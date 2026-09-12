@@ -2,9 +2,9 @@
 
 ## Scope
 
-Phase 2 authorizes Supabase, email/password authentication, persisted sessions,
-and onboarding only. Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`,
-`docs/DATA_MODEL.md`, and `docs/DECISIONS.md` before changes. Do not begin Phase 3
+Phase 3 authorizes the shared vocabulary catalog, daily challenge generation,
+replacement history and Today UI, building on completed Phase 2 authentication. Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`,
+`docs/DATA_MODEL.md`, and `docs/DECISIONS.md` before changes. Do not begin Phase 4
 or implement future product rules merely because they are documented.
 
 ## Engineering
@@ -18,8 +18,10 @@ or implement future product rules merely because they are documented.
 - Keep components small and typed. Prefer existing primitives and system APIs.
 - Support iOS and Android and preserve web compatibility. Minimize platform forks.
 - Do not add Redux/global state without a demonstrated requirement or a custom backend.
-- Do not add vocabulary, assignments, camera/uploads/buckets, streaks, feed, ratings,
-  social login, or fabricated business logic in Phase 2.
+- Do not add camera/uploads/buckets, streaks, feed, ratings, comments, followers,
+  notifications, social login, or fabricated business logic in Phase 3.
+- Derive challenge identity/date/configuration and replacements entirely in backend RPCs.
+- Preserve concept-level assignment history and immutable challenge snapshots.
 - Supabase/PostgreSQL is authoritative. Use RLS, constraints and atomic writes for
   onboarding; never trust a client completion flag or expose service-role keys.
 - Keep migrations, database types, seed and database tests consistent.
@@ -34,7 +36,7 @@ or implement future product rules merely because they are documented.
 Run `npm run check` before handing off a change. For navigation, dependency, or Expo
 configuration changes also run `npm run export:check`, `npx expo install --check`,
 and `npm run doctor`. For database changes also run `npm run db:test` and
-`npm run db:test:integration` and `npx supabase db lint --local --level warning` against local development only;
+`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:bootstrap` and `npx supabase db lint --local --level warning` against local development only;
 see README for the Docker file-sharing fallback. Tests belong outside `app/`; exercise observable behavior
 instead of snapshots or implementation details. Add tests when they protect
 meaningful behavior, not merely to mirror trivial code.

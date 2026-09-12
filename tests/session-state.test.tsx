@@ -145,7 +145,10 @@ it('does not reset the onboarding screen while refreshing the same account', asy
   );
   expect(result.current.status).toBe('onboarding');
   expect(result.current.account).toEqual(account);
-  await act(async () => pending.resolve(account));
+  await waitFor(() => expect(fixture.load).toHaveBeenCalledTimes(2));
+  const refreshedAccount = { ...account };
+  await act(async () => pending.resolve(refreshedAccount));
+  await waitFor(() => expect(result.current.account).toBe(refreshedAccount));
 });
 it('gives a synchronous auth event precedence over stale restoration', async () => {
   const fixture = gatewayFixture();

@@ -1,7 +1,7 @@
-# Phase 2 data model
+# Phase 3 data model
 
-Supabase/PostgreSQL is authoritative. No vocabulary/challenge/photo tables or
-Storage buckets belong to this phase. Email stays in Supabase Auth.
+Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
+Photo/submission tables and Storage buckets remain out of scope. Email stays in Auth.
 
 ## Tables
 
@@ -44,10 +44,69 @@ rename an administratively edited language. Active-language validation applies
 when a learning record is written; deactivating a catalog entry does not erase
 existing users' stored selections or revoke their completion.
 
-## Future concepts, not schemas
+## Shared vocabulary
 
-Vocabulary will use A1–C2 and photographable words. Daily review/target/stretch
-slots will follow PRODUCT.md's boundaries; replacements preserve slot level.
-Submission visibility defaults private; future photos use Supabase Storage.
-Streak maintenance requires at least one completed daily word; semantic ratings
-are 1–5. No columns, indexes, policies, or tables for these concepts are created.
+- `vocabulary_concepts`: semantic key (unique), category, active/photographable flags,
+  timestamps. `BANK_FINANCIAL` and `BANK_RIVER` are separate meanings.
+- `vocabulary_terms`: concept/language foreign keys, term, independent CEFR A1–C2,
+  part of speech, active flag and timestamps. Unique `(concept_id, language_id)`
+  permits one primary term per meaning/language. Identical spelling across distinct
+  concepts is allowed. Reference equivalents are resolved through the concept.
+
+## Daily challenge snapshots and history
+
+- `daily_challenges`: owner and learning-profile foreign keys; unique
+  `(user_language_profile_id, local_challenge_date)`; saved language pair, configured
+  CEFR, IANA timezone and server creation time. Configuration/date are immutable.
+- `daily_challenge_words`: challenge FK, review/target/stretch slot, saved CEFR,
+  target/reference term FKs, concept FK, language/text snapshots, assignment/replacement times.
+  Unique `(daily_challenge_id, concept_id)` covers active and replaced history.
+  A partial unique index allows at most one active assignment per slot. Deferred
+  constraints require three active assignments when the transaction commits.
+
+Assignment insertion validates catalog eligibility against the challenge snapshot
+and copies text/meaning from backend records. An update can only retire an active
+assignment once. Replacements retire then insert atomically, so a pool failure
+leaves the old assignment active. Historical active IDs remain owned by their
+original user; the RPC does not introduce an unrequested age/replacement limit.
+Today displays only the challenge returned for the current server-derived date.
+
+Ordinary users can read the shared catalog and only their own challenges/history.
+They cannot directly mutate any Phase 3 table. The two authenticated RPCs are the
+only client write entry points. Private helpers are not directly callable. Catalog
+FKs restrict deleting referenced terms/concepts; deactivation or text edits do not
+rewrite saved cards. Deleting an Auth account cascades through its challenges.
+
+The additive `20260912020000_phase3_challenges.sql` migration preserves both Phase 2
+migrations. Use the migration runner once per version, not repeated raw schema DDL.
+The development seed inserts missing semantic keys and language terms without
+rewriting catalog administration. It contains 36 concepts and 72 English/French
+terms: six French examples per level, with an intentional cross-language CEFR
+variation. Production level assignments and vocabulary licensing need separate review.
+
+## Phase 3 audit invariants
+
+`20260912030000_phase3_audit_integrity.sql` adds target/reference language snapshots
+on assignment rows and composite foreign keys linking each term ID to its original
+concept/language and each assignment to its challenge language pair. Used terms
+cannot be moved to another meaning or language. Text, CEFR and activation can still
+be edited without rewriting historical cards; unused term identities can be corrected.
+These relational checks remain safe under concurrent/repeatable-read catalog edits.
+
+Assignment history cannot be deleted individually while the parent challenge exists.
+Parent challenge/account deletion still cascades; no retention or replacement policy
+was added. Invalid or missing internal CEFR/slot inputs now fail instead of defaulting
+to C2. The new migration explicitly brackets its backfill and DDL in a transaction,
+locks affected tables, and refuses existing semantic/language-link inconsistencies
+without guessing repairs. Previously saved text, concepts, levels and dates are preserved.
+
+The older Phase 2 audit migration received only an explicit BEGIN/COMMIT wrapper
+after its initial LOCK statement was reproduced failing under the installed CLI.
+Its original SQL body and migration version remain unchanged. The original Phase 2
+identity and Phase 3 schema files remain unchanged by this audit. Respect transaction
+boundaries supplied by each file when applying migrations manually.
+
+## Future concepts
+
+Photo submissions, completion, streaks and community ratings are not schemas in
+Phase 3. No Phase 4 tables or functions are created.

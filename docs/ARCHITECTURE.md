@@ -5,14 +5,15 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 2 boundaries
+## Phase 3 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
 - `src/features/auth/`: session lifecycle, email/password forms, navigation authority.
 - `src/features/onboarding/`: validation and onboarding presentation.
+- `src/features/challenges/`: Today cards, request lifecycle and safe error states.
 - `src/features/profile/`: account summary and sign out.
 - `src/lib/`: validated public configuration and a typed Supabase client.
-- `src/services/`: database operations, including transactional onboarding RPC.
+- `src/services/`: database operations, including transactional onboarding and challenge RPCs.
 - `src/types/`: database types matching migrations.
 - `supabase/`: local configuration, versioned migrations, language seed, SQL tests.
 - `tests/`: behavior tests outside route discovery.
@@ -65,8 +66,34 @@ AsyncStorage is persistent but not encrypted; never treat it as a vault. RLS,
 token expiry/refresh and server validation remain the security boundary. Browser
 storage requires normal XSS precautions before any future web release.
 
+## Challenge authority
+
+`get_or_create_today_challenge()` accepts no configuration or identity arguments.
+`replace_daily_challenge_word(active_assignment_id)` accepts only the assignment ID.
+Both verify `auth.uid()`, require completed onboarding and serialize on the owner's
+profile row. Generation additionally locks the learning row before the challenge.
+Uniqueness and deferred constraints protect the one-per-date and three-slot invariants.
+All elevated helpers stay private with revoked client execution and empty search paths.
+
+Shared concept/term tables provide linked language equivalents and independent
+CEFR levels. Candidate selection uses exact eligibility, excludes all concepts in
+the current challenge's history, and orders by unseen/oldest assignment, with random
+ties. Selection holds catalog row locks until commit to avoid assigning terms that
+are concurrently deactivated. Transactions roll back partial creation/replacement. Composite foreign keys protect
+used term meaning/language identities, including concurrent catalog edits at stronger
+isolation levels. Individual assignment deletion is blocked while its challenge remains.
+
+The client uses typed, token-bound RPC services and validates response ownership
+and complete card shape. User/profile/configuration changes remount Today state;
+generation checks ignore obsolete requests. Focus and foreground events reload
+from the backend. While Today is focused and active, a one-minute server refresh
+handles date rollover without trusting device time or computing slot levels locally.
+Background reads cannot swallow a Replace tap: a write supersedes their response.
+Foreground/resume refreshes wait for a pending write to settle and then reload;
+a token refresh reconciles that write through the latest same-account gateway. A lost replacement response is recovered
+by refreshing; it does not blindly replace the next active word.
+
 ## Future boundaries
 
-Supabase Storage will store photos later; no bucket is provisioned. Vocabulary,
-challenge/streak logic, feed and ratings remain Phase 3 or later. Their confirmed
-rules are in PRODUCT.md and are not executed by this client.
+Supabase Storage and photos, submissions/completion, streaks, feed and ratings
+remain future work. No camera action, storage bucket or Phase 4 feature exists.

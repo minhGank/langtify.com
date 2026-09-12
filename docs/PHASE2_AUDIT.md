@@ -1,5 +1,9 @@
 # Phase 2 security and correctness audit
 
+Historical audit record. The [Phase 3 audit](PHASE3_AUDIT.md) later corrected the
+assumption that the CLI supplies an outer migration transaction and added explicit
+boundaries to the Phase 2 audit migration without changing its SQL body.
+
 Audited locally on 2026-09-12. Scope: Supabase, authentication and onboarding.
 No Phase 3 features, dependencies, product-policy changes or architecture replacement.
 No hosted Supabase project was linked or changed. All database mutations and

@@ -1,3 +1,4 @@
+begin;
 -- Apply as one transaction (the Supabase migration runner does this). Prevent a
 -- concurrent write from invalidating the check before the trigger is installed.
 lock table public.profiles, public.user_language_profiles in share row exclusive mode;
@@ -39,3 +40,5 @@ create constraint trigger preserve_completed_learning_profile
   after delete or update on public.user_language_profiles
   deferrable initially deferred for each row
   execute function private.preserve_completed_learning_profile();
+
+commit;

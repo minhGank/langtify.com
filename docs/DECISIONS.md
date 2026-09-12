@@ -108,3 +108,57 @@ Reject unsafe supplied public configuration before Expo bundles it, sharing a
 checked JavaScript validator with the runtime. Hosted connections require HTTPS;
 local development can use loopback/private addresses. This adds no dependency,
 authentication method, product policy, or Phase 3 functionality.
+
+## 011 — Phase 3 shared semantics and challenge authority
+
+Accepted. One shared concept table represents meanings; one primary term per
+concept/language supplies the displayed word, CEFR and reference equivalent.
+Language levels are independent. Ambiguous meanings are separate concepts, not
+alternate rows distinguished only by spelling.
+
+The backend derives the user's local date from server time and their saved IANA
+timezone. Slot levels are review/target/stretch with clamped A1 and C2 boundaries.
+A profile/date has one immutable configuration snapshot. A same-day settings change
+reuses that snapshot; a timezone change may select a different local calendar date.
+Displayed terms are also snapshotted to preserve prior assignments through edits.
+
+Selection excludes all concepts used in that challenge, prefers never-assigned
+concepts, then least recently assigned, and randomizes ties. Exact eligibility is
+required; insufficient pools fail atomically. Replacements preserve the original
+slot/configuration and history. Already-retired IDs return a controlled stale error
+rather than silently replacing a newer assignment. No daily count or historical
+age restriction is added beyond the requested ownership/active-assignment rules.
+
+Transactions lock the owner profile, then learning/challenge state in a consistent
+order. Unique indexes and deferred checks enforce one profile/date challenge,
+three active slots and no repeated concepts. Client writes go only through hardened
+RPCs. Native/client state is scoped to account and learning configuration; server
+refresh on focus/resume and once per active minute handles day rollover.
+
+The 36-concept, 72-term seed is development data with provisional CEFR examples.
+No dependencies or Phase 4 features are added.
+
+References: [PostgreSQL locking](https://www.postgresql.org/docs/current/explicit-locking.html),
+[constraint triggers](https://www.postgresql.org/docs/current/sql-createtrigger.html),
+and [Supabase functions](https://supabase.com/docs/guides/database/functions).
+
+## 012 — Phase 3 audit integrity and request ordering
+
+Accepted as corrections within Phase 3. Keep saved term meaning/language links valid
+with composite foreign keys and explicit language snapshots; snapshot text and CEFR
+remain independent of later catalog wording/regrading. Preserve individual assignment
+history while allowing existing parent/account cascades. Reject invalid private slot
+inputs rather than silently clamping unknown values to C2.
+
+Reads must not suppress user replacements or run ahead of a pending write on resume.
+A write supersedes an older background read; foreground refresh queues behind the
+write and reconciles through the latest token. Existing account/configuration keys
+continue to discard prior-account state. No selection, replacement-count, settings,
+timezone or retention product rule changes.
+
+The installed CLI was experimentally confirmed to require explicit transaction
+boundaries for LOCK TABLE. The new audit migration includes them. Only the older
+migration with the reproduced bootstrap failure receives a BEGIN/COMMIT wrapper;
+its SQL body stays byte-for-byte unchanged. An initially proposed blanket change
+to old migrations was not performed. Disposable-database tests cover the ordered
+migration chain, nonempty backfill and refusal of inconsistent history.

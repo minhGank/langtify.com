@@ -4,9 +4,10 @@ Mobile-first language learning for iOS and Android. Domain: `langtify.com`.
 Package, Expo slug and URL scheme: `langtify`. The workspace folder is intentionally
 `/Applications/langtify.com`.
 
-Phase 2 implements Supabase email/password authentication, session restoration,
-protected navigation, atomic onboarding and an account/learning summary. Today,
-Discover and Vocabulary remain placeholders. Phase 3 has not started.
+Phase 3 adds a shared vocabulary catalog, server-generated daily challenges,
+concept-level repeat avoidance and word replacement with preserved history. Today
+shows three target/reference cards. Phase 2 authentication/onboarding remains in
+place; Discover and Vocabulary remain placeholders. Phase 4 has not started.
 
 ## Run the app
 
@@ -52,15 +53,18 @@ The CLI is a development dependency. Docker Desktop must be running.
 ```sh
 npm run supabase:start
 npm run db:migrate
+npm run db:seed
 npm run db:test
 npm run db:test:integration
+npm run db:test:challenges
 npm run db:types
 npx prettier --write src/types/database.ts
 ```
 
 `supabase start` creates an isolated local project named `langtify`, applies
 migrations, and loads `supabase/seed.sql`. `db:migrate` applies pending migrations
-without resetting data. `supabase db reset --local` is destructive: use it only
+without resetting data. On an existing stack, run `db:seed` after migrations to
+insert missing development catalog entries; it preserves existing edits. `supabase db reset --local` is destructive: use it only
 when intentionally discarding this project's local development data.
 
 Local API: `http://127.0.0.1:54321`; database port: `54322`; captured confirmation
@@ -93,7 +97,7 @@ Storage, Edge Runtime and analytics are disabled for this phase. No buckets exis
    not linked to a hosted project and no hosted migration has been applied.
 2. Review and apply all pending files in `supabase/migrations/` in filename order to the
    intended database, then `supabase/seed.sql`. Use Supabase SQL Editor with each
-   migration wrapped in `BEGIN` / `COMMIT`, or link
+   migration executed transactionally (respect any `BEGIN` / `COMMIT` already in the file), or link
    the CLI to that project and review pending migrations before `supabase db push`.
    Do not replay the original schema migration on an existing schema. The audit
    migration is additive and refuses preexisting completed profiles missing learning
@@ -129,6 +133,7 @@ src/
   components/ui/             # text, screen, button, input, choices
   features/auth/             # auth forms, session lifecycle, sign out
   features/onboarding/       # validation and setup form
+  features/challenges/       # Today cards, request lifecycle and controlled errors
   features/profile/          # account and learning summary
   hooks/                     # shared system theme
   lib/                       # public config, typed Supabase client, theme
@@ -137,10 +142,10 @@ src/
   utils/
 supabase/
   config.toml
-  migrations/                # original identity schema + additive audit invariant
-  seed.sql                   # English and French only
+  migrations/                # identity, audit invariant and Phase 3 challenge engine
+  seed.sql                   # 36 development concepts, 72 English/French terms
   tests/                     # transactional pgTAP security/invariant tests
-scripts/test-db-integration.mjs # local concurrency and seed/migration replay checks
+scripts/                     # isolated local database integration/concurrency checks
 tests/                      # application behavior tests
 docs/                       # product, architecture, model, roadmap, decisions
 ```
@@ -171,23 +176,60 @@ Routine refresh retains an existing same-account screen while revalidating it.
 Account changes discard pending reads and onboarding drafts. Stored timezones are
 validated by PostgreSQL; device timezone data is used only to assist input.
 
+## Vocabulary and daily challenges
+
+`vocabulary_concepts` represents meanings; `vocabulary_terms` supplies one primary
+term per concept/language, with independent CEFR. Reference equivalents follow
+concept linkage. The development seed provides six French examples per level
+A1–C2, with linked English terms. These provisional examples are not a production
+curriculum; do not ship the development seed as a validated vocabulary catalog.
+
+The no-argument `get_or_create_today_challenge()` RPC derives identity, local date,
+timezone, language pair and levels from backend state. It returns one saved
+challenge per learning profile/date. Slots follow A1/A1/A2 at A1, adjacent levels
+in the middle and C1/C2/C2 at C2. Exact eligibility is required: active target and
+reference terms, active photographable concept, exact target language/CEFR.
+
+`replace_daily_challenge_word(active_assignment_id)` lets the backend choose a
+same-slot/same-level replacement. It preserves the retired record and excludes
+all concepts used anywhere in that challenge, including replacements. Unseen
+concepts come first, followed by least recently assigned concepts, with random
+ties. Insufficient pools fail atomically. Concurrent stale-ID replacements return
+a controlled error; refresh to see the saved state after an uncertain response.
+
+Challenge configuration and term text are immutable snapshots. Same-profile/date
+calls retain the original snapshot after settings changes. A changed timezone can
+select a different date; prior records remain unchanged. Ordinary clients only
+read their own challenges/history and cannot write the challenge tables directly.
+Today refreshes on focus/resume and once per active minute to handle date rollover.
+
+Composite foreign keys preserve the meaning and language of terms referenced by
+saved assignments. Correct unused catalog identities freely; for a used identity,
+create the correct catalog row instead of repurposing the referenced row. Text,
+CEFR and activation edits still preserve historical snapshots. The audit migration
+refuses already-inconsistent links for investigation, and must run transactionally.
+Individual history rows cannot be deleted from a retained challenge.
+
 ## Verification commands
 
-| Command                                        | Purpose                                                         |
-| ---------------------------------------------- | --------------------------------------------------------------- |
-| `npm run typecheck`                            | Strict TypeScript validation                                    |
-| `npm run lint`                                 | ESLint with zero warnings                                       |
-| `npm run format:check`                         | Prettier validation                                             |
-| `npm run format`                               | Format source and documentation                                 |
-| `npm test`                                     | Validation, auth/session race and protected navigation tests    |
-| `npm run test:watch`                           | Watch application tests                                         |
-| `npm run check`                                | Typecheck, lint, formatting and application tests               |
-| `npm run export:check -- --clear`              | Fresh iOS, Android and web production bundles                   |
-| `npx expo install --check`                     | SDK dependency compatibility                                    |
-| `npm run doctor`                               | Expo project diagnostics                                        |
-| `npm run db:test`                              | pgTAP ownership, constraints and atomicity tests                |
-| `npm run db:test:integration`                  | Local concurrent writes and actual seed/migration replay checks |
-| `npx supabase db lint --local --level warning` | Database function checks                                        |
+| Command                                        | Purpose                                                                                 |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `npm run typecheck`                            | Strict TypeScript validation                                                            |
+| `npm run lint`                                 | ESLint with zero warnings                                                               |
+| `npm run format:check`                         | Prettier validation                                                                     |
+| `npm run format`                               | Format source and documentation                                                         |
+| `npm test`                                     | Validation, auth/session race and protected navigation tests                            |
+| `npm run test:watch`                           | Watch application tests                                                                 |
+| `npm run check`                                | Typecheck, lint, formatting and application tests                                       |
+| `npm run export:check -- --clear`              | Fresh iOS, Android and web production bundles                                           |
+| `npx expo install --check`                     | SDK dependency compatibility                                                            |
+| `npm run doctor`                               | Expo project diagnostics                                                                |
+| `npm run db:seed`                              | Insert missing local development seed records transactionally                           |
+| `npm run db:test:bootstrap`                    | Disposable database: migration replay, nonempty backfill and refusal of corrupt history |
+| `npm run db:test:challenges`                   | Concurrent authenticated creation and replacements                                      |
+| `npm run db:test`                              | pgTAP ownership, constraints and atomicity tests                                        |
+| `npm run db:test:integration`                  | Local concurrent writes and actual seed/migration replay checks                         |
+| `npx supabase db lint --local --level warning` | Database function checks                                                                |
 
 Tests live outside `app/` and use `jest-expo` with Testing Library. Database tests
 run in a transaction and roll back fixture users/data. Generated database types
@@ -237,11 +279,13 @@ On **both iOS and Android**, using a configured Supabase development project:
 Automated exports are not native builds or physical-device tests. Real email
 delivery, phone persistence/refresh and device UX remain manual checks. Icons and
 splash assets are still temporary Expo assets; release signing/native identifiers
-and app store configuration remain separate work. No Phase 3 functionality exists.
+and app store configuration remain separate work. No Phase 4 functionality exists.
 
 See [Phase 2 verification and changed files](docs/PHASE2_VERIFICATION.md) for the
-original delivery record and [Phase 2 audit](docs/PHASE2_AUDIT.md) for current
-findings, fixes, checks and remaining acceptance work.
+original delivery record and [Phase 2 audit](docs/PHASE2_AUDIT.md) for that audit.
+See [Phase 3 verification](docs/PHASE3_VERIFICATION.md) for current results, changed
+files, remaining risks and the additional Today/challenge phone checklist. The
+[Phase 3 audit](docs/PHASE3_AUDIT.md) records the latest fixes and closure assessment.
 
 ## References
 

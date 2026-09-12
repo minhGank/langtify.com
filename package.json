@@ -59,7 +59,10 @@
     "db:migrate": "supabase migration up --local",
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local --schema public > src/types/database.ts",
-    "db:test:integration": "node scripts/test-db-integration.mjs"
+    "db:test:integration": "node scripts/test-db-integration.mjs",
+    "db:test:challenges": "node scripts/test-challenges-integration.mjs",
+    "db:test:bootstrap": "node scripts/test-db-bootstrap.mjs",
+    "db:seed": "docker exec -i supabase_db_langtify psql -U postgres -d postgres -v ON_ERROR_STOP=1 --single-transaction < supabase/seed.sql"
   },
   "private": true,
   "engines": {

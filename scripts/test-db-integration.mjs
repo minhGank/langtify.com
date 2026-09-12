@@ -1,60 +1,8 @@
 // Uses only the isolated local Langtify database, never a linked/hosted project.
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { query, execute } from './lib/local-db.mjs';
 import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
-
-function query(sql) {
-  let signalReady;
-  const ready = new Promise((resolve) => {
-    signalReady = resolve;
-  });
-  const result = new Promise((resolve, reject) => {
-    const child = spawn('docker', [
-      'exec',
-      '-i',
-      'supabase_db_langtify',
-      'psql',
-      '-U',
-      'postgres',
-      '-d',
-      'postgres',
-      '-At',
-      '-v',
-      'ON_ERROR_STOP=1',
-      '-v',
-      'VERBOSITY=verbose',
-    ]);
-    let output = '';
-    let error = '';
-    const timeout = setTimeout(() => child.kill(), 20000);
-    child.stdout.on('data', (data) => {
-      output += data;
-      if (output.includes('AUDIT_LOCKED')) signalReady(true);
-    });
-    child.stderr.on('data', (data) => {
-      error += data;
-    });
-    child.on('error', (cause) => {
-      clearTimeout(timeout);
-      signalReady(false);
-      reject(cause);
-    });
-    child.on('close', (code) => {
-      clearTimeout(timeout);
-      signalReady(false);
-      resolve({ code, output, error });
-    });
-    child.stdin.end(sql);
-  });
-  return { ready, result };
-}
-
-async function execute(sql) {
-  const result = await query(sql).result;
-  assert.equal(result.code, 0, result.error);
-  return result.output.trim();
-}
 
 const userA = randomUUID();
 const userB = randomUUID();
@@ -77,10 +25,13 @@ const seedResult = await execute(`begin;
 assert.match(seedResult, /\nt\nROLLBACK$/);
 console.log('PASS: replaying the actual seed preserves catalog edits and avoids duplicates');
 
-const auditMigration = await readFile(
+const auditMigrationFile = await readFile(
   new URL('../supabase/migrations/20260912010000_phase2_audit_invariants.sql', import.meta.url),
   'utf8',
 );
+// Replay inside our rollback-only transaction, including files that now provide
+// their own explicit transaction boundaries for CLI compatibility.
+const auditMigration = auditMigrationFile.replace(/^begin;\s*/i, '').replace(/\s*commit;\s*$/i, '');
 await execute(`begin; ${auditMigration} ${auditMigration} rollback;`);
 console.log('PASS: the additive audit migration can be replayed safely in a transaction');
 
