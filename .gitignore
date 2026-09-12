@@ -30,8 +30,14 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# environment files (only the safe template is committed)
+.env
+.env.*
+!.env.example
+
+# test and lint artifacts
+coverage/
+.eslintcache
 
 # typescript
 *.tsbuildinfo
@@ -41,3 +47,7 @@ example
 # generated native folders
 /ios
 /android
+
+# Supabase local state
+supabase/.temp/
+supabase/.branches/
