@@ -1,4 +1,4 @@
-# Phase 6 data model
+# Phase 7 data model
 
 Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
 Phase 4 adds submissions and private photo storage. Email stays in Auth.
@@ -139,8 +139,7 @@ flag. Today payloads include only minimal submission ID/status information.
 
 Storage policies permit inserting only the exact unexpired owner reservation path,
 selecting only the owner's live rows, and deleting only after deletion intent.
-Custom object metadata is rejected; there is no UPDATE/upsert/move policy. `public` visibility grants no additional
-access. The boolean upload-policy helper locks its reservation while Storage
+Custom object metadata is rejected; there is no UPDATE/upsert/move policy. `public` visibility grants no additional direct table/Storage access; Phase 7 controlled reads are described below. The boolean upload-policy helper locks its reservation while Storage
 inserts. Private definer helpers have empty search paths and revoked client access.
 
 `private.photo_cleanup_queue` retains object paths across submission/account/challenge
@@ -281,4 +280,45 @@ Monitor query plans/latency at production scale before adding any projection.
 Dictionary reads exclude `deleting` as well as `pending`/`deleted`; no photo is
 shown while physical removal is underway. Existing completion and XP transitions
 remain unchanged. A disappearing newest capture exposes the previous valid one;
-no surviving capture means no learned-concept row. Private/public both stay owner-only.
+no surviving capture means no learned-concept row. Private/public both stay owner-only in this dictionary RPC.
+
+## Phase 7 public projection
+
+Migration `20260915000000_phase7_discover.sql` adds no product tables or write
+triggers. `private.discover_candidates` joins immutable submission/assignment
+snapshots to a currently onboarded username, a nondeleted/unbanned Auth owner and
+an existing Storage object matching its private verification receipt's ID/version,
+bucket and path. Only completed, public, unreplaced captures qualify. No catalog
+join rewrites historical words or CEFR. No grouping collapses repeated captures.
+
+- Partial `submissions_discover_newest` index: `(submitted_at DESC, id DESC)` for
+  completed/public rows, including assignment and owner join keys.
+- `challenge_words_discover_language`: `(target_language_id, id)` for language joins.
+- Private `discover_target(viewer)` verifies saved onboarded learning state and
+  active Auth account; neither helper nor eligibility view is client-accessible.
+- Authenticated `get_discover_feed(before_time, before_id, page_size)` derives the
+  caller and target internally. Page size is 1–24 (default 12); cursor fields must
+  be paired and time finite. `(submitted_at,id) < cursor` prevents tied duplicates.
+- Envelope: caller's own `viewer_id`, saved `target_language_id`, `items`, `has_more`.
+  Each item contains exactly `id`, `target_term`, `reference_term`, `cefr_level`,
+  `username`, `submitted_at`. No submitter UUID, challenge ID, raw path, email,
+  timezone, learning profile or XP history is returned.
+- Service-only `get_discover_photo_targets(viewer, expected_target, submission_ids)`
+  checks the verified viewer against saved target, accepts 1–24 distinct UUIDs and
+  uses the same eligibility view. Only this privileged internal result includes
+  paths. Edge Function projects public fields and 60-second signed capabilities.
+
+Both RPCs are stable security definers with empty search paths and explicit grants.
+Existing submission/profile/Storage/XP RLS and mutation permissions are unchanged.
+Anonymous feed access is denied. Visibility and deletion changes are reflected at
+read snapshots; no lock is held across external Storage signing. Existing signed
+capabilities retain their original expiry. Migration replay does not backfill or
+change photo, challenge, XP or streak history.
+
+### Phase 7 audit pagination plan
+
+`20260915010000_phase7_audit_pagination.sql` only replaces the feed RPC body with
+an indexable `(submitted_at,id)` upper bound, using an internal infinity/max-UUID
+sentinel for the initial page. External cursor validation and the exact public
+projection are unchanged. The old migration remains intact. Replay tests preserve
+feed results, submissions and the complete XP ledger over nonempty data.

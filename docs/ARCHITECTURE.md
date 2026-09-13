@@ -5,7 +5,7 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 6 boundaries
+## Phase 7 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
 - `src/features/auth/`: session lifecycle, password/Google forms, navigation authority.
@@ -15,6 +15,7 @@ web-compatible components and a shared `expo-router/js-tabs` layout.
 - `src/features/photos/`: camera, metadata stripping, normalized drafts, preview and submission lifecycle.
 - `src/features/vocabulary/`: bounded library/detail pages, account-scoped reads and photo expiry.
 - `src/features/profile/`: account summary, progress and sign out.
+- `src/features/discover/`: bounded public feed and account-scoped photo lifecycle.
 - `src/features/progress/`: backend progress reads, display and XP receipt feedback.
 - `src/lib/`: validated public configuration and a typed Supabase client.
 - `src/services/`: database operations, including transactional onboarding and challenge RPCs.
@@ -124,8 +125,7 @@ The bucket stays private for both visibility values. Database records contain ob
 paths; the owner receives a 60-second signed URL from the Auth-verified function.
 Direct Storage signing is denied, so a caller cannot extend that lifetime. The function
 returns only the signed relative path; the app resolves it against its validated API
-URL, including a reachable LAN URL during local phone testing. No feed-read policy
-exists. The camera normalizes orientation, caps dimensions, re-encodes JPEG and strips
+URL, including a reachable LAN URL during local phone testing. Phase 7 adds a controlled feed RPC and signing action; no broader Storage or table RLS policy is added. The camera normalizes orientation, caps dimensions, re-encodes JPEG and strips
 all APP/comment segments before preview/upload. Cancelled camera/preprocessing work cannot replace or delete newer drafts.
 Native draft cache is account scoped;
 web retains pre-upload previews only in memory. No location permission is requested.
@@ -165,8 +165,8 @@ an accessible progress bar need no animation or global-state dependency.
 
 ## Future boundaries
 
-Feed, ratings, comments, followers, notifications, leaderboards, achievements,
-subscriptions and AI image validation remain out of scope. Phase 7 has not started.
+Ratings, comments, followers, friends, DMs, notifications, leaderboards, achievements,
+subscriptions and AI image validation remain out of scope. Phase 8 has not started.
 
 ## Google OAuth and session admission — Phase 5.5
 
@@ -274,3 +274,57 @@ URL. Direct concept entry has a Vocabulary return fallback and normalizes UUID c
 Batch signing matches and deduplicates UUIDs case-insensitively, as PostgreSQL does.
 No database schema, RLS, server TTL, grouping or filter rules changed. See
 `PHASE6_AUDIT.md` for reproductions, tests and remaining live-pagination limits.
+
+## Controlled public reads — Phase 7
+
+`src/services/discover.ts` uses a nonpersistent client pinned to the active JWT.
+`get_discover_feed` derives viewer identity from Auth and the target language from
+saved onboarding data. A private eligibility view joins completed public submissions,
+assignment snapshots, valid profiles/Auth accounts, version-bound verification and
+Storage object metadata. Empty-search-path security-definer RPCs expose an explicit
+minimal projection without broadening source-table RLS. No additional business
+projection, dependency, state library or lifecycle mutation was introduced.
+
+One query returns 12 rows plus `has_more` from a bounded lookahead. The exact server
+microsecond timestamp and UUID form the next cursor. The feed retains a sliding
+window of at most 24 rows; Load more evicts the oldest loaded page from memory (the
+newest rows in feed order). Refresh returns to the beginning. FlatList anchors the
+visible content during eviction; verify scrolling on both phones. Pages are live
+reads, not a frozen snapshot: newly published earlier rows require refresh.
+
+One `photo-authority` `feed-previews` request revalidates and signs the whole window.
+The verified Auth user is passed to a service-only target lookup with the saved
+language assertion; clients cannot call that lookup or choose an owner/path/TTL.
+The function returns refreshed public metadata only for still-eligible signed IDs.
+The client validates viewer/target, requested IDs, bucket/path and origin, and removes
+ineligible items. Public signed paths are bearer capabilities that necessarily encode
+the Storage object address; the feed RPC never exposes raw paths or owner UUIDs.
+
+The screen is keyed by viewer and target. Focus, foreground and JWT gateway guards,
+request generations and AbortController prevent stale responses/callbacks from
+installing data. A 45-second visible renewal uses one batch; a separate conservative
+55-second monotonic expiry clears URLs even if renewal stalls or device time changes.
+New batches recreate Image instances and bypass cached responses. Blur/background
+clears rows and URLs; resume refreshes newest. All state is in memory.
+
+Public launch remains blocked until moderation/safety, blocking and reporting exist.
+Hosted deployment must apply the migration before deploying the matching function
+and app. The private bucket and existing cleanup worker remain unchanged.
+
+### Phase 7 audit hardening
+
+The additive `20260915010000_phase7_audit_pagination.sql` keeps the same API and
+eligibility while expressing a direct tuple bound for initial and later pages.
+This lets a generic prepared plan seek the existing newest-feed index rather than
+filtering all entries ahead of a deep cursor. The internal first-page infinity
+sentinel is never accepted as a caller cursor. No data backfill, RLS or write changes.
+
+Batch projection treats a missing/failed Storage signature for an eligible row as
+503/retry, rather than silently advancing pagination without displaying that row.
+Rows excluded by the authoritative eligibility lookup are still omitted normally.
+Focus-local callback lifetime checks prevent queued obsolete AppState events or
+interval callbacks from clearing or restarting a newer focus/gateway session.
+See `PHASE7_AUDIT.md` for reproductions, final checks and remaining limits.
+
+If revalidation empties a previously loaded window, retain its cursor and `has_more`
+until Load more or explicit refresh. Renewal must not silently replay page one.

@@ -3,12 +3,12 @@
 Name: **Langtify**. Domain: `langtify.com`. Package and Expo slug: `langtify`.
 Mobile-first Expo / React Native / strict TypeScript; iOS and Android are primary.
 
-## Current scope: Phase 6
+## Current scope: Phase 7
 
 Supabase email/password authentication, persisted sessions, authoritative profiles,
 and onboarding (username, reference language, target language, CEFR level, IANA
 timezone). The four tabs remain Today, Discover, Vocabulary, and Profile. Profile shows authenticated account, learning information, progress and sign out. Today
-shows real daily challenge cards, replacement and camera/photo completion; Vocabulary shows the personal visual dictionary; Discover remains a placeholder.
+shows real daily challenge cards, replacement and camera/photo completion; Vocabulary shows the personal visual dictionary; Discover shows eligible public vocabulary photos.
 
 English and French are the initial active language catalog. English is available
 as a reference language and French as a target language. Reference and target
@@ -60,8 +60,7 @@ time and visibility. Owners may change visibility without moving files.
 
 Deletion removes the image and retires the submission before freeing the word for
 a new photo or replacement. Interrupted uploads/deletions are recoverable; a scheduled
-maintenance job cleans abandoned uploads. Public means eligible for a later feed,
-not publicly readable storage. All photo access remains owner-only in this phase.
+maintenance job cleans abandoned uploads. Public now grants controlled Discover read eligibility (Phase 7 below); the bucket stays private. Owner photo management remains owner-only.
 
 Unfinished photos on Today also lists owner-only pending/deleting operations from
 earlier dates, so restart or midnight does not strand an uploaded photo. This
@@ -115,8 +114,8 @@ longest streak and lifetime counts of currently valid words/full challenges.
 
 ## Future scope — not implemented
 
-Community feed, semantic ratings (1–5), comments, followers, notifications,
-leaderboards, achievements and subscriptions are not included. Phase 7 has not
+Semantic ratings (1–5), comments, followers, friends, DMs, notifications,
+leaderboards, achievements and subscriptions are not included. Phase 8 has not
 started. Apple, Facebook, magic-link and other login providers remain out of scope.
 Apple Sign-In is deferred until Apple Developer membership is available.
 
@@ -164,5 +163,36 @@ Both lists use 12-item pages with Next page and Back to latest. Pull to refresh,
 focus/resume and active refresh reload backend state; changes from another device
 appear on the next refresh. Empty, no-match, deleted, failed and expired-image states
 have recovery controls. Displayed timestamps use the device's locale for readability,
-not for completion/streak authority. All photos, including public-visibility photos,
-remain private and owner-only in this phase.
+not for completion/streak authority. Dictionary and photo management remain owner-only; eligible public photos additionally appear in Discover below.
+
+## Public Discover Feed — Phase 7
+
+Authenticated, onboarded learners see completed public submissions in their saved
+target language, including their own. The owner must still have an onboarded profile
+and username and an Auth account that is neither deleted nor currently banned.
+Deleting/deleted/pending submissions and missing or unverified image objects are
+excluded. Each capture appears separately, even for a repeated concept. Cards show
+the historical target term, reference translation, CEFR, current username and original
+submitted timestamp. The reference translation belongs to the capture's original
+language pair; it is not retranslated into the viewer's reference language.
+
+Newest submission time comes first, with descending submission UUID breaking ties.
+Publishing an older private photo does not change its timestamp. Pull to refresh
+returns to newest; Load more advances through bounded pages. No ranking, user
+profiles, recommendations or optional public XP/streak display are added.
+
+Public visibility grants read eligibility only, never mutation rights or public
+bucket access. Public → private removes future feed/signing eligibility; private →
+public enables it. Deletion intent hides a photo immediately without changing the
+existing completion/XP reconciliation rules. Read/sign operations concurrent with
+visibility changes observe their database eligibility snapshot. Already issued
+60-second signed bearer URLs may work until their original expiry; downloaded
+images cannot be recalled. No stronger revocation is promised.
+
+Account/sign-out, learning-target changes, focus loss and backgrounding clear feed
+and signed-photo state. Visible feed photos revalidate periodically and on explicit
+refresh; remote changes appear on the next successful read. This is not realtime.
+
+Ratings, blocking and reporting are later phases. **Public production launch is
+gated on moderation/safety functionality, including blocking and reporting.** This
+phase is suitable for controlled development acceptance, not an unrestricted launch.

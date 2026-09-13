@@ -2,9 +2,9 @@
 
 ## Scope
 
-Phase 6 adds personal vocabulary history on audited Phase 5.5.
+Phase 7 adds the Public Discover Feed on audited Phase 6, explicitly authorized by the user.
 Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
-`docs/DECISIONS.md` before changes. Do not begin Phase 7 or add future product rules.
+`docs/DECISIONS.md` before changes. Do not begin Phase 8 or add future product rules.
 
 ## Engineering
 
@@ -17,7 +17,7 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 - Keep components small and typed. Prefer existing primitives and system APIs.
 - Support iOS and Android and preserve web compatibility. Minimize platform forks.
 - Do not add Redux/global state without a demonstrated requirement or a custom backend.
-- Do not add gallery uploads, feed, ratings, comments, followers,
+- Do not add gallery uploads, ratings, comments, followers, friends, DMs,
   notifications, leaderboards, achievements, subscriptions, Apple/Facebook login or AI image validation.
 - Keep the photo bucket private. Submission completion, identity and deletion
   must be backend-authoritative. Preserve trusted byte verification, version-bound
@@ -56,6 +56,18 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
   an inactive screen or an obsolete gateway callback. Abort superseded requests;
   use monotonic elapsed time for preview expiry and retry fresh image instances.
   No category inference.
+- Discover is an authenticated, onboarded, saved-target public read projection.
+  Preserve completed/public/valid-owner/verified-object eligibility and historical
+  vocabulary snapshots; never broaden raw submission/profile/Storage RLS.
+  Batch sign only eligible IDs for 60 seconds, with service-only target lookup and
+  verified viewer identity. Never accept caller paths, identity overrides or TTLs.
+  Keep timestamp/UUID keysets indexable under generic plans, bounded memory/queries
+  and stale-account guards. Ignore callbacks from obsolete focus lifetimes. Treat
+  failed signatures for eligible rows as retryable errors, never silent pagination
+  omissions; only the eligibility lookup may omit an unauthorized/unavailable row.
+  Preserve the paging cursor when revalidation empties a previously loaded window.
+  Ratings, blocking and reporting remain later work; public production launch is
+  gated on moderation/safety including blocking and reporting.
 - Never commit secrets. `EXPO_PUBLIC_*` is public client configuration.
 - Generated `ios/`, `android/`, `.expo/`, and `dist/` remain untracked.
 - Preserve unrelated user changes. Update documentation when decisions change.
@@ -65,7 +77,7 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 Run `npm run check` before handing off a change. For navigation, dependency, or Expo
 configuration changes also run `npm run export:check`, `npx expo install --check`,
 and `npm run doctor`. For database changes also run `npm run db:test` and
-`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:submissions`, `npm run db:test:bootstrap`, `npm run db:test:photo-audit`, `npm run db:test:progress`, `npm run db:test:vocabulary` and `npx supabase db lint --local --level warning` against local development only;
+`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:submissions`, `npm run db:test:bootstrap`, `npm run db:test:photo-audit`, `npm run db:test:progress`, `npm run db:test:vocabulary`, `npm run db:test:discover` and `npx supabase db lint --local --level warning` against local development only;
 see README for the Docker file-sharing fallback. Tests belong outside `app/`; exercise observable behavior
 instead of snapshots or implementation details. Add tests when they protect
 meaningful behavior, not merely to mirror trivial code.

@@ -405,3 +405,62 @@ policy change was necessary. Audit tests retain microseconds, same-time ties,
 ambiguous spellings, cross-user mixed batches and actual batch expiry/renewal.
 References: [React Native AppState](https://reactnative.dev/docs/appstate),
 [Expo Router SDK 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/).
+
+## 022 — Controlled public vocabulary feed without broadening source access
+
+Accepted for Phase 7 with explicit user authorization to update AGENTS and extend
+public-photo signing. Preserve every earlier private management, Storage, RLS,
+authentication, submission, XP/streak and vocabulary authority.
+
+Public completed captures become readable only through the target-filtered Discover
+projection and trusted batch signer. An eligible owner has an onboarded username and
+nondeleted/unbanned Auth account; a viewer must also have saved learning settings.
+Existing verified object ID/version must match. Cards use historical vocabulary and
+CEFR, original submission date and current public username; no viewer-language
+retranslation or public progress/profile page is added. Repeated captures are
+separate feed items. The owner is included. Publishing preserves the original date.
+
+Use descending timestamp/UUID keysets, one bounded query and one batch signing call,
+with a 24-item client window to bound memory and renewal cost. Feed reads bypass
+owner RLS only inside a minimal definer projection with explicit grants and fixed
+search paths. Underlying rows and mutation rights remain owner-only. Signing
+rechecks the same eligibility and saved target, never accepts arbitrary paths or
+caller TTLs, and returns only public fields plus fixed 60-second bearer capabilities.
+
+Privacy changes affect subsequent eligibility snapshots; an in-flight read may
+observe the pre-change state and an issued URL retains its expiry. There is no
+instant revocation, realtime refresh or recall of downloaded images. Account/target
+keys, gateway guards, cancellation and monotonic preview expiry preserve isolation.
+
+Ratings, blocking and reporting are later work. Public production launch is gated
+on moderation/safety functionality including blocking and reporting. No Phase 8,
+social graph, interactions, recommendations or ranking is authorized here.
+
+## 023 — Phase 7 audit: indexed cursor seeks and explicit recovery
+
+Accepted as correctness/maintainability fixes without product-policy changes.
+The optional-cursor OR predicate became a filter under a forced generic plan,
+allowing a deep page to rescan newer entries. Replace it in an additive migration
+with a direct row bound and a first-page sentinel. All external bounds, target
+eligibility, immutable timestamps and public projections remain the same. Verified
+with nested EXPLAIN of the real RPC, not only a hand-copied approximation. See
+[PostgreSQL prepared plans](https://www.postgresql.org/docs/current/sql-prepare.html).
+
+A partial Storage signing error must not masquerade as an ineligible row. Only the
+eligibility query may omit a capture; an eligible target with no successful signature
+causes a retryable response. This avoids silently advancing past unseen captures.
+The client clears failed state and explicit retry starts newest, as before. Short
+capability lifetime and visibility-snapshot semantics remain unchanged.
+
+Guard event callbacks by their focus lifetime, as well as guarding requests by
+viewer/gateway/generation. Removing a listener alone must not let an already retained
+callback clear or restart a subsequent session. Tests explicitly invoke stale
+callbacks after gateway replacement and after same-gateway blur/refocus.
+
+No Phase 8, public profiles, mutation permissions, RLS widening, new dependencies,
+identity behavior or completion/XP/streak rules change.
+
+The audit also reproduced implicit page-one restart after renewal removed every
+retained item. Keep the cursor for that empty window; only an initial empty feed
+may poll page one. Load more continues from the saved position and explicit refresh
+returns to newest. Empty-window copy distinguishes available pagination.

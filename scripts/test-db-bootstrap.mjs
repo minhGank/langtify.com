@@ -13,7 +13,7 @@ await execute(`create database ${database};`);
 try {
   await execute(
     `create schema auth; create schema extensions;
-    create table auth.users(id uuid primary key,email text);
+    create table auth.users(id uuid primary key,email text,deleted_at timestamptz,banned_until timestamptz);
     create function auth.uid() returns uuid language sql stable as
       $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;`,
     database,
@@ -218,6 +218,53 @@ try {
       );
       console.log(
         'PASS: Phase 6 installs and replays over nonempty history without changing completion or XP',
+      );
+    }
+    if (file === '20260915000000_phase7_discover.sql') {
+      const before = await execute(
+        `select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e;`,
+        database,
+      );
+      await execute(sql, database);
+      assert.equal(
+        await execute(
+          `select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e;`,
+          database,
+        ),
+        before,
+      );
+      assert.equal(
+        await execute(
+          `select set_config('request.jwt.claim.sub','${user}',false); select jsonb_array_length(public.get_discover_feed()->'items');`,
+          database,
+        ),
+        `${user}\n0`,
+      );
+      await execute(
+        `select set_config('request.jwt.claim.sub','${user}',false); select public.set_submission_visibility((select id from public.submissions where status='completed' limit 1),'public');`,
+        database,
+      );
+      assert.equal(
+        await execute(
+          `select set_config('request.jwt.claim.sub','${user}',false); select jsonb_array_length(public.get_discover_feed()->'items');`,
+          database,
+        ),
+        `${user}\n1`,
+      );
+      console.log(
+        'PASS: Phase 7 installs and replays without changing XP or exposing private photos; explicit public visibility enables feed reads',
+      );
+    }
+    if (file === '20260915010000_phase7_audit_pagination.sql') {
+      const snapshot = `select set_config('request.jwt.claim.sub','${user}',false);
+        select jsonb_build_object('feed',public.get_discover_feed(),
+          'ledger',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e),
+          'photos',(select jsonb_agg(to_jsonb(s) order by id) from public.submissions s));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      console.log(
+        'PASS: Phase 7 audit replay preserves public feed payloads, private photos and every XP event',
       );
     }
     if (file === '20260913000000_phase5_progress.sql') {

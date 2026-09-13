@@ -7,7 +7,7 @@ Package, Expo slug and URL scheme: `langtify`. The workspace folder is intention
 Phase 4 adds camera capture, normalized photo previews, secure private Storage,
 authoritative submissions, owner visibility controls and recoverable deletion.
 Today shows Take Photo/Replace before completion and Completed/View Photo afterward.
-Discover remains a placeholder. Phase 5 adds progress, streaks, reversible XP and levels;
+Discover shows eligible public vocabulary photos. Phase 5 adds progress, streaks, reversible XP and levels;
 Phase 5.5 adds Google OAuth; Phase 6 adds My Vocabulary with personal concept history.
 
 ## Run the app
@@ -286,7 +286,7 @@ The private `challenge-submissions` bucket accepts JPEGs up to 5 MiB. Records st
 server-derived `<user-id>/<submission-id>.jpg` paths, never public URLs. RLS permits
 only the exact reserved owner upload, owner reads and deletion after server intent;
 custom object metadata and overwrites are denied. Public visibility remains owner-only in Phase 4 and
-marks eligibility for a future feed. Photo detail uses in-memory 60-second signed
+now grants controlled Phase 7 feed eligibility. Photo detail uses in-memory 60-second signed
 URLs issued by the authenticated Supabase function; direct signing is denied; changing visibility does not move images or grant public bucket access.
 
 Reserve -> upload -> finalize is idempotent. SQL derives assignment/owner/vocabulary
@@ -490,7 +490,7 @@ physical-device acceptance checklist remains required before closing Phase 5.5.
 Vocabulary groups successfully photographed concepts across dates, with latest
 snapshot/photo cards, target/reference search, CEFR filters and 12-item pages.
 Concept detail retains earlier captures and opens existing photo management.
-Private/public photos stay owner-only. No social functionality is included.
+The personal dictionary remains owner-only. Phase 7 adds a separate controlled public feed.
 
 Apply `npm run db:migrate` locally and deploy the updated `photo-authority` function
 alongside the Phase 6 migration in the intended hosted environment. The new
@@ -505,3 +505,31 @@ See [Phase 6 verification](docs/PHASE6_VERIFICATION.md) for results and phone ch
 Phase 6 has also been audited: see [Phase 6 audit](docs/PHASE6_AUDIT.md).
 The history integration command checks actual signed-URL expiration and renewal,
 so it deliberately waits about one minute while keeping a valid image in Storage.
+
+## Phase 7 — Public Discover Feed
+
+Discover shows finalized public photos in the viewer's saved target language,
+including their own, newest first. Each card keeps historical vocabulary/translation
+and CEFR alongside the current username and submitted date. Private/pending/deleting/
+deleted photos, invalid accounts and missing verified objects are excluded.
+
+Feed reads and one batch signing request use controlled endpoints; the bucket,
+raw profile/submission RLS and owner mutation rights stay private. Signed photo URLs
+last 60 seconds. Visibility changes affect future eligibility; existing URLs retain
+their short expiry. Pull to refresh, Load more, image retry and active renewal are
+included with bounded memory and account/target isolation.
+
+Apply `20260915000000_phase7_discover.sql` before deploying the updated
+`photo-authority` function and app to an intended hosted development environment.
+No hosted deployment is performed by local verification. Run `npm run db:test:discover`
+for real local Auth/Storage privacy, pagination and signing/expiry checks; this test
+creates and removes only its own fixtures and takes over a minute.
+See [Phase 7 verification](docs/PHASE7_VERIFICATION.md) for checks and phone acceptance.
+
+**Do not launch publicly until moderation/safety functionality, including blocking
+and reporting, is complete.** Ratings and all Phase 8 work remain out of scope.
+
+Phase 7 has been audited; see [Phase 7 audit](docs/PHASE7_AUDIT.md). Deploy the
+additive `20260915010000_phase7_audit_pagination.sql` migration and the matching
+`photo-authority` function (including `feed-photos.ts`) for the audit corrections.
+Public production launch remains gated on moderation/safety and device acceptance.

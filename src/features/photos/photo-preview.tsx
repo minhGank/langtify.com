@@ -100,7 +100,7 @@ export function PhotoPreview({
           />
           <AppText>
             {state.isPublic
-              ? 'Public: eligible for a future community feed.'
+              ? 'Public: visible to other learners in Discover.'
               : 'Private: visible only to you.'}
           </AppText>
           <Button

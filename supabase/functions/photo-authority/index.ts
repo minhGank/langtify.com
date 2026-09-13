@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../../../src/types/database.ts';
 import { validatePhoto } from './validate-photo.ts';
+import { projectFeedPhotos } from './feed-photos.ts';
 
 const headers = {
   'Access-Control-Allow-Origin': '*',
@@ -51,6 +52,44 @@ Deno.serve(async (request: Request) => {
     if (!body || typeof body !== 'object' || Array.isArray(body))
       return reply({ error: 'invalid_request' }, 400);
     const input = body as Record<string, unknown>;
+    if (input.action === 'feed-previews') {
+      const ids = input.submissionIds;
+      if (
+        !Array.isArray(ids) ||
+        ids.length < 1 ||
+        ids.length > 24 ||
+        ids.some((id) => typeof id !== 'string' || !uuid.test(id)) ||
+        new Set(ids.map((id) => String(id).toLowerCase())).size !== ids.length ||
+        typeof input.targetLanguageId !== 'string' ||
+        !uuid.test(input.targetLanguageId)
+      )
+        return reply({ error: 'invalid_request' }, 400);
+      const admin = createClient<Database>(url, secret, options);
+      const targets = await admin.rpc('get_discover_photo_targets', {
+        viewer: auth.data.user.id,
+        expected_target: input.targetLanguageId,
+        submission_ids: ids,
+      });
+      if (targets.error) return reply({ error: 'feed_unavailable' }, 403);
+      const signed = targets.data.length
+        ? await admin.storage.from(bucketName).createSignedUrls(
+            targets.data.map((row) => row.storage_path),
+            60,
+          )
+        : { data: [], error: null };
+      if (signed.error) return reply({ error: 'service_unavailable' }, 503);
+      try {
+        const items = projectFeedPhotos(targets.data, signed.data ?? []);
+        return reply({
+          viewer_id: auth.data.user.id,
+          target_language_id: input.targetLanguageId.toLowerCase(),
+          items,
+        });
+      } catch {
+        return reply({ error: 'service_unavailable' }, 503);
+      }
+    }
+
     if (input.action === 'previews') {
       const ids = input.submissionIds;
       if (

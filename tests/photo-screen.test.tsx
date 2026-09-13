@@ -55,6 +55,7 @@ it('shows a camera preview before submission, starts private, and supports retak
     screen.getByRole('switch', { name: 'Share with the Langtify community' }).props.value,
   ).toBe(false);
   fireEvent(screen.getByRole('switch'), 'valueChange', true);
+  expect(screen.getByText('Public: visible to other learners in Discover.')).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Retake photo' }));
   expect(screen.queryByLabelText('Your challenge photo')).toBeNull();
   fireEvent.press(screen.getByText('Mock camera shutter'));

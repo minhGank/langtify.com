@@ -614,6 +614,26 @@ export type Database = {
         };
       };
       get_assignment_photo: { Args: { assignment_id: string }; Returns: Json };
+      get_discover_feed: {
+        Args: { before_id?: string; before_time?: string; page_size?: number };
+        Returns: Json;
+      };
+      get_discover_photo_targets: {
+        Args: {
+          expected_target: string;
+          submission_ids: string[];
+          viewer: string;
+        };
+        Returns: {
+          cefr_level: string;
+          id: string;
+          reference_term: string;
+          storage_path: string;
+          submitted_at: string;
+          target_term: string;
+          username: string;
+        }[];
+      };
       get_my_progress: { Args: { challenge_id?: string }; Returns: Json };
       get_my_vocabulary: {
         Args: {

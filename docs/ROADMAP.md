@@ -58,9 +58,20 @@ deployment and physical acceptance. `PHASE6_AUDIT.md` records lifecycle, preview
 expiry/retry and UUID fixes with privacy/pagination regression coverage. Google
 physical acceptance remains pending.
 
-## Phase 7 and later — not started
+## Phase 7 — implemented and audited; hosted/device acceptance pending
 
-Further work requires explicit scope. Community
-feed, ratings, comments, followers, notifications, leaderboards, achievements, subscriptions and moderation remain out of scope.
+Controlled public Discover feed, saved-target eligibility, historical vocabulary
+cards, indexed keyset pages and batch 60-second signed photos. Existing private
+Storage and owner-only management/RLS remain intact. See `PHASE7_VERIFICATION.md`.
+The audit fixes generic-plan cursor scans, partial signing omissions and obsolete
+lifecycle callbacks; see `PHASE7_AUDIT.md`.
+
+**Public production launch remains gated on moderation/safety, blocking and reporting.**
+
+## Phase 8 and later — not started
+
+Further work requires explicit scope. Ratings, blocking/reporting, comments,
+followers, friends, DMs, notifications, leaderboards, achievements and subscriptions
+remain unimplemented.
 Other OAuth providers, password recovery UX, production vocabulary/content review, final
 branding, production signing and store setup need separate planning.

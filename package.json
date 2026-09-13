@@ -74,7 +74,7 @@
     "db:test:submissions": "node --experimental-strip-types scripts/test-submissions-integration.mjs",
     "db:test:photo-audit": "node --experimental-strip-types scripts/test-photo-audit.mjs",
     "functions:check": "npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/index.ts",
-    "functions:test": "npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/validate-photo_test.ts",
+    "functions:test": "npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority",
     "functions:lint": "npm exec --yes --package=deno@2.9.6 -- deno lint supabase/functions/photo-authority",
     "security:scan": "node scripts/scan-credentials.mjs",
     "db:test:progress": "node --experimental-strip-types scripts/test-progress-integration.mjs",
@@ -82,7 +82,8 @@
     "build:ios:dev": "expo run:ios --device",
     "build:android:dev": "expo run:android --device",
     "test:auth:integration": "node --experimental-strip-types scripts/test-auth-sessions-integration.mjs",
-    "db:test:vocabulary": "node --experimental-strip-types scripts/test-vocabulary-integration.mjs"
+    "db:test:vocabulary": "node --experimental-strip-types scripts/test-vocabulary-integration.mjs",
+    "db:test:discover": "node --experimental-strip-types scripts/test-discover-integration.mjs"
   },
   "private": true,
   "engines": {
