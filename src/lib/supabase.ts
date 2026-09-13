@@ -5,12 +5,16 @@ import { createClient, processLock } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 
 import { publicConfig } from '@/lib/env';
+import { guardedSessionStorage, browserSessionStorage } from '@/lib/auth-session-storage';
 import type { Database } from '@/types/database';
 
 export const supabase = publicConfig.config
   ? createClient<Database>(publicConfig.config.url, publicConfig.config.key, {
       auth: {
-        ...(Platform.OS !== 'web' ? { storage: AsyncStorage, lock: processLock } : {}),
+        storage: guardedSessionStorage(
+          Platform.OS === 'web' ? browserSessionStorage() : AsyncStorage,
+        ),
+        ...(Platform.OS !== 'web' ? { lock: processLock } : {}),
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: false,

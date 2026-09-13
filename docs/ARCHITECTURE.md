@@ -5,10 +5,11 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 5 boundaries
+## Phase 5.5 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
-- `src/features/auth/`: session lifecycle, email/password forms, navigation authority.
+- `src/features/auth/`: session lifecycle, password/Google forms, navigation authority.
+- `src/features/auth/oauth/`: PKCE staging, callback validation, guarded admission and browser/link adapters.
 - `src/features/onboarding/`: validation and onboarding presentation.
 - `src/features/challenges/`: Today cards, request lifecycle and safe error states.
 - `src/features/photos/`: camera, metadata stripping, normalized drafts, preview and submission lifecycle.
@@ -165,3 +166,62 @@ an accessible progress bar need no animation or global-state dependency.
 
 Feed, ratings, comments, followers, notifications, leaderboards, achievements,
 subscriptions and AI image validation remain out of scope. Phase 6 has not started.
+
+## Google OAuth and session admission — Phase 5.5
+
+The Google button asks a per-attempt Supabase client for
+`signInWithOAuth({ provider: 'google', options: { skipBrowserRedirect: true } })`.
+Expo AuthSession generates the redirect; Expo WebBrowser opens the system auth
+session on native. Native Crypto supplies secure random bytes and SHA-256 if
+WebCrypto is missing; authorization must use S256. There is no native Google SDK.
+The SDK's explicit flow ID selects the saved verifier on code exchange, including
+cold starts. It is kept locally so the callback stays exactly allowlisted.
+
+`OAuthCoordinator` owns one pending login, a ten-minute technical expiry, durable
+one-time exchange claims, in-memory generation guards, cancellation and safe errors.
+Native attempts use namespaced AsyncStorage; web uses per-tab sessionStorage and
+a full-page redirect. This short-lived expiry protects login state, not any product
+calendar/date rule. Only the expected scheme/host/path and a single code are
+accepted; implicit tokens, fragments and unexpected parameters are rejected.
+The authorization URL must match this project's Supabase origin and Google endpoint.
+
+`+native-intent.tsx` forwards callback input to the root bridge while returning a
+clean Router path. The bridge accepts warm links and initial URLs; duplicate
+delivery shares one exchange. Web removes callback query parameters on receipt.
+The callback route is public solely for processing/login recovery; the original
+protected groups still control onboarding and account screens.
+
+Staging Auth persists PKCE material but discards its session writes. Its events are
+never used by the UI. Only a current exchange with no existing main session may
+call the main client's `setSession`. Password auth, sign-out and OAuth installation
+share a mutation queue. The adapter withholds installation events until admission;
+cancellation rolls back only the candidate account. A committing marker survives
+interruption/failed rollback, quarantines its events and is cleaned on restoration.
+Errors do not display SDK payloads or callback strings. Verifier cleanup is scoped
+to an attempt; an obsolete response cannot delete a newer attempt's state.
+
+The existing `useSessionState`, account loader, native foreground refresh and RLS
+remain authoritative. Google metadata cannot mark onboarding complete. There are
+no database/schema changes or client identity-merging rules. Native session
+storage retains its existing AsyncStorage security characteristics; this phase
+does not add encrypted storage or change password/email confirmation behavior.
+
+## Phase 5.5 audit hardening
+
+`index.js` loads the existing URL polyfill and `web-entry.web.ts` before Expo Router
+captures its initial URL. Native uses the no-op adapter and `+native-intent` sanitation.
+Malformed credential-bearing native links never enter Router parameters. Final root
+bridge unmount invalidates its exchange; normal callback navigation preserves it.
+
+`auth-session-storage.ts` guards SDK session writes/removals during OAuth admission.
+Recovery identifies the Auth `session_id` so a newer login of the same UUID survives.
+Cancelled pending records are marked invalid before deletion; auth mutations await
+that cleanup. Pre-audit records without session IDs retain conservative recovery.
+The normal native AsyncStorage adapter and browser localStorage/memory fallback
+remain; token claims used for coordination do not replace server validation.
+
+Web app auth mutations share a Web Lock and non-secret intent/commit metadata in
+localStorage. Verifiers remain per-tab. SDK broadcasts wait for admission/rollback
+and reload current session state before entering the provider; a surviving tab can
+recover a terminated tab's partial install. Google requires secure browser storage
+and Web Locks. See `PHASE55_AUDIT.md` for findings, regressions and acceptance limits.

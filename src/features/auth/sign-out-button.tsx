@@ -1,3 +1,4 @@
+import { authMutation } from '@/features/auth/oauth/runtime';
 import { useState } from 'react';
 
 import { AppText } from '@/components/ui/app-text';
@@ -12,7 +13,7 @@ export function SignOutButton() {
     setBusy(true);
     setError('');
     try {
-      const result = await requireSupabase().auth.signOut({ scope: 'local' });
+      const result = await authMutation(() => requireSupabase().auth.signOut({ scope: 'local' }));
       if (result.error) throw result.error;
     } catch (cause) {
       setError(friendlyError(cause, 'Unable to sign out. Check your connection and try again.'));

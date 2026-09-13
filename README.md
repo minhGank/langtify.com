@@ -7,7 +7,7 @@ Package, Expo slug and URL scheme: `langtify`. The workspace folder is intention
 Phase 4 adds camera capture, normalized photo previews, secure private Storage,
 authoritative submissions, owner visibility controls and recoverable deletion.
 Today shows Take Photo/Replace before completion and Completed/View Photo afterward.
-Discover and Vocabulary remain placeholders. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 6 has not started.
+Discover and Vocabulary remain placeholders. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 5.5 adds Google OAuth through Supabase; Phase 6 has not started.
 
 ## Run the app
 
@@ -15,15 +15,34 @@ Use Node 24 LTS (`.nvmrc`) and npm. Expo SDK 57 requires Node 22.13 or newer.
 
 ```sh
 npm ci
-cp .env.example .env.local
+# Only on a new checkout without .env.local:
+cp -n .env.example .env.local
 # Fill the public Supabase URL and key in .env.local.
-npm start
+npm run start:dev
 ```
 
-Scan the QR code with an Expo Go version compatible with SDK 57, on the same
-network as your computer. `npm run ios`, `npm run android`, and `npm run web`
-open a configured simulator/emulator or browser. Missing configuration shows an
-explicit setup screen. Supplied but invalid configuration stops Expo before bundling.
+Use an installed Langtify development build for Google login, with the phone on
+this computer's network. Expo Go cannot register the required `langtify` callback
+and is explicitly unsupported for Google. Create the native build once (and
+rebuild after native dependency/config changes):
+
+```sh
+# macOS + Xcode, connected and provisioned iPhone
+npm run build:ios:dev
+# Android Studio/SDK, connected phone with USB debugging
+npm run build:android:dev
+# Subsequent JS development; scan with the installed Langtify development client
+npm run start:dev
+# Browser compatibility
+npm run web
+```
+
+The build scripts run `expo run:ios --device` and `expo run:android --device`.
+Expo generates ignored native projects as needed; native identifiers are
+`com.langtify.app`. Xcode signing/device provisioning and Android SDK setup remain
+local prerequisites. These local builds do not require EAS configuration.
+Missing Supabase configuration shows a setup screen; invalid configuration stops bundling.
+See [Google setup and device acceptance](docs/PHASE55_VERIFICATION.md).
 
 ## Public configuration
 
@@ -394,7 +413,7 @@ On **both iOS and Android**, using a configured Supabase development project:
 Automated exports are not native builds or physical-device tests. Real email
 delivery, phone persistence/refresh and device UX remain manual checks. Icons and
 splash assets are still temporary Expo assets; release signing/native identifiers
-and app store configuration remain separate work. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 6 has not started.
+and app store configuration remain separate work. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 5.5 adds Google OAuth through Supabase; Phase 6 has not started.
 
 See [Phase 2 verification and changed files](docs/PHASE2_VERIFICATION.md) for the
 original delivery record and [Phase 2 audit](docs/PHASE2_AUDIT.md) for that audit.
@@ -429,4 +448,38 @@ XP concurrency and recovery coverage. SQL tests include all milestones and DST.
 The [Phase 5 audit](docs/PHASE5_AUDIT.md) records durable XP identity and exact-level
 fixes, regression results and remaining deployment checks. Apply the additive audit
 migration with Phase 5. It refuses ambiguous existing milestone keys or inconsistent
-ledger projections without changing history. Phase 5.5 and Phase 6 have not started.
+ledger projections without changing history. Phase 5.5 Google OAuth is described below; Phase 6 has not started.
+
+## Phase 5.5 Google authentication
+
+Continue with Google uses Supabase Google OAuth and S256 PKCE. The native redirect
+is `langtify://auth/callback`; the existing hosted **Langtify Dev** project already
+has the provider, secret, Google callback and native allowlist configured. Keep
+`.env.local` pointed at that development project's public URL/key. This phase does
+not change environment variable names, database migrations, or local provider configuration.
+Never place a Google client secret in the app.
+
+New Google users follow existing onboarding; provider names/avatars cannot satisfy
+Langtify fields. Existing linked identities keep the authoritative Supabase UUID,
+profile, challenges, photos and XP. Supabase alone decides compatible verified-email
+linking; there is no client email matching, custom merge or manual linking.
+Password login and local Supabase sign-out remain available. Google cookies can
+survive app sign-out; the next login asks Google to select an account.
+
+Web uses a full-page PKCE redirect to the current web origin's `/auth/callback`.
+Before browser OAuth testing, allow that exact URL (for example
+`http://localhost:8081/auth/callback`) in Supabase; the native allowlist alone does
+not enable web. Deployments must serve the exported callback route over HTTPS.
+Local Supabase still supports password, RLS and database regression tests; actual
+Google consent/identity linking requires the hosted development provider.
+
+See [Phase 5.5 verification and physical-device checklist](docs/PHASE55_VERIFICATION.md).
+Apple Sign-In remains deferred until Apple Developer membership is available.
+No Phase 6 functionality is included.
+
+The [Phase 5.5 audit](docs/PHASE55_AUDIT.md) adds guarded session persistence,
+session-specific recovery, durable cancellation, early callback sanitation and
+cross-tab coordination. Run `npm run test:auth:integration` against local Supabase
+for session-ID/refresh/profile/sign-out checks. Web Google login needs secure browser
+storage and Web Locks; reload all web tabs after updating the app. The same
+physical-device acceptance checklist remains required before closing Phase 5.5.

@@ -52,7 +52,7 @@ for (const path of paths) {
   } else source = readFileSync(path, 'utf8');
   scanned++;
   const secret =
-    /sb_secret_[A-Za-z0-9_-]{20,}|-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----/;
+    /GOCSPX_[A-Za-z0-9_-]{20,}|sb_secret_[A-Za-z0-9_-]{20,}|-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----/;
   if (secret.test(source)) failures.push(`${path}: secret/private-key pattern`);
   for (const match of source.matchAll(/eyJ[A-Za-z0-9_-]+\.([A-Za-z0-9_-]+)\.[A-Za-z0-9_-]+/g)) {
     try {

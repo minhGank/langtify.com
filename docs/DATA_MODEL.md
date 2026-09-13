@@ -237,3 +237,18 @@ legacy aliases or inconsistent projections abort the migration atomically for
 reviewed reconciliation; the migration never guesses dates, rewrites events or
 silently erases credit. Valid existing history and replay are tested unchanged.
 See PHASE5_AUDIT.md for reproductions, coverage and deployment limits.
+
+## Phase 5.5 identity behavior (no schema changes)
+
+All ownership remains anchored to the Supabase `auth.users.id`, regardless of
+password or Google identity. Supabase may automatically link a compatible OAuth
+identity to the same user for a safely verified email. The app consumes the
+resulting authenticated UUID and never queries/matches application accounts by
+provider email. No manual linking, merge function, Google-specific profile or
+second user table is introduced. Existing profile creation runs on `auth.users`
+insertion; repeated login to the same UUID only reloads existing data. Provider
+metadata does not populate required onboarding fields or grant completion.
+
+XP, challenges, submissions, private Storage and RLS remain unchanged. PKCE pending
+records are local technical state and confer no database authorization; server-
+validated Supabase JWTs still authorize every account-bound request.

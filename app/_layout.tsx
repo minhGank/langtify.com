@@ -52,6 +52,7 @@ export function RootNavigator() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="photo" />
         </Stack.Protected>
+        <Stack.Screen name="auth/callback" />
       </Stack>
     </ThemeProvider>
   );

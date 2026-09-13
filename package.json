@@ -1,14 +1,17 @@
 {
   "name": "langtify",
-  "main": "expo-router/entry",
+  "main": "index.js",
   "version": "0.1.0",
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@supabase/supabase-js": "^2.116.0",
     "expo": "~57.0.22",
+    "expo-auth-session": "~57.0.12",
     "expo-camera": "~57.0.5",
     "expo-constants": "~57.0.18",
+    "expo-crypto": "~57.0.3",
+    "expo-dev-client": "~57.0.19",
     "expo-file-system": "~57.0.7",
     "expo-font": "~57.0.4",
     "expo-image-manipulator": "~57.0.17",
@@ -17,6 +20,7 @@
     "expo-splash-screen": "~57.0.9",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.4",
+    "expo-web-browser": "~57.0.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
@@ -73,7 +77,11 @@
     "functions:test": "npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/validate-photo_test.ts",
     "functions:lint": "npm exec --yes --package=deno@2.9.6 -- deno lint supabase/functions/photo-authority",
     "security:scan": "node scripts/scan-credentials.mjs",
-    "db:test:progress": "node --experimental-strip-types scripts/test-progress-integration.mjs"
+    "db:test:progress": "node --experimental-strip-types scripts/test-progress-integration.mjs",
+    "start:dev": "expo start --dev-client",
+    "build:ios:dev": "expo run:ios --device",
+    "build:android:dev": "expo run:android --device",
+    "test:auth:integration": "node --experimental-strip-types scripts/test-auth-sessions-integration.mjs"
   },
   "private": true,
   "engines": {

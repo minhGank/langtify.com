@@ -312,3 +312,56 @@ ambiguous source aliases or ledger/projection disagreement before any replacemen
 Those conditions need reviewed signed reconciliation, not destructive history edits.
 No rewards, milestone occurrence rules, deletion policy, timezone-change restrictions,
 client architecture or future-phase features change.
+
+## 018 — Supabase Google OAuth with guarded PKCE admission
+
+Accepted for Phase 5.5. Use the existing Supabase authority with Expo AuthSession,
+WebBrowser and linking, not another auth system or native Google SDK. The hosted
+Langtify Dev provider is already configured; its Google client secret remains in
+Supabase. Preserve `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY`.
+Do not change local provider settings or enable manual identity linking.
+
+The installed auth SDK supports S256 PKCE with persisted per-flow verifier IDs.
+A dedicated, short-lived exchange client saves only PKCE material. This is an
+adapter around the existing auth pipeline, not a replacement provider or user
+store: directly exchanging on the shared client would emit/persist an obsolete
+session before a caller could reject it. The shared mutation queue, admission
+filter and interrupted-commit recovery close that race while retaining the
+existing session state machine, refresh and onboarding validation.
+
+The `langtify` scheme returns to `langtify://auth/callback`. Expo Go is unsupported;
+add SDK-compatible `expo-dev-client`, `expo-web-browser`, `expo-auth-session` and
+`expo-crypto`. Crypto prevents the SDK's insecure-random/plain-PKCE fallback on
+native. Native IDs `com.langtify.app` make local development builds concrete;
+generated native projects remain ignored. Web uses a full-page redirect with
+per-tab PKCE storage and requires its exact callback in the hosted allowlist.
+
+Supabase alone handles supported automatic linking for compatible verified email
+identities. The app does not merge users, infer identity from email, or create a
+second profile on sign-in. Google account selection is requested each time;
+Langtify sign-out ends the local Supabase session, not the Google account. Apple
+Sign-In remains deferred until Apple Developer membership is available.
+
+References: [Supabase native deep linking](https://supabase.com/docs/guides/auth/native-mobile-deep-linking),
+[Expo WebBrowser SDK 57](https://docs.expo.dev/versions/v57.0.0/sdk/webbrowser/),
+[Expo AuthSession SDK 57](https://docs.expo.dev/versions/v57.0.0/sdk/auth-session/),
+[Supabase identity linking](https://supabase.com/docs/guides/auth/auth-identity-linking).
+The Google G asset comes from Google's
+[sign-in branding guidance](https://developers.google.com/identity/branding-guidelines)
+([original asset](https://developers.google.com/identity/images/g-logo.png)); preserve its colors and proportions.
+
+## 019 — Phase 5.5 audit: guard persistence, session identity and early routing
+
+Accepted as correctness/security fixes without changing authentication or product
+policy. Event filtering alone is too late: the installed SDK persists and broadcasts
+before `setSession` returns. Guard the shared storage adapter during admission and
+coordinate browser mutations/broadcast handling across tabs using Web Locks and
+non-secret intent/commit records. Retain per-tab PKCE storage and the existing
+password fallback when persistent browser storage is unavailable.
+
+Match interrupted installations by Auth session ID, not merely user UUID. Preserve
+newer sessions of the same owner. Persist cancellation before removing pending
+records; auth mutations wait for cleanup. Move web callback sanitation to Expo's
+supported custom entry point so Router never captures its code; native malformed
+credential-bearing links also receive a clean error route. No dependencies, schema,
+identity-linking configuration or external credentials change. See `PHASE55_AUDIT.md`.

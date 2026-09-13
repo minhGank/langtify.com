@@ -11,6 +11,7 @@ import SignUpRoute from '../app/sign-up';
 import OnboardingRoute from '../app/onboarding';
 import SessionRoute from '../app/session';
 import PhotoRoute from '../app/photo';
+import OAuthCallback from '../app/auth/callback';
 import type { SessionState } from '@/features/auth/session-state';
 import { makeAccount, makeSession } from './fixtures';
 
@@ -30,6 +31,7 @@ const routes = {
   onboarding: OnboardingRoute,
   session: SessionRoute,
   photo: PhotoRoute,
+  'auth/callback': OAuthCallback,
   '(tabs)/_layout': TabLayout,
   '(tabs)/index': TodayScreen,
   '(tabs)/discover': DiscoverScreen,
@@ -98,4 +100,28 @@ it('blocks direct photo routes without an authenticated onboarded account', asyn
   expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
   expect(app.getPathname()).toBe('/sign-in');
   expect(screen.queryByLabelText('Your challenge photo')).toBeNull();
+});
+
+it.each(['ready', 'onboarding'] as const)(
+  'routes a Google return through the existing %s gate',
+  async (status) => {
+    mockState = { ...mockState, status };
+    const app = renderRouter(routes, { initialUrl: '/auth/callback' });
+    expect(
+      await screen.findByRole('header', {
+        name: status === 'ready' ? "Today's Challenge" : 'Welcome to Langtify',
+      }),
+    ).toBeVisible();
+    expect(app.getPathname()).toBe(status === 'ready' ? '/' : '/onboarding');
+  },
+);
+it('keeps a malformed signed-out callback outside protected content', async () => {
+  mockState = { ...mockState, status: 'signed-out', session: null, account: null };
+  const app = renderRouter(routes, { initialUrl: '/auth/callback' });
+  expect(
+    await screen.findByText('This sign-in link is unavailable. Please try again.'),
+  ).toBeVisible();
+  fireEvent.press(screen.getByRole('button', { name: 'Back to sign in' }));
+  expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
+  expect(app.getPathname()).toBe('/sign-in');
 });

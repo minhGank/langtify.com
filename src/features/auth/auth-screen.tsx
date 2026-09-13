@@ -1,3 +1,5 @@
+import { GoogleButton, useGoogleLogin } from '@/features/auth/oauth/google-button';
+import { authMutation } from '@/features/auth/oauth/runtime';
 import { Link } from 'expo-router';
 import { useRef, useState } from 'react';
 
@@ -9,6 +11,7 @@ import { friendlyError } from '@/features/auth/errors';
 import { requireSupabase } from '@/lib/supabase';
 
 export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
+  const google = useGoogleLogin();
   const signingUp = mode === 'sign-up';
   const title = signingUp ? 'Create your account' : 'Sign in';
   const [email, setEmail] = useState('');
@@ -19,7 +22,7 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   const [message, setMessage] = useState('');
 
   async function submit() {
-    if (submitting.current) return;
+    if (submitting.current || google.busy) return;
     setError('');
     setMessage('');
     const cleanEmail = email.trim();
@@ -32,7 +35,9 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     try {
       const auth = requireSupabase().auth;
       if (signingUp) {
-        const { data, error: signupError } = await auth.signUp({ email: cleanEmail, password });
+        const { data, error: signupError } = await authMutation(() =>
+          auth.signUp({ email: cleanEmail, password }),
+        );
         if (signupError) throw signupError;
         if (!data.session) {
           setMessage(
@@ -41,10 +46,9 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
           setPassword('');
         }
       } else {
-        const { error: signinError } = await auth.signInWithPassword({
-          email: cleanEmail,
-          password,
-        });
+        const { error: signinError } = await authMutation(() =>
+          auth.signInWithPassword({ email: cleanEmail, password }),
+        );
         if (signinError) throw signinError;
       }
     } catch (cause) {
@@ -60,11 +64,13 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     <Screen>
       <AppText>Langtify</AppText>
       <AppText variant="title">{title}</AppText>
+      <GoogleButton disabled={busy} />
+      <AppText style={{ textAlign: 'center' }}>or</AppText>
       <FormField
         label="Email"
         value={email}
         onChangeText={setEmail}
-        editable={!busy}
+        editable={!busy && !google.busy}
         autoCapitalize="none"
         autoCorrect={false}
         keyboardType="email-address"
@@ -75,7 +81,7 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         label="Password"
         value={password}
         onChangeText={setPassword}
-        editable={!busy}
+        editable={!busy && !google.busy}
         secureTextEntry
         autoCapitalize="none"
         autoCorrect={false}
@@ -93,9 +99,10 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       <Button
         label={signingUp ? 'Sign up' : 'Sign in'}
         loading={busy}
+        disabled={google.busy}
         onPress={() => void submit()}
       />
-      {!busy && (
+      {!busy && !google.busy && (
         <Link href={signingUp ? '/sign-in' : '/sign-up'} style={{ paddingVertical: 12 }}>
           <AppText>
             {signingUp ? 'Already have an account? Sign in' : 'New to Langtify? Sign up'}

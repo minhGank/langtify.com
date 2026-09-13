@@ -3,7 +3,7 @@
 Name: **Langtify**. Domain: `langtify.com`. Package and Expo slug: `langtify`.
 Mobile-first Expo / React Native / strict TypeScript; iOS and Android are primary.
 
-## Current scope: Phase 5
+## Current scope: Phase 5.5
 
 Supabase email/password authentication, persisted sessions, authoritative profiles,
 and onboarding (username, reference language, target language, CEFR level, IANA
@@ -117,7 +117,8 @@ longest streak and lifetime counts of currently valid words/full challenges.
 
 Community feed, semantic ratings (1–5), comments, followers, notifications,
 leaderboards, achievements and subscriptions are not included. Phase 6 has not
-started. Google, Apple, magic-link and social login remain out of scope.
+started. Apple, Facebook, magic-link and other login providers remain out of scope.
+Apple Sign-In is deferred until Apple Developer membership is available.
 
 ## Open questions
 
@@ -125,3 +126,13 @@ Production vocabulary sources/licensing and CEFR/photographability review,
 submission retention and further edits, rating labels, eligibility and aggregation,
 moderation, and release policies remain undecided. The modest vocabulary seed is
 for development only, not a validated production learning catalog.
+
+## Google authentication — Phase 5.5
+
+Users may continue with Google through Supabase or keep using email/password.
+Every method enters the same user/profile and onboarding flow. Google metadata
+never replaces username, reference/target languages, CEFR or timezone requirements.
+Existing identities linked by Supabase retain the same account data; the app does
+not merge accounts or decide identity from an email address. Sign-out clears the
+Langtify session and account state, without revoking or deleting the Google account.
+No product, XP, challenge, submission or community rules change in this phase.

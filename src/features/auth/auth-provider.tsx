@@ -3,21 +3,15 @@ import { AppState, Platform } from 'react-native';
 
 import { useSessionState, type SessionGateway } from '@/features/auth/use-session-state';
 import { supabase } from '@/lib/supabase';
+import { OAuthBridge } from '@/features/auth/oauth/oauth-bridge';
+import { restoreAuthSession, subscribeAuth } from '@/features/auth/oauth/runtime';
 import { loadAccount } from '@/services/account';
 
 const gateway: SessionGateway | null = supabase
   ? {
-      async restore() {
-        if (!supabase) return null;
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-        return data.session;
-      },
+      restore: restoreAuthSession,
       subscribe(listener) {
-        const subscription = supabase?.auth.onAuthStateChange((event, session) =>
-          listener(session, event),
-        );
-        return () => subscription?.data.subscription.unsubscribe();
+        return subscribeAuth((event, session) => listener(session, event));
       },
       loadAccount,
     }
@@ -41,7 +35,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
       void client.auth.stopAutoRefresh();
     };
   }, []);
-  return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={state}>
+      <OAuthBridge />
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

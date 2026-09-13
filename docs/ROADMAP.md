@@ -38,9 +38,19 @@ Hosted migration and iOS/Android acceptance remain deployment handoff steps.
 The audit fixes session-dependent milestone identities and extreme level boundaries;
 see `PHASE5_AUDIT.md`.
 
-## Phase 5.5, Phase 6 and later — not started
+## Phase 5.5 — implemented and audited; hosted/device acceptance pending
+
+Google OAuth through Supabase, guarded S256 PKCE callbacks, native development
+build setup and the existing password/session/onboarding pipeline. Automated tests
+cover SDK exchange, cancellation, replay and account boundaries. Real Google
+consent and automatic identity linking require hosted Langtify Dev and device
+acceptance; see `PHASE55_VERIFICATION.md` and `PHASE55_AUDIT.md`. The audit hardens
+persistent session admission, cross-tab isolation, recovery identity and early link sanitation. Apple remains deferred until Apple
+Developer membership is available.
+
+## Phase 6 and later — not started
 
 Further work requires explicit scope. Community
 feed, ratings, comments, followers, notifications, leaderboards, achievements, subscriptions and moderation remain out of scope.
-OAuth providers, password recovery UX, production vocabulary/content review, final
-branding, release identifiers, signing and store setup need separate planning.
+Other OAuth providers, password recovery UX, production vocabulary/content review, final
+branding, production signing and store setup need separate planning.

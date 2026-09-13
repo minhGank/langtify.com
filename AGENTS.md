@@ -2,9 +2,9 @@
 
 ## Scope
 
-Phase 5 authorizes daily progress, streaks, XP and levels on audited Phase 4.
+Phase 5.5 adds Google authentication through Supabase on audited Phase 5.
 Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
-`docs/DECISIONS.md` before changes. Do not begin Phase 5.5 or Phase 6, or add future product rules.
+`docs/DECISIONS.md` before changes. Do not begin Phase 6 or add future product rules.
 
 ## Engineering
 
@@ -18,7 +18,7 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 - Support iOS and Android and preserve web compatibility. Minimize platform forks.
 - Do not add Redux/global state without a demonstrated requirement or a custom backend.
 - Do not add gallery uploads, feed, ratings, comments, followers,
-  notifications, leaderboards, achievements, subscriptions, social login or AI image validation.
+  notifications, leaderboards, achievements, subscriptions, Apple/Facebook login or AI image validation.
 - Keep the photo bucket private. Submission completion, identity and deletion
   must be backend-authoritative. Preserve trusted byte verification, version-bound
   attestations, commit-time object guards and function-only fixed-lifetime signing. Never put cleanup credentials in public env.
@@ -39,6 +39,15 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
   reconciliation, revision-based serialization and account-scoped progress reads.
 - Do not invent product rules. Record unresolved questions and obtain requirements
   when future work depends on them.
+- Google OAuth uses Supabase `signInWithOAuth`, S256 PKCE and the centralized
+  `langtify://auth/callback` redirect. Preserve the audited session state machine,
+  staged exchange, guarded storage writes/admission and account-scoped requests.
+  Recovery must match Auth session IDs, and browser auth mutations/broadcasts must
+  retain cross-tab coordination. Keep callback sanitation before Router initialization. Never consume
+  implicit URL tokens, log callback URLs/codes, or enable manual identity linking.
+- Google testing requires a native development build and hosted Langtify Dev.
+  Preserve the existing public env names and local provider configuration.
+  Apple Sign-In remains deferred until Apple Developer membership is available.
 - Never commit secrets. `EXPO_PUBLIC_*` is public client configuration.
 - Generated `ios/`, `android/`, `.expo/`, and `dist/` remain untracked.
 - Preserve unrelated user changes. Update documentation when decisions change.
@@ -54,6 +63,7 @@ instead of snapshots or implementation details. Add tests when they protect
 meaningful behavior, not merely to mirror trivial code.
 
 Report commands, outcomes, limitations, and physical-device checks still needed.
+For auth changes also run `npm run test:auth:integration` against local Supabase.
 Bundle export is not a native binary build or a substitute for device testing.
 Photo changes must include Storage-policy and recovery/cleanup verification. Keep
 the hourly cleanup job documented and tested; use Storage API for physical deletion.

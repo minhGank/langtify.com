@@ -55,3 +55,10 @@ export function makeAccount(id = makeSession().user.id): Account {
     ],
   };
 }
+
+export function makeOAuthSession(id?: string, sessionId = 'test-oauth-session'): Session {
+  return {
+    ...makeSession(id),
+    access_token: `fixture.${btoa(JSON.stringify({ session_id: sessionId }))}.signature`,
+  };
+}
