@@ -48,7 +48,17 @@ acceptance; see `PHASE55_VERIFICATION.md` and `PHASE55_AUDIT.md`. The audit hard
 persistent session admission, cross-tab isolation, recovery identity and early link sanitation. Apple remains deferred until Apple
 Developer membership is available.
 
-## Phase 6 and later — not started
+## Phase 6 — implemented and audited; device acceptance pending
+
+My Vocabulary groups verified personal photos by concept, with latest capture cards,
+search, CEFR filtering, bounded capture history and existing photo management.
+Owner/RLS queries and batch short-lived previews retain private Storage and account
+isolation. No new completion or XP system. See `PHASE6_VERIFICATION.md` for checks,
+deployment and physical acceptance. `PHASE6_AUDIT.md` records lifecycle, preview
+expiry/retry and UUID fixes with privacy/pagination regression coverage. Google
+physical acceptance remains pending.
+
+## Phase 7 and later — not started
 
 Further work requires explicit scope. Community
 feed, ratings, comments, followers, notifications, leaderboards, achievements, subscriptions and moderation remain out of scope.

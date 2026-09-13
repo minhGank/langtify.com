@@ -1,5 +1,1 @@
-import { PlaceholderScreen } from '@/components/placeholder-screen';
-
-export default function VocabularyScreen() {
-  return <PlaceholderScreen title="Vocabulary" />;
-}
+export { VocabularyScreen as default } from '@/features/vocabulary/vocabulary-screen';

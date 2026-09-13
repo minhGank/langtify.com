@@ -81,7 +81,8 @@
     "start:dev": "expo start --dev-client",
     "build:ios:dev": "expo run:ios --device",
     "build:android:dev": "expo run:android --device",
-    "test:auth:integration": "node --experimental-strip-types scripts/test-auth-sessions-integration.mjs"
+    "test:auth:integration": "node --experimental-strip-types scripts/test-auth-sessions-integration.mjs",
+    "db:test:vocabulary": "node --experimental-strip-types scripts/test-vocabulary-integration.mjs"
   },
   "private": true,
   "engines": {

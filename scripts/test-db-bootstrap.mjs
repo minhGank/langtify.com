@@ -196,6 +196,30 @@ try {
     } else {
       await execute(sql, database);
     }
+    if (file === '20260914000000_phase6_vocabulary_history.sql') {
+      const before = await execute(
+        `select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e;`,
+        database,
+      );
+      await execute(sql, database);
+      assert.equal(
+        await execute(
+          `select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e;`,
+          database,
+        ),
+        before,
+      );
+      assert.equal(
+        await execute(
+          `select set_config('request.jwt.claim.sub','${user}',false); select public.get_my_vocabulary()->>'total_concepts';`,
+          database,
+        ),
+        `${user}\n3`,
+      );
+      console.log(
+        'PASS: Phase 6 installs and replays over nonempty history without changing completion or XP',
+      );
+    }
     if (file === '20260913000000_phase5_progress.sql') {
       assert.equal(await execute(`select sum(amount) from public.xp_events;`, database), '40');
       assert.equal(

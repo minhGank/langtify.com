@@ -11,6 +11,7 @@ import SignUpRoute from '../app/sign-up';
 import OnboardingRoute from '../app/onboarding';
 import SessionRoute from '../app/session';
 import PhotoRoute from '../app/photo';
+import ConceptRoute from '../app/vocabulary-concept';
 import OAuthCallback from '../app/auth/callback';
 import type { SessionState } from '@/features/auth/session-state';
 import { makeAccount, makeSession } from './fixtures';
@@ -31,6 +32,7 @@ const routes = {
   onboarding: OnboardingRoute,
   session: SessionRoute,
   photo: PhotoRoute,
+  'vocabulary-concept': ConceptRoute,
   'auth/callback': OAuthCallback,
   '(tabs)/_layout': TabLayout,
   '(tabs)/index': TodayScreen,
@@ -52,7 +54,8 @@ it('opens Today and navigates through all four tabs', async () => {
     ['Today', '/'],
   ]) {
     fireEvent.press(screen.getByLabelText(label));
-    const title = label === 'Today' ? "Today's Challenge" : label;
+    const title =
+      label === 'Today' ? "Today's Challenge" : label === 'Vocabulary' ? 'My Vocabulary' : label;
     expect(await screen.findByRole('header', { name: title })).toBeVisible();
     expect(app.getPathname()).toBe(path);
   }
@@ -60,7 +63,7 @@ it('opens Today and navigates through all four tabs', async () => {
 
 it.each([
   ['/discover', 'Discover'],
-  ['/vocabulary', 'Vocabulary'],
+  ['/vocabulary', 'My Vocabulary'],
   ['/profile', 'Profile'],
 ])('opens the %s route directly', async (path, title) => {
   const app = renderRouter(routes, { initialUrl: path });

@@ -51,6 +51,42 @@ Deno.serve(async (request: Request) => {
     if (!body || typeof body !== 'object' || Array.isArray(body))
       return reply({ error: 'invalid_request' }, 400);
     const input = body as Record<string, unknown>;
+    if (input.action === 'previews') {
+      const ids = input.submissionIds;
+      if (
+        !Array.isArray(ids) ||
+        ids.length < 1 ||
+        ids.length > 24 ||
+        ids.some((id) => typeof id !== 'string' || !uuid.test(id)) ||
+        new Set(ids.map((id) => String(id).toLowerCase())).size !== ids.length
+      )
+        return reply({ error: 'invalid_request' }, 400);
+      // One owner/RLS query and one Storage batch. No client paths or TTLs.
+      const rows = await userClient
+        .from('submissions')
+        .select('id,storage_path')
+        .eq('user_id', auth.data.user.id)
+        .eq('status', 'completed')
+        .in('id', ids);
+      if (rows.error) return reply({ error: 'service_unavailable' }, 503);
+      const admin = createClient<Database>(url, secret, options);
+      const signed = rows.data.length
+        ? await admin.storage.from(bucketName).createSignedUrls(
+            rows.data.map((s) => s.storage_path),
+            60,
+          )
+        : { data: [], error: null };
+      if (signed.error) return reply({ error: 'service_unavailable' }, 503);
+      // Missing, deleted, pending and other-account IDs are indistinguishable.
+      return reply({
+        previews: ids.map((id) => {
+          const row = rows.data.find((s) => s.id === String(id).toLowerCase());
+          const photo = row && signed.data?.find((s) => s.path === row.storage_path);
+          const uri = photo?.signedUrl && !photo.error ? new URL(photo.signedUrl) : null;
+          return { id, signedPath: uri ? uri.pathname + uri.search : null };
+        }),
+      });
+    }
     if (
       typeof input.submissionId !== 'string' ||
       !uuid.test(input.submissionId) ||

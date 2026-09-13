@@ -5,7 +5,7 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 5.5 boundaries
+## Phase 6 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
 - `src/features/auth/`: session lifecycle, password/Google forms, navigation authority.
@@ -13,6 +13,7 @@ web-compatible components and a shared `expo-router/js-tabs` layout.
 - `src/features/onboarding/`: validation and onboarding presentation.
 - `src/features/challenges/`: Today cards, request lifecycle and safe error states.
 - `src/features/photos/`: camera, metadata stripping, normalized drafts, preview and submission lifecycle.
+- `src/features/vocabulary/`: bounded library/detail pages, account-scoped reads and photo expiry.
 - `src/features/profile/`: account summary, progress and sign out.
 - `src/features/progress/`: backend progress reads, display and XP receipt feedback.
 - `src/lib/`: validated public configuration and a typed Supabase client.
@@ -165,7 +166,7 @@ an accessible progress bar need no animation or global-state dependency.
 ## Future boundaries
 
 Feed, ratings, comments, followers, notifications, leaderboards, achievements,
-subscriptions and AI image validation remain out of scope. Phase 6 has not started.
+subscriptions and AI image validation remain out of scope. Phase 7 has not started.
 
 ## Google OAuth and session admission — Phase 5.5
 
@@ -225,3 +226,51 @@ localStorage. Verifiers remain per-tab. SDK broadcasts wait for admission/rollba
 and reload current session state before entering the provider; a surviving tab can
 recover a terminated tab's partial install. Google requires secure browser storage
 and Web Locks. See `PHASE55_AUDIT.md` for findings, regressions and acceptance limits.
+
+## Personal dictionary reads — Phase 6
+
+`get_my_vocabulary` is a stable, security-invoker RPC over completed submissions
+joined to immutable assignment snapshots. It uses `auth.uid()` plus existing RLS;
+there is no owner argument, definer elevation or new completion table. A single
+statement returns total unique concepts, a latest-capture summary, a bounded page
+and `has_more`. Concept ID changes the page from grouped concepts to individual
+captures. Cursor ordering is `(submitted_at, id)` descending, with one extra row
+for continuation. Concurrent changes are seen at each request's database snapshot;
+refresh returns to latest rather than pretending pages share a frozen snapshot.
+
+`photo-authority` adds `previews` for 1–24 distinct submission UUIDs: one owner/RLS
+query and one Storage `createSignedUrls` request. Only completed owned rows qualify.
+No path, transform, download option or TTL is accepted from callers. Unknown,
+unavailable and foreign IDs all return a null preview. Individual missing objects
+do not discard available images. Existing finalize/single-preview behavior remains.
+The URL lifetime is fixed at 60 seconds; relative paths resolve against validated
+public config and are checked against the account and submission path in the app.
+
+The token-pinned gateway does not consult provider identity. Account-keyed screens
+and generation guards invalidate reads/signing after account, token, filter, focus
+or foreground changes. Only one 12-item page and its signed images remain in memory.
+Focus/resume reload latest; every 45 seconds while active refreshes the current
+page. A separate conservative 55-second timer clears images even if a refresh
+stalls; time starts before signing to reject delayed expired responses. Blur and
+background clear both history and photo state. Signed URLs are never stored or put
+in Router params. The detail route requires the existing ready/onboarded gate.
+
+Photo management returns through the navigation stack so dictionary screens can
+refresh after visibility/deletion. It retains a Today fallback for direct entry.
+No auth, XP, Storage policy, cleanup, dependency or provider-linking changes occur.
+
+### Phase 6 audit lifecycle hardening
+
+Read admission checks both foreground/focus and the current gateway identity.
+Initial background mounts and token changes stay empty until active; obsolete
+callbacks cannot issue a fresh old-query read. AbortSignals cancel RPC and function
+requests on supersession, background, blur or unmount, in addition to generation
+checks on responses. This preserves the provider-independent account boundary.
+
+Preview elapsed time uses monotonic `performance.now()`, so changing the device
+wall clock cannot retain an expired response. Each accepted signed batch creates
+fresh image instances, allowing retries when the server returns the same still-valid
+URL. Direct concept entry has a Vocabulary return fallback and normalizes UUID case.
+Batch signing matches and deduplicates UUIDs case-insensitively, as PostgreSQL does.
+No database schema, RLS, server TTL, grouping or filter rules changed. See
+`PHASE6_AUDIT.md` for reproductions, tests and remaining live-pagination limits.

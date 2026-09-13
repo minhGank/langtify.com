@@ -7,7 +7,8 @@ Package, Expo slug and URL scheme: `langtify`. The workspace folder is intention
 Phase 4 adds camera capture, normalized photo previews, secure private Storage,
 authoritative submissions, owner visibility controls and recoverable deletion.
 Today shows Take Photo/Replace before completion and Completed/View Photo afterward.
-Discover and Vocabulary remain placeholders. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 5.5 adds Google OAuth through Supabase; Phase 6 has not started.
+Discover remains a placeholder. Phase 5 adds progress, streaks, reversible XP and levels;
+Phase 5.5 adds Google OAuth; Phase 6 adds My Vocabulary with personal concept history.
 
 ## Run the app
 
@@ -413,7 +414,7 @@ On **both iOS and Android**, using a configured Supabase development project:
 Automated exports are not native builds or physical-device tests. Real email
 delivery, phone persistence/refresh and device UX remain manual checks. Icons and
 splash assets are still temporary Expo assets; release signing/native identifiers
-and app store configuration remain separate work. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 5.5 adds Google OAuth through Supabase; Phase 6 has not started.
+and app store configuration remain separate work. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 5.5 adds Google OAuth through Supabase; Phase 6 personal vocabulary history is described below.
 
 See [Phase 2 verification and changed files](docs/PHASE2_VERIFICATION.md) for the
 original delivery record and [Phase 2 audit](docs/PHASE2_AUDIT.md) for that audit.
@@ -448,7 +449,7 @@ XP concurrency and recovery coverage. SQL tests include all milestones and DST.
 The [Phase 5 audit](docs/PHASE5_AUDIT.md) records durable XP identity and exact-level
 fixes, regression results and remaining deployment checks. Apply the additive audit
 migration with Phase 5. It refuses ambiguous existing milestone keys or inconsistent
-ledger projections without changing history. Phase 5.5 Google OAuth is described below; Phase 6 has not started.
+ledger projections without changing history. Phase 5.5 Google OAuth is described below; Phase 6 personal vocabulary history is described below.
 
 ## Phase 5.5 Google authentication
 
@@ -483,3 +484,24 @@ cross-tab coordination. Run `npm run test:auth:integration` against local Supaba
 for session-ID/refresh/profile/sign-out checks. Web Google login needs secure browser
 storage and Web Locks; reload all web tabs after updating the app. The same
 physical-device acceptance checklist remains required before closing Phase 5.5.
+
+## Phase 6 — personal visual dictionary
+
+Vocabulary groups successfully photographed concepts across dates, with latest
+snapshot/photo cards, target/reference search, CEFR filters and 12-item pages.
+Concept detail retains earlier captures and opens existing photo management.
+Private/public photos stay owner-only. No social functionality is included.
+
+Apply `npm run db:migrate` locally and deploy the updated `photo-authority` function
+alongside the Phase 6 migration in the intended hosted environment. The new
+`previews` action is needed for batch dictionary images. Follow the reviewed-project
+function deployment instructions above; no hosted changes were made automatically.
+Existing Google credentials, redirects, auth behavior and hourly cleanup are unchanged.
+
+Run `npm run db:test:vocabulary` against local Supabase with the updated function
+served; it uses isolated Auth accounts and real JPEG upload/finalize/delete flows.
+See [Phase 6 verification](docs/PHASE6_VERIFICATION.md) for results and phone checks.
+
+Phase 6 has also been audited: see [Phase 6 audit](docs/PHASE6_AUDIT.md).
+The history integration command checks actual signed-URL expiration and renewal,
+so it deliberately waits about one minute while keeping a valid image in Storage.

@@ -615,6 +615,17 @@ export type Database = {
       };
       get_assignment_photo: { Args: { assignment_id: string }; Returns: Json };
       get_my_progress: { Args: { challenge_id?: string }; Returns: Json };
+      get_my_vocabulary: {
+        Args: {
+          before_id?: string;
+          before_time?: string;
+          page_size?: number;
+          requested_concept?: string;
+          requested_level?: string;
+          search_text?: string;
+        };
+        Returns: Json;
+      };
       get_or_create_today_challenge: { Args: never; Returns: Json };
       get_submission_xp: { Args: { submission_id: string }; Returns: Json };
       photo_verification_target: {

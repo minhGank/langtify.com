@@ -1,4 +1,4 @@
-# Phase 5 data model
+# Phase 6 data model
 
 Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
 Phase 4 adds submissions and private photo storage. Email stays in Auth.
@@ -252,3 +252,33 @@ metadata does not populate required onboarding fields or grant completion.
 XP, challenges, submissions, private Storage and RLS remain unchanged. PKCE pending
 records are local technical state and confer no database authorization; server-
 validated Supabase JWTs still authorize every account-bound request.
+
+## Phase 6 vocabulary history projection
+
+Migration `20260914000000_phase6_vocabulary_history.sql` adds only a partial index
+on completed `submissions(user_id, concept_id, submitted_at DESC, id DESC)` and
+`get_my_vocabulary(requested_concept, search_text, requested_level, before_time,
+before_id, page_size)`. It is transactional and can replay without changing rows.
+There are no new completion/history tables or lifecycle triggers. Generated public
+TypeScript types include the RPC.
+
+The RPC defaults to 12 items, validates 1–24, limits search to 100 characters,
+validates CEFR and a paired finite timestamp/UUID cursor. It derives the owner from
+`auth.uid()`, executes as invoker with an empty search path, and is granted only to
+authenticated users. Source RLS still applies to submissions and assignments.
+Text/meaning comes from submission snapshots; CEFR and language IDs come from
+assignment snapshots, never mutable catalog text. Count and latest selection group
+by concept UUID, including across language pairs. Detail also returns its latest
+summary independently of the current capture page. Empty or foreign concept IDs
+produce no personal history.
+
+Search/filter apply to the latest capture in the grouped library. Literal `%` and
+`_` cannot broaden substring search. Total concepts is unfiltered (for detail it
+is 0 or 1). A bounded cursor page returns rows plus `has_more`; response size is
+bounded, but computing exact counts/latest still scans the owner's eligible history.
+Monitor query plans/latency at production scale before adding any projection.
+
+Dictionary reads exclude `deleting` as well as `pending`/`deleted`; no photo is
+shown while physical removal is underway. Existing completion and XP transitions
+remain unchanged. A disappearing newest capture exposes the previous valid one;
+no surviving capture means no learned-concept row. Private/public both stay owner-only.

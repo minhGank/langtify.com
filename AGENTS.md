@@ -2,9 +2,9 @@
 
 ## Scope
 
-Phase 5.5 adds Google authentication through Supabase on audited Phase 5.
+Phase 6 adds personal vocabulary history on audited Phase 5.5.
 Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
-`docs/DECISIONS.md` before changes. Do not begin Phase 6 or add future product rules.
+`docs/DECISIONS.md` before changes. Do not begin Phase 7 or add future product rules.
 
 ## Engineering
 
@@ -48,6 +48,14 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 - Google testing requires a native development build and hosted Langtify Dev.
   Preserve the existing public env names and local provider configuration.
   Apple Sign-In remains deferred until Apple Developer membership is available.
+- Vocabulary history reads existing completed submissions and immutable assignment snapshots.
+  Group by concept UUID, use latest surviving capture text/CEFR, keep all earlier captures.
+  Exclude pending/deleting/deleted rows; do not change XP or completion authority.
+  Preserve owner-only security-invoker queries, bounded keyset pages, batch 60-second
+  photo signing, and account/focus/foreground invalidation. Never start reads from
+  an inactive screen or an obsolete gateway callback. Abort superseded requests;
+  use monotonic elapsed time for preview expiry and retry fresh image instances.
+  No category inference.
 - Never commit secrets. `EXPO_PUBLIC_*` is public client configuration.
 - Generated `ios/`, `android/`, `.expo/`, and `dist/` remain untracked.
 - Preserve unrelated user changes. Update documentation when decisions change.
@@ -57,7 +65,7 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 Run `npm run check` before handing off a change. For navigation, dependency, or Expo
 configuration changes also run `npm run export:check`, `npx expo install --check`,
 and `npm run doctor`. For database changes also run `npm run db:test` and
-`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:submissions`, `npm run db:test:bootstrap`, `npm run db:test:photo-audit`, `npm run db:test:progress` and `npx supabase db lint --local --level warning` against local development only;
+`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:submissions`, `npm run db:test:bootstrap`, `npm run db:test:photo-audit`, `npm run db:test:progress`, `npm run db:test:vocabulary` and `npx supabase db lint --local --level warning` against local development only;
 see README for the Docker file-sharing fallback. Tests belong outside `app/`; exercise observable behavior
 instead of snapshots or implementation details. Add tests when they protect
 meaningful behavior, not merely to mirror trivial code.

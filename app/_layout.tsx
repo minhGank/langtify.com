@@ -51,6 +51,7 @@ export function RootNavigator() {
         <Stack.Protected guard={status === 'ready'}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="photo" />
+          <Stack.Screen name="vocabulary-concept" />
         </Stack.Protected>
         <Stack.Screen name="auth/callback" />
       </Stack>

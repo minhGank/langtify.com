@@ -3,12 +3,12 @@
 Name: **Langtify**. Domain: `langtify.com`. Package and Expo slug: `langtify`.
 Mobile-first Expo / React Native / strict TypeScript; iOS and Android are primary.
 
-## Current scope: Phase 5.5
+## Current scope: Phase 6
 
 Supabase email/password authentication, persisted sessions, authoritative profiles,
 and onboarding (username, reference language, target language, CEFR level, IANA
 timezone). The four tabs remain Today, Discover, Vocabulary, and Profile. Profile shows authenticated account, learning information, progress and sign out. Today
-shows real daily challenge cards, replacement and camera/photo completion; Discover and Vocabulary remain placeholders.
+shows real daily challenge cards, replacement and camera/photo completion; Vocabulary shows the personal visual dictionary; Discover remains a placeholder.
 
 English and French are the initial active language catalog. English is available
 as a reference language and French as a target language. Reference and target
@@ -116,7 +116,7 @@ longest streak and lifetime counts of currently valid words/full challenges.
 ## Future scope — not implemented
 
 Community feed, semantic ratings (1–5), comments, followers, notifications,
-leaderboards, achievements and subscriptions are not included. Phase 6 has not
+leaderboards, achievements and subscriptions are not included. Phase 7 has not
 started. Apple, Facebook, magic-link and other login providers remain out of scope.
 Apple Sign-In is deferred until Apple Developer membership is available.
 
@@ -136,3 +136,33 @@ Existing identities linked by Supabase retain the same account data; the app doe
 not merge accounts or decide identity from an email address. Sign-out clears the
 Langtify session and account state, without revoking or deleting the Google account.
 No product, XP, challenge, submission or community rules change in this phase.
+
+## Personal vocabulary history — Phase 6
+
+My Vocabulary contains only the owner's successfully finalized photos across all
+challenge dates, grouped by semantic concept UUID. Same spelling never merges
+separate meanings. Repeated encounters, including different language pairs, share
+one concept card; each capture retains its own historical target/reference text,
+CEFR, submitted timestamp and current visibility. Cards and detail summaries show
+the latest surviving capture, ordered by server submission time then submission UUID.
+Catalog edits, deactivation and learning-settings changes never rewrite history.
+
+Search is a case-insensitive literal substring of the latest card's target or
+reference term. CEFR filters that same latest capture. Older text remains visible
+in unfiltered concept detail. The unique-concept total ignores list search/filter;
+it differs from Profile's completed-word count. There is no category filter,
+mastery score, new completion flag or social discovery.
+
+Concept detail retains all surviving captures, newest first, and opens existing
+photo management for visibility/deletion. Pending, deleting and deleted photos
+are absent from the dictionary: deletion intent hides a potentially unavailable
+image immediately. Another surviving capture becomes the concept's latest image;
+removing the last one removes its concept. This display behavior does not alter
+Phase 5: XP credit remains until physical deletion and retirement finish.
+
+Both lists use 12-item pages with Next page and Back to latest. Pull to refresh,
+focus/resume and active refresh reload backend state; changes from another device
+appear on the next refresh. Empty, no-match, deleted, failed and expired-image states
+have recovery controls. Displayed timestamps use the device's locale for readability,
+not for completion/streak authority. All photos, including public-visibility photos,
+remain private and owner-only in this phase.

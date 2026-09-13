@@ -365,3 +365,43 @@ records; auth mutations wait for cleanup. Move web callback sanitation to Expo's
 supported custom entry point so Router never captures its code; native malformed
 credential-bearing links also receive a clean error route. No dependencies, schema,
 identity-linking configuration or external credentials change. See `PHASE55_AUDIT.md`.
+
+## 020 — Personal dictionary from surviving submission snapshots
+
+Accepted for Phase 6. Group by semantic concept UUID across dates/language pairs,
+not spelling or current catalog. Use the latest completed submission for each
+card and preserve every earlier valid capture in detail. Search target/reference
+text and CEFR on the latest card to keep filtering aligned with what is displayed;
+detail remains unfiltered. No category snapshot exists, so omit category filtering.
+
+Use an indexed security-invoker read RPC, JWT-derived ownership, bounded keyset
+pages and exact unfiltered concept count. No independent completion projection,
+new global state, dependency or auth changes. Batch owner previews through the
+existing trusted function and Storage API with its existing fixed 60-second TTL.
+Clear page/image state on account loss, blur/background, and stale request generations.
+
+Hide deleting captures immediately because their images may already be gone.
+This is dictionary presentation only: Phase 5 credits still reverse when deletion
+finishes. Reuse photo detail for all management and return through the stack.
+Signed URLs remain short-lived bearer capabilities; no public read policy is added.
+
+References: [Expo Router SDK 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/),
+[Supabase batch signing](https://supabase.com/docs/reference/javascript/storage-from-createsignedurls).
+
+## 021 — Phase 6 audit: admit only current visible reads and retry photo instances
+
+Accepted as correctness fixes within Phase 6. Gate new reads as well as their
+responses: a retained callback from an old gateway must not start a current request,
+and background mounts/token changes must not reload cleared private state.
+Cancel obsolete HTTP work while retaining generation/owner checks as authority.
+Use monotonic elapsed time for client preview expiry; server signing still fixes
+60 seconds. Recreate image instances for accepted preview batches so an unchanged
+signed URL does not preserve an earlier image-load failure. Canonical UUID comparison
+fixes uppercase inputs and duplicate aliases without changing access rights.
+
+Preserve latest-capture filtering, live keyset pages, private Storage, existing
+photo management and provider-independent UUID ownership. No database or product
+policy change was necessary. Audit tests retain microseconds, same-time ties,
+ambiguous spellings, cross-user mixed batches and actual batch expiry/renewal.
+References: [React Native AppState](https://reactnative.dev/docs/appstate),
+[Expo Router SDK 57](https://docs.expo.dev/versions/v57.0.0/sdk/router/).

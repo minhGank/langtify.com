@@ -24,7 +24,10 @@ export function PhotoScreen() {
     return (
       <Screen>
         <AppText>This photo is unavailable.</AppText>
-        <Button label="Back to Today" onPress={() => router.replace('/')} />
+        <Button
+          label="Back"
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+        />
       </Screen>
     );
   return (
@@ -97,7 +100,10 @@ export function PhotoContent({
   return (
     <Screen>
       <AppText variant="title">{completed ? 'Your photo' : 'Photo challenge'}</AppText>
-      <Button label="Back to Today" onPress={() => router.replace('/')} />
+      <Button
+        label="Back"
+        onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+      />
       {state.loading && !state.data ? (
         <ActivityIndicator accessibilityLabel="Loading photo challenge" />
       ) : null}
