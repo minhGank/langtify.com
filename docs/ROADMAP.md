@@ -29,9 +29,18 @@ installation, trusted function deployment and both-platform phone acceptance rem
 deployment handoff steps. The audit adds actual image verification, fixed preview
 lifetimes, Storage commit guards and stale-draft cancellation; see `PHASE4_AUDIT.md`.
 
-## Phase 5 and later — not started
+## Phase 5 — implemented and audited
 
-Streaks and subsequent explicitly scoped product work. Community
-feed, ratings, comments, followers, notifications and moderation remain out of scope.
+Server-authoritative signed XP ledger, daily progress, reversible streak milestones,
+derived levels and Today/Profile/photo feedback. Concurrency, RLS, historical
+reconciliation, DST and nonempty migration backfill tests accompany the work.
+Hosted migration and iOS/Android acceptance remain deployment handoff steps.
+The audit fixes session-dependent milestone identities and extreme level boundaries;
+see `PHASE5_AUDIT.md`.
+
+## Phase 5.5, Phase 6 and later — not started
+
+Further work requires explicit scope. Community
+feed, ratings, comments, followers, notifications, leaderboards, achievements, subscriptions and moderation remain out of scope.
 OAuth providers, password recovery UX, production vocabulary/content review, final
 branding, release identifiers, signing and store setup need separate planning.

@@ -1,4 +1,4 @@
-# Phase 4 data model
+# Phase 5 data model
 
 Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
 Phase 4 adds submissions and private photo storage. Email stays in Auth.
@@ -173,4 +173,67 @@ alone issues preview URLs with a fixed 60-second TTL. The bucket remains private
 
 ## Future concepts
 
-Streaks and community interactions are not implemented. Phase 5 has not started.
+Community interactions remain unimplemented. Phase 5 progress is described below.
+
+## Phase 5 progress and XP
+
+- `private.word_completions`: one fact per submitted photo, with owner, assignment,
+  challenge, server completion timestamp, persisted IANA timezone snapshot, derived
+  local date and nullable revocation time. A partial unique index permits at most
+  one unrevoked completion per assignment; foreign keys preserve identity links.
+  Source provenance distinguishes new server snapshots from legacy backfill.
+- `private.progress_accounts`: per-owner revision mutex; actual row updates force
+  stronger-isolation stale writers to abort. It does not store a trusted XP total.
+- `private.qualified_days_seen`: durable owner/date identities, retained after photo
+  deletion so replay cannot create additional milestone candidates.
+- `private.streak_milestones`: owner, threshold, exact qualifying start/end dates,
+  source submission and creation time. Unique owner/threshold/end-date and checked
+  window width. All six thresholds and rewards are fixed in backend code.
+- `private.xp_awards`: unique owner/source key, immutable kind/reward, current balance
+  (zero or full reward), monotonically increasing revision and most recent cause.
+  This is the reconciliation projection, not a client-editable XP integer.
+- `public.xp_events`: immutable signed credits/reversals, owner, event kind, durable
+  source key/revision, cause submission UUID and timestamp. Unique owner/source/
+  revision; checked amounts and event kinds. Source keys are `word:<assignment>`,
+  `challenge:<challenge>` and `milestone:<threshold>:<window-end>`. Ordinary accounts
+  may SELECT their own events, never INSERT/UPDATE/DELETE. No anonymous access.
+
+Every source adjustment writes an event and projection in one transaction. Total
+XP is `sum(xp_events.amount)`; never sum only positive entries as lifetime XP.
+Retired photo IDs remain explainable in history. Cause IDs intentionally are not
+cascade foreign keys: parent challenge maintenance must not erase XP reasons.
+Account erasure cascades personal XP history; an immutable-ledger trigger permits
+that only once its owning profile has been removed. Challenge/assignment cascades
+reconcile lost facts while the profile remains. Backend-only tables/helpers have
+no anon/authenticated privileges.
+
+`get_my_progress(challenge_id default null)` validates optional challenge ownership
+and returns the caller's daily count, signed XP total, derived level/thresholds,
+current/longest streak and valid word/full-challenge totals. It never creates a
+challenge. `get_submission_xp(submission_id)` exposes the currently credited word,
+challenge and milestone amounts last caused by that owned photo; it is feedback,
+not an award endpoint. The ledger remains the full historical explanation.
+
+Migration `20260913000000_phase5_progress.sql` locks submission writes, creates the
+schema and chronologically replays existing verified completion/deletion events in
+one transaction. Phase 4 did not record a finalization-time timezone: legacy facts
+use the challenge's saved timezone and `legacy_challenge_snapshot` provenance.
+This is an explicit approximation if the user changed timezone before finalizing.
+New photos snapshot the learning timezone at finalization. The migration does not
+rewrite photos or infer timestamps from clients. Supabase migration tracking makes
+normal reruns a no-op; raw SQL is intentionally not blindly replayable over history.
+
+## Phase 5 audit integrity
+
+`20260913010000_phase5_audit_integrity.sql` preserves the original Phase 5 migration
+and all existing events. Milestone source formatting explicitly uses a timestamp
+without timezone and `YYYY-MM-DD`, avoiding session DateStyle/TimeZone aliases.
+Level calculation verifies its numeric square-root estimate against exact integer
+thresholds, including the upper bigint range.
+
+Before replacing the functions, the migration checks canonical milestone sources
+and agreement between source balances/revisions and signed event history. Ambiguous
+legacy aliases or inconsistent projections abort the migration atomically for
+reviewed reconciliation; the migration never guesses dates, rewrites events or
+silently erases credit. Valid existing history and replay are tested unchanged.
+See PHASE5_AUDIT.md for reproductions, coverage and deployment limits.

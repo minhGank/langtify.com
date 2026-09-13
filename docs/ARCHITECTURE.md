@@ -5,14 +5,15 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 4 boundaries
+## Phase 5 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
 - `src/features/auth/`: session lifecycle, email/password forms, navigation authority.
 - `src/features/onboarding/`: validation and onboarding presentation.
 - `src/features/challenges/`: Today cards, request lifecycle and safe error states.
 - `src/features/photos/`: camera, metadata stripping, normalized drafts, preview and submission lifecycle.
-- `src/features/profile/`: account summary and sign out.
+- `src/features/profile/`: account summary, progress and sign out.
+- `src/features/progress/`: backend progress reads, display and XP receipt feedback.
 - `src/lib/`: validated public configuration and a typed Supabase client.
 - `src/services/`: database operations, including transactional onboarding and challenge RPCs.
 - `src/types/`: database types matching migrations.
@@ -132,7 +133,35 @@ earlier dates, so restart or midnight does not strand an uploaded photo. This
 recovery read is independent of current challenge generation; it is not a gallery
 or feed.
 
+## Progress authority
+
+The submission status trigger records immutable completion-time facts and reconciles
+XP inside the same transaction as verified finalization or finished deletion. A
+failure rolls back both completion and XP. Source balances are private projections;
+public append-only signed events are the authoritative total. There is no client
+XP mutation endpoint or client-generated reward amount. Owner-only RLS protects
+history; empty-search-path definer reads expose only the caller's summary/receipt.
+
+Writers serialize on the owner profile and update an owner progress revision row.
+The latter makes stale REPEATABLE READ writers fail with a serialization error
+instead of reconciling old facts. Cleanup acquires owner/assignment locks in the
+same order as finalization. Source revision uniqueness and private source balances
+prevent duplicate credits. Retrying the existing lifecycle RPCs is sufficient;
+no asynchronous XP worker or distributed credit transaction is needed.
+
+Distinct active completion dates are grouped into consecutive date runs. Milestone
+candidates retain qualifying windows and are reconciled against those runs. Sources
+can be credited, reversed and restored; the signed sum remains authoritative.
+Read operations derive the current streak using server time and the latest saved
+timezone, with historical completion dates unchanged. Details are in PRODUCT.md.
+
+Token-bound progress services validate response ownership and numeric shape.
+Account-keyed panels discard superseded/unmounted reads, refresh on focus/resume
+and every active minute, and show a retry state on failure rather than invented
+zero XP. Photo receipts do not optimistically award XP. Modest static feedback and
+an accessible progress bar need no animation or global-state dependency.
+
 ## Future boundaries
 
-Streaks, feed, ratings, comments, followers, notifications and AI image validation
-remain out of scope. Phase 5 has not started.
+Feed, ratings, comments, followers, notifications, leaderboards, achievements,
+subscriptions and AI image validation remain out of scope. Phase 6 has not started.

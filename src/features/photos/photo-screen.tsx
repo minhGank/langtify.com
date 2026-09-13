@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, AppState } from 'react-native';
+import { SubmissionXpFeedback } from '@/features/progress/submission-xp-feedback';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
@@ -136,6 +137,14 @@ export function PhotoContent({
             </>
           )}
         </>
+      )}
+      {completed && submission && (
+        <SubmissionXpFeedback
+          key={`${userId}:${submission.id}`}
+          userId={userId}
+          accessToken={token}
+          submissionId={submission.id}
+        />
       )}
       {state.error ? <AppText accessibilityRole="alert">{state.error}</AppText> : null}
       <Button label="Refresh photo" disabled={state.busy} onPress={() => void state.refresh()} />

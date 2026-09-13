@@ -260,3 +260,55 @@ References: [Supabase function authentication](https://supabase.com/docs/guides/
 Cleanup claims record a last-attempt time and skip already-queued work during
 discovery. Unattempted jobs run before failed retries, preserving durable retry
 without letting one persistently failing batch strand later deletions.
+
+## 016 — Server-authoritative reversible XP and streaks
+
+Accepted for the Phase 5 request. Keep the existing photo lifecycle and add an
+atomic completion/deletion trigger, private source facts/projections and an
+owner-readable append-only signed ledger. Exact rewards: word 10; full challenge
+10; streak milestones 3/7/14/30/60/100 days earn 10/25/40/75/125/200. No multiplier.
+A source balance can only be zero or its fixed reward. Repeated restoration uses
+new signed revisions of the same source; it cannot farm a positive-only lifetime
+counter. Level derives from cumulative `25 × L × (L + 3)`, starting at zero.
+The supplied formula resolves the inconsistent illustrative 620-XP level example.
+
+Use server finalization time and the current persisted IANA timezone, snapshot both,
+and qualify distinct local completion dates. This preserves Phase 4's interrupted
+upload recovery after midnight without adding a submission deadline. Credit ends
+when deletion finishes, consistent with existing completion/Storage retirement.
+Historical deletion recomputes valid counts and longest/current streaks and can
+lower level. Visibility has no XP effect.
+
+Milestones record original qualifying windows only when a calendar date first
+qualifies at an exact threshold. Historical deletion revokes broken windows and
+never creates retrospective awards from split runs. Same-day restoration reuses
+existing eligibility. A later occurrence can earn each threshold again. If timezone
+travel joins runs, retain only the earliest eligible reward for each threshold in
+the merged run. This deletion interpretation was reported before implementation;
+no achievements or timezone-change restrictions were added.
+
+Serialize owner mutations and change a private revision row to detect stale
+REPEATABLE READ snapshots; cleanup follows the same lock order. Reconciliation is
+synchronous and indexed by owner. It scans that owner's history; monitor latency
+as histories grow before introducing a more complex incremental projection.
+Legacy backfill replays completions and deletions chronologically. Its only known
+timezone is the saved challenge timezone, so provenance explicitly records that
+limitation. Deployment needs backup and migration timing review for existing data.
+
+## 017 — Phase 5 audit: durable identities and exact level boundaries
+
+Accepted as correctness fixes within the existing Phase 5 rules. Date presentation
+must not define XP identity: format milestone dates explicitly from a timestamp
+without timezone. The original `date::text` created a second source when a database
+session changed DateStyle; an implicit cast through a session timezone can also
+shift skipped dates. Existing canonical keys retain their exact spelling.
+
+Treat numeric square root as an estimate for the level, then compare exact cumulative
+thresholds. This preserves the requested formula at very large bigint totals where
+rounding could otherwise advance the level one XP early.
+
+Use a separate additive migration. Preserve every valid existing event and reject
+ambiguous source aliases or ledger/projection disagreement before any replacement.
+Those conditions need reviewed signed reconciliation, not destructive history edits.
+No rewards, milestone occurrence rules, deletion policy, timezone-change restrictions,
+client architecture or future-phase features change.

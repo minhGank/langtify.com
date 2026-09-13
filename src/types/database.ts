@@ -447,6 +447,47 @@ export type Database = {
           },
         ];
       };
+      xp_events: {
+        Row: {
+          amount: number;
+          cause_submission_id: string;
+          created_at: string;
+          event_type: string;
+          id: string;
+          source_key: string;
+          source_revision: number;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          cause_submission_id: string;
+          created_at?: string;
+          event_type: string;
+          id?: string;
+          source_key: string;
+          source_revision: number;
+          user_id: string;
+        };
+        Update: {
+          amount?: number;
+          cause_submission_id?: string;
+          created_at?: string;
+          event_type?: string;
+          id?: string;
+          source_key?: string;
+          source_revision?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'xp_events_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -573,7 +614,9 @@ export type Database = {
         };
       };
       get_assignment_photo: { Args: { assignment_id: string }; Returns: Json };
+      get_my_progress: { Args: { challenge_id?: string }; Returns: Json };
       get_or_create_today_challenge: { Args: never; Returns: Json };
+      get_submission_xp: { Args: { submission_id: string }; Returns: Json };
       photo_verification_target: {
         Args: { expected_user_id: string; submission_id: string };
         Returns: Json;

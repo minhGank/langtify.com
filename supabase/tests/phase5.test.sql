@@ -1,0 +1,152 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path=public,extensions;
+select no_plan();
+-- Test-only server clock replacement, rolled back with every fixture.
+create temporary table progress_clock(instant timestamptz);
+insert into progress_clock values('2026-01-01 12:00:00+00');
+create or replace function private.progress_time() returns timestamptz language sql volatile set search_path='' as $$select instant from pg_temp.progress_clock$$;
+create function pg_temp.clock_at(stamp timestamptz) returns void language sql as $$update pg_temp.progress_clock set instant=stamp$$;
+create function pg_temp.photo(day date,slot_name text default 'review') returns uuid language plpgsql as $$
+declare c uuid; s public.submissions; o storage.objects;
+begin
+ select id into c from public.daily_challenges where user_id=auth.uid() and local_challenge_date=day;
+ if c is null then
+  insert into public.daily_challenges(user_id,user_language_profile_id,created_at)
+   select user_id,id,day::timestamp at time zone timezone from public.user_language_profiles where user_id=auth.uid() returning id into c;
+  perform private.assign_challenge_word(c,'review'); perform private.assign_challenge_word(c,'target'); perform private.assign_challenge_word(c,'stretch');
+ end if;
+ s:=public.reserve_submission((select id from public.daily_challenge_words where daily_challenge_id=c and slot=slot_name and replaced_at is null));
+ if s.status='completed' then perform public.finalize_submission(s.id); return s.id; end if;
+ insert into storage.objects(bucket_id,name,owner_id,version,metadata) values('challenge-submissions',s.storage_path,s.user_id::text,'xp-fixture','{"mimetype":"image/jpeg","size":100}') returning * into o;
+ -- Metadata fixture only. Real byte verification is exercised by Auth/Storage integration.
+ perform public.attest_submission_photo(s.id,s.user_id,o.id,o.version,repeat('a',64),16,16);
+ perform public.finalize_submission(s.id);
+ return s.id;
+end;
+$$;
+create function pg_temp.erase(sid uuid) returns void language plpgsql as $$
+begin
+ perform public.begin_submission_deletion(sid);
+ perform set_config('storage.allow_delete_query','true',true);
+ delete from storage.objects where name=(select storage_path from public.submissions where id=sid);
+ perform public.finish_submission_deletion(sid);
+end;
+$$;
+insert into auth.users(id,email) values('55000000-0000-4000-8000-000000000001','xp_a@example.test'),('55000000-0000-4000-8000-000000000002','xp_b@example.test');
+select set_config('request.jwt.claim.sub','55000000-0000-4000-8000-000000000001',true);
+select public.complete_onboarding('xp_a','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','B1','UTC');
+select is(public.get_my_progress()->>'total_xp','0','New account starts at zero XP');
+select is(public.get_my_progress()->>'level','0','New account starts at level zero');
+select is(private.level_progress(xp)->>'level',level::text,'Exact level at '||xp||' XP') from (values(0,0),(99,0),(100,1),(249,1),(250,2),(449,2),(450,3),(620,3),(699,3),(700,4),(999,4),(1000,5),(3250,10)) t(xp,level);
+select is(private.level_progress(700)->>'xp_for_next_level','300','Level 4 requires 300 more XP');
+select is(private.level_progress(620)->>'xp_into_level','170','Level progress is relative to start');
+create temporary table photos(day date,slot text,id uuid);
+insert into photos values('2026-01-01','review',pg_temp.photo('2026-01-01'));
+select is(public.get_my_progress()->>'total_xp','10','One word earns 10 XP');
+select is(public.get_my_progress()->>'completed_words','1','Daily progress 1/3');
+select is(public.get_my_progress()->>'current_streak','1','One word qualifies the day');
+select is(public.get_submission_xp((select id from photos limit 1))->>'word_xp','10','Server receipt attributes word XP');
+select pg_temp.photo('2026-01-01');
+select is((select count(*) from public.xp_events),1::bigint,'Finalization retry has no extra event');
+insert into photos values('2026-01-01','target',pg_temp.photo('2026-01-01','target'));
+select is(public.get_my_progress()->>'total_xp','20','Two words earn 20 XP');
+select is(public.get_my_progress()->>'current_streak','1','Multiple words do not add streak days');
+insert into photos values('2026-01-01','stretch',pg_temp.photo('2026-01-01','stretch'));
+select is(public.get_my_progress()->>'total_xp','40','Three words earn 40 XP');
+select is(public.get_my_progress()->>'completed_words','3','Daily progress 3/3');
+select is(public.get_my_progress()->>'total_challenges_completed','1','Full completion counted once');
+select pg_temp.photo('2026-01-01','stretch');
+select is((select count(*) from public.xp_events where event_type='DAILY_CHALLENGE_BONUS'),1::bigint,'Full bonus only once');
+select public.begin_submission_deletion((select id from photos where slot='stretch'));
+select is(public.get_my_progress()->>'total_xp','40','Delete intent retains completion until object retirement');
+select pg_temp.erase((select id from photos where slot='stretch'));
+select is(public.get_my_progress()->>'total_xp','20','Deletion reverses word and full bonus');
+select is(public.get_my_progress()->>'total_challenges_completed','0','Deletion removes full completion');
+select pg_temp.photo('2026-01-01','stretch');
+select is(public.get_my_progress()->>'total_xp','40','Resubmit restores balance without farming');
+select pg_temp.erase((select id from public.submissions where status='completed' and daily_challenge_word_id=(select daily_challenge_word_id from public.submissions where id=(select id from photos where slot='stretch'))));
+select pg_temp.photo('2026-01-01','stretch');
+select is(public.get_my_progress()->>'total_xp','40','Repeated delete/resubmit still 40 XP');
+select is((select sum(amount) from public.xp_events where event_type='DAILY_CHALLENGE_BONUS'),10::bigint,'Signed history retains only one net bonus');
+-- Qualify a 100-day occurrence, exercising each threshold and all intervening days.
+do $$declare d integer; begin for d in 2..100 loop
+ perform pg_temp.clock_at('2026-01-01 12:00+00'::timestamptz+(d-1)*interval '1 day');
+ insert into photos values('2026-01-01'::date+d-1,'review',pg_temp.photo('2026-01-01'::date+d-1));
+ end loop; end $$;
+select is((select sum(amount) from public.xp_events where source_key like 'milestone:'||days||':%'),reward::bigint,days||'-day milestone reward') from (values(3,10),(7,25),(14,40),(30,75),(60,125),(100,200)) t(days,reward);
+select is(public.get_my_progress()->>'current_streak','100','100 consecutive local days');
+select is(public.get_my_progress()->>'longest_streak','100','Longest streak 100');
+select is(public.get_my_progress()->>'total_xp','1505','All words and exactly six milestones');
+select is(public.get_my_progress()->>'level','6','Multiple-level advancement derived from ledger');
+select pg_temp.photo('2026-04-10','target');
+select is((select count(*) from public.xp_events where event_type='STREAK_MILESTONE'),6::bigint,'Extra same-day word cannot repeat milestone');
+select pg_temp.clock_at('2026-04-11 23:59:59+00');
+select is(public.get_my_progress()->>'current_streak','100','Yesterday streak survives until today ends');
+select pg_temp.clock_at('2026-04-12 00:00:00+00');
+select is(public.get_my_progress()->>'current_streak','0','Missed local day resets current streak');
+-- Removing the first day invalidates all windows; splitting history never awards past milestones.
+select pg_temp.erase(id) from photos where day='2026-01-01' and slot in ('review','target');
+select pg_temp.erase(id) from public.submissions where status='completed' and daily_challenge_id=(select id from public.daily_challenges where user_id=auth.uid() and local_challenge_date='2026-01-01');
+select is((select sum(amount) from public.xp_events where event_type='STREAK_MILESTONE'),0::bigint,'Historical deletion reverses every broken reward window');
+select is(public.get_my_progress()->>'longest_streak','99','Historical deletion recomputes longest streak');
+select is((select count(*) from private.streak_milestones),6::bigint,'Deletion does not manufacture historical reward candidates');
+select pg_temp.clock_at('2026-04-12 12:00+00'); select pg_temp.photo('2026-04-12');
+select pg_temp.clock_at('2026-04-13 12:00+00'); select pg_temp.photo('2026-04-13');
+select pg_temp.clock_at('2026-04-14 12:00+00'); select pg_temp.photo('2026-04-14');
+select is(public.get_my_progress()->>'current_streak','3','New occurrence reaches 3 days');
+select is((select sum(amount) from public.xp_events where event_type='STREAK_MILESTONE'),10::bigint,'A genuinely new streak can earn a milestone again');
+select pg_temp.erase(id) from public.submissions where status='completed' and daily_challenge_id=(select id from public.daily_challenges where user_id=auth.uid() and local_challenge_date='2026-04-14');
+select is((select sum(amount) from public.xp_events where event_type='STREAK_MILESTONE'),0::bigint,'Delete milestone day reverses milestone');
+select pg_temp.photo('2026-04-14');
+select is((select sum(amount) from public.xp_events where event_type='STREAK_MILESTONE'),10::bigint,'Same-day restore credits same source without farming');
+select is((select count(*) from private.streak_milestones),7::bigint,'Restore creates no new milestone identity');
+-- Cross-user reads and all direct mutations are denied by actual role/RLS.
+create temporary table foreign_challenge as select daily_challenge_id id from public.submissions where id=(select id from photos limit 1);
+grant select on photos,foreign_challenge to authenticated;
+set local role authenticated;
+select ok((select count(*)>0 from public.xp_events),'Owner reads own ledger');
+select throws_ok($$update public.xp_events set amount=200$$,'42501',null,'Direct XP update denied');
+select throws_ok($$delete from public.xp_events$$,'42501',null,'Direct history deletion denied');
+select throws_ok($$insert into public.xp_events(user_id,event_type,source_key,source_revision,amount,cause_submission_id) values(auth.uid(),'WORD_COMPLETED','fake',1,10,gen_random_uuid())$$,'42501',null,'Direct XP insertion denied');
+select throws_ok($$select private.reconcile_progress(auth.uid(),gen_random_uuid())$$,'42501',null,'No client reconciliation authority');
+select set_config('request.jwt.claim.sub','55000000-0000-4000-8000-000000000002',true);
+select is((select count(*) from public.xp_events),0::bigint,'User B cannot read A XP history');
+select throws_ok($$select public.get_submission_xp((select id from photos limit 1))$$,'42501','submission_unavailable','User B cannot read A receipt');
+reset role;
+select public.complete_onboarding('xp_b','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','B1','America/Toronto');
+set local role authenticated;
+select throws_ok($$select public.get_my_progress((select id from foreign_challenge))$$,'42501','challenge_unavailable','User B cannot read A challenge progress');
+reset role;
+select is(public.get_my_progress()->>'total_xp','0','User B summary contains only B XP');
+select ok(not has_table_privilege('authenticated','private.streak_milestones','update'),'Clients cannot alter earned milestones');
+select ok(not has_table_privilege('authenticated','private.xp_awards','update'),'Clients cannot alter source balances');
+-- Persisted timezone, not challenge date, qualifies late uploads. Spring and fall DST.
+select pg_temp.clock_at('2026-03-08 04:59:59+00'); select pg_temp.photo('2026-03-01');
+select is((select local_date::text from private.word_completions where user_id=auth.uid() order by completed_at desc limit 1),'2026-03-07','Toronto before local midnight uses previous date');
+select pg_temp.clock_at('2026-03-08 05:00:00+00'); select pg_temp.photo('2026-03-02');
+select pg_temp.clock_at('2026-03-08 07:00:00+00'); select pg_temp.photo('2026-03-03');
+select is(public.get_my_progress()->>'current_streak','2','DST jump and midnight use calendar days, not 24-hour durations');
+select pg_temp.clock_at('2026-11-01 05:30:00+00'); select pg_temp.photo('2026-10-20');
+select pg_temp.clock_at('2026-11-01 06:30:00+00'); select pg_temp.photo('2026-10-21');
+select is((select count(distinct local_date) from private.word_completions where user_id=auth.uid() and completed_at>='2026-11-01'),1::bigint,'Repeated fall hour qualifies one local date');
+update public.user_language_profiles set timezone='Asia/Tokyo' where user_id=auth.uid();
+select is((select timezone from private.word_completions where user_id=auth.uid() order by completed_at desc limit 1),'America/Toronto','Timezone change cannot rewrite history');
+select pg_temp.clock_at('2026-11-01 16:00:00+00'); select pg_temp.photo('2026-10-22');
+select is((select local_date::text from private.word_completions where user_id=auth.uid() order by completed_at desc limit 1),'2026-11-02','New finalization uses latest persisted timezone');
+-- A downstream XP failure must roll back the submission and every source fact.
+create temporary table before_failure as select (select count(*) from private.word_completions) facts,(select count(*) from public.xp_events) events;
+create function pg_temp.reject_xp() returns trigger language plpgsql as $$begin raise exception 'injected_xp_failure'; end$$;
+create trigger xp_failure before insert on public.xp_events for each row execute function pg_temp.reject_xp();
+select throws_ok($$select pg_temp.photo('2026-10-23')$$,'P0001','injected_xp_failure','XP failure rolls back finalization transaction');
+select is((select count(*) from private.word_completions),(select facts from before_failure),'No partial completion fact after failure');
+select is((select count(*) from public.xp_events),(select events from before_failure),'No partial XP after failure');
+select is((select count(*) from public.daily_challenges where user_id=auth.uid() and local_challenge_date='2026-10-23'),0::bigint,'Fixture challenge and reservation also rolled back');
+drop trigger xp_failure on public.xp_events;
+select lives_ok($$select pg_temp.photo('2026-10-23')$$,'Retry succeeds after transient XP failure');
+select ok(not has_function_privilege('anon','public.get_my_progress(uuid)','execute'),'Anonymous progress denied');
+select ok(not has_function_privilege('authenticated','private.set_xp_award(uuid,text,text,integer,boolean,uuid)','execute'),'Client cannot supply XP amount');
+select throws_ok($$update public.xp_events set amount=10$$,'23514','xp_history_immutable','Ledger immutable even during ordinary maintenance');
+select is((select count(*) from (select user_id,source_key,source_revision from public.xp_events group by 1,2,3 having count(*)>1) d),0::bigint,'No duplicate source revisions');
+select * from finish();
+rollback;

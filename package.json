@@ -72,7 +72,8 @@
     "functions:check": "npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/index.ts",
     "functions:test": "npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/validate-photo_test.ts",
     "functions:lint": "npm exec --yes --package=deno@2.9.6 -- deno lint supabase/functions/photo-authority",
-    "security:scan": "node scripts/scan-credentials.mjs"
+    "security:scan": "node scripts/scan-credentials.mjs",
+    "db:test:progress": "node --experimental-strip-types scripts/test-progress-integration.mjs"
   },
   "private": true,
   "engines": {

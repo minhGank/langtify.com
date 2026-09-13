@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { ActivityIndicator, AppState, StyleSheet, View } from 'react-native';
+import { ProgressPanel } from '@/features/progress/progress-panel';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
@@ -68,6 +69,12 @@ function TodayContent(identity: ChallengeIdentity) {
   return (
     <Screen hasTabBar>
       <AppText variant="title">{"Today's Challenge"}</AppText>
+      <ProgressPanel
+        key={`${userId}:${challenge?.id ?? 'today'}:${challenge?.words.map((word) => `${word.submission?.id}:${word.submission?.status}`).join(',')}`}
+        userId={userId}
+        accessToken={accessToken}
+        challengeId={challenge?.id}
+      />
       {loading && (
         <View accessibilityRole="progressbar" accessibilityLabel="Loading challenge">
           <ActivityIndicator />

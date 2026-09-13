@@ -7,7 +7,7 @@ Package, Expo slug and URL scheme: `langtify`. The workspace folder is intention
 Phase 4 adds camera capture, normalized photo previews, secure private Storage,
 authoritative submissions, owner visibility controls and recoverable deletion.
 Today shows Take Photo/Replace before completion and Completed/View Photo afterward.
-Discover and Vocabulary remain placeholders. Phase 5 has not started.
+Discover and Vocabulary remain placeholders. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 6 has not started.
 
 ## Run the app
 
@@ -59,6 +59,7 @@ npm run db:test:integration
 npm run db:test:challenges
 npm run db:test:submissions
 npm run db:test:photo-audit
+npm run db:test:progress
 npm run db:test:bootstrap
 npm run db:types
 npx prettier --write src/types/database.ts
@@ -393,7 +394,7 @@ On **both iOS and Android**, using a configured Supabase development project:
 Automated exports are not native builds or physical-device tests. Real email
 delivery, phone persistence/refresh and device UX remain manual checks. Icons and
 splash assets are still temporary Expo assets; release signing/native identifiers
-and app store configuration remain separate work. Phase 5 has not started.
+and app store configuration remain separate work. Phase 5 adds daily progress, streaks, reversible XP and derived levels; Phase 6 has not started.
 
 See [Phase 2 verification and changed files](docs/PHASE2_VERIFICATION.md) for the
 original delivery record and [Phase 2 audit](docs/PHASE2_AUDIT.md) for that audit.
@@ -409,3 +410,23 @@ files, remaining risks and the additional Today/challenge phone checklist. The
   and [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
 - [Expo SDK 57](https://docs.expo.dev/versions/v57.0.0/)
   and [protected routes](https://docs.expo.dev/router/advanced/protected/).
+
+## Phase 5 progress
+
+Today shows server-owned daily completion, streak, level and XP; Profile adds the
+next-level bar, longest streak and valid word/full-challenge counts. Photo detail
+shows earned word/bonus XP. See [exact rules](docs/PRODUCT.md) and
+[progress schema](docs/DATA_MODEL.md). No social or leaderboard features are included.
+
+Apply `npm run db:migrate` to local development; deploy the reviewed migration via
+your normal Supabase release workflow. Back up existing data and allow a write-lock
+window for chronological backfill. Legacy timezone provenance is documented in the
+data model. The existing photo-authority function and hourly cleanup remain required.
+There are no new env variables, mobile dependencies or deployment services.
+Run `npm run db:test:progress` with the local function served for real Auth/Storage
+XP concurrency and recovery coverage. SQL tests include all milestones and DST.
+
+The [Phase 5 audit](docs/PHASE5_AUDIT.md) records durable XP identity and exact-level
+fixes, regression results and remaining deployment checks. Apply the additive audit
+migration with Phase 5. It refuses ambiguous existing milestone keys or inconsistent
+ledger projections without changing history. Phase 5.5 and Phase 6 have not started.
