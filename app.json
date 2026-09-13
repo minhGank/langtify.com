@@ -33,6 +33,15 @@
             "backgroundColor": "#101820"
           }
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Langtify to take photos for your vocabulary challenges.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
+        }
       ]
     ],
     "experiments": {

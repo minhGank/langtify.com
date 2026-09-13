@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from 'react';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { ActivityIndicator, AppState, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
 import { useAuth } from '@/features/auth/auth-provider';
 import { useTodayChallenge } from '@/features/challenges/use-today-challenge';
+import { UnfinishedPhotos } from '@/features/photos/unfinished-photos';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import {
   challengeGateway,
@@ -103,6 +104,11 @@ function TodayContent(identity: ChallengeIdentity) {
           />
         </>
       )}
+      <UnfinishedPhotos
+        userId={userId}
+        token={accessToken}
+        currentAssignments={challenge?.words.map((word) => word.id) ?? []}
+      />
     </Screen>
   );
 }
@@ -128,12 +134,30 @@ function WordCard({
         {word.targetTerm}
       </AppText>
       <AppText>{word.referenceTerm}</AppText>
+      {word.submission?.status === 'completed' ? (
+        <AppText>✓ Completed</AppText>
+      ) : word.submission?.status === 'deleting' ? (
+        <AppText>Finishing deletion…</AppText>
+      ) : null}
       <Button
-        label={`Replace ${word.slot} word`}
-        loading={loading}
+        label={
+          word.submission?.status === 'completed'
+            ? `View Photo · ${word.slot}`
+            : word.submission
+              ? `Resume photo · ${word.slot}`
+              : `Take Photo · ${word.slot}`
+        }
         disabled={disabled}
-        onPress={onReplace}
+        onPress={() => router.push({ pathname: '/photo', params: { assignmentId: word.id } })}
       />
+      {!word.submission && (
+        <Button
+          label={`Replace ${word.slot} word`}
+          loading={loading}
+          disabled={disabled}
+          onPress={onReplace}
+        />
+      )}
     </View>
   );
 }

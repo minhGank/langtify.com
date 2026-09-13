@@ -217,6 +217,100 @@ export type Database = {
         };
         Relationships: [];
       };
+      submissions: {
+        Row: {
+          concept_id: string;
+          created_at: string;
+          daily_challenge_id: string;
+          daily_challenge_word_id: string;
+          deleted_at: string | null;
+          expires_at: string;
+          id: string;
+          reference_term: string;
+          reference_term_id: string;
+          status: string;
+          storage_path: string;
+          submitted_at: string | null;
+          target_term: string;
+          updated_at: string;
+          user_id: string;
+          visibility: string;
+          vocabulary_term_id: string;
+        };
+        Insert: {
+          concept_id: string;
+          created_at?: string;
+          daily_challenge_id: string;
+          daily_challenge_word_id: string;
+          deleted_at?: string | null;
+          expires_at?: string;
+          id?: string;
+          reference_term: string;
+          reference_term_id: string;
+          status?: string;
+          storage_path: string;
+          submitted_at?: string | null;
+          target_term: string;
+          updated_at?: string;
+          user_id: string;
+          visibility?: string;
+          vocabulary_term_id: string;
+        };
+        Update: {
+          concept_id?: string;
+          created_at?: string;
+          daily_challenge_id?: string;
+          daily_challenge_word_id?: string;
+          deleted_at?: string | null;
+          expires_at?: string;
+          id?: string;
+          reference_term?: string;
+          reference_term_id?: string;
+          status?: string;
+          storage_path?: string;
+          submitted_at?: string | null;
+          target_term?: string;
+          updated_at?: string;
+          user_id?: string;
+          visibility?: string;
+          vocabulary_term_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'submissions_daily_challenge_id_user_id_fkey';
+            columns: ['daily_challenge_id', 'user_id'];
+            isOneToOne: false;
+            referencedRelation: 'daily_challenges';
+            referencedColumns: ['id', 'user_id'];
+          },
+          {
+            foreignKeyName: 'submissions_daily_challenge_word_id_daily_challenge_id_con_fkey';
+            columns: [
+              'daily_challenge_word_id',
+              'daily_challenge_id',
+              'concept_id',
+              'vocabulary_term_id',
+              'reference_term_id',
+            ];
+            isOneToOne: false;
+            referencedRelation: 'daily_challenge_words';
+            referencedColumns: [
+              'id',
+              'daily_challenge_id',
+              'concept_id',
+              'vocabulary_term_id',
+              'reference_term_id',
+            ];
+          },
+          {
+            foreignKeyName: 'submissions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       user_language_profiles: {
         Row: {
           cefr_level: string;
@@ -358,6 +452,56 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      attest_submission_photo: {
+        Args: {
+          expected_object_id: string;
+          expected_object_version: string;
+          expected_user_id: string;
+          image_height: number;
+          image_sha256: string;
+          image_width: number;
+          submission_id: string;
+        };
+        Returns: undefined;
+      };
+      begin_submission_deletion: {
+        Args: { submission_id: string };
+        Returns: {
+          concept_id: string;
+          created_at: string;
+          daily_challenge_id: string;
+          daily_challenge_word_id: string;
+          deleted_at: string | null;
+          expires_at: string;
+          id: string;
+          reference_term: string;
+          reference_term_id: string;
+          status: string;
+          storage_path: string;
+          submitted_at: string | null;
+          target_term: string;
+          updated_at: string;
+          user_id: string;
+          visibility: string;
+          vocabulary_term_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'submissions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      can_upload_submission_object: {
+        Args: { object_path: string };
+        Returns: boolean;
+      };
+      claim_photo_cleanup: {
+        Args: { batch_size?: number };
+        Returns: {
+          storage_path: string;
+        }[];
+      };
       complete_onboarding: {
         Args: {
           p_cefr_level: string;
@@ -368,10 +512,131 @@ export type Database = {
         };
         Returns: undefined;
       };
+      finalize_submission: {
+        Args: { requested_visibility?: string; submission_id: string };
+        Returns: {
+          concept_id: string;
+          created_at: string;
+          daily_challenge_id: string;
+          daily_challenge_word_id: string;
+          deleted_at: string | null;
+          expires_at: string;
+          id: string;
+          reference_term: string;
+          reference_term_id: string;
+          status: string;
+          storage_path: string;
+          submitted_at: string | null;
+          target_term: string;
+          updated_at: string;
+          user_id: string;
+          visibility: string;
+          vocabulary_term_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'submissions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      finish_photo_cleanup: {
+        Args: { object_path: string };
+        Returns: undefined;
+      };
+      finish_submission_deletion: {
+        Args: { submission_id: string };
+        Returns: {
+          concept_id: string;
+          created_at: string;
+          daily_challenge_id: string;
+          daily_challenge_word_id: string;
+          deleted_at: string | null;
+          expires_at: string;
+          id: string;
+          reference_term: string;
+          reference_term_id: string;
+          status: string;
+          storage_path: string;
+          submitted_at: string | null;
+          target_term: string;
+          updated_at: string;
+          user_id: string;
+          visibility: string;
+          vocabulary_term_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'submissions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      get_assignment_photo: { Args: { assignment_id: string }; Returns: Json };
       get_or_create_today_challenge: { Args: never; Returns: Json };
+      photo_verification_target: {
+        Args: { expected_user_id: string; submission_id: string };
+        Returns: Json;
+      };
       replace_daily_challenge_word: {
         Args: { active_assignment_id: string };
         Returns: Json;
+      };
+      reserve_submission: {
+        Args: { assignment_id: string };
+        Returns: {
+          concept_id: string;
+          created_at: string;
+          daily_challenge_id: string;
+          daily_challenge_word_id: string;
+          deleted_at: string | null;
+          expires_at: string;
+          id: string;
+          reference_term: string;
+          reference_term_id: string;
+          status: string;
+          storage_path: string;
+          submitted_at: string | null;
+          target_term: string;
+          updated_at: string;
+          user_id: string;
+          visibility: string;
+          vocabulary_term_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'submissions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      set_submission_visibility: {
+        Args: { requested_visibility: string; submission_id: string };
+        Returns: {
+          concept_id: string;
+          created_at: string;
+          daily_challenge_id: string;
+          daily_challenge_word_id: string;
+          deleted_at: string | null;
+          expires_at: string;
+          id: string;
+          reference_term: string;
+          reference_term_id: string;
+          status: string;
+          storage_path: string;
+          submitted_at: string | null;
+          target_term: string;
+          updated_at: string;
+          user_id: string;
+          visibility: string;
+          vocabulary_term_id: string;
+        };
+        SetofOptions: {
+          from: '*';
+          to: 'submissions';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
     };
     Enums: {

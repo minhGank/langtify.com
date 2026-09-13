@@ -7,6 +7,8 @@ export function challengeError(error: unknown, replacing = false): string {
       : 'There are not enough eligible words for your language pair and level yet. Please try again later.';
   if (message === 'assignment_unavailable')
     return 'This word has already changed or is unavailable. Refresh today’s challenge.';
+  if (message === 'assignment_has_submission')
+    return 'This word has a photo or an upload in progress. Open its photo to finish or delete it.';
   if (message === 'onboarding_required')
     return 'Your learning profile is unavailable. Please sign in again.';
   return replacing

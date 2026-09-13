@@ -50,6 +50,7 @@ export function RootNavigator() {
         </Stack.Protected>
         <Stack.Protected guard={status === 'ready'}>
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="photo" />
         </Stack.Protected>
       </Stack>
     </ThemeProvider>

@@ -10,6 +10,7 @@ import SignInRoute from '../app/sign-in';
 import SignUpRoute from '../app/sign-up';
 import OnboardingRoute from '../app/onboarding';
 import SessionRoute from '../app/session';
+import PhotoRoute from '../app/photo';
 import type { SessionState } from '@/features/auth/session-state';
 import { makeAccount, makeSession } from './fixtures';
 
@@ -28,6 +29,7 @@ const routes = {
   'sign-up': SignUpRoute,
   onboarding: OnboardingRoute,
   session: SessionRoute,
+  photo: PhotoRoute,
   '(tabs)/_layout': TabLayout,
   '(tabs)/index': TodayScreen,
   '(tabs)/discover': DiscoverScreen,
@@ -87,4 +89,13 @@ it('redirects incomplete authenticated users away from authentication', async ()
   const app = renderRouter(routes, { initialUrl: '/sign-up' });
   expect(await screen.findByRole('header', { name: 'Welcome to Langtify' })).toBeVisible();
   expect(app.getPathname()).toBe('/onboarding');
+});
+it('blocks direct photo routes without an authenticated onboarded account', async () => {
+  mockState = { ...mockState, status: 'signed-out', session: null };
+  const app = renderRouter(routes, {
+    initialUrl: '/photo?assignmentId=45000000-0000-4000-8000-000000000002',
+  });
+  expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
+  expect(app.getPathname()).toBe('/sign-in');
+  expect(screen.queryByLabelText('Your challenge photo')).toBeNull();
 });

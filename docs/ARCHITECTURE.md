@@ -5,17 +5,20 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 3 boundaries
+## Phase 4 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
 - `src/features/auth/`: session lifecycle, email/password forms, navigation authority.
 - `src/features/onboarding/`: validation and onboarding presentation.
 - `src/features/challenges/`: Today cards, request lifecycle and safe error states.
+- `src/features/photos/`: camera, metadata stripping, normalized drafts, preview and submission lifecycle.
 - `src/features/profile/`: account summary and sign out.
 - `src/lib/`: validated public configuration and a typed Supabase client.
 - `src/services/`: database operations, including transactional onboarding and challenge RPCs.
 - `src/types/`: database types matching migrations.
-- `supabase/`: local configuration, versioned migrations, language seed, SQL tests.
+- `supabase/`: local Auth/Storage configuration, versioned migrations, seed and SQL tests.
+- `supabase/functions/photo-authority/`: Auth-verified JPEG attestation and fixed-lifetime preview signing.
+- `scripts/cleanup-submissions.mjs`: server-only scheduled Storage cleanup; never imported by the app.
 - `tests/`: behavior tests outside route discovery.
 
 Supabase/PostgreSQL is the authoritative backend. RLS and database constraints
@@ -93,7 +96,43 @@ Foreground/resume refreshes wait for a pending write to settle and then reload;
 a token refresh reconciles that write through the latest same-account gateway. A lost replacement response is recovered
 by refreshing; it does not blindly replace the next active word.
 
+## Photo authority and recovery
+
+The protected `/photo` route takes only an assignment ID. Its account-keyed content
+loads the owner/assignment relationship from an RPC before showing camera controls.
+A separate non-persisting Supabase client pins all photo RPC/Storage calls to the
+submitting JWT. Late responses cannot populate another account; unmount stops
+subsequent upload stages. Camera mounts only while focused/foregrounded. Foreground
+refresh waits for a write to settle; signed previews refresh while visible.
+
+Database and Storage operations form a recoverable sequence, not a distributed
+transaction: reserve -> upload -> finalize. SQL and partial uniqueness control
+completion; a private, version-bound receipt proves that the Supabase function decoded
+the stored JPEG, bounded its dimensions/memory, and rejected metadata before completion. Storage inserts require the exact owner reservation; a commit-time trigger rechecks
+that lease even for elevated Storage writes and old signed upload capabilities; completed images
+cannot be overwritten or directly deleted. Delete intent revokes upload access,
+then Storage API removal precedes database retirement. A private durable queue and
+orphan scan repair interrupted deletion, abandoned uploads and account cascades.
+The server-only cleanup command must be scheduled hourly; see README and the cron
+example. It uses a privileged key outside Expo, counts-only logging and retryable jobs. Failed jobs rotate behind unattempted work,
+so a poison job cannot monopolize later cleanup batches.
+
+The bucket stays private for both visibility values. Database records contain object
+paths; the owner receives a 60-second signed URL from the Auth-verified function.
+Direct Storage signing is denied, so a caller cannot extend that lifetime. The function
+returns only the signed relative path; the app resolves it against its validated API
+URL, including a reachable LAN URL during local phone testing. No feed-read policy
+exists. The camera normalizes orientation, caps dimensions, re-encodes JPEG and strips
+all APP/comment segments before preview/upload. Cancelled camera/preprocessing work cannot replace or delete newer drafts.
+Native draft cache is account scoped;
+web retains pre-upload previews only in memory. No location permission is requested.
+
+Unfinished photos on Today also lists owner-only pending/deleting operations from
+earlier dates, so restart or midnight does not strand an uploaded photo. This
+recovery read is independent of current challenge generation; it is not a gallery
+or feed.
+
 ## Future boundaries
 
-Supabase Storage and photos, submissions/completion, streaks, feed and ratings
-remain future work. No camera action, storage bucket or Phase 4 feature exists.
+Streaks, feed, ratings, comments, followers, notifications and AI image validation
+remain out of scope. Phase 5 has not started.

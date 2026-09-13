@@ -162,3 +162,101 @@ migration with the reproduced bootstrap failure receives a BEGIN/COMMIT wrapper;
 its SQL body stays byte-for-byte unchanged. An initially proposed blanket change
 to old migrations was not performed. Disposable-database tests cover the ordered
 migration chain, nonempty backfill and refusal of inconsistent history.
+
+## 013 — Camera-first submissions with private Storage
+
+Accepted for Phase 4. Use the SDK-compatible `expo-camera` `CameraView`,
+`expo-image-manipulator` and `expo-file-system`. No picker/gallery, microphone,
+location permission, image analysis or new state library is added. Capture is
+processed for orientation, decoded/re-encoded as JPEG at quality 0.8, resized to
+at most 1600 pixels on the longest side without upscaling, and stripped of all
+JPEG APP/comment metadata. Reject malformed or greater-than-5-MiB results. Preview
+must load before Submit is enabled; capture never triggers upload automatically.
+
+A private `challenge-submissions` bucket stores JPEGs at server-derived
+`<user-id>/<submission-id>.jpg`. The database defaults to private. Public visibility
+records future feed eligibility; it grants nobody else read or mutation access in
+this phase. Owners receive 60-second signed preview URLs, kept in memory only.
+Visibility changes never move files. These URLs are bearer capabilities until
+expiry; changing visibility cannot revoke bytes already downloaded.
+
+## 014 — Recoverable submission and deletion lifecycle
+
+Accepted. Database and object storage cannot share one client transaction.
+`pending -> completed -> deleting -> deleted` is a server-controlled lifecycle;
+pending may also transition directly to deleting. Reserve is idempotent per active
+assignment, and finalization verifies Storage metadata before completion. Retrying
+completed finalization returns the original result without changing visibility.
+At most one non-deleted reservation/submission occupies an assignment. Pending or
+deleting operations temporarily block replacement as well as completed photos,
+so an upload cannot become detached from its assigned vocabulary. Discarding a
+pending upload releases this lock after cleanup.
+
+Assignment/owner/concept/term/text relationships are copied and validated in SQL;
+clients cannot supply them or completion state. Existing assignment history/date
+is authoritative. A previously started upload may finish after midnight for its
+original still-active assignment; no unrequested same-day cutoff was introduced.
+The UI starts new capture from Today. Upload reservations expire after 24 hours
+as a technical recovery lease, not a daily challenge or replacement-count rule.
+
+Deletion records intent, removes bytes through Storage API, then retires the row.
+The assignment remains unavailable for replacement/new capture until deletion
+finishes. Soft-deleted rows retain IDs and immutable vocabulary metadata for
+idempotent retries; account/challenge deletion can still cascade. A private cleanup
+queue survives those cascades. A server-only maintenance command claims expired
+uploads/deletions, removes bytes, and finishes retirement; its orphan sweep also
+handles late-arriving files. Run it hourly on a trusted runner, with monitoring.
+No always-on custom backend or additional infrastructure library is introduced.
+The supplied cron example must be installed for each deployed environment.
+
+Native normalized drafts live in an account/assignment-scoped cache with unique
+URIs to avoid stale image caches; loading removes that account's drafts older than
+24 hours and malformed interrupted writes. Retake/discard/success remove drafts.
+OS cache eviction can require a retake. Web keeps unuploaded drafts in memory;
+uploaded reservations recover on every platform. Camera/upload components remount
+on account/assignment changes, pin network requests to the captured account token,
+and stop later upload/finalization stages after unmount. Same-account token refresh
+reconciles through the latest gateway.
+
+References: [Expo Camera](https://docs.expo.dev/versions/v57.0.0/sdk/camera/),
+[Expo ImageManipulator](https://docs.expo.dev/versions/v57.0.0/sdk/imagemanipulator/),
+[Supabase Storage access control](https://supabase.com/docs/guides/storage/security/access-control).
+
+## 015 — Trusted image verification and Storage commit guards
+
+Accepted during the Phase 4 audit after reproducing completion with arbitrary bytes,
+post-deletion upload-token replay, and caller-selected one-year signed reads. Add a
+small Supabase Edge Function for actual JPEG decoding and fixed-lifetime signing;
+this is technical enforcement of Phase 4, not image-content/AI validation or Phase 5.
+It uses the existing Supabase SDK and server-only `jpeg-js` 0.4.4, pinned with a Deno
+lockfile. No mobile dependency is added. Decode limits are 5 MiB, 1600 pixels per
+edge, 2.56 MP and 64 MiB decoder allocation. Reject APP/comment/trailing metadata
+rather than replacing pixels after the user reviewed them. Camera provenance is
+not attestable from an uploaded JPEG.
+
+Store a private verification receipt bound to the Storage object ID and version.
+Only service callers can attest; owner finalization still uses the user's JWT.
+A Storage commit trigger denies retired/expired reservation writes, owner mismatch,
+content mutation and deletion of a live photo. This is necessary because Storage's
+initial RLS permission test finishes before the upload commits. It also protects
+against old upload capabilities and stale cleanup jobs. All Phase 4 predecessors
+remain unchanged; unverified completed photos require a reviewed backfill before
+applying the audit migration. Never manufacture receipts from MIME metadata.
+
+Deny ordinary Storage signing and issue only 60-second preview capabilities in the
+function after Auth and owner-RLS checks. Returning a relative signed path avoids
+leaking internal local service hostnames into phone URLs. Already-issued links cannot
+be revoked by this policy change; deployment must account for their previous expiry.
+Decoded bytes already downloaded cannot be recalled.
+
+Cancel preprocessing before it writes or prunes drafts when the camera/account screen
+becomes obsolete. Exact-URI cleanup prevents old work from deleting newer drafts;
+retake/capture invalidates pending draft reads. Database recovery remains authoritative.
+
+References: [Supabase function authentication](https://supabase.com/docs/guides/functions/auth),
+[Storage access control](https://supabase.com/docs/guides/storage/security/access-control),
+[JPEG decoder options](https://github.com/jpeg-js/jpeg-js).
+
+Cleanup claims record a last-attempt time and skip already-queued work during
+discovery. Unattempted jobs run before failed retries, preserving durable retry
+without letting one persistently failing batch strand later deletions.

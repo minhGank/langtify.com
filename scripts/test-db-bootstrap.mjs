@@ -73,6 +73,66 @@ try {
   console.log(
     'PASS: ordered migration bootstrap and nonempty audit backfill preserve all assignment snapshots',
   );
+  // Minimal Storage metadata contract; actual file service behavior is exercised
+  // separately by db:test:submissions against real local Auth/Storage.
+  await execute(
+    `create schema storage;
+    create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+    create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text,metadata jsonb,user_metadata jsonb,owner_id text,version text);
+    alter table storage.objects enable row level security;`,
+    database,
+  );
+  for (const file of (await readdir(migrations))
+    .filter((file) => file.endsWith('.sql') && file > auditName)
+    .sort()) {
+    const sql = await readFile(new URL(file, migrations), 'utf8');
+    if (file === '20260912050000_phase4_audit_storage.sql') {
+      // Pre-audit completion trusted metadata only. Never silently backfill that
+      // fixture as verified or rewrite its completion when installing the guard.
+      await execute(
+        `select set_config('request.jwt.claim.sub','${user}',false);
+        create table public.migration_photo_fixture as select (public.reserve_submission(
+          (select id from public.daily_challenge_words limit 1))).*;
+        insert into storage.objects(bucket_id,name,owner_id,version,metadata)
+          select 'challenge-submissions',storage_path,user_id::text,'old-version','{"mimetype":"image/jpeg","size":100}'::jsonb
+          from public.migration_photo_fixture;
+        select public.finalize_submission((select id from public.migration_photo_fixture));`,
+        database,
+      );
+      const refused = await query(sql, database).result;
+      assert.notEqual(refused.code, 0);
+      assert.match(refused.error, /Existing completed photos require a verified backfill/);
+      assert.equal(
+        await execute(
+          `select status from public.submissions where id=(select id from public.migration_photo_fixture);`,
+          database,
+        ),
+        'completed',
+      );
+      assert.equal(
+        await execute(`select to_regclass('private.photo_verifications') is null;`, database),
+        't',
+      );
+      await execute(
+        `delete from storage.objects where name=(select storage_path from public.migration_photo_fixture);
+        delete from public.submissions where id=(select id from public.migration_photo_fixture);
+        drop table public.migration_photo_fixture;`,
+        database,
+      );
+      console.log(
+        'PASS: unverified legacy completion aborts the photo audit without blessing, altering or deleting existing data',
+      );
+    }
+    await execute(sql, database);
+  }
+  assert.equal(await execute(`select count(*) from public.daily_challenge_words;`, database), '3');
+  assert.equal(
+    await execute(`select public from storage.buckets where id='challenge-submissions';`, database),
+    'f',
+  );
+  console.log(
+    'PASS: Phase 4 migration bootstrap creates private storage and preserves existing challenges',
+  );
 } finally {
   await execute(`drop database ${database};`);
 }

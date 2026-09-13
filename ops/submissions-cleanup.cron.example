@@ -1,0 +1,6 @@
+# Install on an operator-managed runner with Node >=22.13 and npm ci completed.
+# Replace paths and use an absolute path to Node if cron's PATH does not contain it.
+# /etc/langtify/maintenance.env contains SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY;
+# restrict it to the runner account (chmod 600). Never use EXPO_PUBLIC_* for this key.
+# Run hourly. Alert on nonzero exit, retry > 0, and missing successful runs.
+0 * * * * cd /srv/langtify && node --env-file=/etc/langtify/maintenance.env scripts/cleanup-submissions.mjs >> /var/log/langtify-photo-cleanup.log 2>&1

@@ -11,11 +11,14 @@ const mockReplace = jest.fn<Promise<TodayChallenge>, [string]>();
 jest.mock('@/features/auth/auth-provider', () => ({
   useAuth: () => ({ account: mockAccount, session: mockSession }),
 }));
+jest.mock('@/services/submissions', () => ({ listUnfinishedPhotos: async () => [] }));
 jest.mock('@/services/challenges', () => ({
   ...jest.requireActual('@/services/challenges'),
   challengeGateway: () => ({ load: mockLoad, replace: mockReplace }),
 }));
+const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
+  router: { push: (...args: unknown[]) => mockPush(...args) },
   useFocusEffect: (callback: () => () => void) => {
     const React = jest.requireActual<typeof ReactTypes>('react');
     React.useEffect(callback, [callback]);
@@ -68,6 +71,29 @@ it('clears cards across account and language-profile configuration changes', asy
     ...mockAccount,
     learning: mockAccount.learning ? { ...mockAccount.learning, cefr_level: 'C2' } : null,
   };
-  rerender(<TodayScreen />);
+  await act(async () => rerender(<TodayScreen />));
   expect(screen.queryByText('la fenêtre')).toBeNull();
+});
+
+it('shows completed cards with View Photo and no replacement action', async () => {
+  const challenge = makeChallenge();
+  challenge.words[0].submission = { id: 'submission', status: 'completed' };
+  mockLoad.mockResolvedValue(challenge);
+  render(<TodayScreen />);
+  expect(await screen.findByText('✓ Completed')).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Replace review word' })).toBeNull();
+  fireEvent.press(screen.getByRole('button', { name: 'View Photo · review' }));
+  expect(mockPush).toHaveBeenCalledWith({
+    pathname: '/photo',
+    params: { assignmentId: 'assignment-review' },
+  });
+});
+it('offers recovery instead of replacement while an upload is pending', async () => {
+  const challenge = makeChallenge();
+  challenge.words[0].submission = { id: 'submission', status: 'pending' };
+  mockLoad.mockResolvedValue(challenge);
+  render(<TodayScreen />);
+  expect(await screen.findByRole('button', { name: 'Resume photo · review' })).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Replace review word' })).toBeNull();
+  expect(screen.queryByText('✓ Completed')).toBeNull();
 });

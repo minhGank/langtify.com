@@ -1,7 +1,7 @@
-# Phase 3 data model
+# Phase 4 data model
 
 Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
-Photo/submission tables and Storage buckets remain out of scope. Email stays in Auth.
+Phase 4 adds submissions and private photo storage. Email stays in Auth.
 
 ## Tables
 
@@ -106,7 +106,71 @@ Its original SQL body and migration version remain unchanged. The original Phase
 identity and Phase 3 schema files remain unchanged by this audit. Respect transaction
 boundaries supplied by each file when applying migrations manually.
 
+## Submissions and private photo storage
+
+`20260912040000_phase4_submissions.sql` is additive and explicitly transactional.
+All previously applied migration files are unchanged by Phase 4. It configures a
+private `challenge-submissions` bucket accepting `image/jpeg`, limited to 5 MiB.
+
+`submissions` contains a UUID, owner, challenge/assignment IDs, concept/target/reference
+term references and text snapshots, unique storage path, visibility (database default
+`private`), lifecycle status, created/updated/expiry/submitted/deleted timestamps.
+Composite foreign keys preserve assignment identity and challenge ownership. A
+trigger derives identity/text/path from the assignment, protects immutable columns
+and validates transitions. A partial unique index permits one non-deleted row per
+assignment. Submission insertion/finalization requires an active assignment. An
+assignment with any non-deleted submission cannot be replaced, including through
+direct privileged assignment updates checked by the trigger.
+
+| State       | Object                                             | Assignment behavior                                   |
+| ----------- | -------------------------------------------------- | ----------------------------------------------------- |
+| `pending`   | May not yet exist                                  | Not completed; finish or discard before replacement.  |
+| `completed` | Decoded and attested for its exact Storage version | Completed; no duplicate submission or replacement.    |
+| `deleting`  | Removal pending or in progress                     | Reserved until Storage removal and retirement finish. |
+| `deleted`   | Absent at retirement                               | Incomplete; new photo/replacement allowed.            |
+
+Owners can select their rows through RLS but cannot directly insert/update/delete.
+Public RPCs are `get_assignment_photo`, `reserve_submission`, `finalize_submission`,
+`set_submission_visibility`, `begin_submission_deletion`, and
+`finish_submission_deletion`. They derive ownership from `auth.uid()` and lock in
+profile/assignment/submission order. Visibility is validated, and finalization is
+idempotent. The audit additionally requires trusted byte verification before completion. Completion is represented by persisted submission state, not a client
+flag. Today payloads include only minimal submission ID/status information.
+
+Storage policies permit inserting only the exact unexpired owner reservation path,
+selecting only the owner's live rows, and deleting only after deletion intent.
+Custom object metadata is rejected; there is no UPDATE/upsert/move policy. `public` visibility grants no additional
+access. The boolean upload-policy helper locks its reservation while Storage
+inserts. Private definer helpers have empty search paths and revoked client access.
+
+`private.photo_cleanup_queue` retains object paths across submission/account/challenge
+cascades. Only service-role callers execute `claim_photo_cleanup` and
+`finish_photo_cleanup`. The worker expires 24-hour pending leases, retries deleting
+rows, removes objects through Storage API, and retires rows only after metadata is
+absent. A sweep finds orphan or late objects lacking a live submission. Queue attempt times
+rotate failing jobs fairly; already-queued rows do not starve discovery of new work. Soft-deleted
+rows preserve idempotency/history; no retention duration beyond this lifecycle was
+invented. Operational cleanup scheduling is required; see README.
+
+## Phase 4 audit enforcement
+
+`20260912050000_phase4_audit_storage.sql` adds `private.photo_verifications`: one
+receipt per submission, with immutable object ID/version, SHA-256, bounded dimensions,
+and server verification time. Only the trusted Supabase function can invoke the
+service-only target/attestation RPCs. The ordinary owner finalization RPC still checks
+identity, active assignment, expiry and Storage presence; its transition now also
+requires the matching receipt. Receipt creation and finalization can be retried
+independently after uncertain responses. No fake verification backfill is performed.
+The migration fails transactionally if unverified preexisting completed photos exist.
+
+A narrowly scoped `storage.objects` trigger protects only `challenge-submissions`:
+commit-time inserts require the same pending unexpired owner reservation, content
+identity cannot be updated, and physical deletion requires a deleting/deleted/missing
+submission. The deletion check also protects a valid image from a stale cleanup job.
+Standard upload/read/delete operations retain owner RLS; reusable upload signing,
+copy and client-selected signing lifetimes are denied. The Auth-verified function
+alone issues preview URLs with a fixed 60-second TTL. The bucket remains private.
+
 ## Future concepts
 
-Photo submissions, completion, streaks and community ratings are not schemas in
-Phase 3. No Phase 4 tables or functions are created.
+Streaks and community interactions are not implemented. Phase 5 has not started.

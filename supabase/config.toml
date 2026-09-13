@@ -42,12 +42,16 @@ enable_anonymous_sign_ins = false
 enable_signup = true
 enable_confirmations = true
 
-# Phase 2 needs no realtime, photo storage, edge functions or analytics.
+# Phase 4 uses private photo storage; other services remain out of scope.
 [realtime]
 enabled = false
 [storage]
-enabled = false
+enabled = true
+file_size_limit = "5MiB"
 [edge_runtime]
-enabled = false
+enabled = true
+
+[functions.photo-authority]
+verify_jwt = true
 [analytics]
 enabled = false

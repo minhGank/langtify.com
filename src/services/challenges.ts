@@ -11,6 +11,7 @@ export type ChallengeWord = {
   conceptId: string;
   targetTerm: string;
   referenceTerm: string;
+  submission: { id: string; status: 'pending' | 'completed' | 'deleting' } | null;
 };
 export type TodayChallenge = {
   id: string;
@@ -60,6 +61,13 @@ export function parseChallenge(
     ) {
       throw new Error('Invalid challenge assignment.');
     }
+    const saved = word.submission == null ? null : object(word.submission);
+    let submission: ChallengeWord['submission'] = null;
+    if (saved) {
+      if (saved.status !== 'pending' && saved.status !== 'completed' && saved.status !== 'deleting')
+        throw new Error('Invalid submission state.');
+      submission = { id: text(saved.id), status: saved.status };
+    }
     return {
       id: text(word.id),
       slot,
@@ -67,6 +75,7 @@ export function parseChallenge(
       conceptId: text(word.concept_id),
       targetTerm: text(word.target_term),
       referenceTerm: text(word.reference_term),
+      submission,
     };
   });
   if (
