@@ -1,6 +1,10 @@
 import { projectFeedPhotos } from './feed-photos.ts';
 
 const target = {
+  average_rating: 4.5,
+  rating_count: 2,
+  viewer_rating: 4,
+  can_rate: true,
   id: '77000000-0000-4000-8000-000000000001',
   storage_path: '77000000-0000-4000-8000-000000000002/77000000-0000-4000-8000-000000000001.jpg',
   target_term: 'le chien',
@@ -45,6 +49,10 @@ Deno.test(
       'username',
       'submitted_at',
       'signed_path',
+      'average_rating',
+      'rating_count',
+      'viewer_rating',
+      'can_rate',
     ].sort();
     if (JSON.stringify(Object.keys(result).sort()) !== JSON.stringify(expected))
       throw new Error('Private projection leak.');

@@ -464,3 +464,51 @@ The audit also reproduced implicit page-one restart after renewal removed every
 retained item. Keep the cursor for that empty window; only an initial empty feed
 may poll page one. Load more continues from the saved position and explicit refresh
 returns to newest. Empty-window copy distinguishes available pagination.
+
+## 024 — Semantic ratings as one authoritative current vote
+
+Accepted under direct user approval of the Phase 8 proposal, including AGENTS scope.
+Use the exact 1–5 vocabulary-match scale, not stars or photography/popularity criteria.
+Reuse Discover eligibility and saved target filtering; self-rating is forbidden.
+Only an Auth-derived RPC may mutate a rating, and a database trigger repeats authority
+checks under the submission lock shared with visibility/deletion. Numeric input is
+validated before integer conversion. One composite-key row records each current
+viewer vote; same-score retries are logically unchanged. Last serialized accepted
+write wins across devices; no artificial client-clock ordering or new rate limit.
+
+Use grouped, indexed aggregates for the bounded page/window instead of a mutable
+counter projection. No raw rating history is exposed. Feed and signing add average,
+count, viewer score and can_rate, preserving public metadata minimization and private
+Storage. Rating intent is immediate in the UI, but selections/aggregates reconcile
+with server results. Reads cannot supersede writes; uncertain responses cause reads
+and explicit retry rather than automatic replay. Retain audited stale-context and
+monotonic photo-expiry guards.
+
+Private visibility and soft retirement retain votes while removing public exposure.
+Hard submission/owner or rater deletion cascades them; resubmission starts unrated.
+Previously valid votes persist through later rater bans or learning-setting changes;
+no retrospective invalidation policy was requested. Ratings do not affect XP, streaks,
+completion, feed ordering, notifications or rewards. No moderation/reporting/blocking
+or other Phase 9 feature is implemented, and the public-production launch gate remains.
+
+## 025 — Phase 8 audit: bounded rating waits and stronger regression evidence
+
+A transport that never settled left every rating control disabled and explicit
+refresh queued forever. Use a 20-second local deadline, abort the request and settle
+independently of transport cooperation. Treat timeout as an uncertain outcome:
+release reads, reconcile server state and permit explicit retry. Never automatically
+replay an older score or assume cancellation undoes an accepted server transaction.
+Tests reproduce the failure, recover an already committed vote without replay and
+discard a late response after a newer vote or account's selection.
+
+No database-policy defect was reproduced and no migration is added. Extend invalid
+input/eligibility coverage, stale REPEATABLE READ visibility races and feed-order
+invariance. The actual feed RPC uses one indexed rating aggregate with 50,000
+unrelated votes under a generic plan; the test runs in a disposable database with
+rolled-back synthetic rows and privileged instrumentation. Suites using shared
+Auth/photo/catalog fixtures must run sequentially.
+
+The stale-snapshot test asserts the database's existing serialization failure,
+consistent with [PostgreSQL transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html).
+This audit changes no ratings, lifecycle, XP/streak, authentication or privacy rules
+and introduces no Phase 9 functionality. See [Phase 8 audit](PHASE8_AUDIT.md).

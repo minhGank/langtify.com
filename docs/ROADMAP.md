@@ -68,9 +68,18 @@ lifecycle callbacks; see `PHASE7_AUDIT.md`.
 
 **Public production launch remains gated on moderation/safety, blocking and reporting.**
 
-## Phase 8 and later — not started
+## Phase 8 — implemented; hosted/device acceptance pending
 
-Further work requires explicit scope. Ratings, blocking/reporting, comments,
+Semantic 1–5 vocabulary-match ratings, one editable current vote per viewer/submission,
+backend eligibility/locking, bounded grouped summaries and Discover controls. Private
+visibility retains votes; hard deletion cascades them. See `PHASE8_VERIFICATION.md`.
+No XP, streak, completion, ordering, Storage privacy or authentication changes.
+Phase 8 audit adds stalled-request recovery and expanded security/concurrency/query-plan
+regressions; see `PHASE8_AUDIT.md`. Hosted/device acceptance remains pending.
+
+## Phase 9 and later — not started
+
+Further work requires explicit scope. Blocking/reporting, comments, likes,
 followers, friends, DMs, notifications, leaderboards, achievements and subscriptions
 remain unimplemented.
 Other OAuth providers, password recovery UX, production vocabulary/content review, final

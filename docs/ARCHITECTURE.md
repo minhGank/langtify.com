@@ -5,7 +5,7 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 7 boundaries
+## Phase 8 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
 - `src/features/auth/`: session lifecycle, password/Google forms, navigation authority.
@@ -15,6 +15,7 @@ web-compatible components and a shared `expo-router/js-tabs` layout.
 - `src/features/photos/`: camera, metadata stripping, normalized drafts, preview and submission lifecycle.
 - `src/features/vocabulary/`: bounded library/detail pages, account-scoped reads and photo expiry.
 - `src/features/profile/`: account summary, progress and sign out.
+- `src/features/ratings/`: typed semantic scale, validated summaries and rating controls.
 - `src/features/discover/`: bounded public feed and account-scoped photo lifecycle.
 - `src/features/progress/`: backend progress reads, display and XP receipt feedback.
 - `src/lib/`: validated public configuration and a typed Supabase client.
@@ -165,8 +166,8 @@ an accessible progress bar need no animation or global-state dependency.
 
 ## Future boundaries
 
-Ratings, comments, followers, friends, DMs, notifications, leaderboards, achievements,
-subscriptions and AI image validation remain out of scope. Phase 8 has not started.
+Comments, likes, followers, friends, DMs, notifications, leaderboards, achievements,
+subscriptions and AI image validation remain out of scope. Phase 9 has not started.
 
 ## Google OAuth and session admission — Phase 5.5
 
@@ -328,3 +329,42 @@ See `PHASE7_AUDIT.md` for reproductions, final checks and remaining limits.
 
 If revalidation empties a previously loaded window, retain its cursor and `has_more`
 until Load more or explicit refresh. Renewal must not silently replay page one.
+
+## Semantic rating authority — Phase 8
+
+The new relational rating table is server-owned and RLS-protected with no client
+raw-history or write grants. `rate_submission(submission_id,score)` derives Auth
+identity and validates an exact integer 1–5 before storage. A private trigger locks
+the submission row, then rechecks the shared Discover candidate view and saved
+viewer target. This serializes votes against existing visibility/deletion writes
+without changing those lifecycle functions or their profile/assignment lock order.
+It also enforces self-rating denial, immutable rating identities and server timestamps.
+
+No cached aggregate counters exist. One grouped query of current ratings restricted
+to bounded page/window submission IDs supplies average/count/viewer score and a
+`can_rate` flag. The composite primary key supports submission lookups and the rater
+index supports Auth cascades. The feed retains its indexed timestamp/UUID keyset,
+12-item pages and at most 24 retained cards; batch signing revalidates the same
+summaries with its fixed 60-second capabilities. No per-card read/signing request.
+
+`useDiscover` owns rating mutations alongside read generations so an older page or
+signature cannot overwrite a newly saved score. Only one write runs at a time;
+explicit refresh queues behind it. The submitting score is intent only; aggregate
+values come from the RPC. After an uncertain error, revalidation can recognize a
+committed vote without resending an older intent. Unavailable content clears to an
+explicit refresh state. Photo expiry continues independently while a write stalls.
+A 20-second transport deadline aborts and settles the local mutation even if the
+transport ignores cancellation. It releases queued reads and follows the same
+uncertain-response reconciliation, without replaying a score or changing vote policy.
+Gateway/account/target/focus invalidation aborts and discards old responses. A server
+transaction already admitted may still commit after network cancellation; later
+reads reconcile it. Across devices, database serialization decides the current vote.
+
+Deploy the Phase 8 migration before the updated photo-authority function (including
+feed-photos.ts) and app. The function return projection gains only four rating fields.
+No dependencies, authentication, Storage policies, XP or challenge authority change.
+
+The Phase 8 audit also checks the actual nested feed query plan in a disposable
+database: one indexed aggregate under a generic plan with 50,000 unrelated votes.
+The bound applies to selected submissions; work for a heavily rated photo still
+grows with its vote count. See [Phase 8 audit](PHASE8_AUDIT.md).

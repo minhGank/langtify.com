@@ -2,8 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 import { isCefrLevel, type CefrLevel } from '@/features/onboarding/validation';
 import { publicConfig } from '@/lib/env';
 import type { Database } from '@/types/database';
+import {
+  parseRatingSummary,
+  RatingUnavailable,
+  type RatingScore,
+  type RatingSummary,
+} from '@/features/ratings/rating';
 
-export type FeedItem = {
+export type FeedItem = RatingSummary & {
   id: string;
   targetTerm: string;
   referenceTerm: string;
@@ -15,6 +21,7 @@ export type FeedCursor = { time: string; id: string };
 export type FeedPage = { items: FeedItem[]; hasMore: boolean };
 export type FeedPhotos = { items: FeedItem[]; photos: Record<string, string> };
 export type FeedGateway = {
+  rate: (id: string, score: RatingScore, signal?: AbortSignal) => Promise<RatingSummary>;
   load: (cursor: FeedCursor | null, signal?: AbortSignal) => Promise<FeedPage>;
   previews: (ids: string[], signal?: AbortSignal) => Promise<FeedPhotos>;
 };
@@ -42,6 +49,7 @@ function payload(value: unknown, identity: FeedIdentity) {
     if (!isCefrLevel(level) || !Number.isFinite(Date.parse(submittedAt)))
       throw new Error('Invalid feed response.');
     return {
+      ...parseRatingSummary(r),
       id: text(r.id),
       targetTerm: text(r.target_term),
       referenceTerm: text(r.reference_term),
@@ -85,6 +93,19 @@ export function parseFeedPhotos(
   }
   return { items, photos };
 }
+export function parseRatingReceipt(
+  value: unknown,
+  identity: FeedIdentity,
+  id: string,
+): RatingSummary {
+  const row = record(value);
+  if (row.viewer_id !== identity.userId) throw new Error('Rating account changed.');
+  if (row.target_language_id !== identity.targetLanguageId)
+    throw new FeedSettingsChanged('Your learning settings changed. Reload your account.');
+  const item = record(row.item);
+  if (item.id !== id) throw new Error('Rating submission changed.');
+  return parseRatingSummary(item);
+}
 export function feedGateway(identity: FeedIdentity): FeedGateway {
   const config = publicConfig.config;
   if (!config) throw new Error('Supabase configuration is missing.');
@@ -93,6 +114,14 @@ export function feedGateway(identity: FeedIdentity): FeedGateway {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
   return {
+    async rate(id, score, signal) {
+      const request = client.rpc('rate_submission', { submission_id: id, score });
+      if (signal) request.abortSignal(signal);
+      const { data, error } = await request;
+      if (error?.code === '42501') throw new RatingUnavailable('Photo is unavailable for rating.');
+      if (error) throw error;
+      return parseRatingReceipt(data, identity, id);
+    },
     async load(cursor, signal) {
       const request = client.rpc('get_discover_feed', {
         before_time: cursor?.time,

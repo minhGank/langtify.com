@@ -33,7 +33,7 @@ create temporary table pages as select public.get_discover_feed(page_size=>1) pa
 select is((select payload->'items'->0->>'id' from pages),(select id::text from photos order by id desc limit 1),'Timestamp ties use descending UUID');
 select is((select payload->>'has_more' from pages),'true','Lookahead indicates more');
 select is((select public.get_discover_feed((payload->'items'->0->>'submitted_at')::timestamptz,(payload->'items'->0->>'id')::uuid,1)->'items'->0->>'id' from pages),(select id::text from photos order by id desc offset 1 limit 1),'Strict keyset has no duplicate under ties');
-select is((select array_agg(key order by key) from jsonb_object_keys(public.get_discover_feed()->'items'->0) key),array['cefr_level','id','reference_term','submitted_at','target_term','username'],'Public projection contains only display fields');
+select is((select array_agg(key order by key) from jsonb_object_keys(public.get_discover_feed()->'items'->0) key),array['average_rating','can_rate','cefr_level','id','rating_count','reference_term','submitted_at','target_term','username','viewer_rating'],'Public projection contains only display fields');
 update public.vocabulary_terms set term='Changed catalog',is_active=false where id=(select vocabulary_term_id from public.submissions where id=(select id from photos where n=1));
 select isnt(public.get_discover_feed()->'items'->0->>'target_term','Changed catalog','Feed uses historical text');
 select set_config('request.jwt.claim.sub','77000000-0000-4000-8000-000000000002',true);

@@ -267,6 +267,70 @@ try {
         'PASS: Phase 7 audit replay preserves public feed payloads, private photos and every XP event',
       );
     }
+    if (file === '20260916000000_phase8_ratings.sql') {
+      const rater = randomUUID();
+      const ledger = await execute(
+        `select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e;`,
+        database,
+      );
+      await execute(
+        `insert into auth.users(id,email) values('${rater}','ratings-bootstrap@example.test');
+        select set_config('request.jwt.claim.sub','${rater}',false);
+        select public.complete_onboarding('rating_bootstrap','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','B1','UTC');
+        select public.rate_submission((select id from public.submissions where visibility='public' and status='completed' limit 1),4);`,
+        database,
+      );
+      const snapshot = `select set_config('request.jwt.claim.sub','${rater}',false);
+        select jsonb_build_object('feed',public.get_discover_feed(),'ratings',(select jsonb_agg(to_jsonb(r) order by submission_id,rater_user_id) from public.submission_ratings r));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      assert.equal(
+        await execute(
+          `select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e;`,
+          database,
+        ),
+        ledger,
+      );
+      console.log(
+        'PASS: Phase 8 bootstrap and nonempty replay preserve current votes, feed summaries and every XP event',
+      );
+      // Planner-only volume fixture in this disposable database. Deliberately
+      // unrelated keys avoid provisioning 50,000 Auth accounts; all synthetic
+      // rows and disabled-trigger settings roll back before lifecycle tests.
+      const plan = await query(
+        `begin;
+        set local session_replication_role=replica;
+        insert into public.submission_ratings(submission_id,rater_user_id,score)
+          select gen_random_uuid(),gen_random_uuid(),3 from generate_series(1,50000);
+        set local session_replication_role=origin;
+        analyze public.submission_ratings;
+        load 'auto_explain';
+        set local auto_explain.log_min_duration=0;
+        set local auto_explain.log_nested_statements=on;
+        set local auto_explain.log_analyze=on;
+        set local auto_explain.log_timing=off;
+        set local client_min_messages=log;
+        set local plan_cache_mode=force_generic_plan;
+        select set_config('request.jwt.claim.sub','${rater}',true);
+        select public.get_discover_feed(page_size=>1);
+        rollback;`,
+        database,
+        'supabase_admin',
+      ).result;
+      assert.equal(plan.code, 0, plan.error);
+      assert.match(
+        plan.error,
+        /(?:Index Scan|Bitmap Index Scan) (?:on|using) submission_ratings_pkey/,
+      );
+      assert.match(plan.error, /Index Cond: \(submission_id = ANY/);
+      assert.doesNotMatch(plan.error, /Seq Scan on submission_ratings/);
+      assert.equal((plan.error.match(/Query Text: with totals as/g) ?? []).length, 1);
+      assert.equal(await execute(snapshot, database), before);
+      console.log(
+        'PASS: real feed RPC uses one indexed bounded rating aggregate among 50,000 unrelated votes under a generic plan',
+      );
+    }
     if (file === '20260913000000_phase5_progress.sql') {
       assert.equal(await execute(`select sum(amount) from public.xp_events;`, database), '40');
       assert.equal(

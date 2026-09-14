@@ -9,6 +9,7 @@ authoritative submissions, owner visibility controls and recoverable deletion.
 Today shows Take Photo/Replace before completion and Completed/View Photo afterward.
 Discover shows eligible public vocabulary photos. Phase 5 adds progress, streaks, reversible XP and levels;
 Phase 5.5 adds Google OAuth; Phase 6 adds My Vocabulary with personal concept history.
+Phase 8 adds authoritative semantic ratings to Phase 7's public Discover feed.
 
 ## Run the app
 
@@ -527,9 +528,30 @@ creates and removes only its own fixtures and takes over a minute.
 See [Phase 7 verification](docs/PHASE7_VERIFICATION.md) for checks and phone acceptance.
 
 **Do not launch publicly until moderation/safety functionality, including blocking
-and reporting, is complete.** Ratings and all Phase 8 work remain out of scope.
+and reporting, is complete.** Phase 8 ratings are described below.
 
 Phase 7 has been audited; see [Phase 7 audit](docs/PHASE7_AUDIT.md). Deploy the
 additive `20260915010000_phase7_audit_pagination.sql` migration and the matching
 `photo-authority` function (including `feed-photos.ts`) for the audit corrections.
 Public production launch remains gated on moderation/safety and device acceptance.
+
+## Phase 8 — Semantic Photo Ratings
+
+Discover now asks how well each public photo represents its assigned vocabulary:
+1 Not related, 2 Poor match, 3 Understandable, 4 Clear match, 5 Perfect match.
+Onboarded nonowners may submit/change one score. Server-only writes enforce current
+eligibility, and bounded queries provide average/count/current-viewer selection.
+Owners see aggregates only. No ratings change XP, streaks, completion or feed order.
+
+Apply `20260916000000_phase8_ratings.sql` before deploying the updated photo-authority
+function and app. Regenerate database types when changing schema. Run
+`npm run db:test:ratings` for real local Auth/Storage/concurrency checks, alongside
+existing regressions. See [Phase 8 verification](docs/PHASE8_VERIFICATION.md) for
+results, exact lifecycle semantics, remaining deployment work and phone acceptance.
+No hosted deployment was performed. Public launch still requires moderation/safety,
+including blocking and reporting; those and all Phase 9 work remain unimplemented.
+
+Phase 8 has been audited; see [Phase 8 audit](docs/PHASE8_AUDIT.md). Rating requests
+now have bounded recovery when a transport stalls. No additional migration or
+server deployment is required for the audit fix. Run shared-database integration
+and pgTAP suites sequentially to avoid overlapping their fixtures.

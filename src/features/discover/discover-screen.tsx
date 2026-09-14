@@ -12,6 +12,8 @@ import {
   type FeedItem,
 } from '@/services/discover';
 import { useDiscover } from './use-discover';
+import { SemanticRating } from '@/features/ratings/semantic-rating';
+import type { RatingScore, RatingAction } from '@/features/ratings/rating';
 
 export function DiscoverScreen() {
   const { status, session, account, reload } = useAuth();
@@ -36,6 +38,10 @@ function DiscoverContent({
   const { colors } = useAppTheme();
   const gateway = useMemo(
     () => ({
+      rate: (id: string, score: RatingScore, signal?: AbortSignal) =>
+        Promise.resolve().then(() =>
+          feedGateway({ userId, token, targetLanguageId }).rate(id, score, signal),
+        ),
       load: (cursor: FeedCursor | null, signal?: AbortSignal) =>
         Promise.resolve().then(() =>
           feedGateway({ userId, token, targetLanguageId }).load(cursor, signal),
@@ -80,6 +86,9 @@ function DiscoverContent({
           <FeedCard
             key={`${item.id}:${state.photoRevision}`}
             item={item}
+            ratingAction={state.ratingAction?.id === item.id ? state.ratingAction : null}
+            ratingDisabled={state.ratingAction?.status === 'saving'}
+            rate={(score) => void state.rate(item.id, score)}
             uri={state.photos[item.id]}
             reload={() => void state.renew()}
           />
@@ -109,7 +118,21 @@ function DiscoverContent({
     </SafeAreaView>
   );
 }
-function FeedCard({ item, uri, reload }: { item: FeedItem; uri?: string; reload: () => void }) {
+function FeedCard({
+  item,
+  uri,
+  reload,
+  rate,
+  ratingAction,
+  ratingDisabled,
+}: {
+  item: FeedItem;
+  uri?: string;
+  reload: () => void;
+  rate: (score: RatingScore) => void;
+  ratingAction: RatingAction | null;
+  ratingDisabled: boolean;
+}) {
   const { colors } = useAppTheme();
   const [loaded, setLoaded] = useState(false),
     [failed, setFailed] = useState(false);
@@ -138,6 +161,13 @@ function FeedCard({ item, uri, reload }: { item: FeedItem; uri?: string; reload:
       </AppText>
       <AppText>@{item.username}</AppText>
       <AppText>{new Date(item.submittedAt).toLocaleString()}</AppText>
+      <SemanticRating
+        word={item.targetTerm}
+        summary={item}
+        action={ratingAction}
+        disabled={ratingDisabled}
+        onRate={rate}
+      />
     </View>
   );
 }

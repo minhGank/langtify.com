@@ -14,6 +14,10 @@ export function projectFeedPhotos(targets: Target[], signed: SignedPhoto[]) {
     const uri = new URL(photo.signedUrl);
     return {
       id: row.id,
+      average_rating: row.average_rating,
+      rating_count: row.rating_count,
+      viewer_rating: row.viewer_rating,
+      can_rate: row.can_rate,
       target_term: row.target_term,
       reference_term: row.reference_term,
       cefr_level: row.cefr_level,

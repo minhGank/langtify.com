@@ -2,7 +2,9 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 
-export function query(sql, database = 'postgres') {
+// The optional database user is for privileged instrumentation in disposable
+// local fixtures; normal regression queries retain the postgres role.
+export function query(sql, database = 'postgres', databaseUser = 'postgres') {
   let signalReady;
   const ready = new Promise((resolve) => {
     signalReady = resolve;
@@ -14,7 +16,7 @@ export function query(sql, database = 'postgres') {
       'supabase_db_langtify',
       'psql',
       '-U',
-      'postgres',
+      databaseUser,
       '-d',
       database,
       '-At',

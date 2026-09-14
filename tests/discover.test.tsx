@@ -13,10 +13,12 @@ import {
   type FeedPhotos,
 } from '@/services/discover';
 import { makeAccount, makeSession } from './fixtures';
+import { RatingUnavailable, type RatingScore, type RatingSummary } from '@/features/ratings/rating';
 let mockSession = makeSession(),
   mockAccount = makeAccount(),
   mockStatus = 'ready';
 let mockFocused = true;
+const mockRate = jest.fn();
 const mockLoad = jest.fn(),
   mockPreviews = jest.fn(),
   mockReload = jest.fn();
@@ -30,7 +32,7 @@ jest.mock('@/features/auth/auth-provider', () => ({
 }));
 jest.mock('@/services/discover', () => ({
   ...jest.requireActual('@/services/discover'),
-  feedGateway: () => ({ load: mockLoad, previews: mockPreviews }),
+  feedGateway: () => ({ load: mockLoad, previews: mockPreviews, rate: mockRate }),
 }));
 jest.mock('expo-router', () => ({
   useFocusEffect: (callback: () => () => void) => {
@@ -40,6 +42,10 @@ jest.mock('expo-router', () => ({
   },
 }));
 const item: FeedItem = {
+  averageRating: null,
+  ratingCount: 0,
+  viewerRating: null,
+  canRate: true,
   id: '77000000-0000-4000-8000-000000000001',
   targetTerm: 'le chien',
   referenceTerm: 'dog',
@@ -48,12 +54,18 @@ const item: FeedItem = {
   submittedAt: '2026-09-13T12:00:00.123456Z',
 };
 const page: FeedPage = { items: [item], hasMore: false };
-const gateway: FeedGateway = { load: mockLoad, previews: mockPreviews };
+const gateway: FeedGateway = { load: mockLoad, previews: mockPreviews, rate: mockRate };
 let catalog: FeedItem[] = [];
 beforeEach(() => {
   jest.clearAllMocks();
   mockLoad.mockReset();
   mockPreviews.mockReset();
+  mockRate.mockReset();
+  mockRate.mockImplementation(async (id: string, score: RatingScore) => {
+    const summary = rated(score);
+    catalog = catalog.map((row) => (row.id === id ? { ...row, ...summary } : row));
+    return summary;
+  });
   Object.defineProperty(AppState, 'currentState', {
     configurable: true,
     writable: true,
@@ -251,6 +263,10 @@ it('rejects wrong account/target, duplicate or malformed rows, arbitrary origins
     cefr_level: 'A1',
     username: 'learner',
     submitted_at: item.submittedAt,
+    average_rating: null,
+    rating_count: 0,
+    viewer_rating: null,
+    can_rate: true,
   };
   const payload = { viewer_id: 'viewer', target_language_id: 'fr', items: [row], has_more: false };
   expect(parseFeedPage(payload, identity).items[0].submittedAt).toBe(item.submittedAt);
@@ -377,4 +393,237 @@ it('keeps its cursor when renewal removes the entire window instead of replaying
     { time: item.submittedAt, id: item.id },
     expect.any(AbortSignal),
   );
+});
+
+function rated(score: RatingScore): RatingSummary {
+  return { averageRating: score, ratingCount: 1, viewerRating: score, canRate: true };
+}
+it('explains semantic scores, marks submitting intent, blocks repeated taps and installs authoritative updates', async () => {
+  let finish: (value: RatingSummary) => void = () => {};
+  mockRate.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  render(<DiscoverScreen />);
+  await screen.findByText('How well does this photo represent “le chien”?');
+  fireEvent.press(screen.getByLabelText('5 — Perfect match for le chien'));
+  await screen.findByText('Saving rating: 5…');
+  expect(screen.getByLabelText('3 — Understandable for le chien')).toBeDisabled();
+  expect(screen.getByText('No semantic ratings yet')).toBeVisible();
+  fireEvent.press(screen.getByLabelText('3 — Understandable for le chien'));
+  expect(mockRate).toHaveBeenCalledTimes(1);
+  await act(async () => finish(rated(5)));
+  expect(screen.getByText('Your rating: 5 — Perfect match')).toBeVisible();
+  expect(screen.getByText('Semantic match: 5.0 / 5 · 1 rating')).toBeVisible();
+  fireEvent.press(screen.getByLabelText('3 — Understandable for le chien'));
+  expect(await screen.findByText('Your rating: 3 — Understandable')).toBeVisible();
+});
+it('shows owners their aggregate without allowing a self-rating', async () => {
+  catalog = [{ ...item, canRate: false, averageRating: 4, ratingCount: 3 }];
+  mockLoad.mockResolvedValue({ items: catalog, hasMore: false });
+  render(<DiscoverScreen />);
+  expect(await screen.findByText('Your photo — you cannot rate it.')).toBeVisible();
+  expect(screen.getByText('Semantic match: 4.0 / 5 · 3 ratings')).toBeVisible();
+  expect(screen.queryByLabelText('5 — Perfect match for le chien')).toBeNull();
+  const { result } = renderHook(() => useDiscover(gateway));
+  await waitFor(() => expect(result.current.loading).toBe(false));
+  await act(async () => {
+    await result.current.rate(item.id, 5);
+  });
+  expect(mockRate).not.toHaveBeenCalled();
+});
+it('supersedes an older renewal response when a vote is saved', async () => {
+  const { result } = renderHook(() => useDiscover(gateway));
+  await waitFor(() => expect(result.current.loading).toBe(false));
+  let finish: (value: FeedPhotos) => void = () => {};
+  mockPreviews.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  act(() => {
+    void result.current.renew();
+  });
+  const signal: AbortSignal = mockPreviews.mock.calls.at(-1)?.[1];
+  await act(async () => {
+    await result.current.rate(item.id, 5);
+  });
+  expect(signal.aborted).toBe(true);
+  await act(async () => finish({ items: [item], photos: { [item.id]: 'old' } }));
+  expect(result.current.items[0].viewerRating).toBe(5);
+  expect(result.current.photos[item.id]).not.toBe('old');
+});
+it('queues explicit refresh behind a mutation and never automatically replays an uncertain committed vote', async () => {
+  const { result } = renderHook(() => useDiscover(gateway));
+  await waitFor(() => expect(result.current.loading).toBe(false));
+  let finish: (value: RatingSummary) => void = () => {};
+  mockRate.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  act(() => {
+    void result.current.rate(item.id, 5);
+    void result.current.refresh();
+  });
+  expect(mockLoad).toHaveBeenCalledTimes(1);
+  catalog = [{ ...item, ...rated(5) }];
+  mockLoad.mockResolvedValue({ items: catalog, hasMore: false });
+  await act(async () => finish(rated(5)));
+  await waitFor(() => expect(result.current.loading).toBe(false));
+  expect(mockLoad).toHaveBeenCalledTimes(2);
+  mockRate.mockImplementationOnce(async () => {
+    catalog = [{ ...item, ...rated(3) }];
+    throw new Error('response lost');
+  });
+  await act(async () => {
+    await result.current.rate(item.id, 3);
+  });
+  await waitFor(() => expect(result.current.items[0].viewerRating).toBe(3));
+  expect(result.current.ratingAction).toBeNull();
+  expect(mockRate).toHaveBeenCalledTimes(2);
+});
+it('offers explicit retry for an unconfirmed vote and hides unavailable photos', async () => {
+  mockRate.mockRejectedValueOnce(new Error('offline'));
+  render(<DiscoverScreen />);
+  await screen.findByText('le chien');
+  fireEvent.press(screen.getByLabelText('4 — Clear match for le chien'));
+  fireEvent.press(await screen.findByText('Retry rating'));
+  expect(await screen.findByText('Your rating: 4 — Clear match')).toBeVisible();
+  mockRate.mockRejectedValueOnce(new RatingUnavailable());
+  fireEvent.press(screen.getByLabelText('5 — Perfect match for le chien'));
+  expect(
+    await screen.findByText('This photo or your learning settings changed. Refresh Discover.'),
+  ).toBeVisible();
+  expect(screen.queryByText('le chien')).toBeNull();
+});
+it.each(['account', 'target', 'signout'])(
+  'drops pending rating results after %s changes',
+  async (change) => {
+    let finish: (value: RatingSummary) => void = () => {};
+    mockRate.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+    );
+    const { rerender } = render(<DiscoverScreen />);
+    await screen.findByText('le chien');
+    fireEvent.press(screen.getByLabelText('5 — Perfect match for le chien'));
+    await waitFor(() => expect(mockRate).toHaveBeenCalled());
+    const signal: AbortSignal = mockRate.mock.calls[0][2];
+    if (change === 'account') {
+      mockSession = makeSession('different');
+      mockAccount = makeAccount('different');
+    }
+    if (change === 'target' && mockAccount.learning)
+      mockAccount = {
+        ...mockAccount,
+        learning: { ...mockAccount.learning, target_language_id: 'de' },
+      };
+    if (change === 'signout') mockStatus = 'signed-out';
+    mockLoad.mockResolvedValue({ items: [], hasMore: false });
+    rerender(<DiscoverScreen />);
+    await act(async () => finish(rated(5)));
+    expect(signal.aborted).toBe(true);
+    expect(screen.queryByText(/Your rating:/)).toBeNull();
+  },
+);
+it('keeps photo expiry independent of stalled vote recovery and discards a backgrounded mutation', async () => {
+  jest.useFakeTimers();
+  const listeners = jest.spyOn(AppState, 'addEventListener');
+  const { result } = renderHook(() => useDiscover(gateway));
+  await act(async () => {});
+  let finish: (value: RatingSummary) => void = () => {};
+  mockRate.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  act(() => {
+    void result.current.rate(item.id, 5);
+  });
+  const signal: AbortSignal = mockRate.mock.calls[0][2];
+  mockPreviews.mockReturnValueOnce(new Promise(() => {}));
+  await act(async () => {
+    jest.advanceTimersByTime(60000);
+  });
+  expect(result.current.photos).toEqual({});
+  act(() => listeners.mock.calls.at(-1)?.[1]('background'));
+  expect(signal.aborted).toBe(true);
+  expect(result.current.ratingAction).toBeNull();
+  await act(async () => finish(rated(5)));
+  expect(result.current.items).toEqual([]);
+  await act(async () => listeners.mock.calls.at(-1)?.[1]('active'));
+  expect(result.current.items[0].viewerRating).toBeNull();
+});
+
+it('times out a stalled vote, releases queued refresh and ignores its late response after a newer vote', async () => {
+  jest.useFakeTimers();
+  const { result } = renderHook(() => useDiscover(gateway));
+  await act(async () => {});
+  let finish: (value: RatingSummary) => void = () => {};
+  mockRate.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  act(() => {
+    void result.current.rate(item.id, 1);
+    void result.current.refresh();
+  });
+  const signal: AbortSignal = mockRate.mock.calls[0][2];
+  await act(async () => {
+    jest.advanceTimersByTime(20000);
+  });
+  expect(signal.aborted).toBe(true);
+  expect(result.current.ratingAction?.status).not.toBe('saving');
+  expect(mockLoad).toHaveBeenCalledTimes(2);
+  expect(mockRate).toHaveBeenCalledTimes(1);
+  await act(async () => {
+    await result.current.rate(item.id, 5);
+  });
+  await act(async () => finish(rated(1)));
+  expect(result.current.items[0].viewerRating).toBe(5);
+  expect(result.current.ratingAction).toBeNull();
+});
+
+it('reconciles a timed-out committed vote without replaying it', async () => {
+  jest.useFakeTimers();
+  const { result } = renderHook(() => useDiscover(gateway));
+  await act(async () => {});
+  mockRate.mockImplementationOnce(() => {
+    catalog = [{ ...item, ...rated(4) }];
+    return new Promise(() => {});
+  });
+  act(() => {
+    void result.current.rate(item.id, 4);
+  });
+  await act(async () => {
+    jest.advanceTimersByTime(20000);
+  });
+  expect(result.current.items[0].viewerRating).toBe(4);
+  expect(result.current.ratingAction).toBeNull();
+  expect(mockRate).toHaveBeenCalledTimes(1);
+});
+
+it('keeps the new account own score on the same public photo after an old mutation settles', async () => {
+  let finish: (value: RatingSummary) => void = () => {};
+  mockRate.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  const { rerender } = render(<DiscoverScreen />);
+  await screen.findByText('le chien');
+  fireEvent.press(screen.getByLabelText('5 — Perfect match for le chien'));
+  await waitFor(() => expect(mockRate).toHaveBeenCalledTimes(1));
+  mockSession = makeSession('different');
+  mockAccount = makeAccount('different');
+  catalog = [{ ...item, ...rated(2) }];
+  rerender(<DiscoverScreen />);
+  await screen.findByText('Your rating: 2 — Poor match');
+  await act(async () => finish(rated(5)));
+  expect(screen.getByText('Your rating: 2 — Poor match')).toBeVisible();
+  expect(screen.queryByText('Your rating: 5 — Perfect match')).toBeNull();
 });

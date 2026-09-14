@@ -1,4 +1,4 @@
-# Phase 7 data model
+# Phase 8 data model
 
 Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
 Phase 4 adds submissions and private photo storage. Email stays in Auth.
@@ -322,3 +322,43 @@ an indexable `(submitted_at,id)` upper bound, using an internal infinity/max-UUI
 sentinel for the initial page. External cursor validation and the exact public
 projection are unchanged. The old migration remains intact. Replay tests preserve
 feed results, submissions and the complete XP ledger over nonempty data.
+
+## Phase 8 semantic ratings
+
+`20260916000000_phase8_ratings.sql` adds `submission_ratings` with composite primary
+key `(submission_id,rater_user_id)`, score SMALLINT CHECK 1–5, created/updated server
+timestamps and FKs cascading on hard submission/Auth-rater deletion. A rater index
+supports account cleanup. RLS is enabled with no ordinary table privileges or read
+policies; clients receive only controlled public summaries and their own score.
+
+`private.prepare_submission_rating` prevents key transfer and self-rating, locks the
+submission row and verifies current shared Discover eligibility for the rater's
+saved target. Same-score upserts preserve timestamps. Owner identity comes from the
+existing immutable submission ownership relationship. Missing/invalid references,
+invalid scores and duplicate rows are rejected by database constraints or triggers.
+
+Authenticated `rate_submission(uuid,numeric)` accepts only submission and score.
+It rejects null, fractional, nonfinite and out-of-range scores before casting to
+SMALLINT, derives `auth.uid()`, and atomically upserts the current vote. Response:
+`{viewer_id,target_language_id,item:{id,average_rating,rating_count,viewer_rating,can_rate}}`.
+All helpers have fixed empty search paths and revoked ordinary execution privileges.
+The public mutation grants only authenticated execution.
+
+`private.discover_rating_stats` groups ratings for at most 24 submission IDs. The
+feed invokes it after page selection, and service-only signing after eligibility
+selection. Average is null at zero votes; count is zero; viewer score is null when
+absent. `can_rate` conveys owner exclusion without returning an owner UUID. Raw
+individual votes and rater identities never enter the public projection. There are
+no mutable aggregate columns to forge or counters to repair after FK cascades.
+
+Votes remain durable through private visibility and soft submission retirement,
+with no public exposure during either state. Republish restores them. Permanent
+submission/owner or rater deletion cascades applicable rows; summaries derive from
+the surviving set. New submission IDs do not inherit votes. No XP/history backfill
+occurs. Transactional migration replay preserves existing votes, summaries and XP.
+
+Phase 8 audit: no schema changes were required. Expanded database tests cover
+pending/unknown IDs, nonfinite input, invalid raters and mismatched object versions;
+integration tests cover stale transaction rejection after visibility changes and
+unchanged feed order. The existing primary key supports the bounded aggregate
+under the tested generic plan without scanning unrelated ratings.

@@ -1,4 +1,4 @@
-import { feedGateway } from '@/services/discover';
+import { feedGateway, parseRatingReceipt } from '@/services/discover';
 const mockRpc = jest.fn(),
   mockInvoke = jest.fn(),
   mockAbort = jest.fn(),
@@ -43,4 +43,34 @@ it('pins the viewer JWT, uses bounded cursor RPC and one batch invocation, and p
   });
   await gateway.previews([], signal);
   expect(mockInvoke).toHaveBeenCalledTimes(1);
+});
+
+it('sends only the submission and semantic score; validates receipt identity and summary', async () => {
+  const identity = { userId: 'viewer', targetLanguageId: 'target', token: 'fixed-token' };
+  const item = {
+    id: 'photo',
+    average_rating: 4,
+    rating_count: 2,
+    viewer_rating: 5,
+    can_rate: true,
+  };
+  const payload = { viewer_id: 'viewer', target_language_id: 'target', item };
+  mockRpc.mockReturnValue(
+    Object.assign(Promise.resolve({ data: payload, error: null }), { abortSignal: mockAbort }),
+  );
+  const signal = new AbortController().signal;
+  expect((await feedGateway(identity).rate('photo', 5, signal)).viewerRating).toBe(5);
+  expect(mockRpc).toHaveBeenLastCalledWith('rate_submission', { submission_id: 'photo', score: 5 });
+  expect(mockAbort).toHaveBeenLastCalledWith(signal);
+  for (const changed of [
+    { viewer_id: 'other' },
+    { target_language_id: 'other' },
+    { item: { ...item, id: 'other' } },
+    { item: { ...item, rating_count: -1 } },
+    { item: { ...item, average_rating: 6 } },
+    { item: { ...item, viewer_rating: 2.5 } },
+    { item: { ...item, can_rate: false } },
+  ]) {
+    expect(() => parseRatingReceipt({ ...payload, ...changed }, identity, 'photo')).toThrow();
+  }
 });

@@ -83,7 +83,8 @@
     "build:android:dev": "expo run:android --device",
     "test:auth:integration": "node --experimental-strip-types scripts/test-auth-sessions-integration.mjs",
     "db:test:vocabulary": "node --experimental-strip-types scripts/test-vocabulary-integration.mjs",
-    "db:test:discover": "node --experimental-strip-types scripts/test-discover-integration.mjs"
+    "db:test:discover": "node --experimental-strip-types scripts/test-discover-integration.mjs",
+    "db:test:ratings": "node --experimental-strip-types scripts/test-ratings-integration.mjs"
   },
   "private": true,
   "engines": {

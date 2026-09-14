@@ -91,6 +91,10 @@ function publicFields(row, signed = false) {
       'cefr_level',
       'username',
       'submitted_at',
+      'average_rating',
+      'rating_count',
+      'viewer_rating',
+      'can_rate',
       ...(signed ? ['signed_path'] : []),
     ].sort(),
   );

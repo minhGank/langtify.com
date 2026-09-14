@@ -217,6 +217,38 @@ export type Database = {
         };
         Relationships: [];
       };
+      submission_ratings: {
+        Row: {
+          created_at: string;
+          rater_user_id: string;
+          score: number;
+          submission_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          rater_user_id: string;
+          score: number;
+          submission_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          rater_user_id?: string;
+          score?: number;
+          submission_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'submission_ratings_submission_id_fkey';
+            columns: ['submission_id'];
+            isOneToOne: false;
+            referencedRelation: 'submissions';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       submissions: {
         Row: {
           concept_id: string;
@@ -625,13 +657,17 @@ export type Database = {
           viewer: string;
         };
         Returns: {
+          average_rating: number;
+          can_rate: boolean;
           cefr_level: string;
           id: string;
+          rating_count: number;
           reference_term: string;
           storage_path: string;
           submitted_at: string;
           target_term: string;
           username: string;
+          viewer_rating: number;
         }[];
       };
       get_my_progress: { Args: { challenge_id?: string }; Returns: Json };
@@ -650,6 +686,10 @@ export type Database = {
       get_submission_xp: { Args: { submission_id: string }; Returns: Json };
       photo_verification_target: {
         Args: { expected_user_id: string; submission_id: string };
+        Returns: Json;
+      };
+      rate_submission: {
+        Args: { score: number; submission_id: string };
         Returns: Json;
       };
       replace_daily_challenge_word: {

@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { RatingUnavailable, type RatingAction, type RatingScore } from '@/features/ratings/rating';
 import {
   FeedSettingsChanged,
   type FeedCursor,
@@ -8,10 +9,14 @@ import {
   type FeedItem,
 } from '@/services/discover';
 
+type ReadMode = 'initial' | 'more' | 'renew';
 type Window = { items: FeedItem[]; cursor: FeedCursor | null; hasMore: boolean };
 const empty = (): Window => ({ items: [], cursor: null, hasMore: false });
 // Two pages remain in memory; signing and revalidation are always a single batch.
 export function useDiscover(gateway: FeedGateway) {
+  const [ratingAction, setRatingAction] = useState<RatingAction | null>(null);
+  const writing = useRef(false),
+    queuedRead = useRef<ReadMode | null>(null);
   const [data, setData] = useState<Window>(empty),
     [photos, setPhotos] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true),
@@ -31,18 +36,23 @@ export function useDiscover(gateway: FeedGateway) {
     setPhotos({});
   }, []);
   const clear = useCallback(() => {
+    setRatingAction(null);
     current.current = empty();
     setData(empty());
     clearPhotos();
   }, [clearPhotos]);
   const read = useCallback(
-    async (mode: 'initial' | 'more' | 'renew') => {
+    async (mode: ReadMode) => {
       if (
         !visible.current ||
         activeGateway.current !== gateway ||
         (mode !== 'initial' && pending.current)
       )
         return;
+      if (writing.current) {
+        queuedRead.current = mode === 'initial' ? mode : (queuedRead.current ?? mode);
+        return;
+      }
       const request = ++generation.current;
       abort.current?.abort();
       const controller = new AbortController();
@@ -81,6 +91,14 @@ export function useDiscover(gateway: FeedGateway) {
         // Revalidation drops newly private/deleting/unavailable items and updates usernames.
         current.current = { ...next, items: approved.items };
         setData(current.current);
+        setRatingAction((previous) =>
+          previous?.status === 'error' &&
+          approved.items.some(
+            (item) => item.id === previous.id && item.viewerRating === previous.score,
+          )
+            ? null
+            : previous,
+        );
         clearPhotos();
         setPhotos(approved.photos);
         setPhotoRevision((n) => n + 1);
@@ -109,6 +127,69 @@ export function useDiscover(gateway: FeedGateway) {
     },
     [gateway, clear, clearPhotos],
   );
+  const rate = useCallback(
+    async (id: string, score: RatingScore) => {
+      if (
+        !visible.current ||
+        activeGateway.current !== gateway ||
+        writing.current ||
+        !current.current.items.some((item) => item.id === id && item.canRate)
+      )
+        return;
+      const request = ++generation.current;
+      abort.current?.abort();
+      const controller = new AbortController();
+      abort.current = controller;
+      pending.current = false;
+      writing.current = true;
+      setLoading(false);
+      setRatingAction({ id, score, status: 'saving' });
+      // Cancellation must settle even if a transport ignores AbortSignal. A
+      // timeout is an uncertain result, so reconcile instead of replaying intent.
+      let rejectCancelled: () => void = () => {};
+      const cancelled = new Promise<never>((_, reject) => {
+        rejectCancelled = () => reject(new Error('Rating request cancelled.'));
+      });
+      controller.signal.addEventListener('abort', rejectCancelled, { once: true });
+      const deadline = setTimeout(() => controller.abort(), 20000);
+      try {
+        const summary = await Promise.race([gateway.rate(id, score, controller.signal), cancelled]);
+        if (request !== generation.current) return;
+        current.current = {
+          ...current.current,
+          items: current.current.items.map((item) =>
+            item.id === id ? { ...item, ...summary } : item,
+          ),
+        };
+        setData(current.current);
+        setRatingAction(null);
+      } catch (cause) {
+        if (request !== generation.current) return;
+        if (cause instanceof RatingUnavailable || cause instanceof FeedSettingsChanged) {
+          clear();
+          setError('This photo or your learning settings changed. Refresh Discover.');
+          setSettingsChanged(cause instanceof FeedSettingsChanged);
+          queuedRead.current = null;
+        } else {
+          setRatingAction({ id, score, status: 'error' });
+          // An uncertain response can follow a committed vote. Re-read; never
+          // automatically replay an old intent over a newer device's vote.
+          queuedRead.current ??= 'renew';
+        }
+      } finally {
+        clearTimeout(deadline);
+        controller.signal.removeEventListener('abort', rejectCancelled);
+        if (request === generation.current) {
+          writing.current = false;
+          abort.current = null;
+          const next = queuedRead.current;
+          queuedRead.current = null;
+          if (next) void read(next);
+        }
+      }
+    },
+    [gateway, clear, read],
+  );
   const refresh = useCallback(() => read('initial'), [read]);
   const loadMore = useCallback(() => {
     if (current.current.hasMore) return read('more');
@@ -129,11 +210,13 @@ export function useDiscover(gateway: FeedGateway) {
           abort.current?.abort();
           abort.current = null;
           pending.current = false;
+          writing.current = false;
+          queuedRead.current = null;
           clear();
         }
       });
       const timer = setInterval(() => {
-        if (focused && visible.current && !pending.current) void renew();
+        if (focused && visible.current && !pending.current && !writing.current) void renew();
       }, 45000);
       return () => {
         focused = false;
@@ -143,6 +226,8 @@ export function useDiscover(gateway: FeedGateway) {
         abort.current?.abort();
         abort.current = null;
         pending.current = false;
+        writing.current = false;
+        queuedRead.current = null;
         clearInterval(timer);
         listener.remove();
         clear();
@@ -150,6 +235,8 @@ export function useDiscover(gateway: FeedGateway) {
     }, [gateway, refresh, renew, clear]),
   );
   return {
+    rate,
+    ratingAction,
     items: data.items,
     hasMore: data.hasMore,
     photos,

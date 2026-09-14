@@ -3,7 +3,7 @@
 Name: **Langtify**. Domain: `langtify.com`. Package and Expo slug: `langtify`.
 Mobile-first Expo / React Native / strict TypeScript; iOS and Android are primary.
 
-## Current scope: Phase 7
+## Current scope: Phase 8
 
 Supabase email/password authentication, persisted sessions, authoritative profiles,
 and onboarding (username, reference language, target language, CEFR level, IANA
@@ -114,16 +114,16 @@ longest streak and lifetime counts of currently valid words/full challenges.
 
 ## Future scope — not implemented
 
-Semantic ratings (1–5), comments, followers, friends, DMs, notifications,
-leaderboards, achievements and subscriptions are not included. Phase 8 has not
+Comments, likes, followers, friends, DMs, notifications,
+leaderboards, achievements and subscriptions are not included. Phase 9 has not
 started. Apple, Facebook, magic-link and other login providers remain out of scope.
 Apple Sign-In is deferred until Apple Developer membership is available.
 
 ## Open questions
 
 Production vocabulary sources/licensing and CEFR/photographability review,
-submission retention and further edits, rating labels, eligibility and aggregation,
-moderation, and release policies remain undecided. The modest vocabulary seed is
+submission retention and further edits, moderation, and release policies remain
+undecided. Phase 8 rating labels, eligibility and aggregation are defined below. The modest vocabulary seed is
 for development only, not a validated production learning catalog.
 
 ## Google authentication — Phase 5.5
@@ -193,6 +193,45 @@ Account/sign-out, learning-target changes, focus loss and backgrounding clear fe
 and signed-photo state. Visible feed photos revalidate periodically and on explicit
 refresh; remote changes appear on the next successful read. This is not realtime.
 
-Ratings, blocking and reporting are later phases. **Public production launch is
+Blocking and reporting are later phases. Semantic ratings are described below. **Public production launch is
 gated on moderation/safety functionality, including blocking and reporting.** This
 phase is suitable for controlled development acceptance, not an unrestricted launch.
+
+## Semantic photo ratings — Phase 8
+
+“How well does this photo represent ‘[word]’?” measures vocabulary representation,
+not photography quality, attractiveness or popularity. The exact scale is:
+
+| Score | Meaning        |
+| ----- | -------------- |
+| 1     | Not related    |
+| 2     | Poor match     |
+| 3     | Understandable |
+| 4     | Clear match    |
+| 5     | Perfect match  |
+
+An authenticated, onboarded learner can rate another user's currently eligible public
+Discover photo in their saved target language. The owner cannot self-rate. Pending,
+private, deleting/deleted, invalid-owner and missing/unverified-image content cannot
+receive new or changed ratings. Device state is never the authority for eligibility.
+
+One current rating exists per submission/viewer. A viewer may change it; same-score
+retries do not add a vote or change its timestamps. Concurrent accepted changes
+serialize at the database; the last serialized accepted score wins. Counts and
+averages are server-derived from current votes. The UI displays averages rounded
+to one decimal, the count and the viewer's own selected score. Owners see aggregates
+but no rating controls. No rater identities/history or public profile page is added.
+
+Public → private retains votes but hides public summaries and rejects new changes.
+Private → public restores retained votes. Deletion intent hides the photo and its
+summary; soft retirement keeps rows for the existing submission history. Permanent
+submission/owner deletion cascades ratings, as does permanent deletion of a rater.
+A new photo submission ID starts unrated. Accepted votes are not retrospectively
+invalidated by a rater's later target-language change or ban; new writes revalidate.
+
+The app marks submitting intent promptly, then installs the server result. Repeated
+taps are serialized; uncertain responses trigger a read before an explicit retry,
+not an automatic replay. Account/target/session/focus changes discard stale UI results.
+Ratings do not award XP or change streaks, word completion, ordering or ranking.
+Comments, likes, social connections, notifications, moderation/reporting/blocking and
+all Phase 9 features remain absent. Public launch still requires moderation/safety.
