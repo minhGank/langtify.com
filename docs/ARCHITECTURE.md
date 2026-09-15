@@ -5,7 +5,7 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 8 boundaries
+## Phase 9 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
 - `src/features/auth/`: session lifecycle, password/Google forms, navigation authority.
@@ -167,7 +167,7 @@ an accessible progress bar need no animation or global-state dependency.
 ## Future boundaries
 
 Comments, likes, followers, friends, DMs, notifications, leaderboards, achievements,
-subscriptions and AI image validation remain out of scope. Phase 9 has not started.
+subscriptions and AI image validation remain out of scope. Phase 10 has not started.
 
 ## Google OAuth and session admission — Phase 5.5
 
@@ -308,7 +308,8 @@ installing data. A 45-second visible renewal uses one batch; a separate conserva
 New batches recreate Image instances and bypass cached responses. Blur/background
 clears rows and URLs; resume refreshes newest. All state is in memory.
 
-Public launch remains blocked until moderation/safety, blocking and reporting exist.
+Public launch requires deployment, device acceptance and operational readiness of
+the Phase 9 moderation, blocking and reporting controls described below.
 Hosted deployment must apply the migration before deploying the matching function
 and app. The private bucket and existing cleanup worker remain unchanged.
 
@@ -368,3 +369,56 @@ The Phase 8 audit also checks the actual nested feed query plan in a disposable
 database: one indexed aggregate under a generic plan with 50,000 unrelated votes.
 The bound applies to selected submissions; work for a heavily rated photo still
 grows with its vote count. See [Phase 8 audit](PHASE8_AUDIT.md).
+
+## Phase 9 safety boundary
+
+Migration `20260917000000_phase9_safety.sql` adds private account revision/restriction,
+moderator-membership and submission-removal tables plus RLS-protected blocks,
+reports and immutable audit events. Ordinary table privileges are revoked; controlled
+security-definer functions derive actors from Auth and use empty search paths.
+Moderator claims from client metadata are never consulted. Operational provisioning
+and revocation are documented in `MODERATION.md`.
+
+Mutating safety operations acquire account revision locks in UUID order. Rating
+admission obtains the same locks before its submission lock. Restrictions and public
+removal serialize with rating/block writes; revision changes reject obsolete
+Repeatable Read transactions. The audited finalize/visibility bodies are moved into
+private functions, with public admission wrappers acquiring account locks before
+existing profile/assignment/submission locks. Wrappers leave private learning and
+completion semantics intact; existing session tokens do not bypass restrictions.
+
+The shared candidate view excludes restricted owners and removed submissions.
+Viewer admission denies restricted callers; feed and signing add indexed mutual
+block checks. No raw profile/submission/Storage RLS is widened. Page fields stay
+minimal, timestamp/UUID cursors stay deterministic and existing grouped ratings
+are retained. Public removal never calls deletion or modifies XP sources.
+
+Reports accept a public submission context and submission/user target kind; the
+owner is resolved server-side without adding owner UUIDs to feed cards. Open-report
+uniqueness prevents duplicate active cases. Moderator mutations use scoped request
+UUIDs and immutable events; reusing an old action ID cannot undo a later restore.
+Queue, block list and audit reads return at most 20 rows plus bounded lookahead.
+Reports/audit identifiers intentionally survive hard account/content deletion.
+
+`photo-authority` adds only `moderation-preview`: verified Auth caller, backend role
+check, existing report context and version-verified completed image. A service-only
+lookup returns the eligible path, and the function fixes a 60-second signature.
+It may review a previously reported photo now private/removed. No caller path,
+viewer override, TTL or arbitrary private photo is accepted. Existing public and
+owner signing paths remain distinct and retain prior authority.
+
+`src/features/safety` implements Discover action dialogs, blocked-user management,
+backend-gated moderator navigation and case review. `src/services/safety` pins the
+captured JWT, validates viewer/target/page/capability responses and rejects already
+cancelled follow-up calls. `useSafetyTask` serializes local work, bounds waits to 20
+seconds and discards obsolete account/focus/background results. No automatic write
+replay. Moderator action retries preserve request UUID and immutable intent. Photo
+expiry uses an independent monotonic deadline; role availability is rechecked while
+the moderator screen is active. Each user/token has a separate component lifetime.
+Queue rows and their cursor clear before changing status/page or refreshing, so an
+uncertain response cannot mix filters. Image-error and expiry callbacks are bound
+to their exact preview instance and cannot clear a newer one. See `PHASE9_AUDIT.md`.
+
+Deploy the migration before the matching function and app. No new dependencies or
+custom backend. Public launch still requires deployment, device/admin acceptance,
+moderator provisioning and operational readiness rather than merely passing exports.

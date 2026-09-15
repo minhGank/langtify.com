@@ -193,6 +193,50 @@ export type Database = {
         };
         Relationships: [];
       };
+      moderation_audit: {
+        Row: {
+          action: string;
+          created_at: string;
+          id: number;
+          moderator_user_id: string;
+          reason: string;
+          report_id: string;
+          request_id: string;
+          target_id: string;
+          target_kind: string;
+        };
+        Insert: {
+          action: string;
+          created_at?: string;
+          id?: never;
+          moderator_user_id: string;
+          reason?: string;
+          report_id: string;
+          request_id: string;
+          target_id: string;
+          target_kind: string;
+        };
+        Update: {
+          action?: string;
+          created_at?: string;
+          id?: never;
+          moderator_user_id?: string;
+          reason?: string;
+          report_id?: string;
+          request_id?: string;
+          target_id?: string;
+          target_kind?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'moderation_audit_report_id_fkey';
+            columns: ['report_id'];
+            isOneToOne: false;
+            referencedRelation: 'safety_reports';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -214,6 +258,51 @@ export type Database = {
           onboarding_completed_at?: string | null;
           updated_at?: string;
           username?: string | null;
+        };
+        Relationships: [];
+      };
+      safety_reports: {
+        Row: {
+          context_submission_id: string;
+          created_at: string;
+          details: string;
+          id: string;
+          reason: string;
+          reporter_user_id: string;
+          status: string;
+          subject_user_id: string;
+          target_id: string;
+          target_kind: string;
+          username_snapshot: string;
+          word_snapshot: string;
+        };
+        Insert: {
+          context_submission_id: string;
+          created_at?: string;
+          details?: string;
+          id?: string;
+          reason: string;
+          reporter_user_id: string;
+          status?: string;
+          subject_user_id: string;
+          target_id: string;
+          target_kind: string;
+          username_snapshot: string;
+          word_snapshot: string;
+        };
+        Update: {
+          context_submission_id?: string;
+          created_at?: string;
+          details?: string;
+          id?: string;
+          reason?: string;
+          reporter_user_id?: string;
+          status?: string;
+          subject_user_id?: string;
+          target_id?: string;
+          target_kind?: string;
+          username_snapshot?: string;
+          word_snapshot?: string;
         };
         Relationships: [];
       };
@@ -342,6 +431,27 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      user_blocks: {
+        Row: {
+          blocked_user_id: string;
+          blocker_user_id: string;
+          created_at: string;
+          id: string;
+        };
+        Insert: {
+          blocked_user_id: string;
+          blocker_user_id: string;
+          created_at?: string;
+          id?: string;
+        };
+        Update: {
+          blocked_user_id?: string;
+          blocker_user_id?: string;
+          created_at?: string;
+          id?: string;
+        };
+        Relationships: [];
       };
       user_language_profiles: {
         Row: {
@@ -565,6 +675,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      block_submission_user: { Args: { submission_id: string }; Returns: Json };
       can_upload_submission_object: {
         Args: { object_path: string };
         Returns: boolean;
@@ -646,6 +757,7 @@ export type Database = {
         };
       };
       get_assignment_photo: { Args: { assignment_id: string }; Returns: Json };
+      get_blocked_users: { Args: { before_id?: string }; Returns: Json };
       get_discover_feed: {
         Args: { before_id?: string; before_time?: string; page_size?: number };
         Returns: Json;
@@ -670,6 +782,22 @@ export type Database = {
           viewer_rating: number;
         }[];
       };
+      get_moderation_history: {
+        Args: { before_id?: number; report_id: string };
+        Returns: Json;
+      };
+      get_moderation_photo_target: {
+        Args: { report_id: string; viewer: string };
+        Returns: {
+          id: string;
+          storage_path: string;
+        }[];
+      };
+      get_moderation_queue: {
+        Args: { after_id?: string; after_time?: string; report_status?: string };
+        Returns: Json;
+      };
+      get_moderation_report: { Args: { report_id: string }; Returns: Json };
       get_my_progress: { Args: { challenge_id?: string }; Returns: Json };
       get_my_vocabulary: {
         Args: {
@@ -683,7 +811,17 @@ export type Database = {
         Returns: Json;
       };
       get_or_create_today_challenge: { Args: never; Returns: Json };
+      get_safety_access: { Args: never; Returns: Json };
       get_submission_xp: { Args: { submission_id: string }; Returns: Json };
+      moderate_report: {
+        Args: {
+          action: string;
+          reason?: string;
+          report_id: string;
+          request_id: string;
+        };
+        Returns: Json;
+      };
       photo_verification_target: {
         Args: { expected_user_id: string; submission_id: string };
         Returns: Json;
@@ -694,6 +832,15 @@ export type Database = {
       };
       replace_daily_challenge_word: {
         Args: { active_assignment_id: string };
+        Returns: Json;
+      };
+      report_public_content: {
+        Args: {
+          details?: string;
+          reason: string;
+          submission_id: string;
+          target_kind: string;
+        };
         Returns: Json;
       };
       reserve_submission: {
@@ -752,6 +899,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      unblock_user: { Args: { block_id: string }; Returns: Json };
     };
     Enums: {
       [_ in never]: never;

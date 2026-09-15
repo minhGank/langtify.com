@@ -52,6 +52,8 @@ export function RootNavigator() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="photo" />
           <Stack.Screen name="vocabulary-concept" />
+          <Stack.Screen name="blocked-users" />
+          <Stack.Screen name="moderation" />
         </Stack.Protected>
         <Stack.Screen name="auth/callback" />
       </Stack>

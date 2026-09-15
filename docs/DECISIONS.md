@@ -512,3 +512,50 @@ The stale-snapshot test asserts the database's existing serialization failure,
 consistent with [PostgreSQL transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html).
 This audit changes no ratings, lifecycle, XP/streak, authentication or privacy rules
 and introduces no Phase 9 functionality. See [Phase 8 audit](PHASE8_AUDIT.md).
+
+## 026 — Backend safety with separate public eligibility
+
+Accepted under explicit direct approval of the Phase 9 proposal and AGENTS update.
+Use private directed blocks with mutual public exclusion, controlled reports and
+backend-only moderator membership. Resolve card targets through submission context,
+not public owner UUIDs or client-supplied identities. Restriction is public-access
+state rather than Auth account deletion, preserving private learning and sessions.
+Removal is a separate flag rather than submission deletion or XP reversal.
+
+Retain existing ratings without individual blocked-user surfaces. Retain case and
+audit identifiers through deletion; define any future retention/erasure process
+separately rather than silently cascading history. Report categories and 500-character
+details are technical bounds; one open report per reporter/target prevents duplicates.
+No reputation scoring or unrelated rate-limit policy is added.
+
+Moderator writes require current backend membership and an immutable audit event;
+request UUIDs make uncertain retries safe without replaying an older action after a
+restore. Ordered per-account revision writes serialize block/restriction/removal and
+rating/publication admission, including stale snapshot rejection. Existing lifecycle
+bodies retain their authority behind public restriction wrappers. No global lock,
+client role boolean, new state library or custom backend is introduced.
+
+Moderators may inspect only the verified image attached to an existing case, including
+a later-private/removed photo, through fixed 60-second report-scoped signing. This
+narrow additional read authority was explicit in the approved proposal. Source RLS,
+ordinary owner previews and public signing remain separate. No arbitrary private
+photo access. Profile navigation and internal forms are gated by backend role checks;
+route knowledge or bundled UI code grants no moderator permission.
+
+Public launch additionally requires the operational/device acceptance in
+`MODERATION.md` and `PHASE9_VERIFICATION.md`. No Phase 10 functionality is authorized.
+
+## 027 — Phase 9 audit: moderator state belongs to its request context
+
+Changing a queue status/page must discard its previous rows and cursor before the
+request starts. An uncertain response must not combine a new status with another
+status's cursor. Explicit refresh restarts the selected status from its first page.
+Preview errors and expiry callbacks affect only the preview instance that created
+them; delayed callbacks cannot clear a subsequently renewed photo.
+
+Regression tests reproduced both defects before their fixes. Expanded local tests
+cover moderator revocation in both admission orders, arbitrary private signing
+denial, reciprocal rating/moderation/publication contention, deletion/restoration,
+restricted finalization and durable cases after target deletion. Existing backend
+authority holds; no SQL migration or product-policy change is needed. See
+`PHASE9_AUDIT.md`. Phase 10 remains out of scope.

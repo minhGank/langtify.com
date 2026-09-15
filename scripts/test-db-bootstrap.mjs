@@ -331,6 +331,50 @@ try {
         'PASS: real feed RPC uses one indexed bounded rating aggregate among 50,000 unrelated votes under a generic plan',
       );
     }
+    if (file === '20260917000000_phase9_safety.sql') {
+      const rater = await execute(
+        `select id from auth.users where id<>'${user}' limit 1;`,
+        database,
+      );
+      const moderator = randomUUID();
+      await execute(
+        `insert into auth.users(id,email) values('${moderator}','safety-bootstrap@example.test');
+        insert into private.moderators(user_id) values('${moderator}');
+        select set_config('request.jwt.claim.sub','${rater}',false);
+        select public.report_public_content((select id from public.submissions where visibility='public' and status='completed' limit 1),'submission','privacy');
+        select public.block_submission_user((select id from public.submissions where visibility='public' and status='completed' limit 1));
+        select set_config('request.jwt.claim.sub','${moderator}',false);
+        select public.moderate_report((select id from public.safety_reports limit 1),'remove_submission','${randomUUID()}');`,
+        database,
+      );
+      const snapshot = `select jsonb_build_object(
+        'reports',(select jsonb_agg(to_jsonb(r) order by id) from public.safety_reports r),
+        'audit',(select jsonb_agg(to_jsonb(e) order by id) from public.moderation_audit e),
+        'blocks',(select jsonb_agg(to_jsonb(b) order by id) from public.user_blocks b),
+        'safety',(select jsonb_agg(to_jsonb(a) order by user_id) from private.safety_accounts a),
+        'removal',(select jsonb_agg(to_jsonb(m) order by submission_id) from private.submission_moderation m),
+        'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      assert.equal(
+        await execute(
+          `select has_function_privilege('authenticated','private.finalize_submission(uuid,text)','execute');`,
+          database,
+        ),
+        'f',
+      );
+      assert.equal(
+        await execute(
+          `select set_config('request.jwt.claim.sub','${rater}',false); select jsonb_array_length(public.get_discover_feed()->'items');`,
+          database,
+        ),
+        `${rater}\n0`,
+      );
+      console.log(
+        'PASS: Phase 9 backfill/replay preserves nonempty reports, blocks, immutable audits and XP while keeping admission wrappers private',
+      );
+    }
     if (file === '20260913000000_phase5_progress.sql') {
       assert.equal(await execute(`select sum(amount) from public.xp_events;`, database), '40');
       assert.equal(

@@ -10,6 +10,7 @@ Today shows Take Photo/Replace before completion and Completed/View Photo afterw
 Discover shows eligible public vocabulary photos. Phase 5 adds progress, streaks, reversible XP and levels;
 Phase 5.5 adds Google OAuth; Phase 6 adds My Vocabulary with personal concept history.
 Phase 8 adds authoritative semantic ratings to Phase 7's public Discover feed.
+Phase 9 adds private reports, mutual blocking and protected moderation.
 
 ## Run the app
 
@@ -527,8 +528,8 @@ for real local Auth/Storage privacy, pagination and signing/expiry checks; this 
 creates and removes only its own fixtures and takes over a minute.
 See [Phase 7 verification](docs/PHASE7_VERIFICATION.md) for checks and phone acceptance.
 
-**Do not launch publicly until moderation/safety functionality, including blocking
-and reporting, is complete.** Phase 8 ratings are described below.
+**Public launch requires deployment, device acceptance and operational readiness
+of the Phase 9 safety controls.** Phase 8 ratings are described below.
 
 Phase 7 has been audited; see [Phase 7 audit](docs/PHASE7_AUDIT.md). Deploy the
 additive `20260915010000_phase7_audit_pagination.sql` migration and the matching
@@ -549,9 +550,31 @@ function and app. Regenerate database types when changing schema. Run
 existing regressions. See [Phase 8 verification](docs/PHASE8_VERIFICATION.md) for
 results, exact lifecycle semantics, remaining deployment work and phone acceptance.
 No hosted deployment was performed. Public launch still requires moderation/safety,
-including blocking and reporting; those and all Phase 9 work remain unimplemented.
+including operational acceptance of the Phase 9 controls described below. Phase 10 remains unimplemented.
 
 Phase 8 has been audited; see [Phase 8 audit](docs/PHASE8_AUDIT.md). Rating requests
 now have bounded recovery when a transport stalls. No additional migration or
 server deployment is required for the audit fix. Run shared-database integration
 and pgTAP suites sequentially to avoid overlapping their fixtures.
+
+## Phase 9 — Reporting, Blocking & Moderation
+
+Discover offers explicit report-photo, report-user and block flows. Profile adds
+Blocked users. Backend-provisioned moderators get an internal queue, case review,
+report-scoped photo preview, public removal/account restriction, resolution and
+immutable audit history. Ordinary metadata cannot grant access; source RLS and
+private Storage remain intact. Reporting/moderation do not change learning XP.
+
+Apply `20260917000000_phase9_safety.sql` locally or to the intended deployment, then
+deploy the matching `photo-authority` function before the app. No hosted deployment
+or real moderator provisioning was performed here. Follow [moderator operations](docs/MODERATION.md)
+for trusted provisioning, revocation and acceptance. Run `npm run db:test:safety`
+for real Auth/Storage/concurrency coverage (including actual 60-second expiry).
+Shared-database suites must run sequentially. See [Phase 9 verification](docs/PHASE9_VERIFICATION.md)
+for results and the phone/admin checklist. Public launch needs operational staffing,
+policy and device acceptance; no Phase 10 functionality is included.
+
+Phase 9 has been audited; see [Phase 9 audit](docs/PHASE9_AUDIT.md). The audit fixes
+moderator queue/cursor recovery and delayed preview callbacks, and extends real
+revocation, deletion and concurrency coverage. No additional migration or server
+deployment is required for these audit fixes; hosted/device/admin acceptance remains pending.

@@ -3,7 +3,7 @@
 Name: **Langtify**. Domain: `langtify.com`. Package and Expo slug: `langtify`.
 Mobile-first Expo / React Native / strict TypeScript; iOS and Android are primary.
 
-## Current scope: Phase 8
+## Current scope: Phase 9
 
 Supabase email/password authentication, persisted sessions, authoritative profiles,
 and onboarding (username, reference language, target language, CEFR level, IANA
@@ -115,7 +115,7 @@ longest streak and lifetime counts of currently valid words/full challenges.
 ## Future scope — not implemented
 
 Comments, likes, followers, friends, DMs, notifications,
-leaderboards, achievements and subscriptions are not included. Phase 9 has not
+leaderboards, achievements and subscriptions are not included. Phase 10 has not
 started. Apple, Facebook, magic-link and other login providers remain out of scope.
 Apple Sign-In is deferred until Apple Developer membership is available.
 
@@ -193,9 +193,9 @@ Account/sign-out, learning-target changes, focus loss and backgrounding clear fe
 and signed-photo state. Visible feed photos revalidate periodically and on explicit
 refresh; remote changes appear on the next successful read. This is not realtime.
 
-Blocking and reporting are later phases. Semantic ratings are described below. **Public production launch is
-gated on moderation/safety functionality, including blocking and reporting.** This
-phase is suitable for controlled development acceptance, not an unrestricted launch.
+Semantic ratings and Phase 9 blocking/reporting are described below. **Public
+production launch requires hosted/device acceptance and operational readiness for
+the safety controls.** Local implementation supports controlled development acceptance.
 
 ## Semantic photo ratings — Phase 8
 
@@ -233,5 +233,50 @@ The app marks submitting intent promptly, then installs the server result. Repea
 taps are serialized; uncertain responses trigger a read before an explicit retry,
 not an automatic replay. Account/target/session/focus changes discard stale UI results.
 Ratings do not award XP or change streaks, word completion, ordering or ranking.
-Comments, likes, social connections, notifications, moderation/reporting/blocking and
-all Phase 9 features remain absent. Public launch still requires moderation/safety.
+Comments, likes, social connections and notifications remain absent. Phase 9 safety
+controls are described below; public launch requires operational and device acceptance.
+
+## Reporting, blocking and moderation — Phase 9
+
+Public cards offer Report photo, Report user and Block user, excluding self actions.
+Reports originate from currently eligible public cards; the server derives the
+reporter and target account. Categories are inappropriate/unrelated image, sexual
+content, violence, harassment/hate, spam, privacy concern and other. Optional details
+are limited to 500 characters. One open report per reporter/target returns a safe
+acknowledgement on retries without changing the original classification. Reports
+start open; moderators resolve or dismiss them. Closed cases remain available to
+moderators and do not prevent a later new report. Reporters receive no outcome or
+identity disclosure to the reported user. Reports and audits retain case identifiers
+and snapshots through account/content deletion; no automatic retention deadline or
+new account-deletion policy is introduced.
+
+A directed block hides public content mutually, prevents ratings in both directions
+and prevents new public signing. Blocks are private; users see only their own list
+of blocked usernames, 20 per page, with explicit unblock confirmation. The other
+party cannot read who blocked them. Same-state retries do not duplicate a block.
+Unblocking restores normal eligibility; it does not restore moderated or restricted
+content. Personal vocabulary and private photo management are unaffected. Existing
+ratings remain stored, with no individual blocked-rater interaction surfaces.
+
+Moderator roles are backend-provisioned only. The internal interface presents
+bounded open/resolved/dismissed queues, case context, report-scoped verified photo
+previews, actions and paginated immutable audit history. Moderator previews may
+inspect the reported photo after it becomes private or publicly removed, but cannot
+access arbitrary unreported private photos, unavailable images or caller paths.
+Every accepted moderation action records actor, target, time and optional reason;
+retries of the same request identity never reapply an older action.
+
+Moderators may remove/restore a submission's public eligibility, restrict/restore
+an account's public participation, and resolve/dismiss reports. Public removal
+is separate from owner visibility, Storage deletion and learning completion. Account
+restriction prevents public reads, publishing, reporting, blocking new accounts and
+ratings, including with existing sessions. Private learning, owner previews, block
+list/unblock and data remain available. Restoration still obeys owner visibility,
+blocks and individual removal flags. No XP, streak, level, completion or feed-order
+changes follow reporting, blocking or moderation.
+
+Future reads and mutation admission use backend safety state. Existing in-flight
+read snapshots and previously issued 60-second photo URLs retain their short lifetime;
+downloaded images cannot be recalled. Device acceptance, moderation staffing and
+operational response procedures are required before public production launch.
+No Phase 10 or unrelated social features are implemented.

@@ -3,6 +3,7 @@ import { AppText } from '@/components/ui/app-text';
 import { Screen } from '@/components/ui/screen';
 import { useAuth } from '@/features/auth/auth-provider';
 import { SignOutButton } from '@/features/auth/sign-out-button';
+import { ProfileSafety } from '@/features/safety/profile-safety';
 
 export function ProfileScreen() {
   const { account, session } = useAuth();
@@ -30,6 +31,13 @@ export function ProfileScreen() {
         />
       )}
       <SignOutButton />
+      {session && (
+        <ProfileSafety
+          key={`${session.user.id}:${session.access_token}`}
+          userId={session.user.id}
+          token={session.access_token}
+        />
+      )}
     </Screen>
   );
 }

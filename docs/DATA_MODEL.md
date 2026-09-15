@@ -1,4 +1,4 @@
-# Phase 8 data model
+# Phase 9 data model
 
 Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
 Phase 4 adds submissions and private photo storage. Email stays in Auth.
@@ -362,3 +362,44 @@ pending/unknown IDs, nonfinite input, invalid raters and mismatched object versi
 integration tests cover stale transaction rejection after visibility changes and
 unchanged feed order. The existing primary key supports the bounded aggregate
 under the tested generic plan without scanning unrelated ratings.
+
+## Phase 9 safety model
+
+- `private.safety_accounts(user_id, restricted, revision)`: one per Auth user,
+  backfilled and initialized on signup. Revision updates serialize safety admission.
+- `private.moderators(user_id, provisioned_at, provisioned_by)`: trusted operational
+  membership only; ordinary metadata/role flags have no authority.
+- `private.submission_moderation(submission_id, removed)`: public-removal flag,
+  cascading only when the underlying submission is hard-deleted.
+- `user_blocks(id, blocker_user_id, blocked_user_id, created_at)`: unique directed
+  pair, self-block CHECK, Auth FKs/cascades and forward/reverse/paging indexes.
+- `safety_reports`: UUID case, reporter, target kind/ID, subject user and context
+  submission IDs, username/word snapshots, controlled reason, details CHECK ≤500,
+  open/resolved/dismissed status, server timestamp. Partial unique index on reporter,
+  kind and target for open cases; status/timestamp/UUID index for queue paging.
+  Historical identity fields intentionally have no cascading Auth/submission FK.
+- `moderation_audit`: immutable identity event, moderator UUID, request UUID, report
+  FK, controlled action, target kind/ID, reason CHECK ≤500 and server time. Unique
+  moderator/request pair; report and target indexes. UPDATE/DELETE trigger rejects
+  changes, and ordinary table access is denied. Hard account deletion never erases
+  audit history. No client aggregate or XP columns are introduced.
+
+All new sources have RLS with no ordinary raw table access. Public Auth-derived
+RPCs: `get_safety_access`, `block_submission_user`, `unblock_user`,
+`get_blocked_users`, `report_public_content`. Moderator-gated RPCs:
+`get_moderation_queue`, `get_moderation_report`, `get_moderation_history`,
+`moderate_report`. Role checking is repeated server-side for every read/write;
+mutation admission also holds the operational membership row against revocation.
+Only `get_moderation_photo_target(viewer, report_id)` grants service execution;
+its viewer must come from Edge Function Auth verification. Other users cannot call
+private helpers or submit rater/reporter/owner identity overrides.
+
+Blocks use opaque ID cursors; queues use ascending server timestamp/UUID; audits use
+descending event IDs. Pages replace prior pages in the client, at most 20 rows.
+The audit cursor is emitted as decimal text to avoid JSON precision loss; the client
+rejects a cursor beyond its safe numeric RPC range instead of rounding it.
+
+The migration is transactional and replay-safe, preserving nonempty case/block/audit
+and XP history. The original finalize/visibility implementations remain private;
+public wrappers enforce restriction admission before prior ownership/locking logic.
+No destructive backfill or photo/XP reinterpretation occurs.

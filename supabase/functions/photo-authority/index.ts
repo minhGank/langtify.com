@@ -52,6 +52,31 @@ Deno.serve(async (request: Request) => {
     if (!body || typeof body !== 'object' || Array.isArray(body))
       return reply({ error: 'invalid_request' }, 400);
     const input = body as Record<string, unknown>;
+    if (input.action === 'moderation-preview') {
+      if (typeof input.reportId !== 'string' || !uuid.test(input.reportId))
+        return reply({ error: 'invalid_request' }, 400);
+      const admin = createClient<Database>(url, secret, options);
+      const targets = await admin.rpc('get_moderation_photo_target', {
+        viewer: auth.data.user.id,
+        report_id: input.reportId,
+      });
+      if (targets.error) return reply({ error: 'moderation_unavailable' }, 403);
+      const target = targets.data[0];
+      let photo: { id: string; signed_path: string } | null = null;
+      if (target) {
+        const signed = await admin.storage
+          .from(bucketName)
+          .createSignedUrl(target.storage_path, 60);
+        if (signed.error) return reply({ error: 'service_unavailable' }, 503);
+        const uri = new URL(signed.data.signedUrl);
+        photo = { id: target.id, signed_path: uri.pathname + uri.search };
+      }
+      return reply({
+        viewer_id: auth.data.user.id,
+        report_id: input.reportId.toLowerCase(),
+        photo,
+      });
+    }
     if (input.action === 'feed-previews') {
       const ids = input.submissionIds;
       if (

@@ -65,7 +65,9 @@ for (const path of paths) {
   }
   if (
     path.startsWith('dist/') &&
-    /SUPABASE_SERVICE_ROLE_KEY|attest_submission_photo|photo_verification_target/.test(source)
+    /SUPABASE_SERVICE_ROLE_KEY|attest_submission_photo|photo_verification_target|get_moderation_photo_target/.test(
+      source,
+    )
   )
     failures.push(`${path}: server-only implementation in app bundle`);
 }

@@ -13,10 +13,20 @@ import SessionRoute from '../app/session';
 import PhotoRoute from '../app/photo';
 import ConceptRoute from '../app/vocabulary-concept';
 import OAuthCallback from '../app/auth/callback';
+import BlockedUsersRoute from '../app/blocked-users';
+import ModerationRoute from '../app/moderation';
 import type { SessionState } from '@/features/auth/session-state';
 import { makeAccount, makeSession } from './fixtures';
 
 let mockState: SessionState;
+const mockModerationQueue = jest.fn();
+jest.mock('@/services/safety', () => ({
+  safetyGateway: () => ({
+    access: async () => ({ moderator: false, restricted: false }),
+    blocks: async () => ({ items: [], hasMore: false }),
+    queue: mockModerationQueue,
+  }),
+}));
 jest.mock('@/features/auth/auth-provider', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => children,
   useAuth: () => ({ ...mockState, reload: jest.fn() }),
@@ -34,6 +44,8 @@ const routes = {
   photo: PhotoRoute,
   'vocabulary-concept': ConceptRoute,
   'auth/callback': OAuthCallback,
+  'blocked-users': BlockedUsersRoute,
+  moderation: ModerationRoute,
   '(tabs)/_layout': TabLayout,
   '(tabs)/index': TodayScreen,
   '(tabs)/discover': DiscoverScreen,
@@ -59,6 +71,23 @@ it('opens Today and navigates through all four tabs', async () => {
     expect(await screen.findByRole('header', { name: title })).toBeVisible();
     expect(app.getPathname()).toBe(path);
   }
+});
+
+it('shows no moderator navigation or data to an ordinary learner', async () => {
+  const app = renderRouter(routes, { initialUrl: '/profile' });
+  expect(await screen.findByText('Blocked users')).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Moderation' })).toBeNull();
+  app.unmount();
+  renderRouter(routes, { initialUrl: '/moderation' });
+  expect(await screen.findByText('Moderator access is required.')).toBeVisible();
+  expect(mockModerationQueue).not.toHaveBeenCalled();
+});
+
+it.each(['/blocked-users', '/moderation'])('protects %s from signed-out sessions', async (path) => {
+  mockState = { ...mockState, status: 'signed-out', session: null };
+  const app = renderRouter(routes, { initialUrl: path });
+  expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
+  expect(app.getPathname()).toBe('/sign-in');
 });
 
 it.each([

@@ -14,6 +14,7 @@ import {
 import { useDiscover } from './use-discover';
 import { SemanticRating } from '@/features/ratings/semantic-rating';
 import type { RatingScore, RatingAction } from '@/features/ratings/rating';
+import { CardActions } from '@/features/safety/card-actions';
 
 export function DiscoverScreen() {
   const { status, session, account, reload } = useAuth();
@@ -54,6 +55,8 @@ function DiscoverContent({
     [userId, token, targetLanguageId],
   );
   const state = useDiscover(gateway);
+  const [safetyItem, setSafetyItem] = useState<FeedItem | null>(null);
+  const safetyIdentity = useMemo(() => ({ userId, token }), [userId, token]);
   return (
     <SafeAreaView
       edges={['top', 'left', 'right']}
@@ -89,6 +92,7 @@ function DiscoverContent({
             ratingAction={state.ratingAction?.id === item.id ? state.ratingAction : null}
             ratingDisabled={state.ratingAction?.status === 'saving'}
             rate={(score) => void state.rate(item.id, score)}
+            actions={() => setSafetyItem(item)}
             uri={state.photos[item.id]}
             reload={() => void state.renew()}
           />
@@ -115,6 +119,18 @@ function DiscoverContent({
           </View>
         }
       />
+      {safetyItem && (
+        <CardActions
+          key={`${userId}:${token}`}
+          identity={safetyIdentity}
+          item={safetyItem}
+          close={() => setSafetyItem(null)}
+          blocked={() => {
+            setSafetyItem(null);
+            void state.refresh();
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -125,6 +141,7 @@ function FeedCard({
   rate,
   ratingAction,
   ratingDisabled,
+  actions,
 }: {
   item: FeedItem;
   uri?: string;
@@ -132,6 +149,7 @@ function FeedCard({
   rate: (score: RatingScore) => void;
   ratingAction: RatingAction | null;
   ratingDisabled: boolean;
+  actions: () => void;
 }) {
   const { colors } = useAppTheme();
   const [loaded, setLoaded] = useState(false),
@@ -160,6 +178,13 @@ function FeedCard({
         {item.referenceTerm} · {item.cefrLevel}
       </AppText>
       <AppText>@{item.username}</AppText>
+      {item.canRate && (
+        <Button
+          label={`More actions for @${item.username}`}
+          disabled={ratingDisabled}
+          onPress={actions}
+        />
+      )}
       <AppText>{new Date(item.submittedAt).toLocaleString()}</AppText>
       <SemanticRating
         word={item.targetTerm}

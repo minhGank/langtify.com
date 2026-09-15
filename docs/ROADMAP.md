@@ -66,7 +66,8 @@ Storage and owner-only management/RLS remain intact. See `PHASE7_VERIFICATION.md
 The audit fixes generic-plan cursor scans, partial signing omissions and obsolete
 lifecycle callbacks; see `PHASE7_AUDIT.md`.
 
-**Public production launch remains gated on moderation/safety, blocking and reporting.**
+**Public production launch requires hosted/device acceptance and operational
+readiness of the Phase 9 moderation, blocking and reporting controls.**
 
 ## Phase 8 — implemented; hosted/device acceptance pending
 
@@ -77,9 +78,17 @@ No XP, streak, completion, ordering, Storage privacy or authentication changes.
 Phase 8 audit adds stalled-request recovery and expanded security/concurrency/query-plan
 regressions; see `PHASE8_AUDIT.md`. Hosted/device acceptance remains pending.
 
-## Phase 9 and later — not started
+## Phase 9 — implemented and audited; hosted/device/admin acceptance pending
 
-Further work requires explicit scope. Blocking/reporting, comments, likes,
+Private reports, mutual blocks, backend moderator roles, removal/restriction,
+immutable audit history and protected review UI. See `PHASE9_VERIFICATION.md` and
+`MODERATION.md`. No XP/streak or private learning changes.
+The audit fixes stale moderator preview callbacks and queue filter/cursor recovery,
+with expanded role-revocation, deletion and concurrency coverage; see `PHASE9_AUDIT.md`.
+
+## Phase 10 and later — not started
+
+Further work requires explicit scope. Comments, likes,
 followers, friends, DMs, notifications, leaderboards, achievements and subscriptions
 remain unimplemented.
 Other OAuth providers, password recovery UX, production vocabulary/content review, final

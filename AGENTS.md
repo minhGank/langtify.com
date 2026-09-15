@@ -2,9 +2,9 @@
 
 ## Scope
 
-Phase 8 adds Semantic Photo Ratings on audited Phase 7, explicitly authorized by the user.
+Phase 9 adds Reporting, Blocking & Moderation on audited Phase 8, explicitly authorized by the user.
 Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
-`docs/DECISIONS.md` before changes. Do not begin Phase 9 or add future product rules.
+`docs/DECISIONS.md` before changes. Do not begin Phase 10 or add future product rules.
 
 ## Engineering
 
@@ -18,7 +18,7 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 - Support iOS and Android and preserve web compatibility. Minimize platform forks.
 - Do not add Redux/global state without a demonstrated requirement or a custom backend.
 - Do not add gallery uploads, likes, comments, followers, friends, DMs,
-  notifications, leaderboards, achievements, subscriptions, moderation, reporting, blocking, Apple/Facebook login or AI image validation.
+  notifications, leaderboards, achievements, subscriptions, Apple/Facebook login or AI image validation.
 - Keep the photo bucket private. Submission completion, identity and deletion
   must be backend-authoritative. Preserve trusted byte verification, version-bound
   attestations, commit-time object guards and function-only fixed-lifetime signing. Never put cleanup credentials in public env.
@@ -66,8 +66,10 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
   failed signatures for eligible rows as retryable errors, never silent pagination
   omissions; only the eligibility lookup may omit an unauthorized/unavailable row.
   Preserve the paging cursor when revalidation empties a previously loaded window.
-  Blocking and reporting remain later work; public production launch is
-  gated on moderation/safety including blocking and reporting.
+  Phase 9 adds mutual blocking, private reports and backend-authorized moderation.
+  Preserve private learning and XP when public content or accounts are restricted.
+  Ordinary clients cannot provision moderators or access reporter/block relationships.
+  Every moderation write has an immutable, retry-safe audit record.
 - Ratings measure vocabulary meaning only: 1 Not related, 2 Poor match,
   3 Understandable, 4 Clear match, 5 Perfect match. Auth-derived nonowner voters
   must satisfy current Discover eligibility. Enforce one integer score per
@@ -79,6 +81,11 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
   Bound rating request waits so stalled transports cannot hold controls indefinitely;
   cancellation must settle locally and release queued reads without replaying votes.
   Ratings have no XP, streak, completion, ranking or notification effect.
+- Safety operations use Auth-derived actors, bounded private queues/lists and controlled
+  reasons. Moderator provisioning is trusted SQL only. Keep request-ID audit
+  idempotency, mutual block checks, public restriction/removal admission locks, and
+  report-scoped 60-second moderator previews. Never conflate removal with completion
+  deletion or XP reversal. Clear privileged state on lost access and account/focus changes.
 - Never commit secrets. `EXPO_PUBLIC_*` is public client configuration.
 - Generated `ios/`, `android/`, `.expo/`, and `dist/` remain untracked.
 - Preserve unrelated user changes. Update documentation when decisions change.
@@ -88,7 +95,7 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 Run `npm run check` before handing off a change. For navigation, dependency, or Expo
 configuration changes also run `npm run export:check`, `npx expo install --check`,
 and `npm run doctor`. For database changes also run `npm run db:test` and
-`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:submissions`, `npm run db:test:bootstrap`, `npm run db:test:photo-audit`, `npm run db:test:progress`, `npm run db:test:vocabulary`, `npm run db:test:discover`, `npm run db:test:ratings` and `npx supabase db lint --local --level warning` against local development only;
+`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:submissions`, `npm run db:test:bootstrap`, `npm run db:test:photo-audit`, `npm run db:test:progress`, `npm run db:test:vocabulary`, `npm run db:test:discover`, `npm run db:test:ratings`, `npm run db:test:safety` and `npx supabase db lint --local --level warning` against local development only;
 see README for the Docker file-sharing fallback. Tests belong outside `app/`; exercise observable behavior
 instead of snapshots or implementation details. Add tests when they protect
 meaningful behavior, not merely to mirror trivial code.
