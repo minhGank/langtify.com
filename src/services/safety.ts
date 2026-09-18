@@ -1,3 +1,4 @@
+import { boundedFetch } from '@/lib/http';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 import { publicConfig } from '@/lib/env';
@@ -23,6 +24,7 @@ export function safetyGateway(identity: SafetyIdentity) {
   const config = publicConfig.config;
   if (!config) throw new Error('Supabase configuration is missing.');
   const client = createClient<Database>(config.url, config.key, {
+    global: { fetch: boundedFetch },
     accessToken: async () => identity.token,
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });

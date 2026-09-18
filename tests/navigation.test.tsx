@@ -15,11 +15,18 @@ import ConceptRoute from '../app/vocabulary-concept';
 import OAuthCallback from '../app/auth/callback';
 import BlockedUsersRoute from '../app/blocked-users';
 import ModerationRoute from '../app/moderation';
+import NotificationSettingsRoute from '../app/notification-settings';
 import type { SessionState } from '@/features/auth/session-state';
 import { makeAccount, makeSession } from './fixtures';
 
 let mockState: SessionState;
 const mockModerationQueue = jest.fn();
+jest.mock('@/features/notifications/device', () => ({
+  permission: async () => 'unavailable',
+  pushToken: async () => null,
+  observe: () => () => {},
+  clearResponses: async () => {},
+}));
 jest.mock('@/services/safety', () => ({
   safetyGateway: () => ({
     access: async () => ({ moderator: false, restricted: false }),
@@ -46,6 +53,7 @@ const routes = {
   'auth/callback': OAuthCallback,
   'blocked-users': BlockedUsersRoute,
   moderation: ModerationRoute,
+  'notification-settings': NotificationSettingsRoute,
   '(tabs)/_layout': TabLayout,
   '(tabs)/index': TodayScreen,
   '(tabs)/discover': DiscoverScreen,
@@ -83,12 +91,15 @@ it('shows no moderator navigation or data to an ordinary learner', async () => {
   expect(mockModerationQueue).not.toHaveBeenCalled();
 });
 
-it.each(['/blocked-users', '/moderation'])('protects %s from signed-out sessions', async (path) => {
-  mockState = { ...mockState, status: 'signed-out', session: null };
-  const app = renderRouter(routes, { initialUrl: path });
-  expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
-  expect(app.getPathname()).toBe('/sign-in');
-});
+it.each(['/blocked-users', '/moderation', '/notification-settings'])(
+  'protects %s from signed-out sessions',
+  async (path) => {
+    mockState = { ...mockState, status: 'signed-out', session: null };
+    const app = renderRouter(routes, { initialUrl: path });
+    expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
+    expect(app.getPathname()).toBe('/sign-in');
+  },
+);
 
 it.each([
   ['/discover', 'Discover'],

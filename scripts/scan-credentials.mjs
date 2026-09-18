@@ -65,7 +65,7 @@ for (const path of paths) {
   }
   if (
     path.startsWith('dist/') &&
-    /SUPABASE_SERVICE_ROLE_KEY|attest_submission_photo|photo_verification_target|get_moderation_photo_target/.test(
+    /SUPABASE_SERVICE_ROLE_KEY|attest_submission_photo|photo_verification_target|get_moderation_photo_target|NOTIFICATION_JOB_SECRET|prepare_due_notifications|claim_notification_attempts|authorize_notification_attempt|claim_notification_receipts|EXPO_ACCESS_TOKEN/.test(
       source,
     )
   )

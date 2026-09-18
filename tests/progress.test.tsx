@@ -30,8 +30,28 @@ const payload = {
 const header = jest.fn();
 beforeEach(() => {
   jest.clearAllMocks();
+  Object.defineProperty(AppState, 'currentState', {
+    configurable: true,
+    writable: true,
+    value: 'active',
+  });
   mockRpc.mockReturnValue({ setHeader: header });
   header.mockResolvedValue({ data: payload, error: null });
+});
+it('rejects obsolete foreground callbacks after a token change and defers background startup', async () => {
+  AppState.currentState = 'background';
+  const listeners = jest.mocked(AppState.addEventListener);
+  const { rerender } = render(<ProgressPanel userId="owner" accessToken="old" />);
+  const obsolete = listeners.mock.calls.at(-1)?.[1];
+  await act(async () => {});
+  expect(mockRpc).not.toHaveBeenCalled();
+  AppState.currentState = 'active';
+  rerender(<ProgressPanel userId="owner" accessToken="new" />);
+  await screen.findByText('620 XP');
+  const calls = mockRpc.mock.calls.length;
+  await act(async () => obsolete?.('active'));
+  expect(mockRpc).toHaveBeenCalledTimes(calls);
+  expect(header).toHaveBeenLastCalledWith('Authorization', 'Bearer new');
 });
 it('renders server daily completion and full bonus with formula-correct level', async () => {
   render(<ProgressPanel userId="owner" accessToken="token" challengeId="challenge" />);

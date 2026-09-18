@@ -1,3 +1,4 @@
+import { boundedFetch } from '@/lib/http';
 import 'react-native-url-polyfill/auto';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +11,7 @@ import type { Database } from '@/types/database';
 
 export const supabase = publicConfig.config
   ? createClient<Database>(publicConfig.config.url, publicConfig.config.key, {
+      global: { fetch: boundedFetch },
       auth: {
         storage: guardedSessionStorage(
           Platform.OS === 'web' ? browserSessionStorage() : AsyncStorage,

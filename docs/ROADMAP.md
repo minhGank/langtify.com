@@ -86,10 +86,25 @@ immutable audit history and protected review UI. See `PHASE9_VERIFICATION.md` an
 The audit fixes stale moderator preview callbacks and queue filter/cursor recovery,
 with expanded role-revocation, deletion and concurrency coverage; see `PHASE9_AUDIT.md`.
 
-## Phase 10 and later — not started
+## Phase 10 — implemented; hosted/provider/device acceptance pending
+
+Private learning notifications use the approved at-most-one-provider-attempt contract.
+Secure registration, preferences, backend challenge/streak admission, real Expo sender,
+receipt/error handling, guarded invalid-token revocation, fixed Today navigation and
+beta recovery hardening are implemented. No guaranteed end-device delivery is claimed.
+Local verification is in `PHASE10_VERIFICATION.md`; hosted Dev, provider credentials,
+cron/cleanup and physical acceptance remain operator steps. See `NOTIFICATIONS.md`,
+`HOSTED_DEV_DEPLOYMENT.md` and `BETA_CHECKLIST.md`. The earlier contract blocker was
+explicitly resolved by the user; no hosted deployment or real device send occurred here.
+
+See `PHASE10_AUDIT.md` for reproduced defects, corrective migrations and the latest
+verification. Full closure still requires hosted/device acceptance and a disposition
+of the documented moderate dependency findings. Phase 11 remains unstarted.
+
+## Phase 11 and later — not started
 
 Further work requires explicit scope. Comments, likes,
-followers, friends, DMs, notifications, leaderboards, achievements and subscriptions
+followers, friends, DMs, social notifications, leaderboards, achievements and subscriptions
 remain unimplemented.
 Other OAuth providers, password recovery UX, production vocabulary/content review, final
 branding, production signing and store setup need separate planning.

@@ -1,6 +1,6 @@
 import type * as ReactTypes from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { View } from 'react-native';
+import { AppState, View } from 'react-native';
 import { UnfinishedPhotos } from '@/features/photos/unfinished-photos';
 import type { UnfinishedPhoto } from '@/services/submissions';
 const mockLoad = jest.fn<Promise<UnfinishedPhoto[]>, [string, string]>(),
@@ -15,7 +15,28 @@ jest.mock('expo-router', () => ({
     React.useEffect(callback, [callback]);
   },
 }));
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => {
+  jest.clearAllMocks();
+  Object.defineProperty(AppState, 'currentState', {
+    configurable: true,
+    writable: true,
+    value: 'active',
+  });
+});
+it('does not start recovery reads while backgrounded or from an obsolete foreground callback', async () => {
+  AppState.currentState = 'background';
+  const listeners = jest.spyOn(AppState, 'addEventListener');
+  const { unmount } = render(
+    <UnfinishedPhotos userId="owner" token="token" currentAssignments={[]} />,
+  );
+  await act(async () => {});
+  expect(mockLoad).not.toHaveBeenCalled();
+  const callback = listeners.mock.calls.at(-1)?.[1];
+  unmount();
+  AppState.currentState = 'active';
+  await act(async () => callback?.('active'));
+  expect(mockLoad).not.toHaveBeenCalled();
+});
 it('recovers earlier-date operations even when today has different assignments or cannot load', async () => {
   mockLoad.mockResolvedValue([
     { assignmentId: 'yesterday', targetTerm: 'la fenêtre' },

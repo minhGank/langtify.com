@@ -2,9 +2,9 @@
 
 ## Scope
 
-Phase 9 adds Reporting, Blocking & Moderation on audited Phase 8, explicitly authorized by the user.
+Phase 10 adds Push Notifications & Beta Hardening on audited Phase 9, explicitly authorized by the user.
 Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
-`docs/DECISIONS.md` before changes. Do not begin Phase 10 or add future product rules.
+`docs/DECISIONS.md` before changes. Do not begin Phase 11 or add future product rules.
 
 ## Engineering
 
@@ -18,7 +18,7 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 - Support iOS and Android and preserve web compatibility. Minimize platform forks.
 - Do not add Redux/global state without a demonstrated requirement or a custom backend.
 - Do not add gallery uploads, likes, comments, followers, friends, DMs,
-  notifications, leaderboards, achievements, subscriptions, Apple/Facebook login or AI image validation.
+  social notifications, leaderboards, achievements, subscriptions, Apple/Facebook login or AI image validation.
 - Keep the photo bucket private. Submission completion, identity and deletion
   must be backend-authoritative. Preserve trusted byte verification, version-bound
   attestations, commit-time object guards and function-only fixed-lifetime signing. Never put cleanup credentials in public env.
@@ -95,7 +95,7 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 Run `npm run check` before handing off a change. For navigation, dependency, or Expo
 configuration changes also run `npm run export:check`, `npx expo install --check`,
 and `npm run doctor`. For database changes also run `npm run db:test` and
-`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:submissions`, `npm run db:test:bootstrap`, `npm run db:test:photo-audit`, `npm run db:test:progress`, `npm run db:test:vocabulary`, `npm run db:test:discover`, `npm run db:test:ratings`, `npm run db:test:safety` and `npx supabase db lint --local --level warning` against local development only;
+`npm run db:test:integration`, `npm run db:test:challenges`, `npm run db:test:submissions`, `npm run db:test:bootstrap`, `npm run db:test:photo-audit`, `npm run db:test:progress`, `npm run db:test:vocabulary`, `npm run db:test:discover`, `npm run db:test:ratings`, `npm run db:test:safety`, `npm run db:test:notifications`, `npm run db:test:notification-sender` and `npx supabase db lint --local --level warning` against local development only;
 see README for the Docker file-sharing fallback. Tests belong outside `app/`; exercise observable behavior
 instead of snapshots or implementation details. Add tests when they protect
 meaningful behavior, not merely to mirror trivial code.
@@ -109,6 +109,36 @@ Bundle export is not a native binary build or a substitute for device testing.
 Photo changes must include Storage-policy and recovery/cleanup verification. Keep
 the hourly cleanup job documented and tested; use Storage API for physical deletion.
 
-For photo-function changes also run `npm run functions:check`, `npm run functions:lint`
+For Edge Function changes also run `npm run functions:check`, `npm run functions:lint`
 and `npm run functions:test`. Deno imports are pinned separately from the mobile
 package; never pull server-only credentials or the decoder into Expo bundles.
+
+## Phase 10 notification authority
+
+- The user explicitly approved at most one provider send attempt per user/type/local
+  date, preferring a missed push over duplicates. Commit the attempt before network
+  I/O; never automatically resend uncertain/failed attempts. Receipt polling is read-only
+  at the provider and may retry. Record outcomes without claiming device delivery.
+  Invalidate definite unregistered tokens only when the attempted binding still matches.
+  Historical blocked rows are not a backlog. Phase 11 remains out of scope; see decision 029.
+- Preserve Auth-derived preferences, persisted IANA time, service-only bounded
+  scheduling, authoritative challenge snapshots and existing streak rules. No local
+  device scheduler, client words/dates, social notifications or new XP behavior.
+- Token registration requires a real live Auth session and installation capability;
+  monotonically persisted revisions fence stale account writes. Anonymous capability
+  calls may only revoke. Never expose tokens/hashes/job credentials in public reads,
+  logs or app config. Keep the Android Firebase client file distinct from FCM secrets.
+- Preserve permission opt-in/no-nag behavior, fixed Today-only matching-account taps,
+  cached-response cleanup, abort/deadline handling and safe uncertain-write recovery.
+- Revoke the previous installation scope before native permission/token lookups on
+  cold start or Auth changes. Resolve local schedule times to the same IANA timestamp
+  for due checks, claims and final authorization, including DST gaps/folds. Release
+  rejected provider response bodies. Preserve the regressions in `docs/PHASE10_AUDIT.md`.
+- Before processing preferences, scheduler batches lock all candidate Auth users,
+  profiles and learning rows in ordered stages. Preserve this cross-candidate lock
+  order against account rebinding and concurrent send admission.
+- Run notification application tests, `npm run db:test:notifications` and
+  `npm run db:test:notification-sender`, plus the
+  existing sequential database/Auth/Storage/safety suites, migration replay, function
+  checks, all-platform exports and `npm run security:scan`. Record physical, hosted
+  and actual provider-delivery checks separately; do not fabricate successful delivery.

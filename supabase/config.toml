@@ -53,5 +53,8 @@ enabled = true
 
 [functions.photo-authority]
 verify_jwt = true
+[functions.notification-scheduler]
+# A dedicated server job secret is required by the handler, never an app credential.
+verify_jwt = false
 [analytics]
 enabled = false

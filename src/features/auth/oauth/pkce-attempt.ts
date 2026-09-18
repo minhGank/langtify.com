@@ -1,3 +1,4 @@
+import { boundedFetch } from '@/lib/http';
 import { createClient } from '@supabase/supabase-js';
 import { ensureOAuthCrypto } from '@/lib/oauth-crypto';
 import type { OAuthAttempt } from './coordinator';
@@ -16,6 +17,7 @@ export function createOAuthAttempt(
   // A staging client holds PKCE material only. Its session is never persisted or
   // subscribed by the app; only a still-current exchange may enter the main client.
   const client = createClient(config.url, config.key, {
+    global: { fetch: boundedFetch },
     auth: {
       storageKey,
       flowType: 'pkce',

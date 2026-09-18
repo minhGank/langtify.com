@@ -7,7 +7,9 @@ export function useProgressRead<T>(load: () => Promise<T>) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState(false);
   const generation = useRef(0);
+  const activeLoad = useRef<(() => Promise<T>) | null>(null);
   const refresh = useCallback(async () => {
+    if (activeLoad.current !== load) return;
     const request = ++generation.current;
     try {
       const next = await load();
@@ -24,20 +26,31 @@ export function useProgressRead<T>(load: () => Promise<T>) {
   }, [load]);
   useFocusEffect(
     useCallback(() => {
-      void refresh();
+      let focused = true;
+      const resume = () => {
+        activeLoad.current = load;
+        void refresh();
+      };
+      if (AppState.currentState === 'active') resume();
       const listener = AppState.addEventListener('change', (state) => {
-        if (state === 'active') void refresh();
-        else generation.current++;
+        if (!focused) return;
+        if (state === 'active') resume();
+        else {
+          activeLoad.current = null;
+          generation.current++;
+        }
       });
       const timer = setInterval(() => {
-        if (AppState.currentState === 'active') void refresh();
+        if (focused && AppState.currentState === 'active') void refresh();
       }, 60000);
       return () => {
+        focused = false;
+        activeLoad.current = null;
         generation.current++;
         listener.remove();
         clearInterval(timer);
       };
-    }, [refresh]),
+    }, [load, refresh]),
   );
   return { data, error, refresh };
 }

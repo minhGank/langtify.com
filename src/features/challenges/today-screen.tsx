@@ -52,15 +52,17 @@ function TodayContent(identity: ChallengeIdentity) {
     useTodayChallenge(gateway);
   useFocusEffect(
     useCallback(() => {
-      void refresh();
+      let focused = true;
+      if (AppState.currentState === 'active') void refresh();
       const listener = AppState.addEventListener('change', (state) => {
-        if (state === 'active') void refresh();
+        if (focused && state === 'active') void refresh();
       });
       // Ask the server again across local midnight; the device never chooses the date.
       const timer = setInterval(() => {
-        if (AppState.currentState === 'active') void refresh(true);
+        if (focused && AppState.currentState === 'active') void refresh(true);
       }, 60000);
       return () => {
+        focused = false;
         listener.remove();
         clearInterval(timer);
       };

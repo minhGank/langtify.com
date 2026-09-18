@@ -1,3 +1,4 @@
+import { boundedFetch } from '@/lib/http';
 import { createClient } from '@supabase/supabase-js';
 import { publicConfig } from '@/lib/env';
 import { requireSupabase } from '@/lib/supabase';
@@ -115,6 +116,7 @@ export function photoGateway(userId: string, assignmentId: string, token: string
   // A separate non-persisting client pins ALL Storage/RPC requests to this account.
   // Never let a later sign-in on the shared Auth client change an upload's owner.
   const client = createClient<Database>(config.url, config.key, {
+    global: { fetch: boundedFetch },
     accessToken: async () => token,
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });

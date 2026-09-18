@@ -11,6 +11,11 @@ Discover shows eligible public vocabulary photos. Phase 5 adds progress, streaks
 Phase 5.5 adds Google OAuth; Phase 6 adds My Vocabulary with personal concept history.
 Phase 8 adds authoritative semantic ratings to Phase 7's public Discover feed.
 Phase 9 adds private reports, mutual blocking and protected moderation.
+Phase 10 adds notification preferences, secure registration, a server sender with
+receipt handling and beta recovery hardening. The approved contract is **at most
+one provider send attempt per user/type/local date**, with no guaranteed device delivery. Start with
+[the beta checklist](docs/BETA_CHECKLIST.md) and
+[hosted Dev deployment](docs/HOSTED_DEV_DEPLOYMENT.md).
 
 ## Run the app
 
@@ -148,7 +153,8 @@ npx supabase functions serve --workdir /private/tmp/langtify-functions
    `https://langtify.com`) that explains email confirmation. The default Supabase
    confirmation link verifies the address in the browser; return to Langtify and
    sign in with email/password. No session tokens are consumed from deep links,
-   and no magic-link login or OAuth callback is implemented.
+   and no magic-link login is implemented. Google uses the separate guarded PKCE callback
+   described in [Google setup](#phase-55-google-authentication).
 5. Copy only the API URL and public anon/publishable key to `.env.local` and restart
    Expo. Add languages through privileged administration, not the client.
 
@@ -377,7 +383,7 @@ ESLint 9 remains necessary for this Expo React lint configuration. The known
 chains. Do not apply forced SDK-breaking downgrades to silence them; reassess on
 compatible dependency updates. See [decisions](docs/DECISIONS.md).
 
-The [Phase 4 audit](docs/PHASE4_AUDIT.md) records the current security fixes and
+The [Phase 4 audit](docs/PHASE4_AUDIT.md) records the photo security fixes and
 verification results. The [original verification report](docs/PHASE4_VERIFICATION.md)
 contains the full camera/upload/deletion phone checklist.
 
@@ -550,7 +556,7 @@ function and app. Regenerate database types when changing schema. Run
 existing regressions. See [Phase 8 verification](docs/PHASE8_VERIFICATION.md) for
 results, exact lifecycle semantics, remaining deployment work and phone acceptance.
 No hosted deployment was performed. Public launch still requires moderation/safety,
-including operational acceptance of the Phase 9 controls described below. Phase 10 remains unimplemented.
+including operational acceptance of the Phase 9 controls described below. Phase 10 learning notifications are described below.
 
 Phase 8 has been audited; see [Phase 8 audit](docs/PHASE8_AUDIT.md). Rating requests
 now have bounded recovery when a transport stalls. No additional migration or
@@ -572,9 +578,51 @@ for trusted provisioning, revocation and acceptance. Run `npm run db:test:safety
 for real Auth/Storage/concurrency coverage (including actual 60-second expiry).
 Shared-database suites must run sequentially. See [Phase 9 verification](docs/PHASE9_VERIFICATION.md)
 for results and the phone/admin checklist. Public launch needs operational staffing,
-policy and device acceptance; no Phase 10 functionality is included.
+policy and device acceptance. Phase 10 learning notifications are described below.
 
 Phase 9 has been audited; see [Phase 9 audit](docs/PHASE9_AUDIT.md). The audit fixes
 moderator queue/cursor recovery and delayed preview callbacks, and extends real
 revocation, deletion and concurrency coverage. No additional migration or server
 deployment is required for these audit fixes; hosted/device/admin acceptance remains pending.
+
+## Phase 10 — push notifications and beta hardening
+
+Profile → Notifications exposes preferences and device permission/registration.
+Defaults are daily words at 08:00 and streak reminder at 19:00 in the saved IANA zone.
+The backend ensures today's challenge exists and snapshots all three assigned words.
+Streak reminders require yesterday's surviving streak and no completion today.
+
+The approved contract permits **one provider send attempt per user/type/local date**.
+The server commits the attempt before network I/O, rechecks current eligibility,
+and selects one most recently registered eligible device. It never automatically
+resends after network uncertainty, throttling, rejection or lost acknowledgement.
+Receipts are checked separately; definite unregistered-token results invalidate only
+the attempted binding. Expo/provider acceptance is never described as device delivery.
+Historical blocked preparation records remain terminal and are not sent as a backlog.
+
+Read [notification architecture/operations](docs/NOTIFICATIONS.md),
+[the ordered Langtify Dev deployment guide](docs/HOSTED_DEV_DEPLOYMENT.md),
+[beta acceptance](docs/BETA_CHECKLIST.md) and
+[Phase 10 verification](docs/PHASE10_VERIFICATION.md).
+
+The [Phase 10 audit](docs/PHASE10_AUDIT.md) fixes previous-account revocation during
+native API failure, DST admission, provider response cleanup and scheduler lock order.
+Apply both additive audit migrations before hosted acceptance.
+
+Run `npm run db:test:notifications` and `npm run db:test:notification-sender` for
+real local Auth/DB/Storage admission and instrumented HTTP send/receipt recovery tests.
+The latter uses a loopback provider fixture; it does not send real Expo notifications.
+Existing shared-database suites remain sequential. Function checks cover both Edge
+Functions. Server setup requires a dedicated job secret and Expo access token with
+Expo enhanced push security; neither belongs in the app.
+
+Set the public EAS UUID only for a real development project. The optional
+`LANGTIFY_GOOGLE_SERVICES_FILE` points to Android's Firebase client config, never an
+FCM service-account key. Rebuild native clients after plugin changes. Hosted Dev,
+provider credentials, cron and physical-device acceptance are still operator steps;
+no hosted deployment or actual device delivery was performed here.
+
+App requests and Auth startup have bounded waits with safe recovery; inactive/obsolete
+Today, recovery and progress callbacks cannot start stale reads. Existing session,
+Storage, XP/streak, vocabulary, Discover, rating and moderation authority is preserved.
+No Phase 11 functionality is included.

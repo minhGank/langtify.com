@@ -20,9 +20,26 @@ export function useSessionState(gateway: SessionGateway | null) {
 
   useEffect(() => {
     if (!gateway) return;
+    const activeGateway = gateway;
     let alive = true;
     let generation = 0;
     const timers = new Set<ReturnType<typeof setTimeout>>();
+
+    async function bounded<T>(work: Promise<T>): Promise<T> {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const deadline = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Session request timed out.')), 15000);
+        timers.add(timer);
+      });
+      try {
+        return await Promise.race([work, deadline]);
+      } finally {
+        if (timer !== undefined) {
+          clearTimeout(timer);
+          timers.delete(timer);
+        }
+      }
+    }
 
     function accept(session: Session | null) {
       const request = ++generation;
@@ -41,8 +58,7 @@ export function useSessionState(gateway: SessionGateway | null) {
       const timer = setTimeout(() => {
         timers.delete(timer);
         if (!alive || request !== generation) return;
-        gateway
-          ?.loadAccount(session.user.id)
+        bounded(activeGateway.loadAccount(session.user.id))
           .then((account) => {
             if (!alive || request !== generation) return;
             setState({
@@ -65,8 +81,7 @@ export function useSessionState(gateway: SessionGateway | null) {
       // The explicit restore result distinguishes that error from a real sign-out.
       if (event !== 'INITIAL_SESSION') accept(session);
     });
-    gateway
-      .restore()
+    bounded(gateway.restore())
       .then((session) => {
         // A sign-out/sign-in event takes precedence over a slower startup read.
         if (alive && generation === initialGeneration) accept(session);

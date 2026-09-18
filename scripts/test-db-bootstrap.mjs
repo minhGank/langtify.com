@@ -331,6 +331,66 @@ try {
         'PASS: real feed RPC uses one indexed bounded rating aggregate among 50,000 unrelated votes under a generic plan',
       );
     }
+    if (file === '20260918000000_phase10_notifications.sql') {
+      await execute(
+        `insert into public.notification_preferences(user_id,daily_time) values('${user}','09:15');
+        insert into private.push_installations(id,secret_hash,revision,user_id,session_id,token,platform) values('${randomUUID()}',repeat('a',64),1,'${user}','${randomUUID()}','ExpoPushToken[bootstrapfixture]','ios');
+        insert into private.notification_deliveries(user_id,kind,local_date,timezone,title,body) values('${user}','STREAK_AT_RISK',current_date,'UTC','Fixture','Fixture');`,
+        database,
+      );
+      const snapshot = `select jsonb_build_object('preferences',(select jsonb_agg(to_jsonb(p)) from public.notification_preferences p),'bindings',(select jsonb_agg(to_jsonb(i)) from private.push_installations i),'deliveries',(select jsonb_agg(to_jsonb(n)) from private.notification_deliveries n),'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      const sent = await query(`update private.notification_deliveries set state='sent';`, database)
+        .result;
+      assert.notEqual(sent.code, 0);
+      console.log(
+        'PASS: Phase 10 nonempty replay preserves preferences, bindings, blocked preparation and XP; schema cannot falsely record delivery',
+      );
+    }
+    if (file === '20260918010000_phase10_sender.sql') {
+      const attempt = randomUUID(),
+        ticket = randomUUID();
+      await execute(
+        `insert into private.notification_deliveries(id,user_id,kind,local_date,timezone,title,body,state,blocked_reason,attempt_started_at,send_authorized_at,installation_id,installation_revision,token_hash)
+        values('${attempt}','${user}','STREAK_AT_RISK',current_date-1,'UTC','Fixture','Fixture','attempting',null,now(),now(),'${randomUUID()}',1,repeat('a',64));`,
+        database,
+      );
+      await execute(
+        `select public.record_notification_result('${attempt}','ticket_accepted','${ticket}');`,
+        database,
+      );
+      const snapshot = `select jsonb_build_object('deliveries',(select jsonb_agg(to_jsonb(n) order by id) from private.notification_deliveries n),'events',(select jsonb_agg(to_jsonb(e) order by id) from private.notification_attempt_events e),'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      await execute(
+        `select public.record_notification_result('${attempt}','uncertain',null,'NetworkError');`,
+        database,
+      );
+      assert.equal(await execute(snapshot, database), before);
+      console.log(
+        'PASS: sender migration replays over blocked and attempted history without resetting attempts, receipts, events or XP',
+      );
+    }
+    if (
+      ['20260918020000_phase10_audit.sql', '20260918030000_phase10_lock_order.sql'].includes(file)
+    ) {
+      const snapshot = `select jsonb_build_object('deliveries',(select jsonb_agg(to_jsonb(n) order by id) from private.notification_deliveries n),'events',(select jsonb_agg(to_jsonb(e) order by id) from private.notification_attempt_events e),'bindings',(select jsonb_agg(to_jsonb(i) order by id) from private.push_installations i),'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      assert.equal(
+        await execute(
+          `select has_function_privilege('authenticated','public.claim_notification_attempts(integer)','execute') or has_function_privilege('anon','public.authorize_notification_attempt(uuid)','execute');`,
+          database,
+        ),
+        'f',
+      );
+      console.log(
+        'PASS: Phase 10 admission audit migration replays without changing durable attempts, events, bindings or XP and preserves service-only admission',
+      );
+    }
     if (file === '20260917000000_phase9_safety.sql') {
       const rater = await execute(
         `select id from auth.users where id<>'${user}' limit 1;`,

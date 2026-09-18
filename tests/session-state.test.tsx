@@ -44,6 +44,36 @@ function gatewayFixture() {
     ) => listener(session, event),
   };
 }
+it.each(['restore', 'account'])(
+  'recovers from a stalled %s request without admitting its late result',
+  async (stage) => {
+    jest.useFakeTimers();
+    try {
+      const fixture = gatewayFixture();
+      const restore = deferred<Session | null>(),
+        account = deferred<Account>();
+      if (stage === 'restore') fixture.restore.mockReturnValueOnce(restore.promise);
+      else fixture.load.mockReturnValueOnce(account.promise);
+      const { result } = renderHook(() => useSessionState(fixture.gateway));
+      await act(async () => {
+        await jest.advanceTimersByTimeAsync(15002);
+      });
+      expect(result.current.status).toBe('error');
+      act(() => result.current.reload());
+      await act(async () => {
+        await jest.advanceTimersByTimeAsync(2);
+      });
+      expect(result.current.status).toBe('ready');
+      await act(async () => {
+        restore.resolve(makeSession('old'));
+        account.resolve(makeAccount('old'));
+      });
+      expect(result.current.session?.user.id).toBe(makeSession().user.id);
+    } finally {
+      jest.useRealTimers();
+    }
+  },
+);
 it('blocks navigation while restoring and validates the restored account', async () => {
   const fixture = gatewayFixture();
   const pending = deferred<Session | null>();

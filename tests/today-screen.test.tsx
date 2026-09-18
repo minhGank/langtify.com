@@ -1,4 +1,5 @@
 import type * as ReactTypes from 'react';
+import { AppState } from 'react-native';
 import { fireEvent, render, screen, waitFor, act } from '@testing-library/react-native';
 import { TodayScreen } from '@/features/challenges/today-screen';
 import { makeAccount, makeSession } from './fixtures';
@@ -26,10 +27,27 @@ jest.mock('expo-router', () => ({
 }));
 beforeEach(() => {
   jest.clearAllMocks();
+  Object.defineProperty(AppState, 'currentState', {
+    configurable: true,
+    writable: true,
+    value: 'active',
+  });
   mockAccount = makeAccount();
   mockSession = makeSession();
   mockLoad.mockResolvedValue(makeChallenge());
   mockReplace.mockResolvedValue(makeChallenge());
+});
+it('defers background startup until foreground instead of generating a challenge while inactive', async () => {
+  AppState.currentState = 'background';
+  const listeners = jest.spyOn(AppState, 'addEventListener');
+  render(<TodayScreen />);
+  await act(async () => {});
+  expect(mockLoad).not.toHaveBeenCalled();
+  AppState.currentState = 'active';
+  await act(async () => {
+    for (const [, callback] of listeners.mock.calls) callback('active');
+  });
+  expect(await screen.findByText('la fenêtre')).toBeVisible();
 });
 it('renders the date and all linked cards with replacement actions', async () => {
   render(<TodayScreen />);

@@ -1,4 +1,4 @@
-# Phase 9 data model
+# Phase 10 data model
 
 Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
 Phase 4 adds submissions and private photo storage. Email stays in Auth.
@@ -403,3 +403,64 @@ The migration is transactional and replay-safe, preserving nonempty case/block/a
 and XP history. The original finalize/visibility implementations remain private;
 public wrappers enforce restriction admission before prior ownership/locking logic.
 No destructive backfill or photo/XP reinterpretation occurs.
+
+## Phase 10 notifications and durable attempt history
+
+`20260918000000_phase10_notifications.sql` introduces preferences/installations and
+historical blocked preparation. Additive `20260918010000_phase10_sender.sql` implements
+the explicitly approved at-most-one-attempt contract. Replay does not erase or reset
+blocked/attempted history, receipts, events or XP.
+
+| Table                                 | Invariants and purpose                                                                                                                                                                                                                                |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `public.notification_preferences`     | Auth owner PK, booleans and minute-only 08:00/19:00 defaults; due index and next-check timestamp; own RPC read/save only                                                                                                                              |
+| `private.push_installations`          | Installation UUID/secret hash, durable positive revision, unique validated Expo token, Auth-derived owner/session and platform; no raw client access                                                                                                  |
+| `private.notification_deliveries`     | Unique owner/type/local date, immutable generated content, timezone/challenge snapshots, consumed-attempt and one-use authorization timestamps, attempted binding identity/revision/token hash, ticket UUID, safe result/error and receipt-check time |
+| `private.notification_attempt_events` | Private timestamped state transitions, unique notification/state; RPCs append transitions and never rewrite them                                                                                                                                      |
+
+States are historical `blocked`, `attempting`, `uncertain`, `send_rejected`,
+`ticket_accepted`, `provider_accepted`, `provider_rejected`, `receipt_unavailable`.
+Constraints require attempt identity/hash/timestamp for nonblocked states and ticket
+identity for receipt states. Unique ticket IDs and due indexes bound receipt/recovery
+reads. No state called delivered exists. Raw tables have RLS and no ordinary/service
+mutation grants; narrow security-definer RPCs use an empty search path. Account deletion
+cascades owned notification records/events and clears bindings while retaining
+installation capability tombstones. No user can mutate or read another user's history.
+
+Own preference RPCs derive the actor and saved timezone, with strict booleans/HH:MM.
+`sync_push_installation` requires Auth plus a live session to register; capability-only
+anonymous access can revoke. Same-revision replay requires identical content; old
+revisions fail. Timezone/preference/registration changes request reevaluation without
+resetting a consumed attempt. Definite invalid-token results clear only an exact
+matching binding, preserving newer registrations and account changes.
+
+Service-only `claim_notification_attempts(1..50)` takes the job lock, then Auth user,
+profile, learning and preference locks. It selects one most-recent eligible installation,
+uses DB-local date, calls existing challenge generation and consumes a row before
+returning its private payload. Per-user failures roll back challenge/attempt together
+and defer the next check 15 minutes. Historical blocked rows are terminal; no backlog.
+
+`authorize_notification_attempt` takes Auth user → profile → learning → installation
+→ preference → notification locks and consumes a one-use authorization after current
+eligibility checks. This preserves registration/deletion/lifecycle ordering and rejects
+work invalidated while waiting. No database lock spans provider I/O; a change after
+admission cannot retract a request already in flight.
+
+`record_notification_result` and `record_notification_receipt` are idempotent metadata
+writes, not send authority. They lock Auth user → installation → notification and
+ignore stale terminal-state downgrades. Only whitelisted error codes are retained.
+`claim_notification_receipts(1..100)` leases bounded receipt reads for 15 minutes;
+missing/unavailable receipts can be looked up again, but no send is retried. At 24
+hours they become receipt_unavailable. Attempts left by crashed workers become
+uncertain after 10 minutes. Lost acknowledgements never reopen the source key.
+
+`20260918020000_phase10_audit.sql` aligns claim and send authorization with the
+resolved local schedule timestamp, correcting early sends during DST gaps/folds.
+It replaces functions only, preserves service-only grants and rewrites no attempt,
+binding, event or XP data. Its nonempty replay and rolled-back clock fixtures are
+covered by the [Phase 10 audit](PHASE10_AUDIT.md).
+
+`20260918030000_phase10_lock_order.sql` replaces only the claim function: take the
+whole bounded candidate batch's Auth, profile and learning locks in ordered stages
+before processing preferences. This closes the reproduced cross-candidate cycle
+with token rebinding and send authorization. No table/backfill or source reset.

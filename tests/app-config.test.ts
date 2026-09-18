@@ -9,11 +9,39 @@ const context: ConfigContext = {
 };
 const originalUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const originalKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const originalProject = process.env.EXPO_PUBLIC_EAS_PROJECT_ID;
+const originalGoogleServices = process.env.LANGTIFY_GOOGLE_SERVICES_FILE;
+beforeEach(() => {
+  delete process.env.EXPO_PUBLIC_EAS_PROJECT_ID;
+  delete process.env.LANGTIFY_GOOGLE_SERVICES_FILE;
+});
 afterEach(() => {
   if (originalUrl === undefined) delete process.env.EXPO_PUBLIC_SUPABASE_URL;
   else process.env.EXPO_PUBLIC_SUPABASE_URL = originalUrl;
   if (originalKey === undefined) delete process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
   else process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY = originalKey;
+  if (originalProject === undefined) delete process.env.EXPO_PUBLIC_EAS_PROJECT_ID;
+  else process.env.EXPO_PUBLIC_EAS_PROJECT_ID = originalProject;
+  if (originalGoogleServices === undefined) delete process.env.LANGTIFY_GOOGLE_SERVICES_FILE;
+  else process.env.LANGTIFY_GOOGLE_SERVICES_FILE = originalGoogleServices;
+});
+it('accepts the optional native Firebase client file without changing the app identity', () => {
+  process.env.LANGTIFY_GOOGLE_SERVICES_FILE = '/operator/google-services.json';
+  expect(
+    configure({
+      ...context,
+      config: { ...context.config, android: { package: 'com.langtify.app' } },
+    }).android,
+  ).toEqual({
+    package: 'com.langtify.app',
+    googleServicesFile: '/operator/google-services.json',
+  });
+});
+it('validates the public EAS UUID before adding project metadata', () => {
+  process.env.EXPO_PUBLIC_EAS_PROJECT_ID = 'not-a-project';
+  expect(() => configure(context)).toThrow('Invalid public EAS project ID');
+  process.env.EXPO_PUBLIC_EAS_PROJECT_ID = '10000000-0000-4000-8000-000000000001';
+  expect(configure(context).extra?.eas.projectId).toBe(process.env.EXPO_PUBLIC_EAS_PROJECT_ID);
 });
 it('preserves static app configuration when public env is absent', () => {
   delete process.env.EXPO_PUBLIC_SUPABASE_URL;

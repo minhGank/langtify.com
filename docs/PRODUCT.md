@@ -3,7 +3,7 @@
 Name: **Langtify**. Domain: `langtify.com`. Package and Expo slug: `langtify`.
 Mobile-first Expo / React Native / strict TypeScript; iOS and Android are primary.
 
-## Current scope: Phase 9
+## Current scope: Phase 10
 
 Supabase email/password authentication, persisted sessions, authoritative profiles,
 and onboarding (username, reference language, target language, CEFR level, IANA
@@ -114,8 +114,8 @@ longest streak and lifetime counts of currently valid words/full challenges.
 
 ## Future scope — not implemented
 
-Comments, likes, followers, friends, DMs, notifications,
-leaderboards, achievements and subscriptions are not included. Phase 10 has not
+Comments, likes, followers, friends, DMs, social notifications,
+leaderboards, achievements and subscriptions are not included. Phase 11 has not
 started. Apple, Facebook, magic-link and other login providers remain out of scope.
 Apple Sign-In is deferred until Apple Developer membership is available.
 
@@ -233,7 +233,7 @@ The app marks submitting intent promptly, then installs the server result. Repea
 taps are serialized; uncertain responses trigger a read before an explicit retry,
 not an automatic replay. Account/target/session/focus changes discard stale UI results.
 Ratings do not award XP or change streaks, word completion, ordering or ranking.
-Comments, likes, social connections and notifications remain absent. Phase 9 safety
+Comments, likes, social connections and social notifications remain absent. Phase 9 safety
 controls are described below; public launch requires operational and device acceptance.
 
 ## Reporting, blocking and moderation — Phase 9
@@ -279,4 +279,45 @@ Future reads and mutation admission use backend safety state. Existing in-flight
 read snapshots and previously issued 60-second photo URLs retain their short lifetime;
 downloaded images cannot be recalled. Device acceptance, moderation staffing and
 operational response procedures are required before public production launch.
-No Phase 10 or unrelated social features are implemented.
+Phase 10 private learning preparation is described below; unrelated social features remain absent.
+
+## Private learning notifications — Phase 10
+
+The user explicitly approved at most one **provider send attempt** per user,
+notification type and local date. Rare missed notifications are preferred to duplicate
+send attempts. Once consumed, a send is never automatically retried, including after
+timeout, HTTP failure, rejection or lost database acknowledgement. Expo/APNs/FCM/device
+delivery or display is not guaranteed. This replaces the earlier delivery block;
+see decision 029 and [notification operations](NOTIFICATIONS.md).
+
+Preferences default to enabled, daily words ON at 08:00 and streak reminders ON at
+19:00, using the persisted IANA learning timezone. Users control the switches and
+minute-precision local times. Permission is separate: explicit opt-in, no repeated
+nagging after denial, device Settings and foreground reconciliation. Web supports
+preferences but does not register push.
+
+Daily content contains the three active authoritative target words when the backend
+consumes the attempt, after ensuring today's challenge exists. Replacements do not
+edit or repeat the notification; Today remains authoritative for current assignments.
+A streak reminder requires a surviving run ending yesterday and no valid word today.
+One word maintains the streak and suppresses an unstarted reminder. Private learning
+remains allowed for publicly restricted accounts. Banned/deleted/incomplete accounts
+and ended Auth sessions are ineligible.
+
+One most recently registered eligible device is selected per user/type/day (UUID
+breaks registration-time ties); there is no per-device fan-out or fallback resend.
+The sender rechecks account, exact binding/session, preferences, timezone/date and
+streak eligibility immediately before the provider call. Changes after that admission
+or already queued OS pushes cannot be recalled, including after offline sign-out.
+
+Database time is authoritative. Default wall times survive DST; nonexistent custom
+times shift forward, and ambiguous times use standard time. Jobs consider the current
+local day only, without historical catch-up. Provider expiration is local midnight.
+Legacy blocked records are preserved and never automatically dispatched. They can
+suppress an attempt on their original date; the next eligible day starts normally.
+Notification taps recognize fixed types and the matching account, then open Today
+after Auth/onboarding. No arbitrary payload route is used.
+
+The [Phase 10 audit](PHASE10_AUDIT.md) preserves these rules and corrects early DST
+admission and previous-account registration cleanup. Device and hosted acceptance
+remain required; automated verification does not claim physical push delivery.

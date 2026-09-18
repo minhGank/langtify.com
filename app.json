@@ -51,7 +51,14 @@
         {
           "launchMode": "most-recent"
         }
-      ]
+      ],
+      [
+        "expo-notifications",
+        {
+          "defaultChannel": "learning"
+        }
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

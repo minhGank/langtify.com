@@ -237,6 +237,36 @@ export type Database = {
           },
         ];
       };
+      notification_preferences: {
+        Row: {
+          daily_time: string;
+          daily_words: boolean;
+          enabled: boolean;
+          next_check_at: string;
+          streak_reminder: boolean;
+          streak_time: string;
+          user_id: string;
+        };
+        Insert: {
+          daily_time?: string;
+          daily_words?: boolean;
+          enabled?: boolean;
+          next_check_at?: string;
+          streak_reminder?: boolean;
+          streak_time?: string;
+          user_id: string;
+        };
+        Update: {
+          daily_time?: string;
+          daily_words?: boolean;
+          enabled?: boolean;
+          next_check_at?: string;
+          streak_reminder?: boolean;
+          streak_time?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -647,6 +677,10 @@ export type Database = {
         };
         Returns: undefined;
       };
+      authorize_notification_attempt: {
+        Args: { notification_id: string };
+        Returns: boolean;
+      };
       begin_submission_deletion: {
         Args: { submission_id: string };
         Returns: {
@@ -679,6 +713,14 @@ export type Database = {
       can_upload_submission_object: {
         Args: { object_path: string };
         Returns: boolean;
+      };
+      claim_notification_attempts: {
+        Args: { batch_size?: number };
+        Returns: Json;
+      };
+      claim_notification_receipts: {
+        Args: { batch_size?: number };
+        Returns: Json;
       };
       claim_photo_cleanup: {
         Args: { batch_size?: number };
@@ -810,6 +852,7 @@ export type Database = {
         };
         Returns: Json;
       };
+      get_notification_preferences: { Args: never; Returns: Json };
       get_or_create_today_challenge: { Args: never; Returns: Json };
       get_safety_access: { Args: never; Returns: Json };
       get_submission_xp: { Args: { submission_id: string }; Returns: Json };
@@ -826,9 +869,31 @@ export type Database = {
         Args: { expected_user_id: string; submission_id: string };
         Returns: Json;
       };
+      prepare_due_notifications: {
+        Args: { batch_size?: number };
+        Returns: Json;
+      };
       rate_submission: {
         Args: { score: number; submission_id: string };
         Returns: Json;
+      };
+      record_notification_receipt: {
+        Args: {
+          notification_id: string;
+          provider_error?: string;
+          provider_ticket: string;
+          receipt_status: string;
+        };
+        Returns: undefined;
+      };
+      record_notification_result: {
+        Args: {
+          notification_id: string;
+          provider_error?: string;
+          provider_ticket?: string;
+          result_status: string;
+        };
+        Returns: undefined;
       };
       replace_daily_challenge_word: {
         Args: { active_assignment_id: string };
@@ -871,6 +936,16 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      save_notification_preferences: {
+        Args: {
+          daily_at: string;
+          daily_enabled: boolean;
+          notifications_enabled: boolean;
+          streak_at: string;
+          streak_enabled: boolean;
+        };
+        Returns: Json;
+      };
       set_submission_visibility: {
         Args: { requested_visibility: string; submission_id: string };
         Returns: {
@@ -898,6 +973,16 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      sync_push_installation: {
+        Args: {
+          device_platform?: string;
+          installation_id: string;
+          installation_revision: number;
+          installation_secret: string;
+          push_token?: string;
+        };
+        Returns: undefined;
       };
       unblock_user: { Args: { block_id: string }; Returns: Json };
     };

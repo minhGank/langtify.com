@@ -1,3 +1,5 @@
+import { router } from 'expo-router';
+import { Button } from '@/components/ui/button';
 import { ProgressPanel } from '@/features/progress/progress-panel';
 import { AppText } from '@/components/ui/app-text';
 import { Screen } from '@/components/ui/screen';
@@ -30,6 +32,7 @@ export function ProfileScreen() {
           detailed
         />
       )}
+      <Button label="Notifications" onPress={() => router.push('/notification-settings')} />
       <SignOutButton />
       {session && (
         <ProfileSafety

@@ -23,6 +23,7 @@ export function UnfinishedPhotos({
       let alive = true,
         generation = 0;
       const load = async () => {
+        if (!alive || AppState.currentState !== 'active') return;
         const request = ++generation;
         try {
           const saved = await listUnfinishedPhotos(userId, token);

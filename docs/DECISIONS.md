@@ -559,3 +559,101 @@ denial, reciprocal rating/moderation/publication contention, deletion/restoratio
 restricted finalization and durable cases after target deletion. Existing backend
 authority holds; no SQL migration or product-policy change is needed. See
 `PHASE9_AUDIT.md`. Phase 10 remains out of scope.
+
+## 028 — Historical Phase 10 delivery block (superseded by 029)
+
+The user explicitly authorized Phase 10 and updating AGENTS. This supersedes the
+historical Phase 9 scope limits in 026/027; Phase 11 remains unauthorized.
+
+We raised the transport ambiguity before implementing a sender: at-most-one provider
+attempt avoids application retries but can miss delivery after a network failure;
+Expo/OS delivery and already queued pushes after offline sign-out cannot be guaranteed.
+The user answered: **“Require stronger guarantees; flag delivery as blocked.”**
+
+Therefore sending is structurally disabled. There is no Expo send HTTP call, successful
+send state, receipt worker or fallback local reminder. Database preparation uniqueness
+is not represented as exactly-once physical delivery. Do not weaken this decision or
+automatically dispatch blocked records after a future migration. Expo documents
+best-effort delivery that can duplicate or fail; a durable outbox alone cannot make
+the network handoff or device display exactly once. See
+[Expo delivery guarantees](https://docs.expo.dev/push-notifications/faq/#delivery-guarantees).
+
+Independent work proceeds: private preferences, installation capabilities/revisions,
+live Auth-session binding, backend challenge/streak preparation, fixed Today routing,
+timeout recovery, deployment documentation and automated regressions. This is partial
+Phase 10, not a completed notification loop. Restricted accounts preserve existing
+private learning eligibility. Times use saved IANA zones; PostgreSQL's standard DST
+resolution moves gaps forward and chooses standard time for folds. Preparation is
+once per current user/type/local date, without catch-up messages for older dates.
+
+Use Expo Notifications for permission/token/listener APIs, Device for physical-device
+availability and SecureStore for the installation secret/revision. No custom backend,
+state library or push provider credential enters the client. Optional public EAS UUID
+and Android Firebase client configuration enable native setup; FCM service-account/APNs
+credentials stay in trusted provider tooling. SDK compatibility also required Expo
+57.0.23 and image-manipulator 57.0.18 patches.
+
+Global request deadlines and Auth startup deadlines correct unbounded waits without
+changing session admission or automatically retrying uncertain mutations. Existing
+safe messages, request identities and backend reconciliation remain authoritative.
+The 14 moderate transitive npm findings remain; forced fixes suggest SDK-breaking
+downgrades. Track compatible upstream fixes and the Router malformed-query advisory
+before external beta acceptance; do not claim the audit is clean.
+
+## 029 — Approved at-most-one provider attempt and receipt reconciliation
+
+The user explicitly changed the contract: at most one provider send attempt per
+user + notification type + local date; uncertain outcomes are never automatically
+resent, and a rare missed notification is preferable to duplicates. Provider/device
+failure is accepted. This supersedes decision 028's sending prohibition. Phase 11
+remains out of scope.
+
+Consume a durable attempt in the database before network I/O and select one most
+recently registered eligible device. One-use pre-send authorization rechecks exact
+binding/session, account, preferences, timezone/date and streak validity. A crash or
+lost claim/authorization response can miss a push, but cannot authorize a resend.
+One recipient per fixed-endpoint HTTP request isolates invalid-token/project errors;
+four concurrent requests bound load. No retrying push SDK or per-device fan-out.
+
+Store safe ticket/result state and append transition events. A ticket confirms Expo
+acceptance; a successful receipt confirms provider handoff, never device delivery.
+Poll receipts after 15 minutes, retry reads when absent/unavailable, and stop at 24
+hours. An interrupted attempt becomes uncertain after 10 minutes. Rejection, 429/5xx,
+network timeout, malformed response and persistence loss never trigger another send.
+DeviceNotRegistered clears only the exact attempted installation/owner/revision/token
+hash, so delayed receipts cannot revoke a new account or token. This follows the
+[Expo ticket/receipt API](https://docs.expo.dev/push-notifications/sending-notifications/)
+while intentionally declining its suggested send retries under the user's contract.
+
+The sender requires server job credentials and an Expo access token with enhanced
+push security. No provider credential enters public env/config or the mobile bundle.
+Legacy blocked records remain terminal and are not a backlog. Admission cannot recall
+already in-flight/OS-queued pushes after account changes, including offline sign-out;
+matching-account tap/foreground guards remain in place. Hosted/provider/device checks
+are distinct from the real local DB + instrumented HTTP-provider tests.
+
+## 030 — Phase 10 audit: scope revocation, DST admission and batch lock ordering
+
+The approved at-most-one provider attempt contract is unchanged. Revoke a previous
+installation scope before calling fallible native permission/token APIs on cold start
+or Auth changes; a failed lookup must not leave another account registered. Persisted
+revisions still fence late writes, and uncertain revocation must remain retryable.
+Offline revocation and recall of already queued pushes remain impossible guarantees.
+
+Claim, last-minute authorization and next-check scheduling must resolve the same IANA
+wall-time instant. Gaps shift forward; folds use standard time. Direct wall-clock
+comparisons allowed early sends after registration/settings refresh during transitions.
+The additive DST audit replaces only the two affected functions and preserves data.
+
+Batching retains locks across candidates. Before processing any preference row, acquire
+all bounded candidate Auth-user locks, then profiles, then learning rows in UUID order.
+This closes the reproduced scheduler/preferences B → authorization/profile A →
+registration/installation A → preferences B deadlock. Current eligibility is still
+rechecked and no database lock spans provider HTTP. A separate additive migration
+preserves the already-applied DST migration and all attempt history.
+
+Cancel unread provider response bodies on rejection. Keep fixed endpoints, bounded
+input/deadlines and no send retries. Expanded tests prove duplicate-claim replay,
+late invalid-token tickets during replacement, network/HTTP uncertainty and lock
+contention, alongside existing receipt/session/RLS regressions. See `PHASE10_AUDIT.md`.
+No product policy or Phase 11 functionality is introduced.

@@ -5,7 +5,7 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
-## Phase 9 boundaries
+## Phase 10 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.
 - `src/features/auth/`: session lifecycle, password/Google forms, navigation authority.
@@ -166,8 +166,8 @@ an accessible progress bar need no animation or global-state dependency.
 
 ## Future boundaries
 
-Comments, likes, followers, friends, DMs, notifications, leaderboards, achievements,
-subscriptions and AI image validation remain out of scope. Phase 10 has not started.
+Comments, likes, followers, friends, DMs, social notifications, leaderboards, achievements,
+subscriptions and AI image validation remain out of scope. Phase 11 has not started.
 
 ## Google OAuth and session admission — Phase 5.5
 
@@ -422,3 +422,60 @@ to their exact preview instance and cannot clear a newer one. See `PHASE9_AUDIT.
 Deploy the migration before the matching function and app. No new dependencies or
 custom backend. Public launch still requires deployment, device/admin acceptance,
 moderator provisioning and operational readiness rather than merely passing exports.
+
+## Notification sender and beta recovery — Phase 10
+
+`src/features/notifications` owns permission/token adapters, account-scoped installation
+registration, fixed Today navigation and settings. `src/services/notifications.ts`
+pins JWT identity; it never accepts a user override. Expo Notifications, Device and
+SecureStore provide native capabilities, physical-device detection and durable
+installation secrets/revisions. Registration/foreground refresh can replace a
+provider-invalidated binding; old receipts cannot clear newer revisions/accounts.
+
+The server-only `notification-scheduler` authenticates its dedicated job secret and
+requires configured Expo access credentials before consuming work. Its store invokes
+service-only RPCs; its transport uses fixed Expo HTTPS endpoints, deadlines and no
+send retry SDK. `claim_notification_attempts` checks at most 10 due accounts per job
+(RPC maximum 50), yielding at most two types each. It serializes workers and delegates
+challenge generation to existing authority, atomically consuming unique attempts.
+No provider I/O happens inside a SQL transaction.
+
+A one-use `authorize_notification_attempt` immediately before each call verifies the
+current account/binding/session/preferences/date/streak under existing lock authority.
+The sender then posts one recipient per HTTP call with at most four concurrent calls.
+Separate requests isolate malformed/foreign-project tokens from other recipients.
+A committed claim or authorization with a lost response is never recoverable send
+work: it may be missed, exactly as the approved contract permits. There is no claim
+lease that returns a notification to a sendable state.
+
+Results move from attempting to accepted ticket, rejection or uncertainty; private
+state-transition events preserve history. Receipt polling starts after 15 minutes,
+retries only reads, and expires unresolved tickets after 24 hours. Crash recovery
+marks attempts older than 10 minutes uncertain without resending. DeviceNotRegistered
+invalidates only the same owner/installation/revision/token hash. Provider acceptance
+means handoff acceptance, not device delivery. No free-form provider message/token
+is logged or stored in errors. See [operations](NOTIFICATIONS.md).
+
+Migrations preserve earlier blocked history, which is never automatically dispatched.
+The old preparation RPC loses service access. Sender authority is not exported to
+ordinary Auth clients, raw tables or app bundles. Public restrictions still permit
+private learning; public/social content and XP/streak rules are unchanged.
+
+All mobile Supabase clients use bounded fetch: 20 seconds normally, 90 seconds for
+Storage object mutations. Auth restoration/account loading time out after 15 seconds
+while preserving session/generation guards. Notification registration has a 15-second
+deadline; settings reuse the focused 20-second task hook. No mutation is automatically
+replayed; uncertain writes use existing backend reconciliation. Today/recovery reads
+defer while backgrounded, and progress admits only the current focused loader.
+Physical OS APIs, device performance and accessibility still require acceptance.
+
+The Phase 10 audit makes installation scope revocation precede fallible native
+permission/token lookup, so lookup failure cannot retain the previous account's
+binding. Scheduler claim and final authorization compare the same resolved IANA
+timestamp used by next-check scheduling. Rejected provider response bodies are
+cancelled. See [audit evidence and acceptance limits](PHASE10_AUDIT.md).
+
+The bounded scheduler batch acquires Auth-user locks for all candidates, then profile
+locks, then learning locks in UUID order before processing any preference row. This
+prevents a three-transaction cycle with cross-account installation rebinding and
+send admission. Candidate due order and all per-user eligibility rechecks remain.
