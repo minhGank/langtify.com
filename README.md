@@ -73,6 +73,14 @@ query parameters or fragments. `app.config.js` preserves the metadata in `app.js
 and shares validation with `src/lib/env.ts` through `src/lib/public-config.js`.
 The validator checks configuration shape/key role; Supabase verifies credentials.
 
+## Continuous integration
+
+GitHub Actions runs the existing application, export, security and local Supabase
+regression checks on pull requests and pushes to `main`. See [CI setup and check
+results](docs/CI.md) for required-check names, credential handling, local reproduction
+and the Expo compatibility verification results. No repository secrets or deployments
+are configured by this workflow.
+
 ## Supabase development setup
 
 The CLI is a development dependency. Docker Desktop must be running.

@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: 'true'
+  EXPO_NO_TELEMETRY: '1'
+  EXPO_NO_DOTENV: '1'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  app:
+    name: App and exports
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Use repository npm version
+        run: npm install --global npm@11.9.0
+      - name: Install locked dependencies
+        id: dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Typecheck, lint, formatting and application tests
+        run: npm run check
+      - name: CI setup regression tests
+        run: node --test scripts/ci-supabase.test.mjs
+      - name: Dependency security gate
+        # Report known moderates; fail on high/critical findings or registry errors.
+        run: npm audit --audit-level=high
+      - name: Export iOS, Android and web
+        env:
+          # Nonfunctional public fixtures; never point export jobs at hosted data.
+          EXPO_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_ci_fixture
+        run: npm run export:check -- --clear
+      - name: Source and bundle credential scan
+        run: npm run security:scan
+      - name: Expo Doctor
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: npm run doctor
+      - name: SDK compatibility
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: npx expo install --check
+
+  backend:
+    name: Supabase and Edge Functions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Use repository npm version
+        run: npm install --global npm@11.9.0
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Edge Function typecheck, lint and tests
+        # Existing scripts pin Deno; the Supabase CLI is locked by package-lock.json.
+        run: |
+          npm run functions:check
+          npm run functions:lint
+          npm run functions:test
+      - name: Start disposable local Supabase
+        run: |
+          # Startup/status output includes local keys: never echo or upload it.
+          umask 077
+          npx supabase start > "$RUNNER_TEMP/supabase-start.log" 2>&1
+          node scripts/ci-supabase.mjs mask
+      - name: Serve local Edge Functions and wait for readiness
+        run: |
+          umask 077
+          npx supabase functions serve > "$RUNNER_TEMP/supabase-functions.log" 2>&1 &
+          node scripts/ci-supabase.mjs ready
+      - name: Migrations, database and RLS tests
+        run: |
+          npm run db:migrate
+          npm run db:test
+          npm run db:test:bootstrap
+      - name: Auth and database integration regressions
+        # These share local fixtures; deliberately run every suite sequentially.
+        run: |
+          npm run test:auth:integration
+          npm run db:test:integration
+          npm run db:test:challenges
+          npm run db:test:submissions
+          npm run db:test:photo-audit
+          npm run db:test:progress
+          npm run db:test:vocabulary
+          npm run db:test:discover
+          npm run db:test:ratings
+          npm run db:test:safety
+          npm run db:test:notifications
+          npm run db:test:notification-sender
+      - name: Database lint
+        run: npx supabase db lint --local --level warning --fail-on warning
+      - name: Stop disposable local Supabase
+        if: always()
+        run: |
+          # Only the fresh GitHub runner's local stack; never a hosted project.
+          umask 077
+          if [[ -x node_modules/.bin/supabase ]]; then
+            node_modules/.bin/supabase stop --no-backup > "$RUNNER_TEMP/supabase-stop.log" 2>&1
+          fi

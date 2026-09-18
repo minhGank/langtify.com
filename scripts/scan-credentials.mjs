@@ -25,7 +25,7 @@ const failures = [];
 for (const path of paths) {
   if (
     !existsSync(path) ||
-    (!/\.(?:[cm]?[jt]sx?|json|lock|md|toml|sql|html|map|hbc)$/.test(path) &&
+    (!/\.(?:[cm]?[jt]sx?|json|lock|md|toml|sql|html|map|hbc|ya?ml)$/.test(path) &&
       !/(^|\/)\.env(?:\.|$)/.test(path))
   )
     continue;
