@@ -1,8 +1,9 @@
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { hasCompletedOnboarding, type SessionState } from '@/features/auth/session-state';
 import type { Account } from '@/services/account';
+import { serverScope, setServerScope } from '@/lib/server-cache';
 
 export type SessionGateway = {
   restore: () => Promise<Session | null>;
@@ -17,12 +18,20 @@ export function useSessionState(gateway: SessionGateway | null) {
     account: null,
   });
   const [revision, setRevision] = useState(0);
+  const refreshAccountRef = useRef<(() => Promise<void>) | null>(null);
+  const refreshAccount = useCallback(async () => {
+    if (!refreshAccountRef.current) throw new Error('Account is unavailable.');
+    await refreshAccountRef.current();
+  }, []);
 
   useEffect(() => {
     if (!gateway) return;
     const activeGateway = gateway;
     let alive = true;
     let generation = 0;
+    let acceptedSession: Session | null = null;
+    let accountRead: { generation: number; work: Promise<void> } | null = null;
+    let explicitRefresh: { generation: number; work: Promise<void> } | null = null;
     const timers = new Set<ReturnType<typeof setTimeout>>();
 
     async function bounded<T>(work: Promise<T>): Promise<T> {
@@ -41,9 +50,52 @@ export function useSessionState(gateway: SessionGateway | null) {
       }
     }
 
+    function readAccount(session: Session, request: number) {
+      if (accountRead?.generation === request) return accountRead.work;
+      const work = bounded(activeGateway.loadAccount(session.user.id)).then((account) => {
+        if (!alive || request !== generation) return;
+        setState({
+          status: hasCompletedOnboarding(account, session.user.id) ? 'ready' : 'onboarding',
+          session,
+          account,
+        });
+      });
+      accountRead = { generation: request, work };
+      void work
+        .finally(() => {
+          if (accountRead?.work === work) accountRead = null;
+        })
+        .catch(() => {});
+      return work;
+    }
+    refreshAccountRef.current = async () => {
+      if (!alive || !acceptedSession) throw new Error('Account is unavailable.');
+      // Refresh persisted account fields without resetting the protected router
+      // or restoring/resubscribing Auth. Concurrent consumers share this read.
+      const request = generation;
+      const session = acceptedSession;
+      if (explicitRefresh?.generation === request) return explicitRefresh.work;
+      const prior = accountRead?.work;
+      const work = (async () => {
+        // An admission/token-refresh read may have started before the mutation.
+        // Wait for it, then issue exactly one post-mutation read.
+        if (prior) await prior.catch(() => {});
+        if (!alive || generation !== request) return;
+        await readAccount(session, request);
+      })();
+      explicitRefresh = { generation: request, work };
+      try {
+        await work;
+      } finally {
+        if (explicitRefresh?.work === work) explicitRefresh = null;
+      }
+    };
+
     function accept(session: Session | null) {
       const request = ++generation;
       if (!alive) return;
+      acceptedSession = session;
+      setServerScope(session ? serverScope(session.user.id, session.access_token) : null);
       if (!session) {
         setState({ status: 'signed-out', session: null, account: null });
         return;
@@ -58,19 +110,10 @@ export function useSessionState(gateway: SessionGateway | null) {
       const timer = setTimeout(() => {
         timers.delete(timer);
         if (!alive || request !== generation) return;
-        bounded(activeGateway.loadAccount(session.user.id))
-          .then((account) => {
-            if (!alive || request !== generation) return;
-            setState({
-              status: hasCompletedOnboarding(account, session.user.id) ? 'ready' : 'onboarding',
-              session,
-              account,
-            });
-          })
-          .catch(() => {
-            if (alive && request === generation)
-              setState({ status: 'error', session, account: null });
-          });
+        readAccount(session, request).catch(() => {
+          if (alive && request === generation)
+            setState({ status: 'error', session, account: null });
+        });
       }, 0);
       timers.add(timer);
     }
@@ -93,6 +136,7 @@ export function useSessionState(gateway: SessionGateway | null) {
       });
     return () => {
       alive = false;
+      refreshAccountRef.current = null;
       ++generation;
       unsubscribe();
       timers.forEach(clearTimeout);
@@ -101,6 +145,7 @@ export function useSessionState(gateway: SessionGateway | null) {
 
   return {
     ...state,
+    refreshAccount,
     reload: () => {
       setState({ status: 'loading', session: null, account: null });
       setRevision((value) => value + 1);

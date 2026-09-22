@@ -1,4 +1,5 @@
 import { feedGateway, parseRatingReceipt } from '@/services/discover';
+import { RatingUnavailable } from '@/features/ratings/rating';
 const mockRpc = jest.fn(),
   mockInvoke = jest.fn(),
   mockAbort = jest.fn(),
@@ -43,6 +44,26 @@ it('pins the viewer JWT, uses bounded cursor RPC and one batch invocation, and p
   });
   await gateway.previews([], signal);
   expect(mockInvoke).toHaveBeenCalledTimes(1);
+});
+
+it.each([401, 403])(
+  'treats signing HTTP %s as an eligibility denial for cache retirement',
+  async (status) => {
+    mockInvoke.mockResolvedValueOnce({
+      data: null,
+      error: new Error('Function denied access.'),
+      response: { status },
+    });
+    const gateway = feedGateway({ userId: 'viewer', targetLanguageId: 'target', token: 'token' });
+    await expect(gateway.previews(['photo'])).rejects.toBeInstanceOf(RatingUnavailable);
+  },
+);
+
+it('keeps a signing service outage retryable rather than treating it as an eligibility denial', async () => {
+  const failure = new Error('Temporary service failure.');
+  mockInvoke.mockResolvedValueOnce({ data: null, error: failure, response: { status: 503 } });
+  const gateway = feedGateway({ userId: 'viewer', targetLanguageId: 'target', token: 'token' });
+  await expect(gateway.previews(['photo'])).rejects.toBe(failure);
 });
 
 it('sends only the submission and semantic score; validates receipt identity and summary', async () => {

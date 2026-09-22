@@ -3,6 +3,25 @@
 ## Scope
 
 Phase 10 adds Push Notifications & Beta Hardening on audited Phase 9, explicitly authorized by the user.
+The subsequent physical-device QA brief explicitly authorizes profile/avatar editing,
+username search and public profiles, follow/unfollow, flat comments with existing
+safety controls, native sharing, quick feed ratings and server-state caching. Implement
+only this product/UX pass; it is not authorization for unrelated Phase 11 work.
+The 2026-09-22 QA2 request additionally authorizes followers/following lists and a
+separate in-app notification center for new followers, new ratings and daily words
+ready. It does not authorize new remote-push types or Phase 11.
+The subsequent physical-device QA brief explicitly authorizes compact semantic
+rating, Search/Explore over existing vocabulary concepts and eligible public photo
+examples, native post navigation, display capitalization, and profile/comment UX
+corrections. Additive search/read RPCs and indexes are within that scope. Preserve
+all existing write, privacy, signing, learning and remote-push authority. This is
+the QA3 presentation/search pass, not Phase 11; no commit, push or deployment.
+The subsequent explicit QA request authorizes native photo-library selection for
+current-day challenge words, through the existing camera submission pipeline.
+The later explicit Past Words brief authorizes historical camera/library captures
+of final, unreplaced past assignments. Keep historical captures separate from daily
+completion: the same reversible assignment entitlement grants only 10 XP, with no
+streak/day/full-challenge credit. Preserve previously admitted daily-upload recovery.
 Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 `docs/DECISIONS.md` before changes. Do not begin Phase 11 or add future product rules.
 
@@ -17,8 +36,11 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 - Keep components small and typed. Prefer existing primitives and system APIs.
 - Support iOS and Android and preserve web compatibility. Minimize platform forks.
 - Do not add Redux/global state without a demonstrated requirement or a custom backend.
-- Do not add gallery uploads, likes, comments, followers, friends, DMs,
-  social notifications, leaderboards, achievements, subscriptions, Apple/Facebook login or AI image validation.
+- Gallery selection is permitted for profile avatars, current-day challenge words
+  and server-eligible Past Words. Preserve explicit server-owned capture kind;
+  preserve the shared JPEG/metadata validation, lifecycle, XP and recovery authority.
+- Do not add likes, friends, DMs, remote social notifications, comment notifications,
+  leaderboards, achievements, subscriptions, Apple/Facebook login or AI image validation.
 - Keep the photo bucket private. Submission completion, identity and deletion
   must be backend-authoritative. Preserve trusted byte verification, version-bound
   attestations, commit-time object guards and function-only fixed-lifetime signing. Never put cleanup credentials in public env.
@@ -37,6 +59,10 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
   ambiguous existing ledger history to make a migration pass.
 - Preserve private progress sources, owner-only immutable ledger, atomic lifecycle
   reconciliation, revision-based serialization and account-scoped progress reads.
+- Past Words uses server time/persisted timezone and actual owned final assignments,
+  never arbitrary catalog IDs. Historical facts stay outside daily word completions,
+  streak runs and bonuses. Daily/historical captures share one reversible word XP
+  entitlement; retries, deletion/reupload and two devices cannot multiply it.
 - Do not invent product rules. Record unresolved questions and obtain requirements
   when future work depends on them.
 - Google OAuth uses Supabase `signInWithOAuth`, S256 PKCE and the centralized
@@ -52,7 +78,8 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
   Group by concept UUID, use latest surviving capture text/CEFR, keep all earlier captures.
   Exclude pending/deleting/deleted rows; do not change XP or completion authority.
   Preserve owner-only security-invoker queries, bounded keyset pages, batch 60-second
-  photo signing, and account/focus/foreground invalidation. Never start reads from
+  photo signing, and account/session invalidation. Recent metadata may survive navigation;
+  signed capabilities must keep their original expiry. Never start reads from
   an inactive screen or an obsolete gateway callback. Abort superseded requests;
   use monotonic elapsed time for preview expiry and retry fresh image instances.
   No category inference.
@@ -80,7 +107,9 @@ Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
   authoritative reconciliation, never automatic replay of older score intent.
   Bound rating request waits so stalled transports cannot hold controls indefinitely;
   cancellation must settle locally and release queued reads without replaying votes.
-  Ratings have no XP, streak, completion, ranking or notification effect.
+  Ratings have no XP, streak, completion, ranking or remote-push effect. The QA2
+  inbox may record the first rating of a submission by a user without revealing
+  the rater's identity or individual score.
 - Safety operations use Auth-derived actors, bounded private queues/lists and controlled
   reasons. Moderator provisioning is trusted SQL only. Keep request-ID audit
   idempotency, mutual block checks, public restriction/removal admission locks, and
@@ -104,6 +133,12 @@ fixtures can affect another suite's catalog, feed and ledger assertions. Bootstr
 uses a separate disposable database; its privileged query-plan fixture always rolls back.
 
 Report commands, outcomes, limitations, and physical-device checks still needed.
+For the authorized product/UX pass, also run `npm run db:test:social` and
+`npm run db:test:avatars`, `npm run db:test:inbox`, `npm run db:test:explore` and `npm run db:test:past-words` sequentially with other DB suites. Keep comment/follow
+authority behind Auth-derived RPCs, private report/audit records and ordered safety
+locks. Gallery access includes current-day challenge words; preserve private avatar Storage, trusted JPEG
+verification and cleanup. Caches remain session-scoped, bounded and memory-only;
+metadata freshness must never extend signed capabilities. See `docs/PRODUCT_UX_PASS.md`.
 For auth changes also run `npm run test:auth:integration` against local Supabase.
 Bundle export is not a native binary build or a substitute for device testing.
 Photo changes must include Storage-policy and recovery/cleanup verification. Keep
@@ -123,7 +158,7 @@ package; never pull server-only credentials or the decoder into Expo bundles.
   Historical blocked rows are not a backlog. Phase 11 remains out of scope; see decision 029.
 - Preserve Auth-derived preferences, persisted IANA time, service-only bounded
   scheduling, authoritative challenge snapshots and existing streak rules. No local
-  device scheduler, client words/dates, social notifications or new XP behavior.
+  device scheduler, client words/dates, remote social notifications or new XP behavior.
 - Token registration requires a real live Auth session and installation capability;
   monotonically persisted revisions fence stale account writes. Anonymous capability
   calls may only revoke. Never expose tokens/hashes/job credentials in public reads,
@@ -142,3 +177,30 @@ package; never pull server-only credentials or the decoder into Expo bundles.
   existing sequential database/Auth/Storage/safety suites, migration replay, function
   checks, all-platform exports and `npm run security:scan`. Record physical, hosted
   and actual provider-delivery checks separately; do not fabricate successful delivery.
+
+## QA2 correction invariants
+
+The authorized follow-up QA batch fixes existing navigation, avatar presentation,
+public-profile posts, cache triggers and password guidance; it does not open Phase 11.
+Do not reintroduce stale-time/focus polling for loaded browsing data. Signed URLs
+keep their original expiry; bounded session-only downloaded pixels may be reused
+without reusing an expired URL. Account/safety invalidation still clears affected
+state. Preserve unfinished-upload recovery and moderator revocation checks. See
+`docs/QA2_CORRECTIONS.md` for exact refresh and physical acceptance rules.
+
+Follower lists must use controlled public projections and batch avatar access,
+not per-row profile/signing requests. The in-app inbox is server-generated and
+owner-scoped with current block/moderation/content eligibility, durable event
+deduplication and controlled read-state RPCs. Do not add polling, caller-created
+events or caller-supplied navigation URLs. Remote push remains DAILY_WORDS and
+STREAK_AT_RISK only, including Personal Team builds. Physical iPhone acceptance
+is required before closing the remaining QA2 scope.
+
+For the authorized QA3 search/navigation pass, preserve existing concept/term
+identity, immutable photo snapshots and saved-target Discover eligibility. Search
+must remain indexed, bounded and Auth-derived; never add raw Storage access or
+caller-selected signed URL paths/TTLs. Public post detail belongs in the native
+stack with normal edge-back navigation; never seed fresh post state from an
+invalidated source. Capitalization is presentation only. Unchanged normalized
+username Save stays disabled. See `docs/QA3_SEARCH_NAVIGATION.md` for verification,
+rollout and required physical acceptance.

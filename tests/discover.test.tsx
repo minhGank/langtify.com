@@ -14,11 +14,13 @@ import {
 } from '@/services/discover';
 import { makeAccount, makeSession } from './fixtures';
 import { RatingUnavailable, type RatingScore, type RatingSummary } from '@/features/ratings/rating';
+jest.mock('@/features/inbox/notification-bell', () => ({ NotificationBell: () => null }));
 let mockSession = makeSession(),
   mockAccount = makeAccount(),
   mockStatus = 'ready';
 let mockFocused = true;
 const mockRate = jest.fn();
+const mockPush = jest.fn();
 const mockLoad = jest.fn(),
   mockPreviews = jest.fn(),
   mockReload = jest.fn();
@@ -34,7 +36,11 @@ jest.mock('@/services/discover', () => ({
   ...jest.requireActual('@/services/discover'),
   feedGateway: () => ({ load: mockLoad, previews: mockPreviews, rate: mockRate }),
 }));
+jest.mock('@/services/social', () => ({
+  socialGateway: () => ({ comments: jest.fn().mockResolvedValue({ items: [], hasMore: false }) }),
+}));
 jest.mock('expo-router', () => ({
+  router: { push: (...args: unknown[]) => mockPush(...args) },
   useFocusEffect: (callback: () => () => void) => {
     const React = jest.requireActual<typeof ReactTypes>('react');
     const focused = mockFocused;
@@ -84,18 +90,22 @@ beforeEach(() => {
 });
 afterEach(() => jest.useRealTimers());
 it('shows vocabulary, username, photo; retries failed images with fresh instances and refreshes to empty', async () => {
+  // Control FlatList's delayed cell batching while asserting successive image
+  // recovery and refresh states; real timers can fire between async assertions.
+  jest.useFakeTimers();
   const rendered = render(<DiscoverScreen />);
-  expect(await screen.findByText('le chien')).toBeVisible();
-  expect(screen.getByText('dog · A1')).toBeVisible();
-  expect(screen.getByText('@learner')).toBeVisible();
-  fireEvent(screen.getByLabelText('Photo of le chien'), 'error');
+  expect(await screen.findByText('Le chien')).toBeVisible();
+  expect(screen.getByText('Dog')).toBeVisible();
+  expect(screen.getByText('Photo by @learner')).toBeVisible();
+  fireEvent(screen.getByLabelText('Photo of Le chien'), 'error');
   fireEvent.press(screen.getByText('Reload photos'));
-  expect(await screen.findByLabelText('Photo of le chien')).toBeVisible();
+  expect(await screen.findByLabelText('Photo of Le chien')).toBeVisible();
   mockLoad.mockResolvedValue({ items: [], hasMore: false });
   fireEvent(rendered.UNSAFE_getByType(FlatList), 'refresh');
   expect(await screen.findByText(/No public photos/)).toBeVisible();
-  expect(screen.queryByText('le chien')).toBeNull();
+  expect(screen.queryByText('Le chien')).toBeNull();
   expect(mockLoad).toHaveBeenLastCalledWith(null, expect.any(AbortSignal));
+  await act(async () => jest.advanceTimersByTime(100));
 });
 it('offers network retry and reloads account when backend target differs', async () => {
   mockLoad.mockRejectedValueOnce(new Error('offline'));
@@ -106,7 +116,7 @@ it('offers network retry and reloads account when backend target differs', async
   fireEvent.press(await screen.findByText('Reload account'));
   expect(mockReload).toHaveBeenCalledTimes(1);
   fireEvent.press(screen.getByText('Retry feed'));
-  expect(await screen.findByText('le chien')).toBeVisible();
+  expect(await screen.findByText('Le chien')).toBeVisible();
 });
 it('bounds the retained window and each signing request, preserves exact cursor, deduplicates and refreshes newest', async () => {
   catalog = Array.from({ length: 36 }, (_, n) => ({ ...item, id: String(n) }));
@@ -174,8 +184,8 @@ it.each(['account', 'target', 'signout'])(
     rerender(<DiscoverScreen />);
     await act(async () => finish({ items: [item], photos: { [item.id]: 'stale' } }));
     expect(signal.aborted).toBe(true);
-    expect(screen.queryByText('le chien')).toBeNull();
-    expect(screen.queryByLabelText('Photo of le chien')).toBeNull();
+    expect(screen.queryByText('Le chien')).toBeNull();
+    expect(screen.queryByLabelText('Photo of Le chien')).toBeNull();
   },
 );
 it('aborts obsolete reads and does not invoke retained callbacks after a gateway change or unmount', async () => {
@@ -207,7 +217,7 @@ it('aborts obsolete reads and does not invoke retained callbacks after a gateway
   });
   expect(mockLoad).toHaveBeenCalledTimes(calls);
 });
-it('does not read in background; clears data on suspension and reloads on resume', async () => {
+it('does not read in background; retains cached metadata on suspension and resumes safely', async () => {
   AppState.currentState = 'background';
   const listeners = jest.spyOn(AppState, 'addEventListener');
   const { result } = renderHook(() => useDiscover(gateway));
@@ -216,25 +226,25 @@ it('does not read in background; clears data on suspension and reloads on resume
   await act(async () => listeners.mock.calls.at(-1)?.[1]('active'));
   expect(result.current.items).toHaveLength(1);
   act(() => listeners.mock.calls.at(-1)?.[1]('background'));
-  expect(result.current.items).toEqual([]);
+  expect(result.current.items).toEqual([item]);
   expect(result.current.photos).toEqual({});
   await act(async () => listeners.mock.calls.at(-1)?.[1]('active'));
   expect(result.current.items).toHaveLength(1);
 });
-it('expires URLs during a stalled renewal and restores them on retry', async () => {
+it('keeps downloaded photos visible without periodic signing and explicitly refreshes on request', async () => {
   jest.useFakeTimers();
   const { result } = renderHook(() => useDiscover(gateway));
   await act(async () => {});
-  expect(result.current.photos[item.id]).toBeTruthy();
-  mockPreviews.mockReturnValueOnce(new Promise(() => {}));
-  await act(async () => {
-    jest.advanceTimersByTime(55000);
-  });
-  expect(result.current.photos).toEqual({});
+  const photo = result.current.photos[item.id];
+  await act(async () => jest.advanceTimersByTime(20 * 60000));
+  expect(result.current.photos[item.id]).toBe(photo);
+  expect(mockLoad).toHaveBeenCalledTimes(1);
+  expect(mockPreviews).toHaveBeenCalledTimes(1);
   await act(async () => {
     await result.current.refresh();
   });
-  expect(result.current.photos[item.id]).toBeTruthy();
+  expect(mockLoad).toHaveBeenCalledTimes(2);
+  expect(mockPreviews).toHaveBeenCalledTimes(2);
 });
 it('rejects a late expired signature even if the wall clock moved backwards', async () => {
   jest.useFakeTimers();
@@ -318,7 +328,7 @@ it('ignores queued lifecycle callbacks after blur and refocus with the same gate
   const stale = listeners.mock.calls.at(-1)?.[1];
   mockFocused = false;
   rerender({});
-  expect(result.current.items).toEqual([]);
+  expect(result.current.items).toEqual([item]);
   mockFocused = true;
   rerender({});
   await waitFor(() => expect(result.current.loading).toBe(false));
@@ -329,7 +339,7 @@ it('ignores queued lifecycle callbacks after blur and refocus with the same gate
   expect(mockLoad).toHaveBeenCalledTimes(calls);
 });
 
-it('reports a signing failure and retries from newest instead of accepting a partially signed page', async () => {
+it('retains prior metadata but clears photos after signing failure, then retries from newest', async () => {
   mockLoad.mockResolvedValue({ ...page, hasMore: true });
   const { result } = renderHook(() => useDiscover(gateway));
   await waitFor(() => expect(result.current.loading).toBe(false));
@@ -338,7 +348,7 @@ it('reports a signing failure and retries from newest instead of accepting a par
     await result.current.loadMore();
   });
   expect(result.current.error).toBeTruthy();
-  expect(result.current.items).toEqual([]);
+  expect(result.current.items).toEqual([item]);
   expect(result.current.photos).toEqual({});
   await act(async () => {
     await result.current.refresh();
@@ -398,7 +408,7 @@ it('keeps its cursor when renewal removes the entire window instead of replaying
 function rated(score: RatingScore): RatingSummary {
   return { averageRating: score, ratingCount: 1, viewerRating: score, canRate: true };
 }
-it('explains semantic scores, marks submitting intent, blocks repeated taps and installs authoritative updates', async () => {
+it('keeps the picker transient, prevents double votes and installs confirmed edits', async () => {
   let finish: (value: RatingSummary) => void = () => {};
   mockRate.mockReturnValueOnce(
     new Promise((resolve) => {
@@ -406,26 +416,30 @@ it('explains semantic scores, marks submitting intent, blocks repeated taps and 
     }),
   );
   render(<DiscoverScreen />);
-  await screen.findByText('How well does this photo represent “le chien”?');
-  fireEvent.press(screen.getByLabelText('5 — Perfect match for le chien'));
-  await screen.findByText('Saving rating: 5…');
-  expect(screen.getByLabelText('3 — Understandable for le chien')).toBeDisabled();
-  expect(screen.getByText('No semantic ratings yet')).toBeVisible();
-  fireEvent.press(screen.getByLabelText('3 — Understandable for le chien'));
-  expect(mockRate).toHaveBeenCalledTimes(1);
+  fireEvent.press(await screen.findByLabelText('Rate photo: Le chien'));
+  fireEvent.press(screen.getByLabelText('5 — Perfect match for Le chien'));
+  expect(screen.queryByLabelText('3 — Understandable for Le chien')).toBeNull();
+  expect(screen.getByLabelText('Rate photo: Le chien')).toBeDisabled();
+  expect(screen.getByText('No ratings yet')).toBeVisible();
+  fireEvent.press(screen.getByLabelText('Rate photo: Le chien'));
+  await waitFor(() => expect(mockRate).toHaveBeenCalledTimes(1));
   await act(async () => finish(rated(5)));
-  expect(screen.getByText('Your rating: 5 — Perfect match')).toBeVisible();
-  expect(screen.getByText('Semantic match: 5.0 / 5 · 1 rating')).toBeVisible();
-  fireEvent.press(screen.getByLabelText('3 — Understandable for le chien'));
-  expect(await screen.findByText('Your rating: 3 — Understandable')).toBeVisible();
+  expect(screen.getByText('5.0 / 5 · 1 rating')).toBeVisible();
+  fireEvent.press(
+    screen.getByLabelText('Your rating: 5 — Perfect match. Edit rating for Le chien'),
+  );
+  fireEvent.press(screen.getByLabelText('3 — Understandable for Le chien'));
+  expect(
+    await screen.findByLabelText('Your rating: 3 — Understandable. Edit rating for Le chien'),
+  ).toBeVisible();
 });
 it('shows owners their aggregate without allowing a self-rating', async () => {
   catalog = [{ ...item, canRate: false, averageRating: 4, ratingCount: 3 }];
   mockLoad.mockResolvedValue({ items: catalog, hasMore: false });
   render(<DiscoverScreen />);
-  expect(await screen.findByText('Your photo — you cannot rate it.')).toBeVisible();
-  expect(screen.getByText('Semantic match: 4.0 / 5 · 3 ratings')).toBeVisible();
-  expect(screen.queryByLabelText('5 — Perfect match for le chien')).toBeNull();
+  expect(await screen.findByText('Your photo')).toBeVisible();
+  expect(screen.getByText('4.0 / 5 · 3 ratings')).toBeVisible();
+  expect(screen.queryByLabelText('Rate photo: Le chien')).toBeNull();
   const { result } = renderHook(() => useDiscover(gateway));
   await waitFor(() => expect(result.current.loading).toBe(false));
   await act(async () => {
@@ -484,19 +498,23 @@ it('queues explicit refresh behind a mutation and never automatically replays an
   expect(result.current.ratingAction).toBeNull();
   expect(mockRate).toHaveBeenCalledTimes(2);
 });
-it('offers explicit retry for an unconfirmed vote and hides unavailable photos', async () => {
+it('keeps failed votes unconfirmed, accepts an explicit new choice and hides denied photos', async () => {
   mockRate.mockRejectedValueOnce(new Error('offline'));
   render(<DiscoverScreen />);
-  await screen.findByText('le chien');
-  fireEvent.press(screen.getByLabelText('4 — Clear match for le chien'));
-  fireEvent.press(await screen.findByText('Retry rating'));
-  expect(await screen.findByText('Your rating: 4 — Clear match')).toBeVisible();
+  fireEvent.press(await screen.findByLabelText('Rate photo: Le chien'));
+  fireEvent.press(screen.getByLabelText('4 — Clear match for Le chien'));
+  await screen.findByText('Rating not confirmed. Tap to check or change it.');
+  expect(mockRate).toHaveBeenCalledTimes(1);
+  fireEvent.press(screen.getByLabelText('Rate photo: Le chien'));
+  fireEvent.press(screen.getByLabelText('4 — Clear match for Le chien'));
+  await screen.findByLabelText('Your rating: 4 — Clear match. Edit rating for Le chien');
   mockRate.mockRejectedValueOnce(new RatingUnavailable());
-  fireEvent.press(screen.getByLabelText('5 — Perfect match for le chien'));
+  fireEvent.press(screen.getByLabelText('Your rating: 4 — Clear match. Edit rating for Le chien'));
+  fireEvent.press(screen.getByLabelText('5 — Perfect match for Le chien'));
   expect(
     await screen.findByText('This photo or your learning settings changed. Refresh Discover.'),
   ).toBeVisible();
-  expect(screen.queryByText('le chien')).toBeNull();
+  expect(screen.queryByText('Le chien')).toBeNull();
 });
 it.each(['account', 'target', 'signout'])(
   'drops pending rating results after %s changes',
@@ -508,8 +526,9 @@ it.each(['account', 'target', 'signout'])(
       }),
     );
     const { rerender } = render(<DiscoverScreen />);
-    await screen.findByText('le chien');
-    fireEvent.press(screen.getByLabelText('5 — Perfect match for le chien'));
+    await screen.findByText('Le chien');
+    fireEvent.press(screen.getByLabelText('Rate photo: Le chien'));
+    fireEvent.press(screen.getByLabelText('5 — Perfect match for Le chien'));
     await waitFor(() => expect(mockRate).toHaveBeenCalled());
     const signal: AbortSignal = mockRate.mock.calls[0][2];
     if (change === 'account') {
@@ -529,7 +548,7 @@ it.each(['account', 'target', 'signout'])(
     expect(screen.queryByText(/Your rating:/)).toBeNull();
   },
 );
-it('keeps photo expiry independent of stalled vote recovery and discards a backgrounded mutation', async () => {
+it('keeps downloaded pixels during uncertain vote recovery and discards a backgrounded mutation', async () => {
   jest.useFakeTimers();
   const listeners = jest.spyOn(AppState, 'addEventListener');
   const { result } = renderHook(() => useDiscover(gateway));
@@ -548,12 +567,12 @@ it('keeps photo expiry independent of stalled vote recovery and discards a backg
   await act(async () => {
     jest.advanceTimersByTime(60000);
   });
-  expect(result.current.photos).toEqual({});
+  expect(result.current.photos[item.id]).toBeTruthy();
   act(() => listeners.mock.calls.at(-1)?.[1]('background'));
   expect(signal.aborted).toBe(true);
   expect(result.current.ratingAction).toBeNull();
   await act(async () => finish(rated(5)));
-  expect(result.current.items).toEqual([]);
+  expect(result.current.items).toEqual([item]);
   await act(async () => listeners.mock.calls.at(-1)?.[1]('active'));
   expect(result.current.items[0].viewerRating).toBeNull();
 });
@@ -615,15 +634,31 @@ it('keeps the new account own score on the same public photo after an old mutati
     }),
   );
   const { rerender } = render(<DiscoverScreen />);
-  await screen.findByText('le chien');
-  fireEvent.press(screen.getByLabelText('5 — Perfect match for le chien'));
+  await screen.findByText('Le chien');
+  fireEvent.press(screen.getByLabelText('Rate photo: Le chien'));
+  fireEvent.press(screen.getByLabelText('5 — Perfect match for Le chien'));
   await waitFor(() => expect(mockRate).toHaveBeenCalledTimes(1));
   mockSession = makeSession('different');
   mockAccount = makeAccount('different');
   catalog = [{ ...item, ...rated(2) }];
   rerender(<DiscoverScreen />);
-  await screen.findByText('Your rating: 2 — Poor match');
+  await screen.findByLabelText('Your rating: 2 — Poor match. Edit rating for Le chien');
   await act(async () => finish(rated(5)));
-  expect(screen.getByText('Your rating: 2 — Poor match')).toBeVisible();
-  expect(screen.queryByText('Your rating: 5 — Perfect match')).toBeNull();
+  expect(
+    screen.getByLabelText('Your rating: 2 — Poor match. Edit rating for Le chien'),
+  ).toBeVisible();
+  expect(screen.queryByText('Your rating: Perfect match')).toBeNull();
 });
+
+it('opens a native post using only its ID and offers organized search from Discover', async () => {
+  render(<DiscoverScreen />);
+  await screen.findByText('Le chien');
+  fireEvent.press(screen.getByLabelText('Open photo: Le chien'));
+  expect(mockPush).toHaveBeenCalledWith({ pathname: '/post', params: { submissionId: item.id } });
+  expect(mockLoad).toHaveBeenCalledTimes(1);
+  expect(mockPreviews).toHaveBeenCalledTimes(1);
+  fireEvent.press(screen.getByLabelText('Search words and people'));
+  expect(mockPush).toHaveBeenLastCalledWith('/explore');
+});
+// Native detail, back navigation, cross-window ratings and background behavior
+// now run against real Router stacks in post-navigation.test.tsx.

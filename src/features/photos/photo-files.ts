@@ -3,12 +3,12 @@ import { ImageManipulator, SaveFormat, type ImageRef } from 'expo-image-manipula
 import { Platform } from 'react-native';
 import { jpegDataUri, stripJpegMetadata } from './jpeg';
 
-export type PreparedPhoto = { uri: string; bytes: Uint8Array };
+export type PreparedPhoto = { uri: string; bytes: Uint8Array; source?: 'library' };
 export const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
 export const PHOTO_MAX_EDGE = 1600;
 export function resizeDimensions(width: number, height: number) {
   if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0)
-    throw new Error('Invalid camera dimensions.');
+    throw new Error('Invalid image dimensions. Please choose or take another photo.');
   const scale = Math.min(1, PHOTO_MAX_EDGE / Math.max(width, height));
   return {
     width: Math.max(1, Math.round(width * scale)),
@@ -56,7 +56,9 @@ export async function loadDraft(
     try {
       const bytes = stripJpegMetadata(new Uint8Array(await file.arrayBuffer()));
       if (bytes.length > PHOTO_MAX_BYTES) throw new Error('Invalid cached photo.');
-      return { uri: file.uri, bytes };
+      return file.name.startsWith(`${assignmentId}-library-`)
+        ? { uri: file.uri, bytes, source: 'library' }
+        : { uri: file.uri, bytes };
     } catch {
       file.delete();
     } // A killed write/cache eviction must still allow retaking.
@@ -64,46 +66,75 @@ export async function loadDraft(
   return null;
 }
 export async function preparePhoto(
-  captured: { uri: string; width: number; height: number },
+  image: { uri: string; width: number; height: number },
   userId: string,
   assignmentId: string,
   isCurrent: () => boolean = () => true,
+  {
+    removeSource = true,
+    source,
+  }: { removeSource?: boolean; source?: PreparedPhoto['source'] } = {},
 ): Promise<PreparedPhoto> {
   let context: ReturnType<typeof ImageManipulator.manipulate> | undefined;
   let savedUri: string | undefined;
+  let oriented: ImageRef | undefined;
   let rendered: ImageRef | undefined;
+  const requireCurrent = () => {
+    if (!isCurrent()) throw new Error('Photo selection cancelled.');
+  };
   try {
-    context = ImageManipulator.manipulate(captured.uri);
-    context.resize(resizeDimensions(captured.width, captured.height));
+    requireCurrent();
+    context = ImageManipulator.manipulate(image.uri);
+    // The native decoder normalizes orientation before this first render. Picker
+    // dimensions may describe the original EXIF orientation; using them here can
+    // stretch portrait images. Resize the actual oriented pixels instead.
+    oriented = await context.renderAsync();
+    requireCurrent();
+    context.resize(resizeDimensions(oriented.width, oriented.height));
     rendered = await context.renderAsync();
+    requireCurrent();
+    if (
+      !Number.isFinite(rendered.width) ||
+      !Number.isFinite(rendered.height) ||
+      rendered.width > PHOTO_MAX_EDGE ||
+      rendered.height > PHOTO_MAX_EDGE ||
+      rendered.width <= 0 ||
+      rendered.height <= 0
+    )
+      throw new Error('The image could not be resized. Please choose or take another photo.');
     const saved = await rendered.saveAsync({ format: SaveFormat.JPEG, compress: 0.8 });
     savedUri = saved.uri;
+    requireCurrent();
     const buffer =
       Platform.OS === 'web'
         ? await (await fetch(saved.uri)).arrayBuffer()
         : await new File(saved.uri).arrayBuffer();
     const bytes = stripJpegMetadata(new Uint8Array(buffer));
     if (bytes.length > PHOTO_MAX_BYTES)
-      throw new Error('The photo is too large. Please retake it.');
-    if (!isCurrent()) throw new Error('Photo capture cancelled.');
-    if (Platform.OS === 'web') return { uri: jpegDataUri(bytes), bytes };
+      throw new Error('The photo is too large. Please choose or take another photo.');
+    requireCurrent();
+    if (Platform.OS === 'web')
+      return { uri: jpegDataUri(bytes), bytes, ...(source ? { source } : {}) };
     directory(userId).create({ intermediates: true, idempotent: true });
     const previous = draftFiles(userId, assignmentId);
     // A fresh URI prevents native image caches showing the previous retake.
     // This suffix is only a local cache identity, never an authorization token.
     const file = new File(
       directory(userId),
-      `${assignmentId}-${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`,
+      `${assignmentId}-${source === 'library' ? 'library-' : ''}${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`,
     );
     file.create();
     file.write(bytes);
     for (const old of previous) old.delete();
-    return { uri: file.uri, bytes };
+    return { uri: file.uri, bytes, ...(source ? { source } : {}) };
   } finally {
     rendered?.release();
+    oriented?.release();
     context?.release();
     if (Platform.OS !== 'web')
-      for (const uri of [captured.uri, savedUri]) {
+      // A library URI may refer to an original asset, not an app-owned camera
+      // temporary file. Only dispose it when its caller owns that source.
+      for (const uri of [removeSource ? image.uri : undefined, savedUri]) {
         if (uri) {
           const file = new File(uri);
           if (file.exists) file.delete();

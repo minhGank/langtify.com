@@ -7,8 +7,10 @@ import Constants from 'expo-constants';
 import type { Installation, PushPermission } from './model';
 const key = 'langtify.push.installation.v1';
 export const devicePlatform = Platform.OS === 'android' ? 'android' : 'ios';
+const iosPushDisabled = () =>
+  Platform.OS === 'ios' && Constants.expoConfig?.extra?.langtifyDisableIosPush === true;
 export async function permission(request = false): Promise<PushPermission> {
-  if (!Device.isDevice) return 'unavailable';
+  if (iosPushDisabled() || !Device.isDevice) return 'unavailable';
   if (Platform.OS === 'android')
     await Notifications.setNotificationChannelAsync('learning', {
       name: 'Daily learning',
@@ -20,6 +22,7 @@ export async function permission(request = false): Promise<PushPermission> {
   return result.status;
 }
 export async function pushToken(): Promise<string | null> {
+  if (iosPushDisabled()) return null;
   const projectId: unknown =
     process.env.EXPO_PUBLIC_EAS_PROJECT_ID || Constants.easConfig?.projectId;
   if (

@@ -1,14 +1,17 @@
 import { useMemo, useState } from 'react';
-import { Modal } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { Sheet } from '@/components/ui/sheet';
+import { useAppTheme } from '@/hooks/use-app-theme';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { ChoiceField } from '@/components/ui/choice-field';
 import { FormField } from '@/components/ui/form-field';
-import { Screen } from '@/components/ui/screen';
 import { safetyGateway } from '@/services/safety';
 import type { FeedItem } from '@/services/discover';
 import { isReportReason, reportReasons, type ReportReason, type SafetyIdentity } from './model';
 import { useSafetyTask } from './use-safety-task';
+import { socialChanged } from '@/features/social/cache';
 
 export function CardActions({
   identity,
@@ -21,6 +24,7 @@ export function CardActions({
   close: () => void;
   blocked: () => void;
 }) {
+  const { colors } = useAppTheme();
   const gateway = useMemo(() => safetyGateway(identity), [identity]);
   const [mode, setMode] = useState<'menu' | 'submission' | 'user' | 'block' | 'done'>('menu');
   const [reason, setReason] = useState<ReportReason>('inappropriate'),
@@ -28,86 +32,151 @@ export function CardActions({
   const [confirm, setConfirm] = useState(false);
   const task = useSafetyTask(close);
   return (
-    <Modal visible animationType="slide" onRequestClose={close}>
-      <Screen>
-        <AppText variant="title">Safety · @{item.username}</AppText>
-        <AppText>{item.targetTerm}</AppText>
-        {mode === 'menu' && (
-          <>
-            <Button label="Report photo" onPress={() => setMode('submission')} />
-            <Button label="Report user" onPress={() => setMode('user')} />
-            <Button label="Block user" onPress={() => setMode('block')} />
-          </>
-        )}
-        {(mode === 'submission' || mode === 'user') && (
-          <>
-            <AppText>{mode === 'submission' ? 'Report this photo' : 'Report this account'}</AppText>
-            {!confirm ? (
-              <>
-                <ChoiceField
-                  label="Report reason"
-                  value={reason}
-                  options={reportReasons}
-                  disabled={task.busy}
-                  onChange={(value) => {
-                    if (isReportReason(value)) setReason(value);
-                  }}
-                />
-                <FormField
-                  label="Additional details (optional)"
-                  value={details}
-                  onChangeText={setDetails}
-                  maxLength={500}
-                  multiline
-                  editable={!task.busy}
-                  hint="Up to 500 characters. Do not include unnecessary personal information."
-                />
-                <Button label="Review report" onPress={() => setConfirm(true)} />
-              </>
-            ) : (
-              <>
-                <AppText>{reportReasons.find((r) => r.value === reason)?.label}</AppText>
-                {details.length > 0 && <AppText>{details}</AppText>}
-                <AppText>
-                  Your report is private. The reported user will not see who submitted it.
-                </AppText>
-                <Button
-                  label="Confirm report"
-                  loading={task.busy}
-                  onPress={() =>
-                    void task.run(
-                      (signal) => gateway.report(item.id, mode, reason, details, signal),
-                      () => setMode('done'),
-                    )
-                  }
-                />
-                <Button
-                  label="Edit report"
-                  disabled={task.busy}
-                  onPress={() => setConfirm(false)}
-                />
-              </>
-            )}
-          </>
-        )}
-        {mode === 'block' && (
-          <>
-            <AppText>Block @{item.username}?</AppText>
-            <AppText>
-              You will stop seeing each other’s public content and cannot rate each other’s photos.
-              You can unblock them in Profile.
-            </AppText>
-            <Button
-              label="Confirm block"
-              loading={task.busy}
-              onPress={() => void task.run((signal) => gateway.block(item.id, signal), blocked)}
-            />
-          </>
-        )}
-        {mode === 'done' && <AppText>Thank you. Your report has been received.</AppText>}
-        {task.error && <AppText accessibilityRole="alert">{task.error}</AppText>}
-        <Button label={mode === 'done' ? 'Done' : 'Cancel'} onPress={close} />
-      </Screen>
-    </Modal>
+    <Sheet
+      visible
+      title={
+        mode === 'menu'
+          ? 'Photo options'
+          : mode === 'block'
+            ? 'Block account'
+            : mode === 'done'
+              ? 'Report received'
+              : 'Report'
+      }
+      onClose={close}
+    >
+      <AppText variant="caption">
+        {item.targetTerm} · @{item.username}
+      </AppText>
+      {mode === 'menu' && (
+        <>
+          {(
+            [
+              { label: 'Report photo', mode: 'submission', icon: 'flag-outline' },
+              { label: 'Report user', mode: 'user', icon: 'person-outline' },
+              { label: 'Block user', mode: 'block', icon: 'ban-outline' },
+            ] as const
+          ).map((entry) => (
+            <Pressable
+              key={entry.mode}
+              accessibilityRole="button"
+              accessibilityLabel={entry.label}
+              onPress={() => setMode(entry.mode)}
+              style={[styles.menuRow, { borderBottomColor: colors.border }]}
+            >
+              <Ionicons
+                name={entry.icon}
+                size={22}
+                color={entry.mode === 'block' ? colors.danger : colors.text}
+              />
+              <AppText
+                style={{ flex: 1, color: entry.mode === 'block' ? colors.danger : colors.text }}
+              >
+                {entry.label}
+              </AppText>
+              <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+            </Pressable>
+          ))}
+        </>
+      )}
+      {(mode === 'submission' || mode === 'user') && (
+        <>
+          <AppText>{mode === 'submission' ? 'Report this photo' : 'Report this account'}</AppText>
+          {!confirm ? (
+            <>
+              <ChoiceField
+                label="Report reason"
+                value={reason}
+                options={reportReasons}
+                disabled={task.busy}
+                onChange={(value) => {
+                  if (isReportReason(value)) setReason(value);
+                }}
+              />
+              <FormField
+                label="Additional details (optional)"
+                value={details}
+                onChangeText={setDetails}
+                maxLength={500}
+                multiline
+                editable={!task.busy}
+                hint="500 characters maximum. Keep personal information private."
+              />
+              <Button label="Review report" onPress={() => setConfirm(true)} />
+            </>
+          ) : (
+            <>
+              <AppText>{reportReasons.find((r) => r.value === reason)?.label}</AppText>
+              {details.length > 0 && <AppText>{details}</AppText>}
+              <AppText>
+                Your report is private. The reported user will not see who submitted it.
+              </AppText>
+              <Button
+                label="Confirm report"
+                loading={task.busy}
+                onPress={() =>
+                  void task.run(
+                    (signal) => gateway.report(item.id, mode, reason, details, signal),
+                    () => setMode('done'),
+                  )
+                }
+              />
+              <Button
+                variant="ghost"
+                label="Edit report"
+                disabled={task.busy}
+                onPress={() => setConfirm(false)}
+              />
+            </>
+          )}
+        </>
+      )}
+      {mode === 'block' && (
+        <>
+          <AppText>Block @{item.username}?</AppText>
+          <AppText>
+            You will stop seeing each other’s public content and cannot rate each other’s photos.
+            You can unblock them in Profile.
+          </AppText>
+          <Button
+            variant="danger"
+            label="Confirm block"
+            loading={task.busy}
+            onPress={() =>
+              void task.run(
+                (signal) => gateway.block(item.id, signal),
+                () => {
+                  socialChanged('block');
+                  blocked();
+                },
+              )
+            }
+          />
+        </>
+      )}
+      {mode === 'done' && (
+        <View style={styles.received}>
+          <Ionicons name="checkmark-circle-outline" size={42} color={colors.success} />
+          <AppText>Thank you. Your report has been received.</AppText>
+        </View>
+      )}
+      {task.error && (
+        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          {task.error}
+        </AppText>
+      )}
+      <Button variant="ghost" label={mode === 'done' ? 'Done' : 'Cancel'} onPress={close} />
+    </Sheet>
   );
 }
+
+const styles = StyleSheet.create({
+  menuRow: {
+    minHeight: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  received: { alignItems: 'center', gap: 16, paddingVertical: 24 },
+});

@@ -8,11 +8,15 @@ type SafetyRun = <T>(
   work: (signal: AbortSignal) => Promise<T>,
   accept: (value: T) => void,
 ) => Promise<void>;
-export function useSafetyTask(onReset: () => void, onResume?: (run: SafetyRun) => void) {
-  const callbacks = useRef({ onReset, onResume });
+export function useSafetyTask(
+  onReset: () => void,
+  onResume?: (run: SafetyRun) => void,
+  onUnavailable?: () => void,
+) {
+  const callbacks = useRef({ onReset, onResume, onUnavailable });
   useEffect(() => {
-    callbacks.current = { onReset, onResume };
-  }, [onReset, onResume]);
+    callbacks.current = { onReset, onResume, onUnavailable };
+  }, [onReset, onResume, onUnavailable]);
   const active = useRef(false),
     pending = useRef(false),
     generation = useRef(0);
@@ -44,7 +48,8 @@ export function useSafetyTask(onReset: () => void, onResume?: (run: SafetyRun) =
         if (active.current && generation.current === request) accept(value);
       } catch (cause) {
         if (active.current && generation.current === request) {
-          if (cause instanceof SafetyUnavailable) callbacks.current.onReset();
+          if (cause instanceof SafetyUnavailable)
+            (callbacks.current.onUnavailable ?? callbacks.current.onReset)();
           setError(
             cause instanceof SafetyUnavailable
               ? cause.message

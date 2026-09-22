@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { AuthProvider, useAuth } from '@/features/auth/auth-provider';
 
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { postScreenOptions } from '@/features/discover/navigation-options';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -53,10 +54,52 @@ export function RootNavigator() {
           <Stack.Protected guard={status === 'ready'}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="photo" />
+            <Stack.Screen
+              name="past-words"
+              options={{
+                headerShown: true,
+                title: 'Past Words',
+                gestureEnabled: true,
+                headerBackButtonDisplayMode: 'minimal',
+              }}
+            />
+            <Stack.Screen name="post" options={postScreenOptions} />
+            <Stack.Screen
+              name="explore"
+              options={{
+                headerShown: true,
+                title: 'Search',
+                gestureEnabled: true,
+                headerBackButtonDisplayMode: 'minimal',
+              }}
+            />
+            <Stack.Screen
+              name="explore-concept"
+              options={{
+                headerShown: true,
+                title: 'Word',
+                gestureEnabled: true,
+                headerBackButtonDisplayMode: 'minimal',
+              }}
+            />
             <Stack.Screen name="vocabulary-concept" />
             <Stack.Screen name="blocked-users" />
             <Stack.Screen name="moderation" />
             <Stack.Screen name="notification-settings" />
+            <Stack.Screen name="edit-profile" />
+            <Stack.Screen name="learning-settings" />
+            <Stack.Screen
+              name="people"
+              options={{
+                headerShown: true,
+                title: 'Search',
+                gestureEnabled: true,
+                headerBackButtonDisplayMode: 'minimal',
+              }}
+            />
+            <Stack.Screen name="public-profile" />
+            <Stack.Screen name="connections" />
+            <Stack.Screen name="notifications" />
           </Stack.Protected>
           <Stack.Screen name="auth/callback" />
         </Stack>

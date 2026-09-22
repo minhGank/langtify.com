@@ -52,6 +52,30 @@ local prerequisites. These local builds do not require EAS configuration.
 Missing Supabase configuration shows a setup screen; invalid configuration stops bundling.
 See [Google setup and device acceptance](docs/PHASE55_VERIFICATION.md).
 
+### Personal Team iPhone builds without push
+
+For local acceptance with a free Apple Personal Team, explicitly disable only the
+iOS push entitlement. From the repository root, stop any existing Metro server and run:
+
+```sh
+LANGTIFY_DISABLE_IOS_PUSH=1 npx expo prebuild --clean --platform ios
+LANGTIFY_DISABLE_IOS_PUSH=1 npm run build:ios:dev
+# For subsequent Metro sessions with this build:
+LANGTIFY_DISABLE_IOS_PUSH=1 npm run start:dev
+```
+
+`--clean` regenerates the ignored `ios/` project, removing the previous push signing
+capability and any manual native edits. Select your Personal Team in Xcode if prompted.
+Keep the flag on for both native generation and Metro so iOS notification registration
+reports `unavailable` without prompting or requesting a token. Android, the installed
+notification module, backend delivery and notification preferences remain unchanged.
+This build cannot validate remote push delivery.
+
+The default configuration remains push-capable. To return to a paid-Apple build,
+remove the flag from your shell/local env, stop Metro, then regenerate with
+`npx expo prebuild --clean --platform ios` and run `npm run build:ios:dev` without
+the flag. Do not set this local acceptance flag in release build environments.
+
 ## Public configuration
 
 | Variable                        | Value                                              |
@@ -166,8 +190,10 @@ npx supabase functions serve --workdir /private/tmp/langtify-functions
 5. Copy only the API URL and public anon/publishable key to `.env.local` and restart
    Expo. Add languages through privileged administration, not the client.
 
-Supabase owns password rules; the client only checks basic email/required fields
-and maps server failures to safe messages. Duplicate signup responses may be
+Supabase owns password rules; the signup form displays and checks the verified
+existing length policy without adding character requirements. Keep that guidance
+aligned when changing hosted settings; see [Password policy](docs/PASSWORD_POLICY.md).
+Sign-in remains server-validated. Duplicate signup responses may be
 intentionally obfuscated by Supabase; check-email messaging does not assert that
 an account was created or reveal whether an address exists.
 
@@ -280,7 +306,7 @@ Challenge configuration and term text are immutable snapshots. Same-profile/date
 calls retain the original snapshot after settings changes. A changed timezone can
 select a different date; prior records remain unchanged. Ordinary clients only
 read their own challenges/history and cannot write the challenge tables directly.
-Today refreshes on focus/resume and once per active minute to handle date rollover.
+Today reuses loaded data; the next local midnight requests authoritative state. See [QA2 refresh rules](docs/QA2_CORRECTIONS.md) for navigation, mutations and long-background recovery.
 
 Composite foreign keys preserve the meaning and language of terms referenced by
 saved assignments. Correct unused catalog identities freely; for a used identity,
@@ -291,8 +317,12 @@ Individual history rows cannot be deleted from a retained challenge.
 
 ## Camera and photo submissions
 
-Use Take Photo on a Today card. Camera permission is requested explicitly; there is
-no gallery picker. Capture is orientation-normalized, resized to at most 1600 pixels
+Use Take Photo on a Today card. Camera remains primary, with a secondary native
+photo-library picker for current-day words. Library selection uses the same secure
+pipeline and rewards; it does not add historical uploads. See
+[current-day library verification and device checklist](docs/CURRENT_DAY_LIBRARY.md).
+Camera permission is requested explicitly; the image-only system picker does not
+request broad library access. Both sources are orientation-normalized, resized to at most 1600 pixels
 on the longest side, re-encoded as JPEG at quality 0.8 and stripped of all JPEG
 APP/comment metadata, including EXIF/GPS/XMP. The app requests no location or audio
 permission. It rejects malformed or greater-than-5-MiB images. A loaded preview and
@@ -330,11 +360,13 @@ or feed.
 ### Required maintenance scheduling
 
 Run `scripts/cleanup-submissions.mjs` hourly on a trusted server/CI runner with Node
-and installed npm dependencies. It expires pending reservations after 24 hours,
-retries deletions, and sweeps orphan/late files. Files are removed through Storage
-API before retirement; failures remain queued. Each run handles up to 100 queued
-paths and reports counts only. Monitor failures and backlog; increase run frequency
-if needed. This job is necessary even if a user never opens the app again.
+and installed npm dependencies. It expires pending submission reservations after
+24 hours and avatar reservations after one hour, retries deletions, and sweeps
+orphan/late files. Physical deletion uses Storage API. Submissions retire after
+file deletion; avatars lose current/pending eligibility before cleanup. Failures
+remain queued. Each run handles up to 100 queued paths per bucket and reports counts
+only, separately for submissions and avatars. Monitor failures and backlog; increase
+run frequency if needed. This job is necessary even if a user never opens the app again.
 
 Provide **server-only** `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (a service-role
 JWT or Supabase secret key) through the runner's secret manager. Never use an
@@ -532,8 +564,7 @@ deleted photos, invalid accounts and missing verified objects are excluded.
 Feed reads and one batch signing request use controlled endpoints; the bucket,
 raw profile/submission RLS and owner mutation rights stay private. Signed photo URLs
 last 60 seconds. Visibility changes affect future eligibility; existing URLs retain
-their short expiry. Pull to refresh, Load more, image retry and active renewal are
-included with bounded memory and account/target isolation.
+their short expiry. Downloaded pixels remain in bounded session memory without periodic re-signing. Pull to refresh, Load more and image retry retain account/target isolation.
 
 Apply `20260915000000_phase7_discover.sql` before deploying the updated
 `photo-authority` function and app to an intended hosted development environment.
@@ -633,4 +664,59 @@ no hosted deployment or actual device delivery was performed here.
 App requests and Auth startup have bounded waits with safe recovery; inactive/obsolete
 Today, recovery and progress callbacks cannot start stale reads. Existing session,
 Storage, XP/streak, vocabulary, Discover, rating and moderation authority is preserved.
-No Phase 11 functionality is included.
+No unrelated Phase 11 functionality is included.
+
+## Latest authorized product/UX pass
+
+Profile/avatar editing, username discovery and public profiles, follow/unfollow,
+flat comments with reporting/moderation, native text sharing, quick feed rating and
+bounded server-state caching are described in [PRODUCT_UX_PASS.md](docs/PRODUCT_UX_PASS.md).
+Physical iPhone acceptance remains required.
+
+Apply the two `20260921` migrations followed by
+`20260922000000_public_profile_submissions.sql` to the intended Dev environment and
+deploy `avatar-authority` before testing this client against it. Preserve existing
+functions and private Storage policies. The trusted hourly `submissions:cleanup`
+command now processes avatars too. Rebuild the native development client because
+`expo-image-picker` was added for profile images. The Personal Team flag and normal
+push-capable default remain unchanged.
+
+New verification: `npm run db:test:social` and `npm run db:test:avatars`, sequentially
+with other local database suites. `functions:check`, `functions:lint` and
+`functions:test` include avatar authority. CI runs both new integration suites.
+No hosted migration, deployment, commit or push is performed automatically.
+
+See the [final focused audit](docs/PRODUCT_UX_AUDIT.md) for findings, verification,
+and accepted limitations from the first pass. The follow-up
+[QA2 corrections](docs/QA2_CORRECTIONS.md) document the current deployment order,
+per-screen refresh policy, navigation fixes, public-profile photos and iPhone
+checklist. No elapsed cache-age or tab-focus polling remains for loaded browsing data.
+
+## Remaining QA2 — connections and in-app notifications
+
+Followers/Following lists and a private in-app inbox are documented in
+[QA2_CONNECTIONS_INBOX.md](docs/QA2_CONNECTIONS_INBOX.md). The inbox supports new
+followers, first ratings and authoritative daily words ready without push permission.
+Remote push remains DAILY_WORDS and STREAK_AT_RISK only. Apply the new additive
+`20260922010000_follow_lists_inbox.sql` after prior QA2 migrations when Dev deployment
+is separately authorized. No new Edge Function or secret is required. Run
+`npm run db:test:inbox` sequentially with existing local integration suites; CI includes
+it. Physical iPhone acceptance remains pending; this does not open Phase 11.
+
+## QA3 — Explore and native post navigation
+
+The current physical QA pass adds Words/People search, eligible public photo
+examples, native post navigation and focused rating/profile corrections. See
+[QA3_SEARCH_NAVIGATION.md](docs/QA3_SEARCH_NAVIGATION.md) for exact behavior, checks,
+local verification limitations, Dev rollout and required phone acceptance. Deploy
+`20260922020000_explore_search.sql` before the matching client only after explicit
+deployment authorization. `npm run db:test:explore` belongs to the sequential local
+integration suites and CI. No new Edge Function, secret, native dependency or remote
+push type is added. This pass has not received physical acceptance and does not
+begin Phase 11.
+
+Past Words QA adds historical capture through the existing uploader, with +10 word
+XP only and no retroactive daily/streak credit. See
+[Past Words rules, deployment order and physical checklist](docs/PAST_WORDS.md).
+Run `npm run db:test:past-words` sequentially with the other local DB integrations.
+Physical acceptance remains pending; this does not open Phase 11.

@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { OAuthBridge } from '@/features/auth/oauth/oauth-bridge';
 import { restoreAuthSession, subscribeAuth } from '@/features/auth/oauth/runtime';
 import { loadAccount } from '@/services/account';
+import { useResumeRevalidation } from '@/hooks/use-resume-revalidation';
 
 const gateway: SessionGateway | null = supabase
   ? {
@@ -20,6 +21,7 @@ const gateway: SessionGateway | null = supabase
 const AuthContext = createContext<ReturnType<typeof useSessionState> | null>(null);
 
 export function AuthProvider({ children }: PropsWithChildren) {
+  useResumeRevalidation();
   const state = useSessionState(gateway);
   useEffect(() => {
     if (!supabase || Platform.OS === 'web') return;

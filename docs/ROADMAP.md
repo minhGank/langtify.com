@@ -1,5 +1,28 @@
 # Roadmap
 
+Current-day photo-library selection is implemented for local review alongside
+camera capture. Historical library uploads remain out of scope. Automated results
+and required physical acceptance are tracked in [CURRENT_DAY_LIBRARY.md](CURRENT_DAY_LIBRARY.md).
+This does not open Phase 11.
+
+The current [QA3 search/native navigation pass](QA3_SEARCH_NAVIGATION.md) is
+implemented for local review. Device acceptance and Dev rollout remain pending;
+this does not open Phase 11.
+
+## Authorized product/UX pass — physical acceptance pending
+
+The post-Phase-10 QA brief adds profile/avatar editing, public profiles and username
+search, follow/unfollow, flat moderated comments, native share, inline ratings and
+session-scoped server caching. See [PRODUCT_UX_PASS.md](PRODUCT_UX_PASS.md).
+This is the explicitly requested bounded pass, not unrelated Phase 11 work.
+Do not mark it complete until physical iPhone acceptance.
+The remaining QA2 followers/following lists and in-app Notification Center are
+implemented for local review; acceptance remains pending. See QA2_CONNECTIONS_INBOX.md.
+The [QA2 correction pass](QA2_CORRECTIONS.md) fixes save navigation, avatar access
+and alignment, missing public-profile photos, unsolicited refetches and signup
+password guidance. Its additional read-only projection migration and updated
+refresh policy require Dev rollout/physical verification, not a Phase 11 opening.
+
 ## Phase 1 — completed
 
 Expo/Router, strict TypeScript, npm, four tabs, UI primitives, lint/format/test
@@ -103,8 +126,14 @@ of the documented moderate dependency findings. Phase 11 remains unstarted.
 
 ## Phase 11 and later — not started
 
-Further work requires explicit scope. Comments, likes,
-followers, friends, DMs, social notifications, leaderboards, achievements and subscriptions
-remain unimplemented.
+Further work requires explicit scope. The separately authorized QA2 scope includes
+flat comments, followers/lists and limited in-app notifications. Likes, friends, DMs,
+remote social notifications, leaderboards, achievements and subscriptions remain deferred.
 Other OAuth providers, password recovery UX, production vocabulary/content review, final
 branding, production signing and store setup need separate planning.
+
+### Authorized QA: Past Words — physical acceptance pending
+
+Final past assignments can receive camera/library photos with reversible +10 XP
+only; daily/streak progress stays separate. Local verification and rollout details
+are in [PAST_WORDS.md](PAST_WORDS.md). No commit/deploy or Phase 11 is authorized.

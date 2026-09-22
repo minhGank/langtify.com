@@ -11,6 +11,7 @@ import {
   type VocabularyPage,
 } from '@/services/vocabulary';
 import { makeSession } from './fixtures';
+jest.mock('@/features/inbox/notification-bell', () => ({ NotificationBell: () => null }));
 
 let mockSession = makeSession();
 let mockStatus = 'ready';
@@ -81,11 +82,11 @@ it.each(['email', 'google'])(
   async (provider) => {
     mockSession.user.app_metadata = { provider };
     render(<VocabularyScreen />);
-    expect(await screen.findByText('1 unique concepts learned')).toBeVisible();
-    expect(await screen.findByLabelText('Your photo of le chien')).toBeVisible();
-    expect(screen.getByText('dog · A1')).toBeVisible();
+    expect(await screen.findByText('1 word captured')).toBeVisible();
+    expect(await screen.findByLabelText('Your photo of Le chien')).toBeVisible();
+    expect(screen.getByText('Dog · A1')).toBeVisible();
     expect(screen.getByText('3 captures')).toBeVisible();
-    fireEvent.press(screen.getByText('View captures: le chien'));
+    fireEvent.press(screen.getByRole('button', { name: /^View captures: Le chien\./ }));
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/vocabulary-concept',
       params: { conceptId: 'concept' },
@@ -98,15 +99,15 @@ it('shows an empty state, network failure/retry and refresh after last deletion'
   render(<VocabularyScreen />);
   expect(await screen.findByText('Vocabulary could not be loaded.')).toBeVisible();
   fireEvent.press(screen.getByText('Retry vocabulary'));
-  await screen.findByText('le chien');
+  await screen.findByText('Le chien');
   mockLoad.mockResolvedValue({ ...page, items: [], concept: null, totalConcepts: 0 });
-  fireEvent.press(screen.getByText('Refresh vocabulary'));
+  fireEvent(screen.getByLabelText('My vocabulary'), 'refresh');
   expect(
     await screen.findByText(
       'Complete your first photo challenge to start building your visual vocabulary.',
     ),
   ).toBeVisible();
-  expect(screen.queryByText('le chien')).toBeNull();
+  expect(screen.queryByText('Le chien')).toBeNull();
 });
 it('replaces bounded pages with a timestamp/id cursor and returns to latest', async () => {
   mockLoad.mockResolvedValueOnce({ ...page, hasMore: true });
@@ -139,9 +140,9 @@ it('drops pending history and photo responses on account switch or sign-out', as
   mockSession = makeSession('different');
   mockLoad.mockResolvedValue({ ...page, items: [], totalConcepts: 0 });
   rerender(<VocabularyScreen />);
-  await screen.findByText('0 unique concepts learned');
+  await screen.findByText('0 words captured');
   await act(async () => finish(page));
-  expect(screen.queryByText('le chien')).toBeNull();
+  expect(screen.queryByText('Le chien')).toBeNull();
   let sign: (value: Record<string, string>) => void = () => {};
   mockPreviews.mockReturnValueOnce(
     new Promise((resolve) => {
@@ -149,36 +150,33 @@ it('drops pending history and photo responses on account switch or sign-out', as
     }),
   );
   mockLoad.mockResolvedValue(page);
-  fireEvent.press(screen.getByText('Refresh vocabulary'));
-  await screen.findByText('le chien');
+  fireEvent(screen.getByLabelText('My vocabulary'), 'refresh');
+  await screen.findByText('Le chien');
   mockStatus = 'signed-out';
   rerender(<VocabularyScreen />);
   await act(async () => sign({ photo: 'https://example.test/old-private-photo' }));
-  expect(screen.queryByLabelText('Your photo of le chien')).toBeNull();
+  expect(screen.queryByLabelText('Your photo of Le chien')).toBeNull();
 });
-it('clears images in background, reloads on resume, and removes expired URLs after a stalled refresh', async () => {
+it('retains history and downloaded photos across short resume and elapsed freshness periods', async () => {
   jest.useFakeTimers();
   const listeners = jest.spyOn(AppState, 'addEventListener');
   const { result } = renderHook(() => useVocabulary(gateway));
   await act(async () => {});
-  expect(result.current.photos.photo).toBeTruthy();
+  const photo = result.current.photos.photo;
   const callback = listeners.mock.calls.at(-1)?.[1];
   act(() => callback?.('background'));
   expect(result.current.photos).toEqual({});
-  expect(result.current.data).toBeNull();
+  expect(result.current.data).toEqual(page);
   await act(async () => callback?.('active'));
-  expect(result.current.photos.photo).toBeTruthy();
-  mockLoad.mockReturnValue(new Promise(() => {}));
-  await act(async () => {
-    jest.advanceTimersByTime(55000);
-  });
-  expect(result.current.photos).toEqual({});
-  expect(result.current.photoError).toBe(true);
-  mockLoad.mockResolvedValue(page);
+  await act(async () => jest.advanceTimersByTime(20 * 60000));
+  expect(result.current.photos.photo).toBe(photo);
+  expect(mockLoad).toHaveBeenCalledTimes(1);
+  expect(mockPreviews).toHaveBeenCalledTimes(1);
   await act(async () => {
     await result.current.refresh();
   });
-  expect(result.current.photos.photo).toBeTruthy();
+  expect(mockLoad).toHaveBeenCalledTimes(2);
+  expect(mockPreviews).toHaveBeenCalledTimes(2);
 });
 it('does not install expired signing responses or stale responses after token/query changes', async () => {
   jest.useFakeTimers();
@@ -263,9 +261,9 @@ it('rejects foreign owners/concepts and arbitrary signed paths, duplicate IDs or
 
 it('submits target/reference search and CEFR filters to the same server query', async () => {
   render(<VocabularyScreen />);
-  await screen.findByText('le chien');
+  await screen.findByText('Le chien');
   fireEvent.changeText(screen.getByLabelText('Search vocabulary'), ' DOG ');
-  fireEvent.press(screen.getByText('Search'));
+  fireEvent(screen.getByLabelText('Search vocabulary'), 'submitEditing');
   await waitFor(() =>
     expect(mockGatewayArgs).toHaveBeenLastCalledWith(
       mockSession.user.id,
@@ -273,6 +271,7 @@ it('submits target/reference search and CEFR filters to the same server query', 
       { conceptId: undefined, search: 'DOG', level: '' },
     ),
   );
+  fireEvent.press(screen.getByLabelText('Filter vocabulary'));
   fireEvent.press(screen.getByLabelText('A1'));
   await waitFor(() =>
     expect(mockGatewayArgs).toHaveBeenLastCalledWith(
@@ -287,7 +286,7 @@ it('opens existing photo management from a concept capture without copying delet
   mockParams = { conceptId };
   render(<VocabularyScreen detail />);
   expect(await screen.findByText('3 captures')).toBeVisible();
-  fireEvent.press(screen.getByText('Open photo'));
+  fireEvent.press(screen.getByRole('button', { name: /^Open photo: Le chien\./ }));
   expect(mockPush).toHaveBeenCalledWith({
     pathname: '/photo',
     params: { assignmentId: 'assignment' },
@@ -376,11 +375,11 @@ it('does not extend photo validity when the device wall clock moves backward', a
 });
 it('retries a failed image even if batch signing returns the same still-valid URL', async () => {
   render(<VocabularyScreen />);
-  const photo = await screen.findByLabelText('Your photo of le chien');
+  const photo = await screen.findByLabelText('Your photo of Le chien');
   fireEvent(photo, 'error');
-  expect(screen.queryByLabelText('Your photo of le chien')).toBeNull();
+  expect(screen.queryByLabelText('Your photo of Le chien')).toBeNull();
   fireEvent.press(screen.getByText('Reload photo'));
-  expect(await screen.findByLabelText('Your photo of le chien')).toBeVisible();
+  expect(await screen.findByLabelText('Your photo of Le chien')).toBeVisible();
 });
 
 it('normalizes an uppercase concept deep link and provides a safe direct-entry return', async () => {
@@ -392,7 +391,7 @@ it('normalizes an uppercase concept deep link and provides a safe direct-entry r
     search: '',
     level: '',
   });
-  fireEvent.press(screen.getByText('Back to My Vocabulary'));
+  fireEvent.press(screen.getByRole('button', { name: 'Back to My Vocabulary' }));
   expect(mockReplace).toHaveBeenCalledWith('/vocabulary');
   expect(mockBack).not.toHaveBeenCalled();
 });

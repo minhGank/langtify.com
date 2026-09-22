@@ -1,9 +1,10 @@
 import { AppState, View } from 'react-native';
 import type * as ReactTypes from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { ProgressPanel } from '@/features/progress/progress-panel';
 import { SubmissionXpFeedback } from '@/features/progress/submission-xp-feedback';
 import { parseProgress, progressGateway, receiptGateway } from '@/services/progress';
+import { invalidateServerData } from '@/lib/server-cache';
 
 const mockRpc = jest.fn();
 jest.mock('@/lib/supabase', () => ({ requireSupabase: () => ({ rpc: mockRpc }) }));
@@ -71,9 +72,9 @@ it('renders accessible within-level progress and profile totals', async () => {
     max: 250,
     now: 170,
   });
-  expect(screen.getByText('🏆 Longest streak: 18')).toBeVisible();
-  expect(screen.getByText('Total words completed: 40')).toBeVisible();
-  expect(screen.getByText('Fully completed challenges: 10')).toBeVisible();
+  expect(screen.getByLabelText('Longest streak: 18 days')).toBeVisible();
+  expect(screen.getByLabelText('Words completed: 40')).toBeVisible();
+  expect(screen.getByLabelText('Full challenges: 10')).toBeVisible();
 });
 it('does not manufacture zero XP when the server fails and supports retry', async () => {
   header.mockResolvedValueOnce({ data: null, error: { message: 'offline' } });
@@ -95,6 +96,7 @@ it('drops a late previous-account response after switching accounts', async () =
       <ProgressPanel key="owner" userId="owner" accessToken="old" />
     </View>,
   );
+  await waitFor(() => expect(header).toHaveBeenCalledWith('Authorization', 'Bearer old'));
   header.mockResolvedValue({
     data: { ...payload, user_id: 'other', total_xp: 0, level: 0, xp_into_level: 0 },
     error: null,
@@ -116,6 +118,7 @@ it('ignores an obsolete token response', async () => {
     }),
   );
   const { rerender } = render(<ProgressPanel userId="owner" accessToken="old" />);
+  await waitFor(() => expect(header).toHaveBeenCalledWith('Authorization', 'Bearer old'));
   header.mockResolvedValue({ data: { ...payload, total_xp: 700 }, error: null });
   rerender(<ProgressPanel userId="owner" accessToken="new" />);
   await screen.findByText('700 XP');
@@ -137,6 +140,47 @@ it('shows a server receipt including word, full challenge and milestone feedback
   expect(await screen.findByText('+10 XP · word completed')).toBeVisible();
   expect(screen.getByText('+10 XP · full challenge bonus')).toBeVisible();
   expect(screen.getByText('+25 XP · streak milestone')).toBeVisible();
+});
+
+it('shows only the server historical +10 XP receipt without daily or streak completion wording', async () => {
+  header.mockResolvedValue({
+    data: {
+      user_id: 'owner',
+      submission_id: 'photo',
+      word_xp: 10,
+      challenge_bonus_xp: 0,
+      milestone_xp: 0,
+    },
+    error: null,
+  });
+  render(
+    <SubmissionXpFeedback userId="owner" accessToken="token" submissionId="photo" historical />,
+  );
+  expect(await screen.findByText('+10 XP')).toBeVisible();
+  expect(screen.queryByText(/word completed|full challenge bonus|streak milestone/)).toBeNull();
+  expect(mockRpc).toHaveBeenCalledWith('get_submission_xp', { submission_id: 'photo' });
+});
+
+it('reconciles historical feedback with authoritative reversal and restoration instead of accumulating positive awards', async () => {
+  const receipt = {
+    user_id: 'owner',
+    submission_id: 'photo',
+    word_xp: 10,
+    challenge_bonus_xp: 0,
+    milestone_xp: 0,
+  };
+  header.mockResolvedValue({ data: receipt, error: null });
+  render(
+    <SubmissionXpFeedback userId="owner" accessToken="token" submissionId="photo" historical />,
+  );
+  await screen.findByText('+10 XP');
+  header.mockResolvedValue({ data: { ...receipt, word_xp: 0 }, error: null });
+  act(() => invalidateServerData(['progress']));
+  await waitFor(() => expect(screen.queryByText('+10 XP')).toBeNull());
+  header.mockResolvedValue({ data: receipt, error: null });
+  act(() => invalidateServerData(['progress']));
+  expect(await screen.findByText('+10 XP')).toBeVisible();
+  expect(screen.queryByText('+20 XP')).toBeNull();
 });
 it('rejects mismatched account, challenge, malformed or unsafe numbers', () => {
   expect(() => parseProgress(payload, 'other')).toThrow();
@@ -165,6 +209,7 @@ it('ignores background responses and re-reads authoritative XP on foreground res
     }),
   );
   const app = render(<ProgressPanel userId="owner" accessToken="token" />);
+  await waitFor(() => expect(header).toHaveBeenCalledWith('Authorization', 'Bearer token'));
   const change = listeners.mock.calls.find(([event]) => event === 'change')?.[1];
   expect(change).toBeDefined();
   act(() => change?.('background'));
@@ -183,6 +228,7 @@ it('a late expired-token failure cannot clear newer same-account progress', asyn
     }),
   );
   const { rerender } = render(<ProgressPanel userId="owner" accessToken="expired" />);
+  await waitFor(() => expect(header).toHaveBeenCalledWith('Authorization', 'Bearer expired'));
   rerender(<ProgressPanel userId="owner" accessToken="renewed" />);
   expect(await screen.findByText('620 XP')).toBeVisible();
   await act(async () => fail(new Error('session expired')));
@@ -208,6 +254,7 @@ it('drops old-account photo XP feedback after switching to another account', asy
       <SubmissionXpFeedback key="owner" userId="owner" accessToken="old" submissionId="old-photo" />
     </View>,
   );
+  await waitFor(() => expect(header).toHaveBeenCalledWith('Authorization', 'Bearer old'));
   header.mockResolvedValue({
     data: {
       ...oldReceipt,

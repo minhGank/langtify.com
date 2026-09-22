@@ -2,6 +2,9 @@ import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { useAssignmentPhoto } from '@/features/photos/use-assignment-photo';
 import type { PhotoGateway, Submission } from '@/services/submissions';
 import { makeSubmission, photoFixture, preparedPhoto } from './photo-fixtures';
+import { invalidateServerData } from '@/lib/server-cache';
+import type { PreparedPhoto } from '@/features/photos/photo-files';
+const libraryPhoto: PreparedPhoto = { ...preparedPhoto, source: 'library' };
 async function mounted(fixture = photoFixture()) {
   const hook = renderHook(() => useAssignmentPhoto(fixture.gateway, fixture.drafts));
   await waitFor(() => expect(hook.result.current.loading).toBe(false));
@@ -245,4 +248,356 @@ it('recovers a committed finalization after its response is lost without another
   });
   expect(gateway.upload).toHaveBeenCalledTimes(1);
   expect(gateway.finalize).toHaveBeenCalledTimes(1);
+});
+
+it('reuses a completed owner photo on revisit and never polls when minutes pass', async () => {
+  jest.useFakeTimers();
+  try {
+    const fixture = photoFixture(makeSubmission({ status: 'completed' }));
+    const first = renderHook(() => useAssignmentPhoto(fixture.gateway, fixture.drafts));
+    await waitFor(() => expect(first.result.current.loading).toBe(false));
+    await act(async () => jest.advanceTimersByTime(600000));
+    expect(fixture.gateway.load).toHaveBeenCalledTimes(1);
+    expect(fixture.gateway.preview).toHaveBeenCalledTimes(1);
+    first.unmount();
+    const next = renderHook(() => useAssignmentPhoto(fixture.gateway, fixture.drafts));
+    expect(next.result.current.data?.submission?.status).toBe('completed');
+    await waitFor(() => expect(next.result.current.loading).toBe(false));
+    expect(fixture.gateway.load).toHaveBeenCalledTimes(1);
+    await act(async () => next.result.current.refresh());
+    expect(fixture.gateway.load).toHaveBeenCalledTimes(2);
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+it.each(['completed', 'pending', 'deleting'] as const)(
+  'only automatically recovers unfinished %s owner state on foreground',
+  async (status) => {
+    const fixture = photoFixture(makeSubmission({ status }));
+    const view = renderHook(
+      ({ visible }: { visible: boolean }) =>
+        useAssignmentPhoto(fixture.gateway, fixture.drafts, visible),
+      {
+        initialProps: { visible: true },
+      },
+    );
+    await waitFor(() => expect(view.result.current.loading).toBe(false));
+    view.rerender({ visible: false });
+    expect(view.result.current.remoteUri).toBeNull();
+    view.rerender({ visible: true });
+    await act(async () => {});
+    expect(fixture.gateway.load).toHaveBeenCalledTimes(status === 'completed' ? 1 : 2);
+  },
+);
+
+it('invalidates cached owner state on deletion/media events and defers reads while inactive', async () => {
+  const fixture = photoFixture(makeSubmission({ status: 'completed' }));
+  const view = renderHook(
+    ({ visible }: { visible: boolean }) =>
+      useAssignmentPhoto(fixture.gateway, fixture.drafts, visible),
+    {
+      initialProps: { visible: true },
+    },
+  );
+  await waitFor(() => expect(view.result.current.loading).toBe(false));
+  view.rerender({ visible: false });
+  act(() => invalidateServerData(['media'], { discard: true }));
+  await act(async () => {});
+  expect(fixture.gateway.load).toHaveBeenCalledTimes(1);
+  view.rerender({ visible: true });
+  await waitFor(() => expect(fixture.gateway.load).toHaveBeenCalledTimes(2));
+  expect(fixture.gateway.finalize).not.toHaveBeenCalled();
+});
+
+it('reconciles pending recovery when revisiting an already cached assignment', async () => {
+  const fixture = photoFixture(makeSubmission());
+  const first = await mounted(fixture);
+  first.unmount();
+  const next = await mounted(fixture);
+  expect(next.gateway.load).toHaveBeenCalledTimes(2);
+  expect(next.gateway.finalize).not.toHaveBeenCalled();
+});
+
+it('queues invalidation behind an in-flight owner read instead of accepting obsolete state', async () => {
+  const fixture = photoFixture(makeSubmission({ status: 'completed' }));
+  const saved = await fixture.gateway.load();
+  fixture.gateway.load.mockClear();
+  let finish = () => {};
+  fixture.gateway.load.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = () => resolve(saved);
+    }),
+  );
+  const view = renderHook(() => useAssignmentPhoto(fixture.gateway, fixture.drafts));
+  await waitFor(() => expect(fixture.gateway.load).toHaveBeenCalledTimes(1));
+  act(() => invalidateServerData(['media'], { discard: true }));
+  await act(async () => finish());
+  await waitFor(() => expect(view.result.current.loading).toBe(false));
+  expect(fixture.gateway.load).toHaveBeenCalledTimes(2);
+  expect(fixture.gateway.preview).toHaveBeenCalledTimes(1);
+});
+
+it('recovers interrupted completed-photo pixels on resume without rereading fresh metadata', async () => {
+  const fixture = photoFixture(makeSubmission({ status: 'completed' }));
+  const view = renderHook(
+    ({ visible }: { visible: boolean }) =>
+      useAssignmentPhoto(fixture.gateway, fixture.drafts, visible),
+    { initialProps: { visible: true } },
+  );
+  await waitFor(() => expect(view.result.current.loading).toBe(false));
+  expect(view.result.current.remoteUri).toContain('signed-photo');
+  let finish = () => {};
+  fixture.gateway.preview.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = () => resolve('obsolete pixels');
+    }),
+  );
+  act(() => invalidateServerData(['media'], { discard: true }));
+  await waitFor(() => expect(fixture.gateway.preview).toHaveBeenCalledTimes(2));
+  expect(view.result.current.remoteUri).toBeNull();
+  view.rerender({ visible: false });
+  view.rerender({ visible: true });
+  await waitFor(() => expect(view.result.current.loading).toBe(false));
+  expect(fixture.gateway.load).toHaveBeenCalledTimes(2);
+  expect(fixture.gateway.preview).toHaveBeenCalledTimes(3);
+  expect(view.result.current.remoteUri).toContain('signed-photo');
+  await act(async () => finish());
+  expect(view.result.current.remoteUri).toContain('signed-photo');
+});
+
+it.each(['private', 'public'] as const)(
+  'submits a current-day gallery photo through the same %s reserve/upload/finalize lifecycle',
+  async (visibility) => {
+    const { result, gateway } = await mounted();
+    act(() => {
+      result.current.acceptPhoto(libraryPhoto);
+      result.current.setPublic(visibility === 'public');
+    });
+    expect(gateway.upload).not.toHaveBeenCalled();
+    await act(async () => result.current.submit());
+    expect(gateway.canChooseLibraryPhoto).toHaveBeenCalledTimes(1);
+    expect(gateway.reserve).toHaveBeenCalledTimes(1);
+    expect(gateway.upload).toHaveBeenCalledWith(makeSubmission(), libraryPhoto.bytes);
+    expect(gateway.finalize).toHaveBeenCalledWith(makeSubmission().id, visibility);
+    expect(result.current.data?.submission?.status).toBe('completed');
+    expect(result.current.data?.submission?.visibility).toBe(visibility);
+  },
+);
+
+it('keeps a restored daily gallery draft recoverable but refuses bytes after server eligibility expires', async () => {
+  const fixture = photoFixture();
+  fixture.drafts.load.mockResolvedValue(libraryPhoto);
+  fixture.gateway.canChooseLibraryPhoto.mockResolvedValue(false);
+  const { result, gateway } = await mounted(fixture);
+  expect(result.current.photo?.source).toBe('library');
+  await act(async () => result.current.submit());
+  expect(gateway.upload).not.toHaveBeenCalled();
+  expect(gateway.finalize).not.toHaveBeenCalled();
+  expect(result.current.error).toBe(
+    'This word is not available for a new photo in this view. Return to Today or Past Words to refresh.',
+  );
+  expect(result.current.photo).toEqual(libraryPhoto);
+});
+
+it('does not upload or finalize a gallery image when current-day verification fails', async () => {
+  const { result, gateway } = await mounted();
+  gateway.canChooseLibraryPhoto.mockRejectedValue(new Error('offline'));
+  act(() => result.current.acceptPhoto(libraryPhoto));
+  await act(async () => result.current.submit());
+  expect(gateway.upload).not.toHaveBeenCalled();
+  expect(gateway.finalize).not.toHaveBeenCalled();
+  expect(result.current.error).not.toBe('');
+  expect(result.current.photo).toEqual(libraryPhoto);
+});
+
+it('rechecks current-day gallery eligibility before retrying a failed upload', async () => {
+  const { result, gateway } = await mounted();
+  gateway.upload.mockRejectedValueOnce(new Error('offline'));
+  act(() => result.current.acceptPhoto(libraryPhoto));
+  await act(async () => result.current.submit());
+  expect(gateway.upload).toHaveBeenCalledTimes(1);
+  gateway.canChooseLibraryPhoto.mockResolvedValue(false);
+  await act(async () => result.current.submit());
+  expect(gateway.canChooseLibraryPhoto).toHaveBeenCalledTimes(2);
+  expect(gateway.upload).toHaveBeenCalledTimes(1);
+  expect(gateway.finalize).not.toHaveBeenCalled();
+  expect(result.current.error).toBe(
+    'This word is not available for a new photo in this view. Return to Today or Past Words to refresh.',
+  );
+});
+
+it('recovers an acknowledged-lost gallery upload after midnight without uploading another object', async () => {
+  const { result, gateway } = await mounted();
+  const upload = gateway.upload.getMockImplementation();
+  gateway.upload.mockImplementationOnce(async () => {
+    await upload?.();
+    throw new Error('upload acknowledgement lost');
+  });
+  act(() => result.current.acceptPhoto(libraryPhoto));
+  await act(async () => result.current.submit());
+  expect(result.current.remoteUri).toContain('signed-photo');
+  expect(gateway.finalize).not.toHaveBeenCalled();
+  gateway.canChooseLibraryPhoto.mockResolvedValue(false);
+  await act(async () => result.current.submit());
+  expect(gateway.canChooseLibraryPhoto).toHaveBeenCalledTimes(1);
+  expect(gateway.upload).toHaveBeenCalledTimes(1);
+  expect(gateway.finalize).toHaveBeenCalledTimes(1);
+  expect(result.current.data?.submission?.status).toBe('completed');
+});
+
+it('recovers a committed gallery finalization after lost acknowledgement without a duplicate finalization', async () => {
+  const { result, gateway } = await mounted();
+  const finalize = gateway.finalize.getMockImplementation();
+  gateway.finalize.mockImplementationOnce(async (id, visibility) => {
+    await finalize?.(id, visibility);
+    throw new Error('finalize acknowledgement lost');
+  });
+  act(() => result.current.acceptPhoto(libraryPhoto));
+  await act(async () => result.current.submit());
+  expect(result.current.data?.submission?.status).toBe('completed');
+  await act(async () => result.current.submit());
+  expect(gateway.upload).toHaveBeenCalledTimes(1);
+  expect(gateway.finalize).toHaveBeenCalledTimes(1);
+});
+
+it('finishes an older pending uploaded photo without requiring new gallery eligibility', async () => {
+  const fixture = photoFixture(makeSubmission());
+  fixture.drafts.load.mockResolvedValue(libraryPhoto);
+  fixture.gateway.preview.mockResolvedValue('https://example.test/previous-day-upload');
+  fixture.gateway.canChooseLibraryPhoto.mockResolvedValue(false);
+  const { result, gateway } = await mounted(fixture);
+  await act(async () => result.current.submit());
+  expect(gateway.canChooseLibraryPhoto).not.toHaveBeenCalled();
+  expect(gateway.upload).not.toHaveBeenCalled();
+  expect(gateway.finalize).toHaveBeenCalledTimes(1);
+  expect(result.current.data?.submission?.status).toBe('completed');
+});
+
+it('ignores gallery eligibility that resolves after account switching', async () => {
+  const first = await mounted();
+  let finish: (allowed: boolean) => void = () => {};
+  first.gateway.canChooseLibraryPhoto.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  act(() => first.result.current.acceptPhoto(libraryPhoto));
+  let pending: Promise<void> | undefined;
+  act(() => {
+    pending = first.result.current.submit();
+  });
+  await waitFor(() => expect(first.gateway.canChooseLibraryPhoto).toHaveBeenCalledTimes(1));
+  first.unmount();
+  const next = await mounted();
+  await act(async () => {
+    finish(true);
+    await pending;
+  });
+  expect(first.gateway.upload).not.toHaveBeenCalled();
+  expect(first.gateway.finalize).not.toHaveBeenCalled();
+  expect(next.result.current.photo).toBeNull();
+  expect(next.result.current.data?.submission).toBeNull();
+});
+
+it.each([
+  ['camera', 'private'],
+  ['camera', 'public'],
+  ['library', 'private'],
+  ['library', 'public'],
+] as const)(
+  'preserves historical server semantics for %s bytes and %s visibility in the shared uploader',
+  async (source, visibility) => {
+    const { result, gateway } = await mounted(
+      photoFixture(null, { captureKind: 'historical', localDate: '2026-08-01' }),
+    );
+    act(() => {
+      result.current.acceptPhoto(source === 'library' ? libraryPhoto : preparedPhoto);
+      result.current.setPublic(visibility === 'public');
+    });
+    await act(async () => result.current.submit());
+    expect(gateway.reserve).toHaveBeenCalledTimes(1);
+    expect(gateway.upload).toHaveBeenCalledWith(
+      makeSubmission({ capture_kind: 'historical' }),
+      preparedPhoto.bytes,
+    );
+    expect(gateway.finalize).toHaveBeenCalledWith(makeSubmission().id, visibility);
+    expect(result.current.data).toMatchObject({
+      captureKind: 'historical',
+      localDate: '2026-08-01',
+      submission: { capture_kind: 'historical', status: 'completed', visibility },
+    });
+    expect(gateway.canChooseLibraryPhoto).toHaveBeenCalledTimes(source === 'library' ? 1 : 0);
+  },
+);
+
+it.each(['camera', 'library'] as const)(
+  'reconciles committed historical %s finalization after a lost acknowledgement without another upload or award request',
+  async (source) => {
+    const { result, gateway } = await mounted(photoFixture(null, { captureKind: 'historical' }));
+    const finalize = gateway.finalize.getMockImplementation();
+    gateway.finalize.mockImplementationOnce(async (id, visibility) => {
+      await finalize?.(id, visibility);
+      throw new Error('finalize acknowledgement lost');
+    });
+    act(() => result.current.acceptPhoto(source === 'library' ? libraryPhoto : preparedPhoto));
+    await act(async () => result.current.submit());
+    expect(result.current.data?.submission).toMatchObject({
+      capture_kind: 'historical',
+      status: 'completed',
+    });
+    await act(async () => result.current.submit());
+    expect(gateway.upload).toHaveBeenCalledTimes(1);
+    expect(gateway.finalize).toHaveBeenCalledTimes(1);
+  },
+);
+
+it('preserves historical deletion and resubmission context instead of turning the assignment into a daily completion', async () => {
+  const { result, gateway } = await mounted(
+    photoFixture(
+      makeSubmission({
+        capture_kind: 'historical',
+        status: 'completed',
+        submitted_at: '2026-09-23T12:00:00Z',
+      }),
+    ),
+  );
+  await act(async () => result.current.deletePhoto());
+  expect(gateway.beginDelete).toHaveBeenCalledWith(makeSubmission().id);
+  expect(gateway.removeObject).toHaveBeenCalledWith(
+    expect.objectContaining({ capture_kind: 'historical', status: 'deleting' }),
+  );
+  expect(gateway.finishDelete).toHaveBeenCalledTimes(1);
+  expect(result.current.data).toMatchObject({ captureKind: 'historical', submission: null });
+  act(() => result.current.acceptPhoto(libraryPhoto));
+  await act(async () => result.current.submit());
+  expect(result.current.data?.submission).toMatchObject({
+    capture_kind: 'historical',
+    status: 'completed',
+  });
+  expect(gateway.finalize).toHaveBeenCalledTimes(1);
+});
+
+it('serializes two historical submit taps and reconciles without changing capture kind', async () => {
+  const { result, gateway } = await mounted(photoFixture(null, { captureKind: 'historical' }));
+  let finish: () => void = () => {};
+  gateway.upload.mockReturnValueOnce(
+    new Promise<void>((resolve) => {
+      finish = resolve;
+    }),
+  );
+  act(() => result.current.acceptPhoto(libraryPhoto));
+  let pending: Promise<void> | undefined;
+  act(() => {
+    pending = result.current.submit();
+    void result.current.submit();
+  });
+  await waitFor(() => expect(gateway.upload).toHaveBeenCalledTimes(1));
+  await act(async () => {
+    finish();
+    await pending;
+  });
+  expect(gateway.reserve).toHaveBeenCalledTimes(1);
+  expect(gateway.finalize).toHaveBeenCalledTimes(1);
+  expect(result.current.data?.submission?.capture_kind).toBe('historical');
 });

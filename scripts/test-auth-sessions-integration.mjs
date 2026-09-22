@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { localApi } from './lib/local-api.mjs';
 import { authSessionId } from '../src/lib/auth-session-storage.ts';
+import { validateSignupPassword } from '../src/features/auth/password-policy.ts';
 
 const api = localApi();
 const email = `oauth-audit-${randomUUID()}@example.test`;
@@ -42,6 +43,22 @@ try {
   assert.equal(other.data.user.id, userId);
   console.log(
     'PASS: repeated password login retains one incomplete profile; signing out an older session preserves the newer session',
+  );
+
+  // Exercise real Auth's shared password-strength check without creating extra
+  // signup emails. This is the fixture's own current authenticated session.
+  for (const candidate of ['abcde', 'a'.repeat(73), '📷'.repeat(19)]) {
+    assert.ok(validateSignupPassword(candidate));
+    const rejected = await second.auth.updateUser({ password: candidate });
+    assert.ok(rejected.error, 'Auth must reject a password outside its byte bounds');
+    assert.ok(['weak_password', 'validation_failed'].includes(rejected.error.code));
+  }
+  for (const candidate of ['abcdef', '語語', '📷'.repeat(18)]) {
+    assert.equal(validateSignupPassword(candidate), undefined);
+    assert.ifError((await second.auth.updateUser({ password: candidate })).error);
+  }
+  console.log(
+    'PASS: actual Auth policy matches signup guidance at the 6/72 UTF-8 byte boundaries without invented character classes',
   );
 } finally {
   if (userId) assert.ifError((await api.admin.auth.admin.deleteUser(userId)).error);

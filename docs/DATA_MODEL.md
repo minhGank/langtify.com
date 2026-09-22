@@ -1,5 +1,21 @@
 # Phase 10 data model
 
+The authorized [QA3 search and native navigation pass](QA3_SEARCH_NAVIGATION.md)
+adds catalog Search/Explore and controlled public examples, a native post route,
+compact semantic rating and profile/comment presentation corrections. Existing
+privacy, signing, learning and remote-push authority remain unchanged. Physical
+acceptance is pending; Phase 11 has not started.
+
+The remaining [QA2 connection lists and in-app Notification Center](QA2_CONNECTIONS_INBOX.md)
+add controlled follow projections and private, server-generated inbox events. Remote
+push remains limited to DAILY_WORDS and STREAK_AT_RISK. Physical acceptance is pending.
+
+The subsequent [product/UX pass](PRODUCT_UX_PASS.md#database-and-privacy) adds
+`profiles.public_id`, `user_follows`, `submission_comments`, comment cases/audits and
+private avatar reservation/current/cleanup records. See it for exact RPC authority,
+bounds, indexes and lifecycle. Existing learning, challenge, submission, rating,
+XP and notification semantics remain unchanged.
+
 Supabase/PostgreSQL is authoritative. Vocabulary and challenges join the existing identity schema.
 Phase 4 adds submissions and private photo storage. Email stays in Auth.
 
@@ -107,6 +123,12 @@ identity and Phase 3 schema files remain unchanged by this audit. Respect transa
 boundaries supplied by each file when applying migrations manually.
 
 ## Submissions and private photo storage
+
+The current-day library addition changes no schema, RPC, Storage policy or XP source.
+Camera/library bytes use identical verified submissions and existing ledger keys.
+Image provenance cannot be securely inferred from uploaded bytes and is not a
+server authority claim. Existing owner progress/assignment reads constrain the
+client's new library flow; historical pending-upload recovery remains unchanged.
 
 `20260912040000_phase4_submissions.sql` is additive and explicitly transactional.
 All previously applied migration files are unchanged by Phase 4. It configures a
@@ -464,3 +486,26 @@ covered by the [Phase 10 audit](PHASE10_AUDIT.md).
 whole bounded candidate batch's Auth, profile and learning locks in ordered stages
 before processing preferences. This closes the reproduced cross-candidate cycle
 with token rebinding and send authorization. No table/backfill or source reset.
+
+## QA2 public-profile submissions projection
+
+`20260922000000_public_profile_submissions.sql` adds
+`get_public_profile_submissions(profile_id, before_time, before_id, page_size)`
+and a partial `(user_id, submitted_at DESC, id DESC)` completed/public index.
+The Auth-derived saved-target Discover projection is narrowed by opaque public
+profile ID. It retains verified-object, block, restriction and moderation checks,
+bounded timestamp/UUID keysets and grouped rating summaries. It exposes no raw
+owner identity or new Storage access. Existing batch `feed-previews` signing
+rechecks eligibility. No table/backfill, reward or submission lifecycle changes.
+
+## Historical Past Words captures
+
+`20260923000000_past_words.sql` adds constrained immutable
+`submissions.capture_kind`, private `historical_captures` source/revocation facts
+and derived `past_word_entries` with owner/captured/date/assignment paging index.
+New RPCs: `get_my_past_words`, `reserve_historical_submission`. Existing daily
+reservation and assignment context now enforce/return server-local admission.
+Progress reconciles the same `word:<assignment>` entitlement across daily and
+historical facts; only daily facts enter streaks, bonuses and completion metrics.
+Existing rows remain daily. See [PAST_WORDS.md](PAST_WORDS.md) for constraints,
+concurrency, replay, deletion and rollout details.

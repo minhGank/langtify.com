@@ -1,18 +1,24 @@
+import { invalidateServerData, serverScope } from '@/lib/server-cache';
 import { boundedFetch } from '@/lib/http';
 import { createClient } from '@supabase/supabase-js';
 import { publicConfig } from '@/lib/env';
 import { requireSupabase } from '@/lib/supabase';
 import type { Database, Json } from '@/types/database';
+import { imageMemory } from '@/lib/image-memory';
 
 export const PHOTO_BUCKET = 'challenge-submissions';
 export type Visibility = 'private' | 'public';
+export type CaptureKind = 'daily' | 'historical';
 export type Submission = Database['public']['Tables']['submissions']['Row'];
 export type AssignmentPhoto = {
   assignmentId: string;
   targetTerm: string;
   referenceTerm: string;
   localDate: string;
+  currentLocalDate: string;
   timezone: string;
+  captureKind: CaptureKind;
+  canCapture: boolean;
   submission: Submission | null;
 };
 export type UnfinishedPhoto = { assignmentId: string; targetTerm: string };
@@ -35,9 +41,12 @@ export async function listUnfinishedPhotos(
   });
 }
 export type PhotoGateway = {
-  load: () => Promise<AssignmentPhoto>;
+  cacheKey?: string;
+  cachedPreview?: (submission: Submission) => string | null;
+  load: (signal?: AbortSignal) => Promise<AssignmentPhoto>;
+  canChooseLibraryPhoto: (signal?: AbortSignal) => Promise<boolean>;
   reserve: () => Promise<Submission>;
-  preview: (submission: Submission) => Promise<string | null>;
+  preview: (submission: Submission, signal?: AbortSignal) => Promise<string | null>;
   upload: (submission: Submission, bytes: Uint8Array) => Promise<void>;
   finalize: (id: string, visibility: Visibility) => Promise<Submission>;
   visibility: (id: string, visibility: Visibility) => Promise<Submission>;
@@ -54,6 +63,10 @@ function text(value: unknown): string {
   if (typeof value !== 'string' || !value) throw new Error('Invalid photo response.');
   return value;
 }
+function captureKind(value: unknown): CaptureKind {
+  if (value !== 'daily' && value !== 'historical') throw new Error('Invalid photo response.');
+  return value;
+}
 export function parseSubmission(value: unknown, userId: string, assignmentId: string): Submission {
   const s = record(value);
   if (
@@ -66,6 +79,7 @@ export function parseSubmission(value: unknown, userId: string, assignmentId: st
     throw new Error('Photo account changed.');
   const nullableText = (value: unknown) => (value === null ? null : text(value));
   return {
+    capture_kind: captureKind(s.capture_kind),
     id: text(s.id),
     user_id: userId,
     daily_challenge_word_id: assignmentId,
@@ -89,6 +103,7 @@ export function parseAssignmentPhoto(
   data: Json,
   userId: string,
   assignmentId: string,
+  intent?: CaptureKind,
 ): AssignmentPhoto {
   const result = record(data),
     assignment = record(result.assignment),
@@ -100,17 +115,41 @@ export function parseAssignmentPhoto(
     assignment.replaced_at !== null
   )
     throw new Error('Photo account changed.');
+  text(challenge.id);
+  text(result.current_local_date);
+  if (
+    typeof result.can_capture_daily !== 'boolean' ||
+    typeof result.can_capture_historical !== 'boolean' ||
+    (result.can_capture_daily && result.can_capture_historical)
+  )
+    throw new Error('Invalid photo response.');
+  const submission =
+    result.submission === null ? null : parseSubmission(result.submission, userId, assignmentId);
+  const kind = submission
+    ? captureKind(submission.capture_kind)
+    : (intent ?? (result.can_capture_historical ? 'historical' : 'daily'));
   return {
     assignmentId,
     targetTerm: text(assignment.target_term),
     referenceTerm: text(assignment.reference_term),
     localDate: text(challenge.local_challenge_date),
+    currentLocalDate: text(result.current_local_date),
     timezone: text(challenge.timezone),
-    submission:
-      result.submission === null ? null : parseSubmission(result.submission, userId, assignmentId),
+    captureKind: kind,
+    canCapture:
+      (!intent || intent === kind) &&
+      (kind === 'historical' ? result.can_capture_historical : result.can_capture_daily) &&
+      submission?.status !== 'completed' &&
+      submission?.status !== 'deleting',
+    submission,
   };
 }
-export function photoGateway(userId: string, assignmentId: string, token: string): PhotoGateway {
+export function photoGateway(
+  userId: string,
+  assignmentId: string,
+  token: string,
+  intent?: CaptureKind,
+): PhotoGateway {
   const config = publicConfig.config;
   if (!config) throw new Error('Supabase configuration is missing.');
   // A separate non-persisting client pins ALL Storage/RPC requests to this account.
@@ -121,34 +160,88 @@ export function photoGateway(userId: string, assignmentId: string, token: string
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
   const bucket = client.storage.from(PHOTO_BUCKET);
-  const checked = (data: unknown) => parseSubmission(data, userId, assignmentId);
+  const memory = imageMemory(serverScope(userId, token), 'owner', [
+    'vocabulary',
+    'unfinished-photos',
+  ]);
+  let knownKind = intent;
+  let belongsToCurrentDate = false;
+  const checked = (data: unknown) => {
+    const parsed = parseSubmission(data, userId, assignmentId);
+    knownKind = captureKind(parsed.capture_kind);
+    return parsed;
+  };
+  const load = async (signal?: AbortSignal) => {
+    let request = client.rpc('get_assignment_photo', { assignment_id: assignmentId });
+    if (signal) request = request.abortSignal(signal);
+    const { data, error } = await request;
+    if (error) throw error;
+    const parsed = parseAssignmentPhoto(data, userId, assignmentId, intent);
+    knownKind = parsed.captureKind;
+    belongsToCurrentDate = parsed.localDate === parsed.currentLocalDate;
+    return parsed;
+  };
+  // Late photo work may settle after an account switch. Invalidate only its
+  // originating session, never the new user's projections.
+  const invalidate = (tags: readonly string[], options: { discard?: boolean } = {}) =>
+    invalidateServerData(tags, { ...options, scope: serverScope(userId, token) });
+  const challengeTags = () =>
+    knownKind === 'historical' && !belongsToCurrentDate ? [] : ['challenge'];
   return {
-    async load() {
-      const { data, error } = await client.rpc('get_assignment_photo', {
-        assignment_id: assignmentId,
-      });
-      if (error) throw error;
-      return parseAssignmentPhoto(data, userId, assignmentId);
+    cacheKey: `${serverScope(userId, token)}:assignment:${assignmentId}:${intent ?? 'auto'}`,
+    cachedPreview(submission) {
+      return memory.cached([checked(submission).id])[submission.id] ?? null;
+    },
+    load,
+    async canChooseLibraryPhoto(signal) {
+      // One owner read computes current-day / Past Words admission on the server.
+      // Route intent cannot turn a current word into historical reward authority.
+      return (await load(signal)).canCapture;
     },
     async reserve() {
-      const { data, error } = await client.rpc('reserve_submission', {
-        assignment_id: assignmentId,
-      });
+      const context = await load();
+      if (context.submission?.status === 'completed') return context.submission;
+      if (!context.canCapture) throw new Error('photo_capture_unavailable');
+      const { data, error } = await client.rpc(
+        context.captureKind === 'historical'
+          ? 'reserve_historical_submission'
+          : 'reserve_submission',
+        {
+          assignment_id: assignmentId,
+        },
+      );
+      invalidate(['past-words', 'unfinished-photos', ...challengeTags()]);
       if (error) throw error;
-      return checked(data);
+      const reserved = checked(data);
+      if (reserved.capture_kind !== context.captureKind) throw new Error('Photo account changed.');
+      return reserved;
     },
-    async preview(submission) {
+    async preview(submission, signal) {
+      if (signal?.aborted) throw new Error('Photo request cancelled.');
       const s = checked(submission);
+      const cached = memory.cached([s.id])[s.id];
+      if (cached) return cached;
+      const started = performance.now();
       const { data, error } = await client.functions.invoke('photo-authority', {
         body: { action: 'preview', submissionId: s.id },
+        ...(signal ? { signal } : {}),
       });
+      if (signal?.aborted) throw new Error('Photo request cancelled.');
       if (error) throw error;
       const result = record(data);
-      if (result.signedPath === null) return null;
+      if (result.signedPath === null) {
+        await memory.resolve({ [s.id]: null });
+        return null;
+      }
       const path = text(result.signedPath);
       if (!path.startsWith(`/storage/v1/object/sign/${PHOTO_BUCKET}/${s.storage_path}?token=`))
         throw new Error('Invalid photo response.');
-      return `${config.url}${path}`;
+      const photos = await memory.resolve(
+        { [s.id]: `${config.url}${path}` },
+        signal,
+        started + 55000,
+      );
+      return photos[s.id] ?? null;
     },
     async upload(submission, bytes) {
       const s = checked(submission);
@@ -163,6 +256,14 @@ export function photoGateway(userId: string, assignmentId: string, token: string
       const { data, error } = await client.functions.invoke('photo-authority', {
         body: { action: 'finalize', submissionId: id, visibility },
       });
+      invalidate([
+        ...challengeTags(),
+        'progress',
+        'vocabulary',
+        'past-words',
+        'discover',
+        'unfinished-photos',
+      ]);
       if (error) throw error;
       return checked(record(data).submission);
     },
@@ -171,11 +272,14 @@ export function photoGateway(userId: string, assignmentId: string, token: string
         submission_id: id,
         requested_visibility: visibility,
       });
+      invalidate(['vocabulary', 'discover', 'inbox'], { discard: true });
       if (error) throw error;
       return checked(data);
     },
     async beginDelete(id) {
       const { data, error } = await client.rpc('begin_submission_deletion', { submission_id: id });
+      invalidate([...challengeTags(), 'past-words', 'unfinished-photos']);
+      invalidate(['vocabulary', 'discover', 'inbox'], { discard: true });
       if (error) throw error;
       return checked(data);
     },
@@ -185,6 +289,14 @@ export function photoGateway(userId: string, assignmentId: string, token: string
     },
     async finishDelete(id) {
       const { data, error } = await client.rpc('finish_submission_deletion', { submission_id: id });
+      invalidate([
+        ...challengeTags(),
+        'progress',
+        'vocabulary',
+        'past-words',
+        'discover',
+        'unfinished-photos',
+      ]);
       if (error) throw error;
       return checked(data);
     },

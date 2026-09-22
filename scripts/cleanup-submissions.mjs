@@ -1,6 +1,7 @@
 // Server-only scheduled maintenance. Never import this module into the Expo app.
 import { createClient } from '@supabase/supabase-js';
 import { pathToFileURL } from 'node:url';
+import { cleanupAvatars } from './cleanup-avatars.mjs';
 
 export async function cleanupSubmissions(client, batchSize = 100) {
   const { data: jobs, error } = await client.rpc('claim_photo_cleanup', { batch_size: batchSize });
@@ -28,6 +29,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const result = await cleanupSubmissions(client);
-  console.log(JSON.stringify(result)); // Counts only; no paths, keys, signed URLs or user IDs.
-  if (result.retry) process.exitCode = 1;
+  const avatars = await cleanupAvatars(client);
+  console.log(JSON.stringify({ submissions: result, avatars })); // Counts only; no paths or credentials.
+  if (result.retry || avatars.retry) process.exitCode = 1;
 }

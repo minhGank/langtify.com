@@ -4,6 +4,8 @@ import { isCefrLevel, type CefrLevel } from '@/features/onboarding/validation';
 import { publicConfig } from '@/lib/env';
 import type { Database } from '@/types/database';
 import { PHOTO_BUCKET } from './submissions';
+import { imageMemory } from '@/lib/image-memory';
+import { serverScope } from '@/lib/server-cache';
 
 export type Capture = {
   id: string;
@@ -25,6 +27,7 @@ export type VocabularyPage = {
 };
 export type VocabularyQuery = { conceptId?: string; search: string; level: string };
 export type VocabularyGateway = {
+  cachedPreviews?: (ids: string[]) => Record<string, string>;
   load: (cursor: HistoryCursor | null, signal?: AbortSignal) => Promise<VocabularyPage>;
   previews: (ids: string[], signal?: AbortSignal) => Promise<Record<string, string | null>>;
 };
@@ -122,7 +125,12 @@ export function vocabularyGateway(
     accessToken: async () => token,
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
+  const images = imageMemory(serverScope(userId, token), 'owner', [
+    'vocabulary',
+    'unfinished-photos',
+  ]);
   return {
+    cachedPreviews: images.cached,
     async load(cursor, signal) {
       const request = client.rpc('get_my_vocabulary', {
         requested_concept: query.conceptId,
@@ -139,12 +147,17 @@ export function vocabularyGateway(
     },
     async previews(ids, signal) {
       if (!ids.length) return {};
+      const started = performance.now();
       const { data, error } = await client.functions.invoke('photo-authority', {
         body: { action: 'previews', submissionIds: ids },
         signal,
       });
       if (error) throw error;
-      return parseVocabularyPreviews(data, userId, ids, config.url);
+      return images.resolve(
+        parseVocabularyPreviews(data, userId, ids, config.url),
+        signal,
+        started + 55000,
+      );
     },
   };
 }

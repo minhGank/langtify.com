@@ -8,11 +8,12 @@ export const reportReasons = [
   { value: 'other', label: 'Other' },
 ] as const;
 export type ReportReason = (typeof reportReasons)[number]['value'];
-export type ReportKind = 'submission' | 'user';
+export type ReportKind = 'submission' | 'user' | 'comment';
 export type ReportStatus = 'open' | 'resolved' | 'dismissed';
 export const moderationActions = [
   { value: 'remove_submission', label: 'Remove photo from public view' },
   { value: 'restore_submission', label: 'Restore photo eligibility' },
+  { value: 'remove_comment', label: 'Remove comment' },
   { value: 'suspend_user', label: 'Restrict account public access' },
   { value: 'restore_user', label: 'Restore account public access' },
   { value: 'resolve_report', label: 'Resolve report' },
@@ -31,6 +32,7 @@ export type Report = {
   details: string;
   status: ReportStatus;
   createdAt: string;
+  comment?: string;
 };
 export type ModerationCase = {
   report: Report;
@@ -38,6 +40,8 @@ export type ModerationCase = {
   userExists: boolean;
   removed: boolean;
   restricted: boolean;
+  commentExists?: boolean;
+  commentRemoved?: boolean;
 };
 export type AuditEvent = {
   id: string;
@@ -88,7 +92,7 @@ export function parseReport(value: unknown): Report {
   if (
     !isReportReason(reason) ||
     !isReportStatus(r.status) ||
-    (kind !== 'user' && kind !== 'submission')
+    (kind !== 'user' && kind !== 'submission' && kind !== 'comment')
   )
     throw new Error('Invalid report.');
   return {
@@ -100,6 +104,7 @@ export function parseReport(value: unknown): Report {
     details: text(r.details),
     status: r.status,
     createdAt: timestamp(r.created_at),
+    ...(r.comment_snapshot == null ? {} : { comment: text(r.comment_snapshot) }),
   };
 }
 export function timestamp(value: unknown) {

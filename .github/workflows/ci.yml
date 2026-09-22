@@ -114,6 +114,11 @@ jobs:
           npm run db:test:discover
           npm run db:test:ratings
           npm run db:test:safety
+          npm run db:test:social
+          npm run db:test:inbox
+          npm run db:test:explore
+          npm run db:test:past-words
+          npm run db:test:avatars
           npm run db:test:notifications
           npm run db:test:notification-sender
       - name: Database lint

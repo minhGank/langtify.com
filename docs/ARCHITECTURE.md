@@ -1,5 +1,20 @@
 # Architecture
 
+The authorized [QA3 search and native navigation pass](QA3_SEARCH_NAVIGATION.md)
+adds catalog Search/Explore and controlled public examples, a native post route,
+compact semantic rating and profile/comment presentation corrections. Existing
+privacy, signing, learning and remote-push authority remain unchanged. Physical
+acceptance is pending; Phase 11 has not started.
+
+The remaining [QA2 connection lists and in-app Notification Center](QA2_CONNECTIONS_INBOX.md)
+add controlled follow projections and private, server-generated inbox events. Remote
+push remains limited to DAILY_WORDS and STREAK_AT_RISK. Physical acceptance is pending.
+
+The authorized [product/UX pass](PRODUCT_UX_PASS.md) adds controlled social/profile
+RPCs, private avatar authority and bounded session-scoped server caching. The [QA2 policy](QA2_CORRECTIONS.md) supersedes earlier cache-age/focus polling: loaded metadata and downloaded pixels survive navigation; capabilities retain their fixed expiry. Eligibility and mutation authority remain unchanged.
+New UI lives in `src/features/social/` and `src/features/profile/`; cache code lives
+in `src/lib/server-cache.ts`, `src/lib/image-memory.ts` and `src/hooks/use-server-query.ts`.
+
 Langtify uses Expo SDK 57, React Native, strict TypeScript, npm, and Expo Router.
 Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
@@ -93,9 +108,7 @@ isolation levels. Individual assignment deletion is blocked while its challenge 
 
 The client uses typed, token-bound RPC services and validates response ownership
 and complete card shape. User/profile/configuration changes remount Today state;
-generation checks ignore obsolete requests. Focus and foreground events reload
-from the backend. While Today is focused and active, a one-minute server refresh
-handles date rollover without trusting device time or computing slot levels locally.
+generation checks ignore obsolete requests. Today reuses loaded state until invalidation or a calendar-day refresh hint. A next-local-midnight timer requests the authoritative server challenge; there is no minute polling or client date authority.
 Background reads cannot swallow a Replace tap: a write supersedes their response.
 Foreground/resume refreshes wait for a pending write to settle and then reload;
 a token refresh reconciles that write through the latest same-account gateway. A lost replacement response is recovered
@@ -103,12 +116,22 @@ by refreshing; it does not blindly replace the next active word.
 
 ## Photo authority and recovery
 
+The authorized current-day library option reuses installed Expo ImagePicker and
+the same JPEG preparation, preview, reserve/upload/finalize and XP path as camera.
+The system image-only picker needs no broad library permission preflight. Existing
+owner RPCs `get_assignment_photo` and argument-free `get_my_progress` gate selection
+using the server's current challenge/date; no device date or route flag is authority.
+Selection is revalidated on return and before a new gallery upload. Local drafts
+retain library provenance solely for this UI admission check; it grants no backend
+rights and creates no new database source field. Already-uploaded recovery remains
+available after midnight. See [lifecycle details](CURRENT_DAY_LIBRARY.md).
+
 The protected `/photo` route takes only an assignment ID. Its account-keyed content
 loads the owner/assignment relationship from an RPC before showing camera controls.
 A separate non-persisting Supabase client pins all photo RPC/Storage calls to the
 submitting JWT. Late responses cannot populate another account; unmount stops
 subsequent upload stages. Camera mounts only while focused/foregrounded. Foreground
-refresh waits for a write to settle; signed previews refresh while visible.
+recovery waits for a write to settle. Completed previews reuse downloaded pixels; unfinished operations still reconcile on return.
 
 Database and Storage operations form a recoverable sequence, not a distributed
 transaction: reserve -> upload -> finalize. SQL and partial uniqueness control
@@ -159,15 +182,15 @@ Read operations derive the current streak using server time and the latest saved
 timezone, with historical completion dates unchanged. Details are in PRODUCT.md.
 
 Token-bound progress services validate response ownership and numeric shape.
-Account-keyed panels discard superseded/unmounted reads, refresh on focus/resume
-and every active minute, and show a retry state on failure rather than invented
-zero XP. Photo receipts do not optimistically award XP. Modest static feedback and
+Account-keyed panels discard superseded/unmounted reads and reuse loaded metadata until mutation, explicit refresh or justified long-background recovery. Failures show retry state rather than invented zero XP. Photo receipts do not optimistically award XP. Modest static feedback and
 an accessible progress bar need no animation or global-state dependency.
 
 ## Future boundaries
 
-Comments, likes, followers, friends, DMs, social notifications, leaderboards, achievements,
-subscriptions and AI image validation remain out of scope. Phase 11 has not started.
+Likes, friends, DMs, remote social notifications, leaderboards, achievements,
+subscriptions and AI image validation remain out of scope. Controlled comments,
+follows and the limited in-app inbox belong to the authorized product/UX and QA2
+passes above. Phase 11 has not started.
 
 ## Google OAuth and session admission — Phase 5.5
 
@@ -247,14 +270,13 @@ do not discard available images. Existing finalize/single-preview behavior remai
 The URL lifetime is fixed at 60 seconds; relative paths resolve against validated
 public config and are checked against the account and submission path in the app.
 
-The token-pinned gateway does not consult provider identity. Account-keyed screens
-and generation guards invalidate reads/signing after account, token, filter, focus
-or foreground changes. Only one 12-item page and its signed images remain in memory.
-Focus/resume reload latest; every 45 seconds while active refreshes the current
-page. A separate conservative 55-second timer clears images even if a refresh
-stalls; time starts before signing to reject delayed expired responses. Blur and
-background clear both history and photo state. Signed URLs are never stored or put
-in Router params. The detail route requires the existing ready/onboarded gate.
+The token-pinned gateway does not consult provider identity. Account/session and
+query keys partition bounded metadata pages. Navigation reuses them; background
+masks images. Relevant mutations, explicit refresh and actual long-background
+recovery reconcile state. JPEG bytes are downloaded through the session image
+cache while the fixed capability is valid; there is no periodic photo renewal.
+Signed URLs are never persisted or put in Router params. The detail route requires
+the existing ready/onboarded gate.
 
 Photo management returns through the navigation stack so dictionary screens can
 refresh after visibility/deletion. It retains a Today fallback for direct entry.
@@ -269,9 +291,7 @@ requests on supersession, background, blur or unmount, in addition to generation
 checks on responses. This preserves the provider-independent account boundary.
 
 Preview elapsed time uses monotonic `performance.now()`, so changing the device
-wall clock cannot retain an expired response. Each accepted signed batch creates
-fresh image instances, allowing retries when the server returns the same still-valid
-URL. Direct concept entry has a Vocabulary return fallback and normalizes UUID case.
+wall clock cannot admit an expired capability. Explicit retry can create a fresh image instance; pagination preserves existing instances. Downloaded pixels are distinct from signed access and may outlive its expiry in bounded session memory. Direct concept entry has a Vocabulary return fallback and normalizes UUID case.
 Batch signing matches and deduplicates UUIDs case-insensitively, as PostgreSQL does.
 No database schema, RLS, server TTL, grouping or filter rules changed. See
 `PHASE6_AUDIT.md` for reproductions, tests and remaining live-pagination limits.
@@ -301,12 +321,12 @@ The client validates viewer/target, requested IDs, bucket/path and origin, and r
 ineligible items. Public signed paths are bearer capabilities that necessarily encode
 the Storage object address; the feed RPC never exposes raw paths or owner UUIDs.
 
-The screen is keyed by viewer and target. Focus, foreground and JWT gateway guards,
-request generations and AbortController prevent stale responses/callbacks from
-installing data. A 45-second visible renewal uses one batch; a separate conservative
-55-second monotonic expiry clears URLs even if renewal stalls or device time changes.
-New batches recreate Image instances and bypass cached responses. Blur/background
-clears rows and URLs; resume refreshes newest. All state is in memory.
+The screen is keyed by viewer/session and target. Focus, foreground and JWT gateway
+guards, request generations and AbortController reject obsolete work. Returning to
+a loaded screen reuses metadata, cursor and local pixels. No elapsed-age or photo
+renewal timer issues browsing requests. Fresh controlled signing is required for
+missing pixels; explicit refresh rechecks current eligibility. QA2 documents the
+five-minute actual-background reconciliation and bounded memory policy.
 
 Public launch requires deployment, device acceptance and operational readiness of
 the Phase 9 moderation, blocking and reporting controls described below.
@@ -353,7 +373,7 @@ signature cannot overwrite a newly saved score. Only one write runs at a time;
 explicit refresh queues behind it. The submitting score is intent only; aggregate
 values come from the RPC. After an uncertain error, revalidation can recognize a
 committed vote without resending an older intent. Unavailable content clears to an
-explicit refresh state. Photo expiry continues independently while a write stalls.
+explicit refresh state. Downloaded pixels can remain while a write stalls; no expired URL is reused.
 A 20-second transport deadline aborts and settles the local mutation even if the
 transport ignores cancellation. It releases queued reads and follows the same
 uncertain-response reconciliation, without replaying a score or changing vote policy.
@@ -479,3 +499,11 @@ The bounded scheduler batch acquires Auth-user locks for all candidates, then pr
 locks, then learning locks in UUID order before processing any preference row. This
 prevents a three-transaction cycle with cross-account installation rebinding and
 send admission. Candidate due order and all per-user eligibility rechecks remain.
+
+## Past Words authority
+
+The existing photo pipeline receives immutable server-owned daily/historical mode.
+Separate private historical facts share the assignment XP entitlement while daily
+facts alone drive streaks and completion metrics. A derived indexed owner read
+projection provides missing-first keyset pages; it never grants rewards. No new
+Edge Function or Storage access is added. See [PAST_WORDS.md](PAST_WORDS.md).

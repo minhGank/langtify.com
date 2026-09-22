@@ -1,9 +1,15 @@
-import { useCallback, useRef, useState } from 'react';
-import { router, useFocusEffect } from 'expo-router';
-import { AppState } from 'react-native';
+import { displayTerm } from '@/utils/display-term';
+import { useCallback, useMemo } from 'react';
+import { createServerCache, serverScope } from '@/lib/server-cache';
+import { useServerQuery } from '@/hooks/use-server-query';
+import { router } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
+import { useAppTheme } from '@/hooks/use-app-theme';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { listUnfinishedPhotos, type UnfinishedPhoto } from '@/services/submissions';
+
+const cache = createServerCache<UnfinishedPhoto[]>({ maxEntries: 2 });
 
 // Operation recovery, including prior dates; this is not a photo gallery/feed.
 export function UnfinishedPhotos({
@@ -15,47 +21,24 @@ export function UnfinishedPhotos({
   token: string;
   currentAssignments: string[];
 }) {
-  const [photos, setPhotos] = useState<UnfinishedPhoto[]>([]);
-  const [error, setError] = useState(false);
-  const reload = useRef<(() => Promise<void>) | null>(null);
-  useFocusEffect(
-    useCallback(() => {
-      let alive = true,
-        generation = 0;
-      const load = async () => {
-        if (!alive || AppState.currentState !== 'active') return;
-        const request = ++generation;
-        try {
-          const saved = await listUnfinishedPhotos(userId, token);
-          if (alive && request === generation) {
-            setPhotos(saved);
-            setError(false);
-          }
-        } catch {
-          if (alive && request === generation) setError(true);
-        }
-      };
-      reload.current = load;
-      void load();
-      const listener = AppState.addEventListener('change', (state) => {
-        if (state === 'active') void load();
-      });
-      return () => {
-        alive = false;
-        reload.current = null;
-        listener.remove();
-      };
-    }, [userId, token]),
+  const { colors } = useAppTheme();
+  const resource = useMemo(
+    () => cache.entry(`${serverScope(userId, token)}:unfinished`, ['unfinished-photos']),
+    [userId, token],
   );
+  const load = useCallback(() => listUnfinishedPhotos(userId, token), [userId, token]);
+  const { data, error, refresh } = useServerQuery(resource, load, { staleTime: 60000 });
+  const photos = data ?? [];
   const earlier = photos.filter((photo) => !currentAssignments.includes(photo.assignmentId));
   if (!earlier.length && !error) return null;
   return (
-    <>
-      <AppText accessibilityRole="header">Unfinished photos</AppText>
+    <View style={[styles.panel, { backgroundColor: colors.surfaceMuted }]}>
+      <AppText variant="label">Unfinished photos</AppText>
       {earlier.map((photo) => (
         <Button
           key={photo.assignmentId}
-          label={`Resume ${photo.targetTerm} photo`}
+          variant="secondary"
+          label={`Resume ${displayTerm(photo.targetTerm)} photo`}
           onPress={() =>
             router.push({ pathname: '/photo', params: { assignmentId: photo.assignmentId } })
           }
@@ -63,10 +46,11 @@ export function UnfinishedPhotos({
       ))}
       {error ? (
         <>
-          <AppText>Unfinished photos could not be loaded.</AppText>
-          <Button label="Retry unfinished photos" onPress={() => void reload.current?.()} />
+          <AppText variant="caption">Unfinished photos could not be loaded.</AppText>
+          <Button variant="ghost" label="Retry unfinished photos" onPress={() => void refresh()} />
         </>
       ) : null}
-    </>
+    </View>
   );
 }
+const styles = StyleSheet.create({ panel: { borderRadius: 20, padding: 16, gap: 12 } });

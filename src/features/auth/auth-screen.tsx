@@ -2,16 +2,25 @@ import { GoogleButton, useGoogleLogin } from '@/features/auth/oauth/google-butto
 import { authMutation } from '@/features/auth/oauth/runtime';
 import { Link } from 'expo-router';
 import { useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { Screen } from '@/components/ui/screen';
 import { friendlyError } from '@/features/auth/errors';
+import {
+  passwordRejection,
+  signupPasswordHint,
+  validateSignupPassword,
+} from '@/features/auth/password-policy';
 import { requireSupabase } from '@/lib/supabase';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   const google = useGoogleLogin();
+  const { colors } = useAppTheme();
   const signingUp = mode === 'sign-up';
   const title = signingUp ? 'Create your account' : 'Sign in';
   const [email, setEmail] = useState('');
@@ -20,16 +29,25 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   const submitting = useRef(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
 
   async function submit() {
     if (submitting.current || google.busy) return;
     setError('');
     setMessage('');
     const cleanEmail = email.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail) || !password) {
-      setError('Enter a valid email address and your password.');
-      return;
-    }
+    const validation = {
+      email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)
+        ? undefined
+        : 'Enter a valid email address.',
+      password: signingUp
+        ? validateSignupPassword(password)
+        : password
+          ? undefined
+          : 'Enter your password.',
+    };
+    setFieldErrors(validation);
+    if (validation.email || validation.password) return;
     submitting.current = true;
     setBusy(true);
     try {
@@ -41,7 +59,7 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         if (signupError) throw signupError;
         if (!data.session) {
           setMessage(
-            'If this address can be registered, a confirmation email is on its way. Check your inbox, confirm your email, then return here to sign in. Already registered? Try signing in.',
+            'If this address can be registered, a confirmation email is on its way. Confirm your email, then return to sign in.',
           );
           setPassword('');
         }
@@ -52,9 +70,13 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         if (signinError) throw signinError;
       }
     } catch (cause) {
-      setError(
-        friendlyError(cause, 'Unable to connect right now. Check your connection and try again.'),
-      );
+      const passwordError = passwordRejection(cause);
+      if (passwordError) setFieldErrors((previous) => ({ ...previous, password: passwordError }));
+      else {
+        setError(
+          friendlyError(cause, 'Unable to connect right now. Check your connection and try again.'),
+        );
+      }
     } finally {
       submitting.current = false;
       setBusy(false);
@@ -62,14 +84,36 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   }
   return (
     <Screen>
-      <AppText>Langtify</AppText>
-      <AppText variant="title">{title}</AppText>
+      <View style={styles.intro}>
+        <View style={[styles.mark, { backgroundColor: colors.primarySoft }]}>
+          <Ionicons name="language-outline" size={30} color={colors.primary} />
+        </View>
+        <AppText variant="label" style={{ color: colors.primary }}>
+          Langtify
+        </AppText>
+        <AppText variant="title">{title}</AppText>
+        <AppText style={{ color: colors.muted }}>
+          {signingUp ? 'A new way to see the words you learn.' : 'Your next discovery is waiting.'}
+        </AppText>
+      </View>
       <GoogleButton disabled={busy} />
-      <AppText style={{ textAlign: 'center' }}>or</AppText>
+      <View style={styles.divider}>
+        <View style={[styles.line, { backgroundColor: colors.border }]} />
+        <AppText variant="caption" style={{ color: colors.muted }}>
+          or use email
+        </AppText>
+        <View style={[styles.line, { backgroundColor: colors.border }]} />
+      </View>
       <FormField
         label="Email"
+        required
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(value) => {
+          setEmail(value);
+          setFieldErrors((previous) => ({ ...previous, email: undefined }));
+          setError('');
+        }}
+        error={fieldErrors.email}
         editable={!busy && !google.busy}
         autoCapitalize="none"
         autoCorrect={false}
@@ -79,8 +123,15 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       />
       <FormField
         label="Password"
+        required
         value={password}
-        onChangeText={setPassword}
+        onChangeText={(value) => {
+          setPassword(value);
+          setFieldErrors((previous) => ({ ...previous, password: undefined }));
+          setError('');
+        }}
+        error={fieldErrors.password}
+        hint={signingUp ? signupPasswordHint : undefined}
         editable={!busy && !google.busy}
         secureTextEntry
         autoCapitalize="none"
@@ -91,11 +142,19 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         returnKeyType="go"
       />
       {error && (
-        <AppText accessibilityRole="alert" accessibilityLiveRegion="polite">
+        <AppText
+          style={{ color: colors.danger }}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
+        >
           {error}
         </AppText>
       )}
-      {message && <AppText accessibilityLiveRegion="polite">{message}</AppText>}
+      {message && (
+        <AppText style={{ color: colors.success }} accessibilityLiveRegion="polite">
+          {message}
+        </AppText>
+      )}
       <Button
         label={signingUp ? 'Sign up' : 'Sign in'}
         loading={busy}
@@ -103,8 +162,8 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         onPress={() => void submit()}
       />
       {!busy && !google.busy && (
-        <Link href={signingUp ? '/sign-in' : '/sign-up'} style={{ paddingVertical: 12 }}>
-          <AppText>
+        <Link href={signingUp ? '/sign-in' : '/sign-up'} style={styles.accountLink}>
+          <AppText style={{ color: colors.primary }}>
             {signingUp ? 'Already have an account? Sign in' : 'New to Langtify? Sign up'}
           </AppText>
         </Link>
@@ -112,3 +171,17 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     </Screen>
   );
 }
+const styles = StyleSheet.create({
+  intro: { gap: 10, paddingTop: 12, paddingBottom: 8 },
+  mark: {
+    height: 60,
+    width: 60,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  divider: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  line: { flex: 1, height: StyleSheet.hairlineWidth },
+  accountLink: { paddingVertical: 14, textAlign: 'center' },
+});

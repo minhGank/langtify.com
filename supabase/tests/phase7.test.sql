@@ -2,6 +2,25 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path=public,extensions;
 select no_plan();
+-- These existing daily-photo fixtures represent reservations admitted on their
+-- challenge day, then finalized later. Only the transaction-local test clock is
+-- changed around admission; the production date guard remains fully exercised.
+create temporary table reservation_clock(instant timestamptz);
+insert into reservation_clock values(null);
+create or replace function private.progress_time() returns timestamptz language sql volatile set search_path='' as $$
+ select coalesce((select instant from pg_temp.reservation_clock),clock_timestamp())
+$$;
+create function pg_temp.reserve_daily_fixture(assignment uuid) returns public.submissions language plpgsql as $$
+declare s public.submissions;
+begin
+ update pg_temp.reservation_clock set instant=(select (c.local_challenge_date::timestamp+interval '12 hours') at time zone l.timezone
+   from public.daily_challenge_words w join public.daily_challenges c on c.id=w.daily_challenge_id
+   join public.user_language_profiles l on l.user_id=c.user_id where w.id=assignment);
+ s:=public.reserve_submission(assignment);
+ update pg_temp.reservation_clock set instant=null;
+ return s;
+end;
+$$;
 insert into auth.users(id,email) values('77000000-0000-4000-8000-000000000001','discover_a@example.test'),('77000000-0000-4000-8000-000000000002','discover_b@example.test');
 select set_config('request.jwt.claim.sub','77000000-0000-4000-8000-000000000001',true);
 select public.complete_onboarding('discover_a','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','B1','UTC');
@@ -14,7 +33,7 @@ begin
  select id into term from public.vocabulary_terms where language_id='00000000-0000-4000-8000-000000000002' and cefr_level='A2' order by id limit 1;
  insert into public.daily_challenge_words(daily_challenge_id,slot,cefr_level,vocabulary_term_id) values(c,'review','A2',term);
  perform private.assign_challenge_word(c,'target');perform private.assign_challenge_word(c,'stretch');
- s:=public.reserve_submission((select id from public.daily_challenge_words where daily_challenge_id=c and slot='review'));
+ s:=pg_temp.reserve_daily_fixture((select id from public.daily_challenge_words where daily_challenge_id=c and slot='review'));
  insert into storage.objects(bucket_id,name,owner_id,version,metadata) values('challenge-submissions',s.storage_path,s.user_id::text,'history-fixture','{"mimetype":"image/jpeg","size":100}') returning * into o;
  -- SQL metadata fixture only; real JPEG/Storage coverage is in the integration suite.
  perform public.attest_submission_photo(s.id,s.user_id,o.id,o.version,repeat('a',64),16,16);

@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { localApi } from './lib/local-api.mjs';
 import { execute, query } from './lib/local-db.mjs';
+import { reservePriorDailyFixture } from './lib/prior-daily-fixture.mjs';
 import { stripJpegMetadata } from '../src/features/photos/jpeg.ts';
 
 const api = localApi(),
@@ -65,6 +66,7 @@ try {
       select private.assign_challenge_word(id,slot) from public.daily_challenges cross join unnest(array['review','target','stretch']) slot where user_id='${user}' and local_challenge_date=(clock_timestamp() at time zone 'UTC')::date-${days}; commit;
       select w.id from public.daily_challenge_words w join public.daily_challenges c on c.id=w.daily_challenge_id where c.user_id='${user}' and c.local_challenge_date=(clock_timestamp() at time zone 'UTC')::date-${days} and w.slot='review';`);
     const assignment = challenge.trim().split('\n').at(-1);
+    await reservePriorDailyFixture(user, assignment);
     const s = await reserve(a, assignment);
     await finalize(a, s);
     await execute(`begin; update private.word_completions set completed_at=completed_at-interval '${days} days',local_date=local_date-${days} where submission_id='${s.id}';

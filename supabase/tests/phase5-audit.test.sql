@@ -8,7 +8,7 @@ insert into progress_clock values('2026-01-01 12:00:00+00');
 create or replace function private.progress_time() returns timestamptz language sql volatile set search_path='' as $$select instant from pg_temp.progress_clock$$;
 create function pg_temp.clock_at(stamp timestamptz) returns void language sql as $$update pg_temp.progress_clock set instant=stamp$$;
 create function pg_temp.photo(day date,slot_name text default 'review') returns uuid language plpgsql as $$
-declare c uuid; s public.submissions; o storage.objects;
+declare c uuid; s public.submissions; o storage.objects; finalization_time timestamptz;
 begin
  select id into c from public.daily_challenges where user_id=auth.uid() and local_challenge_date=day;
  if c is null then
@@ -16,7 +16,12 @@ begin
    select user_id,id,day::timestamp at time zone timezone from public.user_language_profiles where user_id=auth.uid() returning id into c;
   perform private.assign_challenge_word(c,'review'); perform private.assign_challenge_word(c,'target'); perform private.assign_challenge_word(c,'stretch');
  end if;
+ -- Admit this legacy daily fixture on its actual assignment date, then restore
+ -- the independent finalization clock to exercise interrupted-upload recovery.
+ finalization_time:=private.progress_time();
+ perform pg_temp.clock_at((day::timestamp+interval '12 hours') at time zone (select timezone from public.user_language_profiles where user_id=auth.uid()));
  s:=public.reserve_submission((select id from public.daily_challenge_words where daily_challenge_id=c and slot=slot_name and replaced_at is null));
+ perform pg_temp.clock_at(finalization_time);
  if s.status='completed' then perform public.finalize_submission(s.id); return s.id; end if;
  insert into storage.objects(bucket_id,name,owner_id,version,metadata) values('challenge-submissions',s.storage_path,s.user_id::text,'xp-fixture','{"mimetype":"image/jpeg","size":100}') returning * into o;
  -- Metadata fixture only. Real byte verification is exercised by Auth/Storage integration.

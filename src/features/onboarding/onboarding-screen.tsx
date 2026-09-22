@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,8 @@ import {
   type OnboardingInput,
 } from '@/features/onboarding/validation';
 import { completeOnboarding } from '@/services/account';
+import { useAppTheme } from '@/hooks/use-app-theme';
+import { TimezoneField } from './timezone-field';
 
 export function OnboardingScreen() {
   const { session } = useAuth();
@@ -26,6 +29,7 @@ export function OnboardingScreen() {
 }
 
 function OnboardingForm() {
+  const { colors } = useAppTheme();
   const { account, session, reload } = useAuth();
   const mounted = useRef(true);
   useEffect(() => {
@@ -55,6 +59,7 @@ function OnboardingForm() {
   function update(field: keyof OnboardingInput, value: string) {
     setInput((previous) => ({ ...previous, [field]: value }));
     setErrors((previous) => ({ ...previous, [field]: undefined }));
+    setError('');
   }
   async function submit() {
     if (submitting.current || !session) return;
@@ -89,10 +94,16 @@ function OnboardingForm() {
   }));
   return (
     <Screen>
-      <AppText variant="title">Welcome to Langtify</AppText>
-      <AppText>Set up your learning profile.</AppText>
+      <View style={styles.intro}>
+        <AppText variant="label" style={{ color: colors.primary }}>
+          YOUR LEARNING PROFILE
+        </AppText>
+        <AppText variant="title">Make it yours</AppText>
+        <AppText style={{ color: colors.muted }}>A few details to shape your daily words.</AppText>
+      </View>
       <FormField
         label="Username"
+        required
         value={input.username}
         onChangeText={(value) => update('username', value)}
         onBlur={() => update('username', normalizeUsername(input.username))}
@@ -102,28 +113,32 @@ function OnboardingForm() {
         maxLength={30}
         editable={!busy}
         error={errors.username}
-        hint="3–30 letters, numbers or underscores. Usernames are stored in lowercase."
+        hint="3–30 letters, numbers or underscores. Shown with public photos."
       />
       {languages.length < 2 ? (
         <>
-          <AppText accessibilityRole="alert">
+          <AppText style={{ color: colors.danger }} accessibilityRole="alert">
             Learning languages are unavailable. Please try again shortly.
           </AppText>
-          <Button label="Reload languages" onPress={reload} />
+          <Button variant="secondary" label="Reload languages" onPress={reload} />
         </>
       ) : (
         <>
           <ChoiceField
             label="Reference language"
+            required
             value={input.referenceLanguageId}
             options={options}
             disabled={busy}
             onChange={(value) => update('referenceLanguageId', value)}
             error={errors.referenceLanguageId}
           />
-          <AppText>This language will explain translations.</AppText>
+          <AppText variant="caption" style={{ color: colors.muted }}>
+            The language you use for translations.
+          </AppText>
           <ChoiceField
             label="Target language"
+            required
             value={input.targetLanguageId}
             options={options}
             disabled={busy}
@@ -134,6 +149,7 @@ function OnboardingForm() {
       )}
       <ChoiceField
         label="Your current level"
+        required
         value={input.cefrLevel}
         disabled={busy}
         options={cefrOptions.map((option) => ({
@@ -143,18 +159,18 @@ function OnboardingForm() {
         onChange={(value) => update('cefrLevel', value)}
         error={errors.cefrLevel}
       />
-      <FormField
-        label="Timezone"
+      <TimezoneField
         value={input.timezone}
-        onChangeText={(value) => update('timezone', value)}
-        autoCapitalize="none"
-        autoCorrect={false}
-        editable={!busy}
+        onChange={(value) => update('timezone', value)}
+        disabled={busy}
         error={errors.timezone}
-        hint="Detected from your device when available. Check this timezone before saving; it will be stored with your profile."
       />
       {error && (
-        <AppText accessibilityRole="alert" accessibilityLiveRegion="polite">
+        <AppText
+          style={{ color: colors.danger }}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
+        >
           {error}
         </AppText>
       )}
@@ -168,3 +184,4 @@ function OnboardingForm() {
     </Screen>
   );
 }
+const styles = StyleSheet.create({ intro: { gap: 10, paddingVertical: 8 } });

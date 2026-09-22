@@ -37,6 +37,10 @@ site_url = "http://localhost:8081"
 additional_redirect_urls = []
 enable_signup = true
 enable_anonymous_sign_ins = false
+# Explicit existing defaults; matches the verified Langtify Dev policy. Keep the
+# signup guidance in src/features/auth/password-policy.ts aligned with Auth.
+minimum_password_length = 6
+password_requirements = ""
 
 [auth.email]
 enable_signup = true
@@ -52,6 +56,8 @@ file_size_limit = "5MiB"
 enabled = true
 
 [functions.photo-authority]
+verify_jwt = true
+[functions.avatar-authority]
 verify_jwt = true
 [functions.notification-scheduler]
 # A dedicated server job secret is required by the handler, never an app credential.

@@ -78,7 +78,7 @@ export function safetyGateway(identity: SafetyIdentity) {
     },
     report(
       id: string,
-      kind: ReportKind,
+      kind: Exclude<ReportKind, 'comment'>,
       reason: ReportReason,
       details: string,
       signal: AbortSignal,
@@ -115,6 +115,9 @@ export function safetyGateway(identity: SafetyIdentity) {
         userExists: flag(r.user_exists),
         removed: flag(r.removed),
         restricted: flag(r.restricted),
+        ...(report.kind === 'comment'
+          ? { commentExists: flag(r.comment_exists), commentRemoved: flag(r.comment_removed) }
+          : {}),
       };
     },
     async history(id: string, beforeId: string | null, signal: AbortSignal) {

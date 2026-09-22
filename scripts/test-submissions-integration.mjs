@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { localApi } from './lib/local-api.mjs';
 import { execute, query } from './lib/local-db.mjs';
+import { reservePriorDailyFixture } from './lib/prior-daily-fixture.mjs';
 import { cleanupSubmissions } from './cleanup-submissions.mjs';
 import { stripJpegMetadata } from '../src/features/photos/jpeg.ts';
 
@@ -62,12 +63,12 @@ async function reserve(client, id) {
   paths.add(s.storage_path);
   return s;
 }
-async function upload(client, s) {
+async function upload(client, s, bytes = jpeg) {
   assert.ifError(
     (
       await client.storage
         .from(bucket)
-        .upload(s.storage_path, jpeg, { contentType: 'image/jpeg', upsert: false })
+        .upload(s.storage_path, bytes, { contentType: 'image/jpeg', upsert: false })
     ).error,
   );
 }
@@ -250,6 +251,7 @@ try {
   const historicalAssignment = await execute(
     `select id from public.daily_challenge_words where daily_challenge_id='${historicalId}' and slot='review';`,
   );
+  await reservePriorDailyFixture(a.id, historicalAssignment);
   const unfinished = await reserve(a.client, historicalAssignment);
   const recoveries = await a.client
     .from('submissions')
@@ -267,6 +269,93 @@ try {
   assert.equal(recoveredOlder.submission.id, unfinished.id);
   console.log(
     'PASS: owner can discover and resume an unfinished earlier-date assignment independently of Today',
+  );
+
+  // Camera and library share this exact byte-only authority. Source provenance
+  // is intentionally not a caller claim accepted by Storage, finalization or XP.
+  // App tests separately exercise the native picker entering this same pipeline.
+  const sourceNeutral = await account();
+  const currentDay = await rpc(sourceNeutral.client, 'get_or_create_today_challenge');
+  const before = await rpc(sourceNeutral.client, 'get_my_progress');
+  assert.equal(before.challenge_id, currentDay.challenge.id);
+  assert.equal(before.local_date, currentDay.challenge.local_challenge_date);
+  assert.equal(before.total_xp, 0);
+  const metadata = Buffer.from('Exif\0\0GPS-test-location-not-for-upload');
+  const metadataLength = metadata.length + 2;
+  const libraryBytes = stripJpegMetadata(
+    Buffer.concat([
+      jpeg.subarray(0, 2),
+      Buffer.from([0xff, 0xe1, metadataLength >> 8, metadataLength & 0xff]),
+      metadata,
+      jpeg.subarray(2),
+    ]),
+  );
+  assert.deepEqual(libraryBytes, jpeg);
+  const completed = [];
+  for (const [index, word] of currentDay.words.entries()) {
+    const photo = await reserve(sourceNeutral.client, word.id);
+    await upload(sourceNeutral.client, photo, index === 0 ? jpeg : libraryBytes);
+    const visibility = index === 0 ? 'private' : 'public';
+    const finalized = await rpc(sourceNeutral.client, 'finalize_submission', {
+      submission_id: photo.id,
+      requested_visibility: visibility,
+    });
+    assert.equal(finalized.visibility, visibility);
+    completed.push(finalized);
+    // A lost acknowledgement retries the same reservation/finalization, never
+    // supplies a second source key or a caller-generated reward amount.
+    assert.equal((await reserve(sourceNeutral.client, word.id)).id, photo.id);
+    await rpc(sourceNeutral.client, 'finalize_submission', {
+      submission_id: photo.id,
+      requested_visibility: visibility,
+    });
+    const progress = await rpc(sourceNeutral.client, 'get_my_progress');
+    assert.equal(progress.total_xp, [10, 20, 40][index]);
+    assert.equal(progress.completed_words, index + 1);
+    assert.equal(progress.current_streak, 1);
+    assert.equal(progress.total_challenges_completed, index === 2 ? 1 : 0);
+    const stored = await sourceNeutral.client.storage.from(bucket).download(photo.storage_path);
+    assert.ifError(stored.error);
+    assert.deepEqual(new Uint8Array(await stored.data.arrayBuffer()), jpeg);
+  }
+  const vocabulary = await rpc(sourceNeutral.client, 'get_my_vocabulary');
+  assert.equal(vocabulary.total_concepts, 3);
+  assert.deepEqual(
+    vocabulary.items.map((item) => item.id).sort(),
+    completed.map((item) => item.id).sort(),
+  );
+  for (const photo of completed) {
+    const publicDetail = await rpc(b.client, 'get_discover_submission', {
+      submission_id: photo.id,
+    });
+    assert.equal(publicDetail.items.length, photo.visibility === 'public' ? 1 : 0);
+    assert((await b.client.storage.from(bucket).download(photo.storage_path)).error);
+  }
+  const replaced = completed[1];
+  await rpc(sourceNeutral.client, 'begin_submission_deletion', { submission_id: replaced.id });
+  assert.ifError(
+    (await sourceNeutral.client.storage.from(bucket).remove([replaced.storage_path])).error,
+  );
+  await rpc(sourceNeutral.client, 'finish_submission_deletion', { submission_id: replaced.id });
+  assert.equal((await rpc(sourceNeutral.client, 'get_my_progress')).total_xp, 20);
+  assert.equal((await rpc(sourceNeutral.client, 'get_my_vocabulary')).total_concepts, 2);
+  assert.equal(
+    (await rpc(b.client, 'get_discover_submission', { submission_id: replaced.id })).items.length,
+    0,
+  );
+  const resubmitted = await reserve(sourceNeutral.client, replaced.daily_challenge_word_id);
+  await upload(sourceNeutral.client, resubmitted, libraryBytes);
+  await rpc(sourceNeutral.client, 'finalize_submission', { submission_id: resubmitted.id });
+  assert.equal((await rpc(sourceNeutral.client, 'get_my_progress')).total_xp, 40);
+  assert.equal((await rpc(sourceNeutral.client, 'get_my_vocabulary')).total_concepts, 3);
+  const events = await sourceNeutral.client.from('xp_events').select('amount');
+  assert.ifError(events.error);
+  assert.equal(
+    events.data.reduce((sum, event) => sum + event.amount, 0),
+    40,
+  );
+  console.log(
+    'PASS: source-neutral current-day images strip metadata, earn exactly 10/20/40 XP and one streak day, preserve private/public projections, and reconcile retries/deletion/resubmission',
   );
 
   const cascade = await reserve(a.client, assignment);

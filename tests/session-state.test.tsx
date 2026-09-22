@@ -44,6 +44,53 @@ function gatewayFixture() {
     ) => listener(session, event),
   };
 }
+it('refreshes account fields after an older admission read without resetting the ready route or duplicating explicit refreshes', async () => {
+  const fixture = gatewayFixture();
+  const { result } = renderHook(() => useSessionState(fixture.gateway));
+  await waitFor(() => expect(result.current.status).toBe('ready'));
+  const admission = deferred<Account>();
+  fixture.load.mockReturnValueOnce(admission.promise);
+  act(() => fixture.emit({ ...makeSession(), access_token: 'renewed-token' }, 'TOKEN_REFRESHED'));
+  await waitFor(() => expect(fixture.load).toHaveBeenCalledTimes(2));
+  const updated = makeAccount();
+  if (!updated.profile) throw new Error('Missing fixture');
+  updated.profile.username = 'updated_name';
+  fixture.load.mockResolvedValueOnce(updated);
+  let first: Promise<void>;
+  let second: Promise<void>;
+  act(() => {
+    first = result.current.refreshAccount();
+    second = result.current.refreshAccount();
+  });
+  expect(result.current.status).toBe('ready');
+  await act(async () => {
+    admission.resolve(makeAccount());
+    await Promise.all([first, second]);
+  });
+  expect(result.current.account?.profile?.username).toBe('updated_name');
+  expect(fixture.load).toHaveBeenCalledTimes(3);
+  expect(fixture.restore).toHaveBeenCalledTimes(1);
+  expect(fixture.unsubscribe).not.toHaveBeenCalled();
+});
+
+it('does not install a post-save account refresh into a different account', async () => {
+  const fixture = gatewayFixture();
+  const { result } = renderHook(() => useSessionState(fixture.gateway));
+  await waitFor(() => expect(result.current.status).toBe('ready'));
+  const pending = deferred<Account>();
+  fixture.load.mockReturnValueOnce(pending.promise);
+  let refresh: Promise<void>;
+  act(() => {
+    refresh = result.current.refreshAccount();
+  });
+  act(() => fixture.emit(makeSession('another-account')));
+  await waitFor(() => expect(result.current.account?.profile?.id).toBe('another-account'));
+  await act(async () => {
+    pending.resolve(makeAccount());
+    await refresh;
+  });
+  expect(result.current.account?.profile?.id).toBe('another-account');
+});
 it.each(['restore', 'account'])(
   'recovers from a stalled %s request without admitting its late result',
   async (stage) => {

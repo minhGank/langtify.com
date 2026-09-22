@@ -657,3 +657,157 @@ input/deadlines and no send retries. Expanded tests prove duplicate-claim replay
 late invalid-token tickets during replacement, network/HTTP uncertainty and lock
 contention, alongside existing receipt/session/RLS regressions. See `PHASE10_AUDIT.md`.
 No product policy or Phase 11 functionality is introduced.
+
+## 031 — Presentation polish after physical iPhone QA
+
+Refine existing Phase 10 screens without starting Phase 11 or changing backend
+contracts or product rules. Prioritize a photo-led Discover feed and a focused
+post modal; show the exact existing semantic rating labels and move report/block
+controls into an overflow sheet. The modal derives content from the current
+bounded authorized feed window, with no additional fetch, global store, copied
+signed URL or new public projection. Existing lifecycle/revalidation clears it.
+
+Use shared typography/surface/action hierarchy and accessible native sheets across
+forms, selectors, capture, vocabulary and settings. Timezone and notification time
+controls constrain input presentation while retaining existing server validation.
+User-initiated capture may open directly after assignment/draft recovery. Preserve
+uncertain-response recovery and destructive confirmation when simplifying controls.
+See `UX_QA.md` for scope, verification limits and required physical acceptance.
+
+## 032 — Authorized profile/social pass and bounded mobile caching
+
+The latest user QA brief authorizes avatar/profile editing, prefix username search,
+public profiles, follow/unfollow, flat comments with reporting/moderation, native
+sharing and quick ratings. It supersedes earlier exclusions only for that scope;
+unrelated Phase 11 work remains unauthorized.
+
+Use immutable opaque public IDs, not Auth IDs. Preserve the feed projection and
+resolve authors through eligible submission context on tap. Follow edges are
+unique, prohibit self-follow and remain hidden under mutual blocks/restrictions.
+Flat comments use newest-first 20-item keysets, a 500-character bound and durable
+request tombstones. Comment cases extend private reports/audits without granting
+moderator private-photo inspection.
+
+Avatars use a separate private bucket, immutable reservation paths, trusted JPEG
+verification, object-version activation and Storage API cleanup. Add only the
+SDK-compatible `expo-image-picker` for profile gallery selection; challenge capture
+and Personal Team configuration remain intact. Native sharing uses the existing
+[React Native Share API](https://reactnative.dev/docs/0.86/share) for vocabulary and
+safe app context, never signed capabilities or unsupported public-post routes.
+
+A focused typed memory cache preserves bounded pages and audited mutation ordering
+without another state dependency. Separate metadata freshness from fixed photo
+expiry; share concurrent reads and partition by Auth session. See
+`PRODUCT_UX_PASS.md` for exact cache rules, database authority, measured query counts,
+deployment and physical acceptance. Automated verification is not phone acceptance.
+
+## 033 — QA2 navigation, public photos and request-driven caching
+
+Saving an unchanged normalized username is a valid no-op. A changed save awaits
+an account refresh that preserves the protected ready route, then performs one
+guarded back action or replaces Profile for direct entry. A preceding admission
+read cannot satisfy a post-mutation refresh. Learning settings use the same path.
+
+Public profiles now read owner-scoped posts through the existing saved-target
+Discover eligibility projection, with a new bounded RPC/index and existing signing.
+This fixes absent profile content without broadening raw RLS or private reads.
+
+Cache age is metadata, not a network trigger. Loaded screens reuse bounded session
+data on tab return. Signed URLs retain the 60-second server lifetime and a 55-second
+monotonic client download admission limit; downloaded JPEG pixels are separately
+cached in memory. Only a miss/invalidation needs new image access. No ordinary
+browsing polling remains. Actual background intervals of five minutes justify
+reconciliation; foreground time, tab focus and native inactive sheets do not.
+Keep pending-photo recovery and moderator revocation checks. See
+[QA2_CORRECTIONS.md](QA2_CORRECTIONS.md) for every major screen's rules and limits.
+
+Signup guidance mirrors verified Dev minimum/character settings and Auth's UTF-8
+byte bounds without imposing stronger composition rules. Leaked-password protection
+is a separate hosted setting still requiring confirmation; see PASSWORD_POLICY.md.
+
+## 034 — Remaining QA2 connection lists and separate in-app inbox
+
+The user explicitly authorizes followers/following lists and an in-app inbox without
+opening Phase 11 or expanding remote push. Reuse opaque public profiles, ordered
+social admission and controlled batched avatars. Follow acknowledgements include
+authoritative profiles/counts so related cache state updates immediately.
+
+Persist inbox source events server-side, separate from remote delivery attempts.
+Use one recorded follower-pair event, one first-rating pair event and one event per
+ready authoritative challenge; refollows/edits/retries do not renew timestamps/read
+state. This is the recommended deduplication default communicated during the pass.
+Keep rating actors private and present anonymous notices; resolve taps to existing
+owner photo detail so current learning-language changes cannot misroute an old photo.
+
+Filter inbox rows, unread counts and target resolution against current block,
+moderation, relationship and public-photo eligibility. No signed URLs or arbitrary
+routes enter events. Mark-all-read is bounded by the last observed server keyset.
+Preserve source/read history on replay, retain read state while temporarily hidden,
+and cascade hard deletion. No XP, streak or remote push changes.
+
+Loaded data survives navigation without polling. Initial/explicit/justified long
+background reads observe other-device changes; this is not realtime notification
+delivery. Account changes retire all session state. See QA2_CONNECTIONS_INBOX.md
+for exact semantics, rollout order and mandatory physical acceptance.
+
+## 035 — QA3 Explore and native public post navigation
+
+The physical QA brief explicitly authorizes vocabulary Search/Explore and related
+public examples. Use existing concepts with indexed token-prefix target-term
+search, saved reference translation, and Words/People categories. Keep username
+prefix indexing and add only follow-state booleans. Public examples and one-post
+reads reuse existing Discover eligibility, ratings and 60-second signing; no raw
+RLS/Storage expansion, remote social notification or learning rule changes.
+
+Replace modal post detail with a native card route/header for safe-area ownership
+and iOS edge-back behavior. Pass only the submission ID through Router. Reuse fresh
+session-scoped metadata/pixels, preserving invalidation and receipt synchronization.
+Short background does not pop the route. Quick rating uses a transient accessible
+palette rather than inline expansion; persisted score waits for server confirmation.
+
+Displayed terms capitalize the first Unicode character without rewriting stored
+snapshots or the remainder. Unchanged normalized username Save is disabled;
+profile editing remains through the avatar pen and own public photos appear inline.
+Remove routine comment/public-photo refresh buttons while retaining explicit error
+recovery and established cache policy. See QA3_SEARCH_NAVIGATION.md. Phase 11 and
+physical acceptance remain pending; no deployment is implied.
+
+## 036 — Current-day library selection shares photo authority
+
+The user explicitly authorizes library selection only for current-day assigned
+words, superseding the earlier avatar-only gallery restriction for this scope.
+Keep camera primary, with a native image-only picker as a secondary action. Reuse
+the installed SDK-compatible picker; no broad photo-library permission preflight,
+editor, new reward model, source-specific backend or historical-upload feature.
+
+Use argument-free `get_my_progress` plus the owned unreplaced assignment to read
+server current-day membership without generating a challenge. Recheck after the
+picker and before new library bytes upload. Local draft provenance survives restart
+so an old library draft cannot start uploading; it is not trusted backend identity.
+Source-neutral reserve/upload/finalize authority, idempotency and already-uploaded
+recovery stay unchanged, including crossing midnight. A network upload already
+admitted may finish later; server finalization still chooses the completion day.
+
+Native decoding normalizes orientation before computing the 1600px cap; re-encode
+JPEG and strip APP/comment/trailing metadata for both sources. Never delete library
+originals. Picker callbacks are fenced to the screen/account/session and do not
+consume unscoped Android pending results after activity destruction. Rebuild native
+config to pick up the broadened iOS photo-purpose text; Personal Team push behavior
+is unchanged. See CURRENT_DAY_LIBRARY.md. Physical acceptance remains pending.
+
+## 037 — Historical capture separates XP from daily completion
+
+The latest explicit QA brief authorizes Past Words camera/library capture; the
+user chose final, unreplaced assignments only. This supersedes decision 036's
+current-day-only gallery scope, without opening Phase 11. The photo-context RPC
+now supplies both server-owned admission flags in one read. New daily reservations
+require today's server date; preexisting admitted uploads retain their daily mode.
+
+Historical facts never enter daily completion/streak sources. Both modes share
+the existing reversible assignment +10 entitlement so delete/resubmit cannot farm
+net XP. Finished deletion reverses historical XP; later capture restores only word
+credit. Keep daily-only completion metrics unchanged and use existing photo history
+for visual dictionary counts. A private derived projection makes missing-first
+keysets efficient without loading all prior challenges. No social label, new
+uploader, Storage capability, remote notification type or separate XP engine.
+See [PAST_WORDS.md](PAST_WORDS.md); physical acceptance remains pending.

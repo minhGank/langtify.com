@@ -1,4 +1,8 @@
+import { passwordRejection } from '@/features/auth/password-policy';
+
 export function friendlyError(error: unknown, fallback: string) {
+  const passwordError = passwordRejection(error);
+  if (passwordError) return passwordError;
   const code = typeof error === 'object' && error !== null && 'code' in error ? error.code : null;
   switch (code) {
     case 'invalid_credentials':
@@ -8,8 +12,6 @@ export function friendlyError(error: unknown, fallback: string) {
     case 'user_already_exists':
     case 'email_exists':
       return 'Unable to create this account. Try signing in or use another email.';
-    case 'weak_password':
-      return 'This password does not meet the account security requirements. Try a longer, stronger password.';
     case 'over_request_rate_limit':
     case 'over_email_send_rate_limit':
       return 'Too many attempts. Please wait a little and try again.';

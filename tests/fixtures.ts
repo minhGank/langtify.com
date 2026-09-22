@@ -19,6 +19,7 @@ export function makeSession(id = '10000000-0000-4000-8000-000000000001'): Sessio
 export function makeAccount(id = makeSession().user.id): Account {
   return {
     profile: {
+      public_id: '99000000-0000-4000-8000-000000000001',
       id,
       username: 'learner',
       created_at: '2026-09-12T00:00:00Z',

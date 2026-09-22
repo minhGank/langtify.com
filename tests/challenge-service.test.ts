@@ -1,6 +1,7 @@
 import { challengeGateway, parseChallenge } from '@/services/challenges';
 import { makeChallengePayload } from './challenge-fixtures';
 import { makeSession } from './fixtures';
+import { createServerCache, serverScope } from '@/lib/server-cache';
 const mockHeader = jest.fn();
 const mockRpc = jest.fn(() => ({ setHeader: mockHeader }));
 jest.mock('@/lib/supabase', () => ({ requireSupabase: () => ({ rpc: mockRpc }) }));
@@ -28,6 +29,61 @@ it('sends no client identity, date or configuration when generating', async () =
   await challengeGateway(identity).load();
   expect(mockRpc).toHaveBeenCalledWith('get_or_create_today_challenge');
   expect(mockHeader).toHaveBeenCalledWith('Authorization', 'Bearer captured-token');
+});
+it.each(['daily', 'historical'] as const)(
+  'preserves authoritative %s capture semantics when a submission appears in Today',
+  (captureKind) => {
+    const payload = makeChallengePayload();
+    const result = parseChallenge(
+      {
+        ...payload,
+        words: payload.words.map((word, index) => ({
+          ...word,
+          submission:
+            index === 0
+              ? { id: 'saved-photo', status: 'completed', capture_kind: captureKind }
+              : null,
+        })),
+      },
+      identity,
+    );
+    expect(result.words[0].submission).toEqual({
+      id: 'saved-photo',
+      status: 'completed',
+      captureKind,
+    });
+  },
+);
+it.each([null, '', 'library', 'DAILY'])(
+  'rejects ambiguous capture kind %p rather than inferring daily credit',
+  (captureKind) => {
+    const payload = makeChallengePayload();
+    expect(() =>
+      parseChallenge(
+        {
+          ...payload,
+          words: payload.words.map((word) => ({
+            ...word,
+            submission: { id: 'saved-photo', status: 'completed', capture_kind: captureKind },
+          })),
+        },
+        identity,
+      ),
+    ).toThrow('Invalid submission state');
+  },
+);
+it('invalidates only the current session inbox once when authoritative daily words become ready', async () => {
+  const cache = createServerCache<number>();
+  const own = cache.entry(`${serverScope(identity.userId, identity.accessToken)}:inbox`, ['inbox']);
+  const other = cache.entry('another:session:inbox', ['inbox']);
+  own.set(0);
+  other.set(4);
+  await challengeGateway(identity).load();
+  expect(own.getSnapshot().invalidation).toBe(1);
+  expect(other.getSnapshot().invalidation).toBe(0);
+  await challengeGateway(identity).load();
+  await challengeGateway(identity).replace('assignment-review');
+  expect(own.getSnapshot().invalidation).toBe(1);
 });
 it('sends only the active assignment ID for replacement and pins the session', async () => {
   await challengeGateway(identity).replace('assignment-review');

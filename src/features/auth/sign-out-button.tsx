@@ -5,8 +5,10 @@ import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { friendlyError } from '@/features/auth/errors';
 import { requireSupabase } from '@/lib/supabase';
+import { useAppTheme } from '@/hooks/use-app-theme';
 
 export function SignOutButton() {
+  const { colors } = useAppTheme();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   async function signOut() {
@@ -23,8 +25,12 @@ export function SignOutButton() {
   }
   return (
     <>
-      {error && <AppText accessibilityRole="alert">{error}</AppText>}
-      <Button label="Sign out" loading={busy} onPress={() => void signOut()} />
+      {error && (
+        <AppText style={{ color: colors.danger }} accessibilityRole="alert">
+          {error}
+        </AppText>
+      )}
+      <Button variant="ghost" label="Sign out" loading={busy} onPress={() => void signOut()} />
     </>
   );
 }

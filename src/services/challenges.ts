@@ -1,6 +1,9 @@
 import { requireSupabase } from '@/lib/supabase';
 import type { Json } from '@/types/database';
 import { isCefrLevel } from '@/features/onboarding/validation';
+import { createServerCache, invalidateServerData, serverScope } from '@/lib/server-cache';
+
+const noticedChallenges = createServerCache<string>({ maxEntries: 4 });
 
 export const challengeSlots = ['review', 'target', 'stretch'] as const;
 export type ChallengeSlot = (typeof challengeSlots)[number];
@@ -11,7 +14,11 @@ export type ChallengeWord = {
   conceptId: string;
   targetTerm: string;
   referenceTerm: string;
-  submission: { id: string; status: 'pending' | 'completed' | 'deleting' } | null;
+  submission: {
+    id: string;
+    status: 'pending' | 'completed' | 'deleting';
+    captureKind: 'daily' | 'historical';
+  } | null;
 };
 export type TodayChallenge = {
   id: string;
@@ -64,9 +71,14 @@ export function parseChallenge(
     const saved = word.submission == null ? null : object(word.submission);
     let submission: ChallengeWord['submission'] = null;
     if (saved) {
-      if (saved.status !== 'pending' && saved.status !== 'completed' && saved.status !== 'deleting')
+      if (
+        (saved.status !== 'pending' &&
+          saved.status !== 'completed' &&
+          saved.status !== 'deleting') ||
+        (saved.capture_kind !== 'daily' && saved.capture_kind !== 'historical')
+      )
         throw new Error('Invalid submission state.');
-      submission = { id: text(saved.id), status: saved.status };
+      submission = { id: text(saved.id), status: saved.status, captureKind: saved.capture_kind };
     }
     return {
       id: text(word.id),
@@ -92,13 +104,22 @@ export function parseChallenge(
   };
 }
 export function challengeGateway(identity: ChallengeIdentity): ChallengeGateway {
+  const scope = serverScope(identity.userId, identity.accessToken);
+  const noticed = noticedChallenges.entry(`${scope}:inbox-ready-challenge`, []);
   return {
     async load() {
       const { data, error } = await requireSupabase()
         .rpc('get_or_create_today_challenge')
         .setHeader('Authorization', `Bearer ${identity.accessToken}`);
       if (error) throw error;
-      return parseChallenge(data, identity);
+      const challenge = parseChallenge(data, identity);
+      if (!noticed.getSnapshot().retired && noticed.getSnapshot().data !== challenge.id) {
+        noticed.set(challenge.id);
+        // The ready event commits with the server's three-word challenge. A
+        // previously loaded badge/list may have read before that commit.
+        invalidateServerData(['inbox'], { scope });
+      }
+      return challenge;
     },
     async replace(assignmentId) {
       const { data, error } = await requireSupabase()

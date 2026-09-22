@@ -28,6 +28,12 @@ const item = {
 };
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.spyOn(globalThis, 'fetch').mockImplementation(
+    async () =>
+      new Response(new Uint8Array([255, 216, 255, 217]).buffer, {
+        headers: { 'content-type': 'image/jpeg' },
+      }),
+  );
   const request = Promise.resolve({
     data: { user_id: 'owner', items: [item], concept: item, has_more: false, total_concepts: 1 },
     error: null,
@@ -45,6 +51,7 @@ beforeEach(() => {
     error: null,
   });
 });
+afterEach(() => jest.restoreAllMocks());
 it('pins the JWT for one RPC and one batch invocation, preserving microsecond cursors and cancellation', async () => {
   const gateway = vocabularyGateway('owner', 'old-token', { search: 'dog', level: 'A1' });
   const signal = new AbortController().signal;
@@ -66,7 +73,13 @@ it('pins the JWT for one RPC and one batch invocation, preserving microsecond cu
     page_size: 12,
   });
   expect(mockAbort).toHaveBeenCalledWith(signal);
-  await gateway.previews(['capture'], signal);
+  expect(await gateway.previews(['capture'], signal)).toEqual({
+    capture: 'data:image/jpeg;base64,/9j/2Q==',
+  });
+  expect(gateway.cachedPreviews?.(['capture'])).toEqual({
+    capture: 'data:image/jpeg;base64,/9j/2Q==',
+  });
+  expect(globalThis.fetch).toHaveBeenCalledTimes(1);
   expect(mockInvoke).toHaveBeenCalledTimes(1);
   expect(mockInvoke).toHaveBeenCalledWith('photo-authority', {
     body: { action: 'previews', submissionIds: ['capture'] },

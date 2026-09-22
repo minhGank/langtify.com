@@ -3,6 +3,64 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      in_app_notifications: {
+        Row: {
+          id: string;
+          user_id: string;
+          kind: string;
+          source_key: string;
+          actor_user_id: string | null;
+          submission_id: string | null;
+          challenge_id: string | null;
+          created_at: string;
+          read_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          kind: string;
+          source_key: string;
+          actor_user_id?: string | null;
+          submission_id?: string | null;
+          challenge_id?: string | null;
+          created_at?: string;
+          read_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          kind?: string;
+          source_key?: string;
+          actor_user_id?: string | null;
+          submission_id?: string | null;
+          challenge_id?: string | null;
+          created_at?: string;
+          read_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'in_app_notifications_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'in_app_notifications_submission_id_fkey';
+            columns: ['submission_id'];
+            isOneToOne: false;
+            referencedRelation: 'submissions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'in_app_notifications_challenge_id_fkey';
+            columns: ['challenge_id'];
+            isOneToOne: false;
+            referencedRelation: 'daily_challenges';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       daily_challenge_words: {
         Row: {
           assigned_at: string;
@@ -272,6 +330,7 @@ export type Database = {
           created_at: string;
           id: string;
           onboarding_completed_at: string | null;
+          public_id: string;
           updated_at: string;
           username: string | null;
         };
@@ -279,6 +338,7 @@ export type Database = {
           created_at?: string;
           id: string;
           onboarding_completed_at?: string | null;
+          public_id?: string;
           updated_at?: string;
           username?: string | null;
         };
@@ -286,6 +346,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           onboarding_completed_at?: string | null;
+          public_id?: string;
           updated_at?: string;
           username?: string | null;
         };
@@ -293,6 +354,7 @@ export type Database = {
       };
       safety_reports: {
         Row: {
+          comment_snapshot: string;
           context_submission_id: string;
           created_at: string;
           details: string;
@@ -307,6 +369,7 @@ export type Database = {
           word_snapshot: string;
         };
         Insert: {
+          comment_snapshot?: string;
           context_submission_id: string;
           created_at?: string;
           details?: string;
@@ -321,6 +384,7 @@ export type Database = {
           word_snapshot: string;
         };
         Update: {
+          comment_snapshot?: string;
           context_submission_id?: string;
           created_at?: string;
           details?: string;
@@ -335,6 +399,47 @@ export type Database = {
           word_snapshot?: string;
         };
         Relationships: [];
+      };
+      submission_comments: {
+        Row: {
+          author_user_id: string;
+          body: string;
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          removed: boolean;
+          request_id: string;
+          submission_id: string;
+        };
+        Insert: {
+          author_user_id: string;
+          body: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          removed?: boolean;
+          request_id: string;
+          submission_id: string;
+        };
+        Update: {
+          author_user_id?: string;
+          body?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          removed?: boolean;
+          request_id?: string;
+          submission_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'submission_comments_submission_id_fkey';
+            columns: ['submission_id'];
+            isOneToOne: false;
+            referencedRelation: 'submissions';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       submission_ratings: {
         Row: {
@@ -370,6 +475,7 @@ export type Database = {
       };
       submissions: {
         Row: {
+          capture_kind: string;
           concept_id: string;
           created_at: string;
           daily_challenge_id: string;
@@ -389,6 +495,7 @@ export type Database = {
           vocabulary_term_id: string;
         };
         Insert: {
+          capture_kind?: string;
           concept_id: string;
           created_at?: string;
           daily_challenge_id: string;
@@ -408,6 +515,7 @@ export type Database = {
           vocabulary_term_id: string;
         };
         Update: {
+          capture_kind?: string;
           concept_id?: string;
           created_at?: string;
           daily_challenge_id?: string;
@@ -480,6 +588,24 @@ export type Database = {
           blocker_user_id?: string;
           created_at?: string;
           id?: string;
+        };
+        Relationships: [];
+      };
+      user_follows: {
+        Row: {
+          created_at: string;
+          followed_user_id: string;
+          follower_user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          followed_user_id: string;
+          follower_user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          followed_user_id?: string;
+          follower_user_id?: string;
         };
         Relationships: [];
       };
@@ -665,6 +791,18 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      activate_profile_avatar: {
+        Args: {
+          avatar_id: string;
+          expected_object_id: string;
+          expected_object_version: string;
+          expected_user_id: string;
+          image_height: number;
+          image_sha256: string;
+          image_width: number;
+        };
+        Returns: Json;
+      };
       attest_submission_photo: {
         Args: {
           expected_object_id: string;
@@ -680,6 +818,10 @@ export type Database = {
       authorize_notification_attempt: {
         Args: { notification_id: string };
         Returns: boolean;
+      };
+      avatar_verification_target: {
+        Args: { avatar_id: string; expected_user_id: string };
+        Returns: Json;
       };
       begin_submission_deletion: {
         Args: { submission_id: string };
@@ -709,10 +851,21 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      block_public_profile: { Args: { profile_id: string }; Returns: Json };
       block_submission_user: { Args: { submission_id: string }; Returns: Json };
+      can_upload_avatar_object: {
+        Args: { object_name: string };
+        Returns: boolean;
+      };
       can_upload_submission_object: {
         Args: { object_path: string };
         Returns: boolean;
+      };
+      claim_avatar_cleanup: {
+        Args: { batch_size?: number };
+        Returns: {
+          storage_path: string;
+        }[];
       };
       claim_notification_attempts: {
         Args: { batch_size?: number };
@@ -738,6 +891,11 @@ export type Database = {
         };
         Returns: undefined;
       };
+      create_submission_comment: {
+        Args: { body: string; request_id: string; submission_id: string };
+        Returns: Json;
+      };
+      delete_submission_comment: { Args: { comment_id: string }; Returns: Json };
       finalize_submission: {
         Args: { requested_visibility?: string; submission_id: string };
         Returns: {
@@ -765,6 +923,10 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      finish_avatar_cleanup: {
+        Args: { object_path: string };
+        Returns: undefined;
       };
       finish_photo_cleanup: {
         Args: { object_path: string };
@@ -799,9 +961,45 @@ export type Database = {
         };
       };
       get_assignment_photo: { Args: { assignment_id: string }; Returns: Json };
+      get_my_past_words: {
+        Args: {
+          search_text?: string;
+          requested_level?: string;
+          before_captured?: boolean;
+          before_date?: string;
+          before_id?: string;
+          page_size?: number;
+        };
+        Returns: Json;
+      };
+      reserve_historical_submission: {
+        Args: { assignment_id: string };
+        Returns: Database['public']['Tables']['submissions']['Row'];
+      };
+      get_avatar_targets: {
+        Args: { avatar_ids: string[]; viewer: string };
+        Returns: {
+          id: string;
+          storage_path: string;
+        }[];
+      };
       get_blocked_users: { Args: { before_id?: string }; Returns: Json };
+      search_vocabulary_terms: {
+        Args: { query: string; before_term?: string; before_id?: string; page_size?: number };
+        Returns: Json;
+      };
+      get_explore_concept: { Args: { concept_id: string }; Returns: Json };
+      get_concept_submissions: {
+        Args: { concept_id: string; before_time?: string; before_id?: string; page_size?: number };
+        Returns: Json;
+      };
+      get_discover_submission: { Args: { submission_id: string }; Returns: Json };
       get_discover_feed: {
         Args: { before_id?: string; before_time?: string; page_size?: number };
+        Returns: Json;
+      };
+      get_public_profile_submissions: {
+        Args: { profile_id: string; before_id?: string; before_time?: string; page_size?: number };
         Returns: Json;
       };
       get_discover_photo_targets: {
@@ -852,9 +1050,46 @@ export type Database = {
         };
         Returns: Json;
       };
+      get_profile_connections: {
+        Args: {
+          profile_id: string;
+          list_kind: string;
+          before_time?: string;
+          before_id?: string;
+          page_size?: number;
+        };
+        Returns: Json;
+      };
+      get_notification_inbox: {
+        Args: { before_time?: string; before_id?: string; page_size?: number };
+        Returns: Json;
+      };
+      get_notification_summary: { Args: never; Returns: Json };
+      set_notification_read: {
+        Args: { notification_id: string; read: boolean };
+        Returns: Json;
+      };
+      mark_notifications_read: {
+        Args: { through_time: string; through_id: string };
+        Returns: Json;
+      };
+      resolve_notification_target: { Args: { notification_id: string }; Returns: Json };
       get_notification_preferences: { Args: never; Returns: Json };
       get_or_create_today_challenge: { Args: never; Returns: Json };
+      get_own_avatar: { Args: never; Returns: Json };
+      get_public_profile: {
+        Args: { profile_id?: string; submission_id?: string };
+        Returns: Json;
+      };
       get_safety_access: { Args: never; Returns: Json };
+      get_submission_comments: {
+        Args: {
+          before_id?: string;
+          before_time?: string;
+          submission_id: string;
+        };
+        Returns: Json;
+      };
       get_submission_xp: { Args: { submission_id: string }; Returns: Json };
       moderate_report: {
         Args: {
@@ -895,6 +1130,10 @@ export type Database = {
         };
         Returns: undefined;
       };
+      remove_profile_avatar: {
+        Args: { expected_avatar_id: string };
+        Returns: Json;
+      };
       replace_daily_challenge_word: {
         Args: { active_assignment_id: string };
         Returns: Json;
@@ -908,6 +1147,11 @@ export type Database = {
         };
         Returns: Json;
       };
+      report_submission_comment: {
+        Args: { comment_id: string; details?: string; reason: string };
+        Returns: Json;
+      };
+      reserve_profile_avatar: { Args: { request_id: string }; Returns: Json };
       reserve_submission: {
         Args: { assignment_id: string };
         Returns: {
@@ -944,6 +1188,14 @@ export type Database = {
           streak_at: string;
           streak_enabled: boolean;
         };
+        Returns: Json;
+      };
+      search_public_profiles: {
+        Args: { after_id?: string; after_username?: string; prefix: string };
+        Returns: Json;
+      };
+      set_follow: {
+        Args: { following: boolean; profile_id: string };
         Returns: Json;
       };
       set_submission_visibility: {
@@ -985,6 +1237,16 @@ export type Database = {
         Returns: undefined;
       };
       unblock_user: { Args: { block_id: string }; Returns: Json };
+      update_learning_preferences: {
+        Args: {
+          cefr_level: string;
+          reference_language_id: string;
+          target_language_id: string;
+          timezone: string;
+        };
+        Returns: Json;
+      };
+      update_my_profile: { Args: { username: string }; Returns: Json };
     };
     Enums: {
       [_ in never]: never;

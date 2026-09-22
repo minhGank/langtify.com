@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Image } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { IconButton } from '@/components/ui/icon-button';
+import { useAppTheme } from '@/hooks/use-app-theme';
 import { router } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
 import { AppText } from '@/components/ui/app-text';
@@ -22,6 +25,7 @@ import {
   type SafetyPage,
 } from './model';
 import { useSafetyTask } from './use-safety-task';
+import { socialChanged } from '@/features/social/cache';
 async function caseData(gateway: SafetyGateway, id: string, signal: AbortSignal) {
   if (signal.aborted) throw new Error('Request cancelled.');
   const nextDetail = await gateway.detail(id, signal);
@@ -29,7 +33,7 @@ async function caseData(gateway: SafetyGateway, id: string, signal: AbortSignal)
   const started = performance.now();
   const [nextHistory, uri] = await Promise.all([
     gateway.history(id, null, signal),
-    gateway.photo(id, signal),
+    nextDetail.report.kind === 'comment' ? Promise.resolve(null) : gateway.photo(id, signal),
   ]);
   return {
     detail: nextDetail,
@@ -49,6 +53,7 @@ export function ModerationScreen() {
   ) : null;
 }
 function Moderation({ userId, token }: SafetyIdentity) {
+  const { colors } = useAppTheme();
   const gateway = useMemo(() => safetyGateway({ userId, token }), [userId, token]);
   const [allowed, setAllowed] = useState(false),
     [status, setStatus] = useState<ReportStatus>('open');
@@ -152,7 +157,22 @@ function Moderation({ userId, token }: SafetyIdentity) {
   }, [gateway, run]);
   return (
     <Screen>
-      <AppText variant="title">Moderation</AppText>
+      <View style={styles.header}>
+        <IconButton
+          name="chevron-back"
+          label="Back to Profile"
+          onPress={() => router.replace('/(tabs)/profile')}
+        />
+        <AppText variant="heading" style={{ flex: 1 }}>
+          Moderation
+        </AppText>
+        <IconButton
+          name="refresh-outline"
+          label="Refresh moderation"
+          disabled={task.busy}
+          onPress={refresh}
+        />
+      </View>
       {!allowed && (
         <AppText>
           {task.busy ? 'Checking moderator access…' : 'Moderator access is required.'}
@@ -162,11 +182,18 @@ function Moderation({ userId, token }: SafetyIdentity) {
         <>
           {detail ? (
             <>
-              <AppText variant="title">
-                {detail.report.kind === 'user' ? 'Account report' : 'Photo report'} · @
-                {detail.report.username}
+              <AppText variant="heading">
+                {detail.report.kind === 'comment'
+                  ? 'Comment report'
+                  : detail.report.kind === 'user'
+                    ? 'Account report'
+                    : 'Photo report'}{' '}
+                · @{detail.report.username}
               </AppText>
               <AppText>{detail.report.word}</AppText>
+              {detail.report.kind === 'comment' && (
+                <AppText>{detail.report.comment || 'Comment unavailable.'}</AppText>
+              )}
               <AppText>Reason: {detail.report.reason}</AppText>
               <AppText>{detail.report.details || 'No additional details.'}</AppText>
               <AppText>
@@ -174,22 +201,27 @@ function Moderation({ userId, token }: SafetyIdentity) {
                 {new Date(detail.report.createdAt).toLocaleString()}
               </AppText>
               <AppText>
-                Public removal: {detail.removed ? 'Yes' : 'No'} · Account restricted:{' '}
-                {detail.restricted ? 'Yes' : 'No'}
+                Public removal:{' '}
+                {(detail.report.kind === 'comment' ? detail.commentRemoved : detail.removed)
+                  ? 'Yes'
+                  : 'No'}{' '}
+                · Account restricted: {detail.restricted ? 'Yes' : 'No'}
               </AppText>
-              {photo ? (
-                <Image
-                  key={`${photo.uri}:${photo.expiresAt}`}
-                  source={{ uri: photo.uri, cache: 'reload' }}
-                  style={{ width: '100%', height: 260 }}
-                  accessibilityLabel="Reported photo"
-                  onError={() => setPhoto((current) => (current === photo ? null : current))}
-                />
-              ) : (
-                <AppText>Photo unavailable or preview expired.</AppText>
-              )}
+              {detail.report.kind !== 'comment' &&
+                (photo ? (
+                  <Image
+                    key={`${photo.uri}:${photo.expiresAt}`}
+                    source={{ uri: photo.uri, cache: 'reload' }}
+                    style={{ width: '100%', height: 260 }}
+                    accessibilityLabel="Reported photo"
+                    onError={() => setPhoto((current) => (current === photo ? null : current))}
+                  />
+                ) : (
+                  <AppText>Photo unavailable or preview expired.</AppText>
+                ))}
               <Button
-                label="Reload case and photo"
+                variant="ghost"
+                label={detail.report.kind === 'comment' ? 'Reload case' : 'Reload case and photo'}
                 disabled={task.busy}
                 onPress={() => open(detail.report.id)}
               />
@@ -203,20 +235,35 @@ function Moderation({ userId, token }: SafetyIdentity) {
                     multiline
                     editable={!task.busy}
                   />
-                  {moderationActions.map((action) => (
-                    <Button
-                      key={action.value}
-                      label={action.label}
-                      disabled={
-                        task.busy ||
-                        (action.value.endsWith('submission') && !detail.submissionExists) ||
-                        (action.value.endsWith('user') && !detail.userExists)
-                      }
-                      onPress={() =>
-                        setIntent({ action: action.value, requestId: randomUUID(), reason })
-                      }
-                    />
-                  ))}
+                  {moderationActions
+                    .filter((action) =>
+                      detail.report.kind === 'comment'
+                        ? !action.value.endsWith('submission')
+                        : action.value !== 'remove_comment',
+                    )
+                    .map((action) => (
+                      <Button
+                        key={action.value}
+                        variant={
+                          action.value === 'remove_submission' ||
+                          action.value === 'remove_comment' ||
+                          action.value === 'suspend_user'
+                            ? 'danger'
+                            : 'secondary'
+                        }
+                        label={action.label}
+                        disabled={
+                          task.busy ||
+                          (action.value.endsWith('submission') && !detail.submissionExists) ||
+                          (action.value === 'remove_comment' &&
+                            (!detail.commentExists || detail.commentRemoved)) ||
+                          (action.value.endsWith('user') && !detail.userExists)
+                        }
+                        onPress={() =>
+                          setIntent({ action: action.value, requestId: randomUUID(), reason })
+                        }
+                      />
+                    ))}
                 </>
               ) : (
                 <>
@@ -238,6 +285,10 @@ function Moderation({ userId, token }: SafetyIdentity) {
                             intent.reason,
                             signal,
                           );
+                          if (signal.aborted) throw new Error('Request cancelled.');
+                          // The write is confirmed even if the following case
+                          // read fails. Retire public caches at this boundary.
+                          socialChanged('block');
                           return caseData(gateway, detail.report.id, signal);
                         },
                         (value) => {
@@ -248,13 +299,14 @@ function Moderation({ userId, token }: SafetyIdentity) {
                     }
                   />
                   <Button
+                    variant="ghost"
                     label="Cancel action"
                     disabled={task.busy}
                     onPress={() => setIntent(null)}
                   />
                 </>
               )}
-              <AppText variant="title">Audit history</AppText>
+              <AppText variant="heading">Audit history</AppText>
               {history?.items.length === 0 && <AppText>No moderation actions yet.</AppText>}
               {history?.items.map((event) => (
                 <AppText key={event.id}>
@@ -265,6 +317,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
               ))}
               {history?.hasMore && (
                 <Button
+                  variant="secondary"
                   label="Older audit events"
                   disabled={task.busy}
                   onPress={() =>
@@ -277,6 +330,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
                 />
               )}
               <Button
+                variant="ghost"
                 label="Back to reports"
                 disabled={task.busy}
                 onPress={() => loadQueue(status, null)}
@@ -298,15 +352,40 @@ function Moderation({ userId, token }: SafetyIdentity) {
               />
               {queue?.items.length === 0 && <AppText>No reports on this page.</AppText>}
               {queue?.items.map((report) => (
-                <Button
+                <Pressable
                   key={report.id}
-                  label={`Review ${report.kind} report: @${report.username} · ${report.word} · ${report.reason}`}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Review ${report.kind} report: @${report.username} · ${report.word} · ${report.reason}`}
                   disabled={task.busy}
                   onPress={() => open(report.id)}
-                />
+                  style={[
+                    styles.report,
+                    {
+                      backgroundColor: colors.surface,
+                      borderColor: colors.border,
+                      opacity: task.busy ? 0.6 : 1,
+                    },
+                  ]}
+                >
+                  <View style={{ flex: 1, gap: 6 }}>
+                    <AppText variant="caption">
+                      {report.kind === 'comment'
+                        ? 'Comment report'
+                        : report.kind === 'submission'
+                          ? 'Photo report'
+                          : 'Account report'}
+                    </AppText>
+                    <AppText variant="subtitle">{report.word || `@${report.username}`}</AppText>
+                    <AppText variant="caption">
+                      @{report.username} · {report.reason.replaceAll('_', ' ')}
+                    </AppText>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+                </Pressable>
               ))}
               {queue?.hasMore && (
                 <Button
+                  variant="secondary"
                   label="Next reports"
                   disabled={task.busy}
                   onPress={() => {
@@ -319,9 +398,23 @@ function Moderation({ userId, token }: SafetyIdentity) {
           )}
         </>
       )}
-      {task.error && <AppText accessibilityRole="alert">{task.error}</AppText>}
-      <Button label="Refresh moderation" loading={task.busy} onPress={refresh} />
-      <Button label="Back to Profile" onPress={() => router.replace('/(tabs)/profile')} />
+      {task.error && (
+        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          {task.error}
+        </AppText>
+      )}
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  header: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  report: {
+    padding: 18,
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+});

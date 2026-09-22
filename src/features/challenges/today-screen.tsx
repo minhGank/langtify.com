@@ -1,13 +1,18 @@
+import { displayTerm } from '@/utils/display-term';
+import { TabHeading } from '@/components/ui/tab-heading';
 import { useCallback, useMemo } from 'react';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useFocusEffect } from 'expo-router';
 import { ActivityIndicator, AppState, StyleSheet, View } from 'react-native';
 import { ProgressPanel } from '@/features/progress/progress-panel';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
+import { IconButton } from '@/components/ui/icon-button';
 import { useAuth } from '@/features/auth/auth-provider';
 import { useTodayChallenge } from '@/features/challenges/use-today-challenge';
 import { UnfinishedPhotos } from '@/features/photos/unfinished-photos';
+import { invalidateServerData, serverScope } from '@/lib/server-cache';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import {
   challengeGateway,
@@ -21,7 +26,7 @@ export function TodayScreen() {
   if (!session || !learning)
     return (
       <Screen hasTabBar>
-        <AppText variant="title">{"Today's Challenge"}</AppText>
+        <TabHeading title="Today's Challenge" />
         <AppText>Your learning profile is unavailable.</AppText>
       </Screen>
     );
@@ -39,45 +44,77 @@ export function TodayScreen() {
       userId={session.user.id}
       learningId={learning.id}
       accessToken={session.access_token}
+      cacheKey={key}
+      timezone={learning.timezone}
     />
   );
 }
-function TodayContent(identity: ChallengeIdentity) {
+function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone: string }) {
+  const { colors } = useAppTheme();
   const { userId, learningId, accessToken } = identity;
   const gateway = useMemo(
     () => challengeGateway({ userId, learningId, accessToken }),
     [userId, learningId, accessToken],
   );
-  const { challenge, loading, replacing, error, replacementError, refresh, replace } =
-    useTodayChallenge(gateway);
+  const {
+    challenge,
+    loading,
+    replacing,
+    error,
+    replacementError,
+    refresh,
+    ensureFresh,
+    replace,
+    subscribe,
+  } = useTodayChallenge(
+    gateway,
+    `${serverScope(userId, accessToken)}:challenge:${identity.cacheKey}`,
+  );
   useFocusEffect(
     useCallback(() => {
       let focused = true;
-      if (AppState.currentState === 'active') void refresh();
-      const listener = AppState.addEventListener('change', (state) => {
-        if (focused && state === 'active') void refresh();
+      if (AppState.currentState === 'active') void ensureFresh();
+      const unsubscribe = subscribe(() => {
+        if (focused && AppState.currentState === 'active') void ensureFresh();
       });
-      // Ask the server again across local midnight; the device never chooses the date.
-      const timer = setInterval(() => {
-        if (focused && AppState.currentState === 'active') void refresh(true);
-      }, 60000);
+      const listener = AppState.addEventListener('change', (state) => {
+        if (focused && state === 'active') void ensureFresh();
+      });
+      // A local timer only schedules a server read at the next timezone day
+      // boundary. The RPC still chooses the date; no device date enters it.
+      let timer: ReturnType<typeof setTimeout>;
+      const schedule = () => {
+        timer = setTimeout(() => {
+          if (focused && AppState.currentState === 'active') void refresh(true);
+          if (focused) schedule();
+        }, nextDayDelay(identity.timezone));
+      };
+      schedule();
       return () => {
         focused = false;
+        unsubscribe();
         listener.remove();
-        clearInterval(timer);
+        clearTimeout(timer);
       };
-    }, [refresh]),
+    }, [refresh, ensureFresh, subscribe, identity.timezone]),
   );
   return (
-    <Screen hasTabBar>
-      <AppText variant="title">{"Today's Challenge"}</AppText>
+    <Screen
+      hasTabBar
+      refreshing={loading}
+      onRefresh={() => {
+        invalidateServerData(['progress', 'unfinished-photos']);
+        void refresh();
+      }}
+    >
+      <TabHeading title="Today's Challenge" />
       <ProgressPanel
         key={`${userId}:${challenge?.id ?? 'today'}:${challenge?.words.map((word) => `${word.submission?.id}:${word.submission?.status}`).join(',')}`}
         userId={userId}
         accessToken={accessToken}
         challengeId={challenge?.id}
       />
-      {loading && (
+      {loading && !challenge && (
         <View accessibilityRole="progressbar" accessibilityLabel="Loading challenge">
           <ActivityIndicator />
           <AppText>Loading your challenge…</AppText>
@@ -85,15 +122,15 @@ function TodayContent(identity: ChallengeIdentity) {
       )}
       {error ? (
         <>
-          <AppText accessibilityRole="alert">{error}</AppText>
+          <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+            {error}
+          </AppText>
           <Button label="Retry challenge" onPress={() => void refresh()} />
         </>
       ) : null}
       {challenge && (
         <>
-          <AppText>
-            {challenge.localDate} · {challenge.timezone}
-          </AppText>
+          <AppText variant="caption">Find these words in the world around you.</AppText>
           {challenge.words.map((word) => (
             <WordCard
               key={word.id}
@@ -104,13 +141,17 @@ function TodayContent(identity: ChallengeIdentity) {
             />
           ))}
           {replacementError ? (
-            <AppText accessibilityRole="alert">{replacementError}</AppText>
+            <View style={styles.word}>
+              <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+                {replacementError}
+              </AppText>
+              <Button
+                label="Check challenge state"
+                variant="secondary"
+                onPress={() => void refresh()}
+              />
+            </View>
           ) : null}
-          <Button
-            label="Refresh challenge"
-            disabled={replacing !== null}
-            onPress={() => void refresh()}
-          />
         </>
       )}
       <UnfinishedPhotos
@@ -134,43 +175,98 @@ function WordCard({
 }) {
   const { colors } = useAppTheme();
   const label = word.slot[0].toUpperCase() + word.slot.slice(1);
+  const completed = word.submission?.status === 'completed';
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <AppText style={{ color: colors.muted }}>
-        {label} · {word.cefrLevel}
-      </AppText>
-      <AppText accessibilityRole="header" style={styles.term}>
-        {word.targetTerm}
-      </AppText>
-      <AppText>{word.referenceTerm}</AppText>
-      {word.submission?.status === 'completed' ? (
-        <AppText>✓ Completed</AppText>
-      ) : word.submission?.status === 'deleting' ? (
-        <AppText>Finishing deletion…</AppText>
-      ) : null}
+      <View style={styles.row}>
+        <AppText variant="caption">
+          {label} · {word.cefrLevel}
+        </AppText>
+        {completed ? (
+          <View style={styles.status}>
+            <Ionicons name="checkmark-circle" size={18} color={colors.success} />
+            <AppText variant="caption" style={{ color: colors.success }}>
+              {word.submission?.captureKind === 'historical' ? 'Captured' : 'Completed'}
+            </AppText>
+          </View>
+        ) : !word.submission ? (
+          <IconButton
+            name="refresh-outline"
+            label="Replace"
+            hint={`Replace the ${word.slot} word: ${displayTerm(word.targetTerm)}`}
+            disabled={disabled || loading}
+            onPress={onReplace}
+          />
+        ) : (
+          <AppText variant="caption">
+            {word.submission.status === 'deleting' ? 'Deleting…' : 'Unfinished photo'}
+          </AppText>
+        )}
+      </View>
+      <View style={styles.word}>
+        <AppText accessibilityRole="header" variant="heading" style={styles.term}>
+          {displayTerm(word.targetTerm)}
+        </AppText>
+        <AppText style={{ color: colors.muted }}>{displayTerm(word.referenceTerm)}</AppText>
+      </View>
       <Button
-        label={
-          word.submission?.status === 'completed'
-            ? `View Photo · ${word.slot}`
+        label={completed ? 'View photo' : word.submission ? 'Resume photo' : 'Take photo'}
+        accessibilityLabel={
+          completed
+            ? `View photo · ${word.slot}`
             : word.submission
               ? `Resume photo · ${word.slot}`
-              : `Take Photo · ${word.slot}`
+              : `Take photo · ${word.slot}`
         }
+        variant={completed ? 'secondary' : 'primary'}
+        loading={loading}
         disabled={disabled}
-        onPress={() => router.push({ pathname: '/photo', params: { assignmentId: word.id } })}
+        onPress={() =>
+          router.push({
+            pathname: '/photo',
+            params: { assignmentId: word.id, ...(!word.submission ? { capture: '1' } : {}) },
+          })
+        }
       />
-      {!word.submission && (
-        <Button
-          label={`Replace ${word.slot} word`}
-          loading={loading}
-          disabled={disabled}
-          onPress={onReplace}
-        />
-      )}
     </View>
   );
 }
 const styles = StyleSheet.create({
-  card: { padding: 20, borderWidth: 1, borderRadius: 16, gap: 12 },
-  term: { fontSize: 24, lineHeight: 32, fontWeight: '600' },
+  card: { padding: 20, borderWidth: 1, borderRadius: 24, gap: 16 },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    minHeight: 36,
+  },
+  status: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  word: { gap: 4 },
+  term: { fontSize: 28, lineHeight: 34 },
 });
+
+// Find the next calendar-date change rather than assuming every day lasts 24h.
+function nextDayDelay(timezone: string) {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    const now = Date.now();
+    const today = formatter.format(now);
+    let low = now,
+      high = now + 36 * 60 * 60 * 1000;
+    while (high - low > 1000) {
+      const middle = Math.floor((low + high) / 2);
+      if (formatter.format(middle) === today) low = middle;
+      else high = middle;
+    }
+    return Math.max(1000, high - now + 1000);
+  } catch {
+    // The server may have newer IANA data than this device. Keep authority on
+    // the server and check hourly until focus/resume provides another refresh.
+    return 60 * 60 * 1000;
+  }
+}

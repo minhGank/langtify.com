@@ -45,6 +45,14 @@
           "barcodeScannerEnabled": false
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Langtify to choose vocabulary photos and your profile avatar.",
+          "cameraPermission": "Allow Langtify to take photos for your vocabulary challenges.",
+          "microphonePermission": false
+        }
+      ],
       "expo-web-browser",
       [
         "expo-dev-client",

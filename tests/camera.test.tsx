@@ -31,12 +31,13 @@ beforeEach(() => {
   mockRequest.mockResolvedValue(undefined);
   mockTake.mockResolvedValue({ uri: 'file:///camera.jpg', width: 3000, height: 2000 });
 });
-it('explains denied camera access and requests permission explicitly', async () => {
+it('requests permission once after the capture action and permits an explicit denied-access retry', async () => {
   render(<CameraCapture onCapture={jest.fn()} onCancel={jest.fn()} />);
-  expect(screen.getByText('Camera access needed')).toBeVisible();
+  expect(await screen.findByText('Camera access needed')).toBeVisible();
+  expect(mockRequest).toHaveBeenCalledTimes(1);
   expect(screen.queryByTestId('camera-preview')).toBeNull();
   fireEvent.press(screen.getByRole('button', { name: 'Allow camera' }));
-  await waitFor(() => expect(mockRequest).toHaveBeenCalledTimes(1));
+  await waitFor(() => expect(mockRequest).toHaveBeenCalledTimes(2));
 });
 it('offers settings when permission cannot be requested again', async () => {
   mockPermission = { granted: false, canAskAgain: false };
@@ -46,6 +47,15 @@ it('offers settings when permission cannot be requested again', async () => {
   await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Open settings' })));
   expect(settings).toHaveBeenCalledTimes(1);
   settings.mockRestore();
+});
+it('does not repeat the native permission prompt on an unchanged denied state', async () => {
+  const props = { onCapture: jest.fn(), onCancel: jest.fn() };
+  const { rerender } = render(<CameraCapture {...props} />);
+  await screen.findByText('Camera access needed');
+  mockPermission = { granted: false, canAskAgain: true };
+  rerender(<CameraCapture {...props} />);
+  await act(async () => {});
+  expect(mockRequest).toHaveBeenCalledTimes(1);
 });
 it('blocks capture until ready, then returns a processed camera photo for preview', async () => {
   mockPermission = { granted: true, canAskAgain: true };
@@ -83,4 +93,24 @@ it('discards a camera result arriving after the camera unmounts', async () => {
   await act(async () => finish({ uri: 'file:///obsolete.jpg', width: 16, height: 16 }));
   expect(captured).not.toHaveBeenCalled();
   expect(mockDelete).toHaveBeenCalledTimes(1);
+});
+
+it('keeps the library usable when camera permission is denied without requesting camera access', () => {
+  mockPermission = { granted: false, canAskAgain: false };
+  const choose = jest.fn();
+  render(<CameraCapture onCapture={jest.fn()} onCancel={jest.fn()} onChooseLibrary={choose} />);
+  fireEvent.press(screen.getByRole('button', { name: 'Choose from library' }));
+  expect(choose).toHaveBeenCalledTimes(1);
+  expect(mockRequest).not.toHaveBeenCalled();
+  expect(mockTake).not.toHaveBeenCalled();
+});
+
+it('shows a secondary library action beside the shutter', () => {
+  mockPermission = { granted: true, canAskAgain: true };
+  const choose = jest.fn();
+  render(<CameraCapture onCapture={jest.fn()} onCancel={jest.fn()} onChooseLibrary={choose} />);
+  expect(screen.getByRole('button', { name: 'Take photo' })).toBeVisible();
+  expect(screen.getByText('Photo library')).toBeVisible();
+  fireEvent.press(screen.getByRole('button', { name: 'Choose from library' }));
+  expect(choose).toHaveBeenCalledTimes(1);
 });

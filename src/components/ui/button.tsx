@@ -2,24 +2,53 @@ import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { radius } from '@/lib/theme';
 
-type ButtonProps = { label: string; onPress: () => void; loading?: boolean; disabled?: boolean };
-export function Button({ label, onPress, loading = false, disabled = false }: ButtonProps) {
+type ButtonProps = {
+  label: string;
+  accessibilityLabel?: string;
+  onPress: () => void;
+  loading?: boolean;
+  disabled?: boolean;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+};
+export function Button({
+  label,
+  accessibilityLabel,
+  onPress,
+  loading = false,
+  disabled = false,
+  variant = 'primary',
+}: ButtonProps) {
   const { colors } = useAppTheme();
+  const backgroundColor = {
+    primary: colors.primary,
+    secondary: colors.surfaceMuted,
+    ghost: 'transparent',
+    danger: colors.dangerSoft,
+  }[variant];
+  const foregroundColor = {
+    primary: colors.onPrimary,
+    secondary: colors.text,
+    ghost: colors.primary,
+    danger: colors.danger,
+  }[variant];
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled: disabled || loading, busy: loading }}
       disabled={disabled || loading}
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
-        { backgroundColor: colors.primary, opacity: disabled || loading || pressed ? 0.65 : 1 },
+        { backgroundColor, opacity: disabled ? 0.45 : pressed ? 0.75 : 1 },
       ]}
     >
-      {loading && <ActivityIndicator color={colors.surface} />}
-      <AppText style={{ color: colors.surface, fontWeight: '600', textAlign: 'center' }}>
+      {loading && <ActivityIndicator color={foregroundColor} />}
+      <AppText
+        style={{ color: foregroundColor, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}
+      >
         {label}
       </AppText>
     </Pressable>
@@ -27,9 +56,10 @@ export function Button({ label, onPress, loading = false, disabled = false }: Bu
 }
 const styles = StyleSheet.create({
   button: {
-    minHeight: 48,
-    padding: 12,
-    borderRadius: 10,
+    minHeight: 50,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: radius.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

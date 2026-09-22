@@ -207,13 +207,12 @@ try {
   const uri = new URL(api.url + manipulated.items[0].signed_path);
   assert(uri.pathname.endsWith(first.storage_path));
   assert.equal(uri.searchParams.size, 1);
-  assert.equal(
-    JSON.parse(Buffer.from(uri.searchParams.get('token').split('.')[1], 'base64url').toString())
-      .exp -
-      claims.iat <=
-      61,
-    true,
+  const manipulatedClaims = JSON.parse(
+    Buffer.from(uri.searchParams.get('token').split('.')[1], 'base64url').toString(),
   );
+  // Each capability's TTL is relative to its own issue time, not an earlier
+  // signing request that may have completed several seconds before this one.
+  assert.equal(manipulatedClaims.exp - manipulatedClaims.iat, 60);
   for (const submissionIds of [
     [],
     Array(25).fill(first.id),

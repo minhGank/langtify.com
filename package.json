@@ -16,6 +16,7 @@
     "expo-file-system": "~57.0.7",
     "expo-font": "~57.0.4",
     "expo-image-manipulator": "~57.0.19",
+    "expo-image-picker": "~57.0.19",
     "expo-linking": "~57.0.10",
     "expo-notifications": "~57.0.20",
     "expo-router": "~57.0.22",
@@ -51,8 +52,8 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
@@ -76,8 +77,8 @@
     "submissions:cleanup": "node scripts/cleanup-submissions.mjs",
     "db:test:submissions": "node --experimental-strip-types scripts/test-submissions-integration.mjs",
     "db:test:photo-audit": "node --experimental-strip-types scripts/test-photo-audit.mjs",
-    "functions:check": "npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/index.ts && npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/notification-scheduler/deno.json supabase/functions/notification-scheduler/index.ts",
-    "functions:test": "npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority && npm exec --yes --package=deno@2.9.6 -- deno test --config supabase/functions/notification-scheduler/deno.json supabase/functions/notification-scheduler",
+    "functions:check": "npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/index.ts && npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/notification-scheduler/deno.json supabase/functions/notification-scheduler/index.ts && npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/avatar-authority/deno.json supabase/functions/avatar-authority/index.ts",
+    "functions:test": "npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority && npm exec --yes --package=deno@2.9.6 -- deno test --config supabase/functions/notification-scheduler/deno.json supabase/functions/notification-scheduler && npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/avatar-authority/deno.json supabase/functions/avatar-authority",
     "functions:lint": "npm exec --yes --package=deno@2.9.6 -- deno lint supabase/functions",
     "security:scan": "node scripts/scan-credentials.mjs",
     "db:test:progress": "node --experimental-strip-types scripts/test-progress-integration.mjs",
@@ -90,7 +91,12 @@
     "db:test:ratings": "node --experimental-strip-types scripts/test-ratings-integration.mjs",
     "db:test:safety": "node --experimental-strip-types scripts/test-safety-integration.mjs",
     "db:test:notifications": "node --experimental-strip-types scripts/test-notifications-integration.mjs",
-    "db:test:notification-sender": "node --experimental-strip-types scripts/test-notification-sender-integration.mjs"
+    "db:test:notification-sender": "node --experimental-strip-types scripts/test-notification-sender-integration.mjs",
+    "db:test:avatars": "node --experimental-strip-types scripts/test-avatars-integration.mjs",
+    "db:test:social": "node --experimental-strip-types scripts/test-social-integration.mjs",
+    "db:test:inbox": "node --experimental-strip-types scripts/test-inbox-integration.mjs",
+    "db:test:explore": "node --experimental-strip-types scripts/test-explore-integration.mjs",
+    "db:test:past-words": "node --experimental-strip-types scripts/test-past-words-integration.mjs"
   },
   "private": true,
   "engines": {

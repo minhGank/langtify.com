@@ -4,6 +4,7 @@ export const photoUser = '45000000-0000-4000-8000-000000000001';
 export const photoAssignment = '45000000-0000-4000-8000-000000000002';
 export function makeSubmission(overrides: Partial<Submission> = {}): Submission {
   return {
+    capture_kind: 'daily',
     id: '45000000-0000-4000-8000-000000000003',
     user_id: photoUser,
     daily_challenge_word_id: photoAssignment,
@@ -24,20 +25,31 @@ export function makeSubmission(overrides: Partial<Submission> = {}): Submission 
     ...overrides,
   };
 }
-export function photoFixture(submission: Submission | null = null) {
+export function photoFixture(
+  submission: Submission | null = null,
+  context: Partial<AssignmentPhoto> = {},
+) {
   let saved: AssignmentPhoto = {
     assignmentId: photoAssignment,
     targetTerm: 'la fenêtre',
     referenceTerm: 'window',
     localDate: '2026-09-12',
+    currentLocalDate: '2026-09-12',
     timezone: 'UTC',
+    captureKind: submission?.capture_kind === 'historical' ? 'historical' : 'daily',
+    canCapture: true,
     submission,
+    ...context,
   };
   let uploaded = submission?.status === 'completed';
   const gateway = {
     load: jest.fn(async () => saved),
+    canChooseLibraryPhoto: jest.fn(async (): Promise<boolean> => true),
     reserve: jest.fn(async () => {
-      saved = { ...saved, submission: saved.submission ?? makeSubmission() };
+      saved = {
+        ...saved,
+        submission: saved.submission ?? makeSubmission({ capture_kind: saved.captureKind }),
+      };
       return saved.submission!;
     }),
     preview: jest.fn(async (): Promise<string | null> =>
@@ -48,6 +60,7 @@ export function photoFixture(submission: Submission | null = null) {
     }),
     finalize: jest.fn(async (_id: string, visibility: 'private' | 'public') => {
       const row = makeSubmission({
+        capture_kind: saved.captureKind,
         status: 'completed',
         submitted_at: '2026-09-12T13:00:00Z',
         visibility,
@@ -57,6 +70,7 @@ export function photoFixture(submission: Submission | null = null) {
     }),
     visibility: jest.fn(async (_id: string, visibility: 'private' | 'public') => {
       const row = makeSubmission({
+        capture_kind: saved.captureKind,
         status: 'completed',
         submitted_at: '2026-09-12T13:00:00Z',
         visibility,
@@ -65,7 +79,7 @@ export function photoFixture(submission: Submission | null = null) {
       return row;
     }),
     beginDelete: jest.fn(async () => {
-      const row = makeSubmission({ status: 'deleting' });
+      const row = makeSubmission({ status: 'deleting', capture_kind: saved.captureKind });
       saved = { ...saved, submission: row };
       return row;
     }),
@@ -74,7 +88,11 @@ export function photoFixture(submission: Submission | null = null) {
     }),
     finishDelete: jest.fn(async () => {
       saved = { ...saved, submission: null };
-      return makeSubmission({ status: 'deleted', deleted_at: '2026-09-12T13:00:00Z' });
+      return makeSubmission({
+        capture_kind: saved.captureKind,
+        status: 'deleted',
+        deleted_at: '2026-09-12T13:00:00Z',
+      });
     }),
   } satisfies PhotoGateway;
   const drafts = {

@@ -2,11 +2,13 @@ import { useEffect, useSyncExternalStore } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
+import { useAppTheme } from '@/hooks/use-app-theme';
 import { coordinator, googleLoginUnavailable } from './runtime';
 export function useGoogleLogin() {
   return useSyncExternalStore(coordinator.subscribe, coordinator.snapshot, coordinator.snapshot);
 }
 export function GoogleButton({ disabled = false }: { disabled?: boolean }) {
+  const { colors } = useAppTheme();
   const state = useGoogleLogin();
   const unavailable = disabled || state.busy || Boolean(googleLoginUnavailable);
   useEffect(() => () => coordinator.releaseScreen(), []);
@@ -35,21 +37,30 @@ export function GoogleButton({ disabled = false }: { disabled?: boolean }) {
       {state.busy && (
         <Button
           label="Cancel Google sign-in"
+          variant="ghost"
           onPress={() => void coordinator.cancel().catch(() => {})}
         />
       )}
-      {googleLoginUnavailable ? <AppText>{googleLoginUnavailable}</AppText> : null}
-      {state.message ? <AppText accessibilityLiveRegion="polite">{state.message}</AppText> : null}
+      {googleLoginUnavailable ? (
+        <AppText variant="caption" style={{ color: colors.muted }}>
+          {googleLoginUnavailable}
+        </AppText>
+      ) : null}
+      {state.message ? (
+        <AppText variant="caption" accessibilityLiveRegion="polite">
+          {state.message}
+        </AppText>
+      ) : null}
     </View>
   );
 }
 const styles = StyleSheet.create({
   button: {
-    minHeight: 48,
+    minHeight: 52,
     backgroundColor: '#FFFFFF',
     borderColor: '#747775',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 16,
     padding: 12,
     gap: 12,
     flexDirection: 'row',

@@ -43,12 +43,12 @@ it('recovers earlier-date operations even when today has different assignments o
     { assignmentId: 'today', targetTerm: 'bondé' },
   ]);
   render(<UnfinishedPhotos userId="owner" token="owner-token" currentAssignments={['today']} />);
-  fireEvent.press(await screen.findByRole('button', { name: 'Resume la fenêtre photo' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Resume La fenêtre photo' }));
   expect(mockPush).toHaveBeenCalledWith({
     pathname: '/photo',
     params: { assignmentId: 'yesterday' },
   });
-  expect(screen.queryByRole('button', { name: 'Resume bondé photo' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Resume Bondé photo' })).toBeNull();
 });
 it('offers retry when recovery history is offline', async () => {
   mockLoad.mockRejectedValueOnce(new Error('offline')).mockResolvedValue([]);
@@ -72,6 +72,7 @@ it('does not restore another account’s pending operations after unmount', asyn
       <UnfinishedPhotos key="old" userId="old" token="old-token" currentAssignments={[]} />
     </View>,
   );
+  await waitFor(() => expect(mockLoad).toHaveBeenCalledWith('old', 'old-token'));
   view.rerender(
     <View>
       <UnfinishedPhotos key="new" userId="new" token="new-token" currentAssignments={[]} />

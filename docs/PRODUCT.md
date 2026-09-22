@@ -1,9 +1,25 @@
 # Langtify product decisions
 
+The authorized [QA3 search and native navigation pass](QA3_SEARCH_NAVIGATION.md)
+adds catalog Search/Explore and controlled public examples, a native post route,
+compact semantic rating and profile/comment presentation corrections. Existing
+privacy, signing, learning and remote-push authority remain unchanged. Physical
+acceptance is pending; Phase 11 has not started.
+
+The remaining [QA2 connection lists and in-app Notification Center](QA2_CONNECTIONS_INBOX.md)
+add controlled follow projections and private, server-generated inbox events. Remote
+push remains limited to DAILY_WORDS and STREAK_AT_RISK. Physical acceptance is pending.
+
 Name: **Langtify**. Domain: `langtify.com`. Package and Expo slug: `langtify`.
 Mobile-first Expo / React Native / strict TypeScript; iOS and Android are primary.
 
-## Current scope: Phase 10
+## Current scope: Phase 10 plus the authorized product/UX pass
+
+The latest QA brief additionally authorizes profile/avatar editing, user search,
+public profiles, follow/unfollow, flat comments, native sharing, inline ratings and
+mobile caching. [PRODUCT_UX_PASS.md](PRODUCT_UX_PASS.md) defines this bounded scope
+and supersedes historical exclusions below for these features only. Physical iPhone
+acceptance remains pending; unrelated Phase 11 work is not authorized.
 
 Supabase email/password authentication, persisted sessions, authoritative profiles,
 and onboarding (username, reference language, target language, CEFR level, IANA
@@ -51,9 +67,13 @@ requested, without editing prior challenges.
 
 ## Camera capture and submissions — implemented in Phase 4
 
-A user opens a Today card, takes a camera photo, reviews the normalized preview,
-chooses private/public (default private), and explicitly submits. There is no gallery
-upload. One successful submission completes the assignment and blocks replacement.
+A user opens a Today card, takes a camera photo or chooses an existing library photo
+for a current-day word, reviews the normalized preview, chooses private/public
+(default private), and explicitly submits. Camera remains primary; library selection
+is secondary and does not enable historical/old-word uploads. Both sources earn the
+same 10 XP per word, 10 XP full-challenge bonus and server-timed streak qualification.
+See [current-day library acceptance](CURRENT_DAY_LIBRARY.md). One successful
+submission completes the assignment and blocks replacement.
 A pending upload must be finished or discarded before replacing its word. Owner-only
 photo detail shows the saved vocabulary, translation, challenge date, submission
 time and visibility. Owners may change visibility without moving files.
@@ -114,9 +134,10 @@ longest streak and lifetime counts of currently valid words/full challenges.
 
 ## Future scope — not implemented
 
-Comments, likes, followers, friends, DMs, social notifications,
-leaderboards, achievements and subscriptions are not included. Phase 11 has not
-started. Apple, Facebook, magic-link and other login providers remain out of scope.
+Likes, friends, DMs, remote social notifications, leaderboards, achievements and
+subscriptions are not included. Comments, follows and the limited in-app inbox are
+covered by the explicitly authorized product/UX and QA2 passes above. Phase 11 has
+not started. Apple, Facebook, magic-link and other login providers remain out of scope.
 Apple Sign-In is deferred until Apple Developer membership is available.
 
 ## Open questions
@@ -160,8 +181,7 @@ removing the last one removes its concept. This display behavior does not alter
 Phase 5: XP credit remains until physical deletion and retirement finish.
 
 Both lists use 12-item pages with Next page and Back to latest. Pull to refresh,
-focus/resume and active refresh reload backend state; changes from another device
-appear on the next refresh. Empty, no-match, deleted, failed and expired-image states
+relevant mutations and justified long-background recovery reload backend state; navigation reuses cached pages. Other-device changes appear on the next actual read. Empty, no-match, deleted, failed and expired-image states
 have recovery controls. Displayed timestamps use the device's locale for readability,
 not for completion/streak authority. Dictionary and photo management remain owner-only; eligible public photos additionally appear in Discover below.
 
@@ -189,9 +209,7 @@ visibility changes observe their database eligibility snapshot. Already issued
 60-second signed bearer URLs may work until their original expiry; downloaded
 images cannot be recalled. No stronger revocation is promised.
 
-Account/sign-out, learning-target changes, focus loss and backgrounding clear feed
-and signed-photo state. Visible feed photos revalidate periodically and on explicit
-refresh; remote changes appear on the next successful read. This is not realtime.
+Account/sign-out and learning-target changes isolate feed state. Focus loss and backgrounding mask photos while preserving bounded session metadata and downloaded pixels. Explicit refresh, relevant mutations and long-background recovery revalidate eligibility; elapsed cache age alone does not. Remote changes appear on the next successful read. This is not realtime. See [QA2 corrections](QA2_CORRECTIONS.md).
 
 Semantic ratings and Phase 9 blocking/reporting are described below. **Public
 production launch requires hosted/device acceptance and operational readiness for
@@ -321,3 +339,11 @@ after Auth/onboarding. No arbitrary payload route is used.
 The [Phase 10 audit](PHASE10_AUDIT.md) preserves these rules and corrects early DST
 admission and previous-account registration cleanup. Device and hosted acceptance
 remain required; automated verification does not claim physical push delivery.
+
+## Past Words capture (authorized QA)
+
+Vocabulary now includes final, unreplaced assignments from earlier server-local
+days. A historical camera/library photo earns only the reversible +10 word XP,
+never daily completion, streak, milestone or 3/3 credit. Captured photos join normal
+Vocabulary/social eligibility. See [PAST_WORDS.md](PAST_WORDS.md) for exact admission,
+delete/resubmit semantics and required physical acceptance. Phase 11 stays closed.

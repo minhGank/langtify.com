@@ -16,11 +16,26 @@ import OAuthCallback from '../app/auth/callback';
 import BlockedUsersRoute from '../app/blocked-users';
 import ModerationRoute from '../app/moderation';
 import NotificationSettingsRoute from '../app/notification-settings';
+import EditProfileRoute from '../app/edit-profile';
+import LearningSettingsRoute from '../app/learning-settings';
+import PeopleRoute from '../app/people';
+import PublicProfileRoute from '../app/public-profile';
+import ConnectionsRoute from '../app/connections';
+import InboxRoute from '../app/notifications';
+import PostRoute from '../app/post';
+import ExploreRoute from '../app/explore';
+import ExploreConceptRoute from '../app/explore-concept';
 import type { SessionState } from '@/features/auth/session-state';
 import { makeAccount, makeSession } from './fixtures';
 
 let mockState: SessionState;
 const mockModerationQueue = jest.fn();
+jest.mock('@/services/inbox', () => ({
+  inboxGateway: () => ({
+    summary: async () => ({ unreadCount: 0, readCursor: null }),
+    page: async () => ({ items: [], hasMore: false, unreadCount: 0, readCursor: null }),
+  }),
+}));
 jest.mock('@/features/notifications/device', () => ({
   permission: async () => 'unavailable',
   pushToken: async () => null,
@@ -32,6 +47,19 @@ jest.mock('@/services/safety', () => ({
     access: async () => ({ moderator: false, restricted: false }),
     blocks: async () => ({ items: [], hasMore: false }),
     queue: mockModerationQueue,
+  }),
+}));
+jest.mock('@/services/social', () => ({
+  socialGateway: () => ({
+    profile: async () => ({
+      id: '99000000-0000-4000-8000-000000000001',
+      username: 'learner',
+      isSelf: true,
+      isFollowing: false,
+      followerCount: 0,
+      followingCount: 0,
+      avatarId: null,
+    }),
   }),
 }));
 jest.mock('@/features/auth/auth-provider', () => ({
@@ -54,6 +82,15 @@ const routes = {
   'blocked-users': BlockedUsersRoute,
   moderation: ModerationRoute,
   'notification-settings': NotificationSettingsRoute,
+  'edit-profile': EditProfileRoute,
+  'learning-settings': LearningSettingsRoute,
+  people: PeopleRoute,
+  'public-profile': PublicProfileRoute,
+  connections: ConnectionsRoute,
+  notifications: InboxRoute,
+  post: PostRoute,
+  explore: ExploreRoute,
+  'explore-concept': ExploreConceptRoute,
   '(tabs)/_layout': TabLayout,
   '(tabs)/index': TodayScreen,
   '(tabs)/discover': DiscoverScreen,
@@ -91,13 +128,43 @@ it('shows no moderator navigation or data to an ordinary learner', async () => {
   expect(mockModerationQueue).not.toHaveBeenCalled();
 });
 
-it.each(['/blocked-users', '/moderation', '/notification-settings'])(
-  'protects %s from signed-out sessions',
-  async (path) => {
-    mockState = { ...mockState, status: 'signed-out', session: null };
-    const app = renderRouter(routes, { initialUrl: path });
-    expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
-    expect(app.getPathname()).toBe('/sign-in');
+it.each([
+  '/blocked-users',
+  '/moderation',
+  '/notification-settings',
+  '/edit-profile',
+  '/learning-settings',
+  '/people',
+  '/public-profile',
+  '/connections',
+  '/notifications',
+  '/post',
+  '/explore',
+  '/explore-concept',
+])('protects %s from signed-out sessions', async (path) => {
+  mockState = { ...mockState, status: 'signed-out', session: null };
+  const app = renderRouter(routes, { initialUrl: path });
+  expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
+  expect(app.getPathname()).toBe('/sign-in');
+});
+
+it('opens the in-app inbox from the global bell while native push is unavailable and returns to Profile', async () => {
+  const app = renderRouter(routes, { initialUrl: '/profile' });
+  fireEvent.press(await screen.findByLabelText('Notifications'));
+  expect(await screen.findByRole('header', { name: 'Notifications' })).toBeVisible();
+  expect(app.getPathname()).toBe('/notifications');
+  fireEvent.press(screen.getByLabelText('Back'));
+  expect(await screen.findByRole('header', { name: 'Profile' })).toBeVisible();
+  expect(app.getPathname()).toBe('/profile');
+});
+
+it.each(['/connections', '/notifications', '/post', '/explore', '/explore-concept'])(
+  'requires onboarding for direct entry into %s',
+  async (route) => {
+    mockState = { ...mockState, status: 'onboarding' };
+    const app = renderRouter(routes, { initialUrl: route });
+    expect(await screen.findByRole('header', { name: 'Make it yours' })).toBeVisible();
+    expect(app.getPathname()).toBe('/onboarding');
   },
 );
 
@@ -113,7 +180,7 @@ it.each([
 
 it.each([
   ['signed-out', '/sign-in', 'Sign in'],
-  ['onboarding', '/onboarding', 'Welcome to Langtify'],
+  ['onboarding', '/onboarding', 'Make it yours'],
   ['loading', '/session', 'Langtify'],
   ['error', '/session', 'Langtify'],
   ['unconfigured', '/session', 'Langtify'],
@@ -132,7 +199,7 @@ it('redirects completed users away from authentication', async () => {
 it('redirects incomplete authenticated users away from authentication', async () => {
   mockState = { ...mockState, status: 'onboarding' };
   const app = renderRouter(routes, { initialUrl: '/sign-up' });
-  expect(await screen.findByRole('header', { name: 'Welcome to Langtify' })).toBeVisible();
+  expect(await screen.findByRole('header', { name: 'Make it yours' })).toBeVisible();
   expect(app.getPathname()).toBe('/onboarding');
 });
 it('blocks direct photo routes without an authenticated onboarded account', async () => {
@@ -152,7 +219,7 @@ it.each(['ready', 'onboarding'] as const)(
     const app = renderRouter(routes, { initialUrl: '/auth/callback' });
     expect(
       await screen.findByRole('header', {
-        name: status === 'ready' ? "Today's Challenge" : 'Welcome to Langtify',
+        name: status === 'ready' ? "Today's Challenge" : 'Make it yours',
       }),
     ).toBeVisible();
     expect(app.getPathname()).toBe(status === 'ready' ? '/' : '/onboarding');

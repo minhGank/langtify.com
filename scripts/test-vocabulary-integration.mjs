@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { localApi } from './lib/local-api.mjs';
 import { execute } from './lib/local-db.mjs';
+import { reservePriorDailyFixture } from './lib/prior-daily-fixture.mjs';
 import { cleanupSubmissions } from './cleanup-submissions.mjs';
 import { stripJpegMetadata } from '../src/features/photos/jpeg.ts';
 
@@ -89,7 +90,9 @@ try {
     select private.assign_challenge_word(c.id,slot) from public.daily_challenges c cross join unnest(array['target','stretch']) slot where c.user_id='${a.id}' and c.id<>'${challenge.challenge.id}';
     commit;
     select w.id from public.daily_challenge_words w join public.daily_challenges c on c.id=w.daily_challenge_id where c.user_id='${a.id}' and c.id<>'${challenge.challenge.id}' and w.slot='review';`);
-  const repeated = await photo(a.client, output.split('\n').at(-1));
+  const repeatedAssignment = output.split('\n').at(-1);
+  await reservePriorDailyFixture(a.id, repeatedAssignment);
+  const repeated = await photo(a.client, repeatedAssignment);
   history = await rpc(a.client, 'get_my_vocabulary');
   assert.equal(history.total_concepts, 2);
   assert.equal(history.items[0].id, repeated.id);

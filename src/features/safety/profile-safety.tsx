@@ -16,17 +16,22 @@ export function ProfileSafety({ userId, token }: SafetyIdentity) {
   );
   return (
     <>
-      <Button label="Blocked users" onPress={() => router.push('/blocked-users')} />
+      <Button
+        variant="secondary"
+        label="Blocked users"
+        onPress={() => router.push('/blocked-users')}
+      />
       {access?.restricted && (
         <AppText>
           Your account’s public access is restricted. Your private learning data remains available.
         </AppText>
       )}
       {access?.moderator && (
-        <Button label="Moderation" onPress={() => router.push('/moderation')} />
+        <Button variant="secondary" label="Moderation" onPress={() => router.push('/moderation')} />
       )}
       {task.error && (
         <Button
+          variant="ghost"
           label="Refresh account safety status"
           onPress={() => void task.run(gateway.access, setAccess)}
         />
