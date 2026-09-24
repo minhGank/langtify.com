@@ -201,7 +201,10 @@ export function ConnectionsContent({
               onPress={() =>
                 router.push({ pathname: '/public-profile', params: { profileId: item.id } })
               }
-              style={({ pressed }) => [styles.person, { opacity: pressed ? 0.6 : 1 }]}
+              style={({ pressed }) => [
+                styles.person,
+                { backgroundColor: pressed ? colors.surfaceMuted : undefined },
+              ]}
             >
               <Avatar
                 username={item.username}
@@ -231,20 +234,38 @@ export function ConnectionsContent({
                 style={({ pressed }) => [
                   styles.follow,
                   {
-                    backgroundColor: item.isFollowing ? colors.surfaceMuted : colors.primary,
-                    opacity: task.busy ? 0.5 : pressed ? 0.7 : 1,
+                    backgroundColor: task.busy
+                      ? colors.surfaceMuted
+                      : item.isFollowing
+                        ? pressed
+                          ? colors.brandSoft
+                          : colors.surfaceMuted
+                        : pressed
+                          ? colors.brandPrimaryPressed
+                          : colors.brandPrimary,
                   },
                 ]}
               >
                 <AppText
                   variant="label"
-                  style={{ color: item.isFollowing ? colors.text : colors.onPrimary }}
+                  style={{
+                    color: task.busy
+                      ? colors.textSecondary
+                      : item.isFollowing
+                        ? colors.textPrimary
+                        : colors.textOnPrimary,
+                  }}
                 >
                   {item.isFollowing ? 'Following' : 'Follow'}
                 </AppText>
               </Pressable>
             ) : (
-              <Ionicons name="chevron-forward" size={18} color={colors.muted} accessible={false} />
+              <Ionicons
+                name="chevron-forward"
+                size={18}
+                color={colors.textSecondary}
+                accessible={false}
+              />
             )}
           </View>
         )}
@@ -253,11 +274,11 @@ export function ConnectionsContent({
             {query.loading ? (
               <ActivityIndicator
                 accessibilityLabel={`Loading ${title.toLowerCase()}`}
-                color={colors.primary}
+                color={colors.brandPrimary}
               />
             ) : (
               <>
-                <Ionicons name="people-outline" size={40} color={colors.muted} />
+                <Ionicons name="people-outline" size={40} color={colors.textSecondary} />
                 <AppText variant="heading">
                   {query.error
                     ? 'List unavailable'
@@ -280,7 +301,7 @@ export function ConnectionsContent({
           <View style={styles.footer}>
             {(query.error || task.error) && (
               <>
-                <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+                <AppText accessibilityRole="alert" style={{ color: colors.error }}>
                   {task.error ?? 'Connections could not be loaded.'}
                 </AppText>
                 <Button label="Refresh list" variant="secondary" onPress={refresh} />
@@ -289,7 +310,7 @@ export function ConnectionsContent({
             {query.loading && !!query.data && (
               <ActivityIndicator
                 accessibilityLabel="Loading more learners"
-                color={colors.primary}
+                color={colors.brandPrimary}
               />
             )}
             {query.data?.hasMore && (

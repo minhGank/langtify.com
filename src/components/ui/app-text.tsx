@@ -15,7 +15,12 @@ export function AppText({ variant = 'body', style, ...props }: AppTextProps) {
       {...props}
       style={[
         styles[variant],
-        { color: variant === 'caption' || variant === 'subtitle' ? colors.muted : colors.text },
+        {
+          color:
+            variant === 'caption' || variant === 'subtitle'
+              ? colors.textSecondary
+              : colors.textPrimary,
+        },
         style,
       ]}
     />

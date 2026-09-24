@@ -187,7 +187,9 @@ it.each([
 ] as const)('blocks a direct main route while %s', async (status, path, title) => {
   mockState = { ...mockState, status };
   const app = renderRouter(routes, { initialUrl: '/profile' });
-  expect(await screen.findByRole('header', { name: title })).toBeVisible();
+  expect(
+    await screen.findByRole(path === '/session' ? 'image' : 'header', { name: title }),
+  ).toBeVisible();
   expect(app.getPathname()).toBe(path);
   expect(screen.queryByRole('header', { name: 'Profile' })).toBeNull();
 });

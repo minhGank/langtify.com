@@ -133,16 +133,16 @@ export function Comments({
         onPress={send}
       />
       {task.error && (
-        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+        <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {task.error}
         </AppText>
       )}
       {query.loading && !query.data && (
-        <ActivityIndicator accessibilityLabel="Loading comments" color={colors.primary} />
+        <ActivityIndicator accessibilityLabel="Loading comments" color={colors.brandPrimary} />
       )}
       {query.error && (
         <>
-          <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          <AppText accessibilityRole="alert" style={{ color: colors.error }}>
             Comments could not be loaded.
           </AppText>
           <Button label="Retry comments" variant="secondary" onPress={refresh} />
@@ -314,7 +314,7 @@ function CommentActions({
       )}
       {mode === 'done' && <AppText>Your report has been received.</AppText>}
       {task.error && (
-        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+        <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {task.error}
         </AppText>
       )}

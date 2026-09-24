@@ -19,7 +19,7 @@ export function Avatar({
     <View
       style={[
         styles.frame,
-        { width: size, height: size, borderRadius: size / 2, backgroundColor: colors.primarySoft },
+        { width: size, height: size, borderRadius: size / 2, backgroundColor: colors.surfaceMuted },
       ]}
     >
       {uri && failedUri !== uri ? (
@@ -40,7 +40,7 @@ export function Avatar({
           allowFontScaling={false}
           style={[
             styles.initial,
-            { color: colors.primary, fontSize, lineHeight: Math.ceil(fontSize * 1.25) },
+            { color: colors.textSecondary, fontSize, lineHeight: Math.ceil(fontSize * 1.25) },
           ]}
         >
           {username.slice(0, 1).toUpperCase() || 'L'}

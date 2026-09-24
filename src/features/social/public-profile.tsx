@@ -76,7 +76,10 @@ export function PublicProfilePanel({
   return (
     <View style={styles.content}>
       {query.loading && !profile && (
-        <ActivityIndicator accessibilityLabel="Loading public profile" color={colors.primary} />
+        <ActivityIndicator
+          accessibilityLabel="Loading public profile"
+          color={colors.brandPrimary}
+        />
       )}
       {profile && (
         <>
@@ -139,7 +142,7 @@ export function PublicProfilePanel({
       )}
       {(query.error || task.error) && (
         <>
-          <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          <AppText accessibilityRole="alert" style={{ color: colors.error }}>
             {task.error ?? 'This profile could not be loaded.'}
           </AppText>
           <Button

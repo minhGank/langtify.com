@@ -67,14 +67,17 @@ export function CardActions({
               <Ionicons
                 name={entry.icon}
                 size={22}
-                color={entry.mode === 'block' ? colors.danger : colors.text}
+                color={entry.mode === 'block' ? colors.error : colors.textPrimary}
               />
               <AppText
-                style={{ flex: 1, color: entry.mode === 'block' ? colors.danger : colors.text }}
+                style={{
+                  flex: 1,
+                  color: entry.mode === 'block' ? colors.error : colors.textPrimary,
+                }}
               >
                 {entry.label}
               </AppText>
-              <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+              <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
             </Pressable>
           ))}
         </>
@@ -161,7 +164,7 @@ export function CardActions({
         </View>
       )}
       {task.error && (
-        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+        <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {task.error}
         </AppText>
       )}

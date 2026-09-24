@@ -24,7 +24,7 @@ function VisibilityChoice({
       <Ionicons
         name={value ? 'globe-outline' : 'lock-closed-outline'}
         size={22}
-        color={colors.muted}
+        color={colors.textSecondary}
       />
       <View style={styles.choiceText}>
         <AppText variant="label">Share in Discover</AppText>
@@ -38,7 +38,11 @@ function VisibilityChoice({
         value={value}
         disabled={disabled}
         onValueChange={onChange}
-        trackColor={{ true: colors.primary }}
+        trackColor={{
+          true: disabled ? colors.controlBorder : colors.brandPrimary,
+          false: colors.controlBorder,
+        }}
+        thumbColor={value && !disabled ? colors.textOnPrimary : colors.surface}
       />
     </View>
   );
@@ -87,7 +91,7 @@ export function PhotoPreview({
             <ActivityIndicator
               style={StyleSheet.absoluteFill}
               accessibilityLabel="Loading photo preview"
-              color={colors.primary}
+              color={colors.brandPrimary}
             />
           ) : null}
           {failedUri === preview ? (
@@ -108,14 +112,14 @@ export function PhotoPreview({
         </View>
       ) : !completed && !deleting ? (
         <View style={[styles.empty, { backgroundColor: colors.surfaceMuted }]}>
-          <Ionicons name="camera-outline" size={44} color={colors.muted} />
+          <Ionicons name="camera-outline" size={44} color={colors.textSecondary} />
           <AppText variant="caption">Capture this word in your world.</AppText>
         </View>
       ) : null}
       <View style={styles.context}>
         <View style={styles.choiceText}>
           <AppText variant="heading">{displayTerm(state.data?.targetTerm ?? '')}</AppText>
-          <AppText style={{ color: colors.muted }}>
+          <AppText style={{ color: colors.textSecondary }}>
             {displayTerm(state.data?.referenceTerm ?? '')}
           </AppText>
         </View>
@@ -268,7 +272,7 @@ export function PhotoPreview({
             )}
             {state.error && (
               <View style={styles.group}>
-                <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+                <AppText accessibilityRole="alert" style={{ color: colors.error }}>
                   {state.error}
                 </AppText>
                 <Button

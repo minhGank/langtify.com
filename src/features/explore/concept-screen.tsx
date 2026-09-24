@@ -104,7 +104,7 @@ function ConceptContent({
     return (
       <View style={styles.message}>
         {query.loading ? (
-          <ActivityIndicator accessibilityLabel="Loading word" color={colors.primary} />
+          <ActivityIndicator accessibilityLabel="Loading word" color={colors.brandPrimary} />
         ) : (
           <AppText>
             {query.error ? 'This word could not be loaded.' : 'This word is unavailable.'}
@@ -174,11 +174,16 @@ function ConceptExamples({
           {state.loading ? (
             <ActivityIndicator
               accessibilityLabel="Loading public examples"
-              color={colors.primary}
+              color={colors.brandPrimary}
             />
           ) : (
             <>
-              <Ionicons name="images-outline" size={36} color={colors.muted} accessible={false} />
+              <Ionicons
+                name="images-outline"
+                size={36}
+                color={colors.textSecondary}
+                accessible={false}
+              />
               <AppText variant="heading">
                 {state.error ? 'Photos unavailable' : 'A fresh perspective awaits'}
               </AppText>

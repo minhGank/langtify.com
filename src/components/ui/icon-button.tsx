@@ -33,15 +33,23 @@ export function IconButton({
       style={({ pressed }) => [
         styles.button,
         {
-          backgroundColor: variant === 'surface' ? colors.surfaceMuted : 'transparent',
-          opacity: disabled ? 0.4 : pressed ? 0.6 : 1,
+          backgroundColor:
+            pressed && !disabled
+              ? variant === 'danger'
+                ? colors.errorSoft
+                : colors.brandSoft
+              : variant === 'surface'
+                ? colors.surfaceMuted
+                : 'transparent',
         },
       ]}
     >
       <Ionicons
         name={name}
         size={24}
-        color={variant === 'danger' ? colors.danger : colors.text}
+        color={
+          disabled ? colors.textSecondary : variant === 'danger' ? colors.error : colors.textPrimary
+        }
         accessible={false}
       />
     </Pressable>

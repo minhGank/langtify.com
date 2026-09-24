@@ -39,16 +39,19 @@ export function NotificationTimeField({
           setMinute(nextMinute ?? '00');
           setOpen(true);
         }}
-        style={[styles.row, { opacity: disabled ? 0.5 : 1 }]}
+        style={styles.row}
       >
         <AppText style={styles.label}>{label}</AppText>
-        <AppText variant="label" style={{ color: colors.primary }}>
+        <AppText
+          variant="label"
+          style={{ color: disabled ? colors.textSecondary : colors.brandText }}
+        >
           {value}
         </AppText>
-        <Ionicons name="chevron-forward" size={16} color={colors.muted} />
+        <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
       </Pressable>
       <Sheet visible={open} title={label} onClose={() => setOpen(false)} scroll={false}>
-        <AppText variant="caption" style={{ color: colors.muted }}>
+        <AppText variant="caption" style={{ color: colors.textSecondary }}>
           24-hour time
         </AppText>
         <View style={styles.columns}>
@@ -79,14 +82,15 @@ export function NotificationTimeField({
                     style={[
                       styles.option,
                       {
-                        backgroundColor:
-                          column.value === item ? colors.primarySoft : colors.surface,
+                        backgroundColor: column.value === item ? colors.brandSoft : colors.surface,
                       },
                     ]}
                   >
                     <AppText
                       variant="subtitle"
-                      style={{ color: column.value === item ? colors.primary : colors.text }}
+                      style={{
+                        color: column.value === item ? colors.brandText : colors.textPrimary,
+                      }}
                     >
                       {item}
                     </AppText>

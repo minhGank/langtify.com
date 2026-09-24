@@ -117,7 +117,10 @@ export function PeopleResults({
           }
           style={({ pressed }) => [
             styles.row,
-            { borderBottomColor: colors.border, opacity: pressed ? 0.6 : 1 },
+            {
+              borderBottomColor: colors.border,
+              backgroundColor: pressed ? colors.surfaceMuted : undefined,
+            },
           ]}
         >
           <Avatar
@@ -130,7 +133,12 @@ export function PeopleResults({
               {item.isSelf ? 'You' : item.isFollowing ? 'Following' : 'Not following'}
             </AppText>
           </View>
-          <Ionicons name="chevron-forward" size={18} color={colors.muted} accessible={false} />
+          <Ionicons
+            name="chevron-forward"
+            size={18}
+            color={colors.textSecondary}
+            accessible={false}
+          />
         </Pressable>
       )}
       ListEmptyComponent={

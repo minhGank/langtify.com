@@ -57,28 +57,28 @@ export function ProfileScreen() {
         />
       )}
       <View style={styles.section}>
-        <AppText variant="label" style={{ color: colors.muted }}>
+        <AppText variant="label" style={{ color: colors.textSecondary }}>
           LEARNING SETUP
         </AppText>
         <View
           style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
         >
           <View style={styles.row}>
-            <AppText style={{ color: colors.muted }}>Learning</AppText>
+            <AppText style={{ color: colors.textSecondary }}>Learning</AppText>
             <AppText variant="label">
               {target?.name ?? 'Unavailable'} · {learning?.cefr_level}
             </AppText>
           </View>
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <View style={styles.row}>
-            <AppText style={{ color: colors.muted }}>Reference language</AppText>
+            <AppText style={{ color: colors.textSecondary }}>Reference language</AppText>
             <AppText variant="label" style={styles.value}>
               {reference?.name ?? 'Unavailable'}
             </AppText>
           </View>
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <View style={styles.row}>
-            <AppText style={{ color: colors.muted }}>Timezone</AppText>
+            <AppText style={{ color: colors.textSecondary }}>Timezone</AppText>
             <AppText variant="label" style={styles.value}>
               {timezoneLabel(learning?.timezone ?? '')}
             </AppText>
@@ -91,7 +91,7 @@ export function ProfileScreen() {
         </View>
       </View>
       <View style={styles.section}>
-        <AppText variant="label" style={{ color: colors.muted }}>
+        <AppText variant="label" style={{ color: colors.textSecondary }}>
           ACCOUNT
         </AppText>
         <Pressable
@@ -103,9 +103,9 @@ export function ProfileScreen() {
             { backgroundColor: colors.surface, borderColor: colors.border },
           ]}
         >
-          <Ionicons name="notifications-outline" size={22} color={colors.text} />
+          <Ionicons name="notifications-outline" size={22} color={colors.textPrimary} />
           <AppText style={styles.settingsText}>Notification settings</AppText>
-          <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+          <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
         </Pressable>
         {session && (
           <ProfileSafety

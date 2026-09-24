@@ -42,7 +42,7 @@ export function FeedCard({
       />
       <View style={styles.body}>
         <View style={styles.row}>
-          <AppText variant="caption" style={{ color: colors.primary }}>
+          <AppText variant="caption" style={{ color: colors.textSecondary }}>
             {language}
           </AppText>
         </View>
@@ -54,7 +54,9 @@ export function FeedCard({
           <AppText variant="heading" style={styles.word}>
             {displayTerm(item.targetTerm)}
           </AppText>
-          <AppText style={{ color: colors.muted }}>{displayTerm(item.referenceTerm)}</AppText>
+          <AppText style={{ color: colors.textSecondary }}>
+            {displayTerm(item.referenceTerm)}
+          </AppText>
         </Pressable>
         <Pressable
           accessibilityRole="button"

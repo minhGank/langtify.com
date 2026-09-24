@@ -119,7 +119,10 @@ export function WordResults({
           }
           style={({ pressed }) => [
             styles.row,
-            { borderBottomColor: colors.border, opacity: pressed ? 0.6 : 1 },
+            {
+              borderBottomColor: colors.border,
+              backgroundColor: pressed ? colors.surfaceMuted : undefined,
+            },
           ]}
         >
           <View style={styles.term}>
@@ -129,7 +132,12 @@ export function WordResults({
           <View style={[styles.level, { backgroundColor: colors.surfaceMuted }]}>
             <AppText variant="label">{item.cefrLevel}</AppText>
           </View>
-          <Ionicons name="chevron-forward" size={18} color={colors.muted} accessible={false} />
+          <Ionicons
+            name="chevron-forward"
+            size={18}
+            color={colors.textSecondary}
+            accessible={false}
+          />
         </Pressable>
       )}
       ListEmptyComponent={

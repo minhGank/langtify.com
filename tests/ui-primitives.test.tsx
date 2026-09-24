@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { useState } from 'react';
-import { Modal } from 'react-native';
+import { Appearance, Modal, View } from 'react-native';
+import { AccentBadge } from '@/components/ui/accent-badge';
+import { palette } from '@/lib/theme';
 
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
@@ -104,3 +106,36 @@ it('handles a native modal dismissal through the same close authority', () => {
   fireEvent(view.UNSAFE_getByType(Modal), 'requestClose');
   expect(onClose).toHaveBeenCalledTimes(1);
 });
+
+it.each(['light', 'dark'] as const)(
+  'keeps %s actions and energy/reward labels readable without changing interaction state',
+  (mode) => {
+    const scheme = jest.spyOn(Appearance, 'getColorScheme').mockReturnValue(mode);
+    const colors = palette[mode];
+    const onPress = jest.fn();
+    try {
+      render(
+        <View>
+          <Button label="Save profile" onPress={onPress} />
+          <Button label="Unavailable action" disabled onPress={onPress} />
+          <AccentBadge tone="reward" label="+10 XP" announce />
+          <AccentBadge tone="energy" icon="flame" label="7 day streak" />
+        </View>,
+      );
+      expect(screen.getByRole('button', { name: 'Save profile' })).toHaveStyle({
+        backgroundColor: colors.brandPrimary,
+      });
+      expect(screen.getByText('Save profile')).toHaveStyle({ color: colors.textOnPrimary });
+      expect(screen.getByRole('button', { name: 'Unavailable action' })).toBeDisabled();
+      expect(screen.getByText('Unavailable action')).toHaveStyle({ color: colors.textSecondary });
+      expect(screen.getByText('+10 XP')).toHaveStyle({ color: colors.textOnAccent });
+      expect(screen.getByText('+10 XP')).toHaveProp('accessibilityLiveRegion', 'polite');
+      expect(screen.getByText('7 day streak')).toHaveStyle({ color: colors.textOnAccent });
+      fireEvent.press(screen.getByRole('button', { name: 'Save profile' }));
+      fireEvent.press(screen.getByRole('button', { name: 'Unavailable action' }));
+      expect(onPress).toHaveBeenCalledTimes(1);
+    } finally {
+      scheme.mockRestore();
+    }
+  },
+);

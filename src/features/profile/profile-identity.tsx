@@ -47,7 +47,10 @@ export function ProfileIdentity({
           accessibilityLabel="Edit profile photo"
           accessibilityHint="Opens Edit Profile."
           onPress={() => router.push('/edit-profile')}
-          style={({ pressed }) => [styles.avatarButton, { opacity: pressed ? 0.65 : 1 }]}
+          style={({ pressed }) => [
+            styles.avatarButton,
+            { transform: [{ scale: pressed ? 0.98 : 1 }] },
+          ]}
         >
           <ProfileAvatar
             identity={identity}
@@ -61,7 +64,7 @@ export function ProfileIdentity({
               { backgroundColor: colors.surface, borderColor: colors.border },
             ]}
           >
-            <Ionicons name="pencil" size={13} color={colors.text} accessible={false} />
+            <Ionicons name="pencil" size={13} color={colors.textPrimary} accessible={false} />
           </View>
         </Pressable>
         <View style={styles.text}>

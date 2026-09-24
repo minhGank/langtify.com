@@ -22,6 +22,10 @@ The later explicit Past Words brief authorizes historical camera/library capture
 of final, unreplaced past assignments. Keep historical captures separate from daily
 completion: the same reversible assignment entitlement grants only 10 XP, with no
 streak/day/full-challenge credit. Preserve previously admitted daily-upload recovery.
+The subsequent visual-identity request authorizes semantic color tokens and their
+presentation across existing screens only: indigo brand, orange energy, yellow
+rewards, green completion and red errors. Preserve behavior/backend authority;
+physical iPhone review is required. See `docs/COLOR_SYSTEM.md`.
 Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 `docs/DECISIONS.md` before changes. Do not begin Phase 11 or add future product rules.
 

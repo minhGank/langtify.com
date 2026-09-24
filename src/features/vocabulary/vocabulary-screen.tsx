@@ -137,13 +137,13 @@ export function VocabularyContent({
                   onPress={() => router.push('/past-words')}
                   style={({ pressed }) => [
                     styles.pastWords,
-                    { backgroundColor: colors.primarySoft, opacity: pressed ? 0.75 : 1 },
+                    { backgroundColor: pressed ? colors.brandSoft : colors.surfaceMuted },
                   ]}
                 >
                   <Ionicons
                     name="albums-outline"
                     size={25}
-                    color={colors.primary}
+                    color={colors.brandPrimary}
                     accessible={false}
                   />
                   <View style={styles.pastWordsCopy}>
@@ -153,7 +153,7 @@ export function VocabularyContent({
                   <Ionicons
                     name="chevron-forward"
                     size={19}
-                    color={colors.primary}
+                    color={colors.brandPrimary}
                     accessible={false}
                   />
                 </Pressable>
@@ -161,18 +161,18 @@ export function VocabularyContent({
                   <View
                     style={[
                       styles.search,
-                      { borderColor: colors.border, backgroundColor: colors.surface },
+                      { borderColor: colors.controlBorder, backgroundColor: colors.surface },
                     ]}
                   >
-                    <Ionicons name="search-outline" size={20} color={colors.muted} />
+                    <Ionicons name="search-outline" size={20} color={colors.textSecondary} />
                     <TextInput
                       accessibilityLabel="Search vocabulary"
                       value={input}
                       onChangeText={setInput}
                       maxLength={100}
                       placeholder="Search words or translations"
-                      placeholderTextColor={colors.muted}
-                      style={[styles.searchInput, { color: colors.text }]}
+                      placeholderTextColor={colors.textSecondary}
+                      style={[styles.searchInput, { color: colors.textPrimary }]}
                       returnKeyType="search"
                       autoCorrect={false}
                       onSubmitEditing={() => {
@@ -219,11 +219,14 @@ export function VocabularyContent({
               </View>
             )}
             {state.loading && !state.data && (
-              <ActivityIndicator accessibilityLabel="Loading vocabulary" color={colors.primary} />
+              <ActivityIndicator
+                accessibilityLabel="Loading vocabulary"
+                color={colors.brandPrimary}
+              />
             )}
             {state.error && (
               <View style={styles.notice}>
-                <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+                <AppText accessibilityRole="alert" style={{ color: colors.error }}>
                   Vocabulary could not be loaded.
                 </AppText>
                 <Button
@@ -261,7 +264,7 @@ export function VocabularyContent({
               <Ionicons
                 name={input || level ? 'search-outline' : 'images-outline'}
                 size={38}
-                color={colors.muted}
+                color={colors.textSecondary}
               />
               <AppText variant="heading">
                 {conceptId
@@ -272,7 +275,7 @@ export function VocabularyContent({
                       ? 'Your words, in pictures'
                       : 'No words on this page'}
               </AppText>
-              <AppText style={[styles.emptyCopy, { color: colors.muted }]}>
+              <AppText style={[styles.emptyCopy, { color: colors.textSecondary }]}>
                 {conceptId
                   ? 'Photos you delete are removed from your history.'
                   : input || level
@@ -327,14 +330,14 @@ export function VocabularyContent({
             }}
             style={[
               styles.filterOption,
-              { backgroundColor: level === option.value ? colors.primarySoft : colors.surface },
+              { backgroundColor: level === option.value ? colors.brandSoft : colors.surface },
             ]}
           >
             <AppText variant="label">
               {option.value ? `${option.value} · ${option.label}` : option.label}
             </AppText>
             {level === option.value && (
-              <Ionicons name="checkmark" size={22} color={colors.primary} />
+              <Ionicons name="checkmark" size={22} color={colors.brandPrimary} />
             )}
           </Pressable>
         ))}
@@ -373,7 +376,9 @@ function CaptureCard({
         accessibilityRole="button"
         accessibilityLabel={`${detail ? 'Open photo' : 'View captures'}: ${displayTerm(capture.targetTerm)}. ${displayTerm(capture.referenceTerm)}, ${capture.cefrLevel}. ${detail ? new Date(capture.submittedAt).toLocaleDateString() : `${capture.captureCount} captures`}. ${capture.visibility === 'public' ? 'Public' : 'Private'}.`}
         onPress={open}
-        style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
+        style={({ pressed }) => ({
+          backgroundColor: pressed ? colors.surfaceMuted : colors.surface,
+        })}
       >
         <View style={{ backgroundColor: colors.surfaceMuted }}>
           {uri && failed !== uri ? (
@@ -386,7 +391,7 @@ function CaptureCard({
             />
           ) : (
             <View style={styles.unavailable}>
-              <Ionicons name="image-outline" size={28} color={colors.muted} />
+              <Ionicons name="image-outline" size={28} color={colors.textSecondary} />
               <AppText variant="caption">Photo unavailable</AppText>
             </View>
           )}
@@ -413,7 +418,7 @@ function CaptureCard({
               accessibilityLabel={capture.visibility === 'public' ? 'Public' : 'Private'}
               name={capture.visibility === 'public' ? 'globe-outline' : 'lock-closed-outline'}
               size={14}
-              color={colors.muted}
+              color={colors.textSecondary}
             />
           </View>
         </View>

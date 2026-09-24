@@ -6,7 +6,7 @@ notification delivery, rating semantics or photo authority.
 
 ## Presentation and interaction changes
 
-- Shared warm surfaces, restrained green emphasis, separate danger/success states,
+- Shared neutral surfaces (color roles superseded by [COLOR_SYSTEM.md](COLOR_SYSTEM.md)), separate danger/success states,
   heading/body/caption typography, primary/secondary/tertiary buttons, and 44-point
   minimum icon targets. Inputs distinguish required values, errors and helper copy.
 - Discover uses large photos, prominent vocabulary/translation, a visible target

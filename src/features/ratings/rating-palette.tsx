@@ -74,21 +74,24 @@ export function RatingPalette({
                       styles.choice,
                       vertical && styles.verticalChoice,
                       {
-                        backgroundColor: active || pressed ? colors.primarySoft : 'transparent',
-                        opacity: disabled ? 0.5 : 1,
+                        backgroundColor: disabled
+                          ? colors.surfaceMuted
+                          : active || pressed
+                            ? colors.brandSoft
+                            : 'transparent',
                       },
                     ]}
                   >
                     <View
                       style={[
                         styles.symbol,
-                        { backgroundColor: active ? colors.primary : colors.surfaceMuted },
+                        { backgroundColor: active ? colors.brandPrimary : colors.surfaceMuted },
                       ]}
                     >
                       <Ionicons
                         name={matchIcons[score]}
                         size={25}
-                        color={active ? colors.onPrimary : colors.primary}
+                        color={active ? colors.textOnPrimary : colors.brandPrimary}
                         accessible={false}
                       />
                     </View>
@@ -97,7 +100,7 @@ export function RatingPalette({
                       style={[
                         styles.choiceLabel,
                         vertical && styles.verticalLabel,
-                        { color: active ? colors.primary : colors.text },
+                        { color: active ? colors.brandText : colors.textPrimary },
                       ]}
                     >
                       {label}

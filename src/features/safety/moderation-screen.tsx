@@ -361,9 +361,8 @@ function Moderation({ userId, token }: SafetyIdentity) {
                   style={[
                     styles.report,
                     {
-                      backgroundColor: colors.surface,
-                      borderColor: colors.border,
-                      opacity: task.busy ? 0.6 : 1,
+                      backgroundColor: task.busy ? colors.surfaceMuted : colors.surface,
+                      borderColor: colors.controlBorder,
                     },
                   ]}
                 >
@@ -380,7 +379,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
                       @{report.username} · {report.reason.replaceAll('_', ' ')}
                     </AppText>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color={colors.muted} />
+                  <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
                 </Pressable>
               ))}
               {queue?.hasMore && (
@@ -399,7 +398,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
         </>
       )}
       {task.error && (
-        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+        <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {task.error}
         </AppText>
       )}

@@ -69,7 +69,7 @@ function Settings({ userId, token }: NotificationIdentity) {
                   : 'notifications-off-outline'
               }
               size={24}
-              color={colors.muted}
+              color={colors.textSecondary}
             />
           </View>
           <AppText variant="label" style={styles.heading}>
@@ -94,18 +94,18 @@ function Settings({ userId, token }: NotificationIdentity) {
           />
         )}
         {native.permission === 'unavailable' && (
-          <AppText variant="caption" style={{ color: colors.muted }}>
+          <AppText variant="caption" style={{ color: colors.textSecondary }}>
             You can still save your reminder preferences below.
           </AppText>
         )}
         {settingsError && (
-          <AppText style={{ color: colors.danger }} accessibilityRole="alert">
+          <AppText style={{ color: colors.error }} accessibilityRole="alert">
             Unable to open Settings. Open your device’s Settings app.
           </AppText>
         )}
         {native.error && (
           <>
-            <AppText style={{ color: colors.danger }} accessibilityRole="alert">
+            <AppText style={{ color: colors.error }} accessibilityRole="alert">
               {native.error}
             </AppText>
             <Button
@@ -180,7 +180,7 @@ function Settings({ userId, token }: NotificationIdentity) {
               }}
             />
           </View>
-          <AppText variant="caption" style={{ color: colors.muted }}>
+          <AppText variant="caption" style={{ color: colors.textSecondary }}>
             Times use your saved timezone: {timezoneLabel(value.timezone)}
           </AppText>
           <Button
@@ -203,16 +203,16 @@ function Settings({ userId, token }: NotificationIdentity) {
               Notification preferences saved.
             </AppText>
           )}
-          <AppText variant="caption" style={{ color: colors.muted }}>
+          <AppText variant="caption" style={{ color: colors.textSecondary }}>
             Reminders depend on device permissions and service availability.
           </AppText>
         </>
       ) : task.busy ? (
-        <ActivityIndicator color={colors.primary} accessibilityLabel="Loading preferences" />
+        <ActivityIndicator color={colors.brandPrimary} accessibilityLabel="Loading preferences" />
       ) : null}
       {task.error && (
         <>
-          <AppText style={{ color: colors.danger }} accessibilityRole="alert">
+          <AppText style={{ color: colors.error }} accessibilityRole="alert">
             {task.error}
           </AppText>
           <Button
@@ -241,11 +241,11 @@ function PreferenceSwitch({
 }) {
   const { colors } = useAppTheme();
   return (
-    <View style={[styles.switchRow, { opacity: disabled ? 0.5 : 1 }]}>
+    <View style={styles.switchRow}>
       <View style={styles.switchCopy}>
         <AppText variant="label">{label}</AppText>
         {hint && (
-          <AppText variant="caption" style={{ color: colors.muted }}>
+          <AppText variant="caption" style={{ color: colors.textSecondary }}>
             {hint}
           </AppText>
         )}
@@ -255,7 +255,11 @@ function PreferenceSwitch({
         accessibilityState={{ disabled }}
         value={value}
         disabled={disabled}
-        trackColor={{ true: colors.primary }}
+        trackColor={{
+          true: disabled ? colors.controlBorder : colors.brandPrimary,
+          false: colors.controlBorder,
+        }}
+        thumbColor={value && !disabled ? colors.textOnPrimary : colors.surface}
         onValueChange={onChange}
       />
     </View>

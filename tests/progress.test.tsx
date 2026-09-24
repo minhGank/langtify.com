@@ -1,3 +1,4 @@
+import { palette } from '@/lib/theme';
 import { AppState, View } from 'react-native';
 import type * as ReactTypes from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
@@ -59,8 +60,12 @@ it('renders server daily completion and full bonus with formula-correct level', 
   expect(await screen.findByText('3 / 3 completed')).toBeVisible();
   expect(screen.getByText('Daily Challenge Complete')).toBeVisible();
   expect(screen.getByText('+10 XP bonus')).toBeVisible();
+  expect(screen.getByText('+10 XP bonus')).toHaveStyle({ color: palette.light.textOnAccent });
+  expect(screen.getByText('Daily Challenge Complete')).toHaveStyle({
+    color: palette.light.success,
+  });
   expect(screen.getByText('Level 3')).toBeVisible();
-  expect(screen.getByText('🔥 7 day streak')).toBeVisible();
+  expect(screen.getByText('7 day streak')).toBeVisible();
   expect(mockRpc).toHaveBeenCalledWith('get_my_progress', { challenge_id: 'challenge' });
   expect(header).toHaveBeenCalledWith('Authorization', 'Bearer token');
 });

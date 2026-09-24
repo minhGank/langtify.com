@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
+import { BrandLogo } from '@/components/ui/brand-logo';
 import { Button } from '@/components/ui/button';
 import { ChoiceField } from '@/components/ui/choice-field';
 import { FormField } from '@/components/ui/form-field';
@@ -95,11 +96,14 @@ function OnboardingForm() {
   return (
     <Screen>
       <View style={styles.intro}>
-        <AppText variant="label" style={{ color: colors.primary }}>
+        <BrandLogo />
+        <AppText variant="label" style={{ color: colors.brandText }}>
           YOUR LEARNING PROFILE
         </AppText>
         <AppText variant="title">Make it yours</AppText>
-        <AppText style={{ color: colors.muted }}>A few details to shape your daily words.</AppText>
+        <AppText style={{ color: colors.textSecondary }}>
+          A few details to shape your daily words.
+        </AppText>
       </View>
       <FormField
         label="Username"
@@ -117,7 +121,7 @@ function OnboardingForm() {
       />
       {languages.length < 2 ? (
         <>
-          <AppText style={{ color: colors.danger }} accessibilityRole="alert">
+          <AppText style={{ color: colors.error }} accessibilityRole="alert">
             Learning languages are unavailable. Please try again shortly.
           </AppText>
           <Button variant="secondary" label="Reload languages" onPress={reload} />
@@ -133,7 +137,7 @@ function OnboardingForm() {
             onChange={(value) => update('referenceLanguageId', value)}
             error={errors.referenceLanguageId}
           />
-          <AppText variant="caption" style={{ color: colors.muted }}>
+          <AppText variant="caption" style={{ color: colors.textSecondary }}>
             The language you use for translations.
           </AppText>
           <ChoiceField
@@ -167,7 +171,7 @@ function OnboardingForm() {
       />
       {error && (
         <AppText
-          style={{ color: colors.danger }}
+          style={{ color: colors.error }}
           accessibilityRole="alert"
           accessibilityLiveRegion="polite"
         >

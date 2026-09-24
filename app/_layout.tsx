@@ -28,11 +28,12 @@ export function RootNavigator() {
         ...baseTheme,
         colors: {
           ...baseTheme.colors,
-          primary: colors.primary,
+          primary: colors.brandText,
           background: colors.background,
           card: colors.surface,
-          text: colors.text,
+          text: colors.textPrimary,
           border: colors.border,
+          notification: colors.brandPrimary,
         },
       }}
     >

@@ -28,7 +28,7 @@ export function ChoiceField({
     <View style={styles.group}>
       <AppText variant="label">
         {label}
-        {required && <AppText style={{ color: colors.muted }}> *</AppText>}
+        {required && <AppText style={{ color: colors.textSecondary }}> *</AppText>}
       </AppText>
       <View accessibilityRole="radiogroup" accessibilityLabel={label} style={styles.options}>
         {options.map((option) => (
@@ -43,22 +43,29 @@ export function ChoiceField({
               styles.choice,
               {
                 borderColor: error
-                  ? colors.danger
+                  ? colors.error
                   : value === option.value
-                    ? colors.primary
-                    : colors.border,
-                backgroundColor: value === option.value ? colors.primarySoft : colors.surface,
-                opacity: disabled ? 0.5 : pressed ? 0.7 : 1,
+                    ? colors.brandPrimary
+                    : colors.controlBorder,
+                backgroundColor: disabled
+                  ? colors.surfaceMuted
+                  : value === option.value || pressed
+                    ? colors.brandSoft
+                    : colors.surface,
               },
             ]}
           >
             {value === option.value && (
-              <Ionicons name="checkmark" size={18} color={colors.primary} accessible={false} />
+              <Ionicons name="checkmark" size={18} color={colors.brandPrimary} accessible={false} />
             )}
             <AppText
               variant="label"
               style={{
-                color: value === option.value ? colors.primary : colors.text,
+                color: disabled
+                  ? colors.textSecondary
+                  : value === option.value
+                    ? colors.brandText
+                    : colors.textPrimary,
                 flexShrink: 1,
               }}
             >
@@ -68,7 +75,7 @@ export function ChoiceField({
         ))}
       </View>
       {error && (
-        <AppText variant="caption" accessibilityRole="alert" style={{ color: colors.danger }}>
+        <AppText variant="caption" accessibilityRole="alert" style={{ color: colors.error }}>
           {error}
         </AppText>
       )}

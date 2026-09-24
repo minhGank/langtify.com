@@ -101,7 +101,7 @@ function BlockedUsers({ userId, token }: SafetyIdentity) {
         </Sheet>
       )}
       {task.error && (
-        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+        <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {task.error}
         </AppText>
       )}
@@ -114,7 +114,7 @@ function BlockedUsers({ userId, token }: SafetyIdentity) {
         />
       )}
       {task.busy && (
-        <ActivityIndicator color={colors.primary} accessibilityLabel="Loading blocked users" />
+        <ActivityIndicator color={colors.brandPrimary} accessibilityLabel="Loading blocked users" />
       )}
       {task.error && (
         <Button

@@ -68,12 +68,27 @@ function PastWordsContent({ identity }: { identity: PastWordsIdentity }) {
       <View style={styles.header}>
         <AppText variant="subtitle">Give words from earlier challenges a picture.</AppText>
         <View style={styles.searchRow}>
-          <View style={[styles.search, { backgroundColor: colors.surfaceMuted }]}>
-            <Ionicons name="search-outline" size={20} color={colors.muted} accessible={false} />
+          <View
+            style={[
+              styles.search,
+              {
+                backgroundColor: colors.surfaceMuted,
+                borderColor: colors.controlBorder,
+                borderWidth: 1,
+              },
+            ]}
+          >
+            <Ionicons
+              name="search-outline"
+              size={20}
+              color={colors.textSecondary}
+              accessible={false}
+            />
             <TextInput
               accessibilityLabel="Search past words"
               placeholder="Search words or translations"
-              placeholderTextColor={colors.muted}
+              selectionColor={colors.brandPrimary}
+              placeholderTextColor={colors.textSecondary}
               value={input}
               onChangeText={setInput}
               onSubmitEditing={() => setSearch(input.trim())}
@@ -81,7 +96,7 @@ function PastWordsContent({ identity }: { identity: PastWordsIdentity }) {
               autoCorrect={false}
               autoCapitalize="none"
               returnKeyType="search"
-              style={[styles.input, { color: colors.text }]}
+              style={[styles.input, { color: colors.textPrimary }]}
             />
             {!!input && (
               <IconButton
@@ -122,14 +137,14 @@ function PastWordsContent({ identity }: { identity: PastWordsIdentity }) {
             }}
             style={[
               styles.filterOption,
-              { backgroundColor: level === option.value ? colors.primarySoft : colors.surface },
+              { backgroundColor: level === option.value ? colors.brandSoft : colors.surface },
             ]}
           >
             <AppText variant="label">
               {option.value ? `${option.value} · ${option.label}` : option.label}
             </AppText>
             {level === option.value && (
-              <Ionicons name="checkmark" size={22} color={colors.primary} accessible={false} />
+              <Ionicons name="checkmark" size={22} color={colors.brandPrimary} accessible={false} />
             )}
           </Pressable>
         ))}

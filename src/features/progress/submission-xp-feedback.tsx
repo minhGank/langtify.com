@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { createServerCache, serverScope } from '@/lib/server-cache';
 import { StyleSheet, View } from 'react-native';
+import { AccentBadge } from '@/components/ui/accent-badge';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
@@ -36,17 +37,23 @@ export function SubmissionXpFeedback({
     );
   if (data.wordXp === 0 && data.challengeBonusXp === 0 && data.milestoneXp === 0) return null;
   return (
-    <View style={[styles.feedback, { backgroundColor: colors.primarySoft }]}>
+    <View style={[styles.feedback, { backgroundColor: colors.surfaceMuted }]}>
       {data.wordXp > 0 && (
-        <AppText variant="label" style={{ color: colors.success }} accessibilityLiveRegion="polite">
-          +{data.wordXp} XP{historical ? '' : ' · word completed'}
-        </AppText>
+        <AccentBadge
+          tone="reward"
+          announce
+          label={`+${data.wordXp} XP${historical ? '' : ' · word completed'}`}
+        />
       )}
       {data.challengeBonusXp > 0 && (
-        <AppText variant="caption">+{data.challengeBonusXp} XP · full challenge bonus</AppText>
+        <AccentBadge tone="reward" label={`+${data.challengeBonusXp} XP · full challenge bonus`} />
       )}
       {data.milestoneXp > 0 && (
-        <AppText variant="caption">+{data.milestoneXp} XP · streak milestone</AppText>
+        <AccentBadge
+          tone="reward"
+          icon="sparkles-outline"
+          label={`+${data.milestoneXp} XP · streak milestone`}
+        />
       )}
     </View>
   );

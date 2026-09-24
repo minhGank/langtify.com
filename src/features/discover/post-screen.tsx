@@ -72,7 +72,7 @@ function PostContent({
     return (
       <SafeAreaView edges={['left', 'right', 'bottom']} style={styles.message}>
         {state.loading ? (
-          <ActivityIndicator color={colors.primary} accessibilityLabel="Loading photo" />
+          <ActivityIndicator color={colors.brandPrimary} accessibilityLabel="Loading photo" />
         ) : (
           <UnavailablePost />
         )}

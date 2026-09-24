@@ -46,7 +46,7 @@ it('updates nested surfaces and text on live theme changes without subscription 
     });
     expect(screen.getByTestId('page')).toHaveStyle({ backgroundColor: palette[next].background });
     expect(screen.getByTestId('card')).toHaveStyle({ backgroundColor: palette[next].surface });
-    expect(screen.getByTestId('card-label')).toHaveStyle({ color: palette[next].text });
+    expect(screen.getByTestId('card-label')).toHaveStyle({ color: palette[next].textPrimary });
     view.rerender(<Page title={`Profile in ${next}`} />);
     expect(subscribe).toHaveBeenCalledTimes(subscriptions);
   }

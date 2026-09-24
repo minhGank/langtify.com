@@ -3,9 +3,9 @@ import { authMutation } from '@/features/auth/oauth/runtime';
 import { Link } from 'expo-router';
 import { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { AppText } from '@/components/ui/app-text';
+import { BrandLogo } from '@/components/ui/brand-logo';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/ui/form-field';
 import { Screen } from '@/components/ui/screen';
@@ -85,21 +85,16 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
   return (
     <Screen>
       <View style={styles.intro}>
-        <View style={[styles.mark, { backgroundColor: colors.primarySoft }]}>
-          <Ionicons name="language-outline" size={30} color={colors.primary} />
-        </View>
-        <AppText variant="label" style={{ color: colors.primary }}>
-          Langtify
-        </AppText>
+        <BrandLogo />
         <AppText variant="title">{title}</AppText>
-        <AppText style={{ color: colors.muted }}>
+        <AppText style={{ color: colors.textSecondary }}>
           {signingUp ? 'A new way to see the words you learn.' : 'Your next discovery is waiting.'}
         </AppText>
       </View>
       <GoogleButton disabled={busy} />
       <View style={styles.divider}>
         <View style={[styles.line, { backgroundColor: colors.border }]} />
-        <AppText variant="caption" style={{ color: colors.muted }}>
+        <AppText variant="caption" style={{ color: colors.textSecondary }}>
           or use email
         </AppText>
         <View style={[styles.line, { backgroundColor: colors.border }]} />
@@ -143,7 +138,7 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       />
       {error && (
         <AppText
-          style={{ color: colors.danger }}
+          style={{ color: colors.error }}
           accessibilityRole="alert"
           accessibilityLiveRegion="polite"
         >
@@ -163,7 +158,7 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       />
       {!busy && !google.busy && (
         <Link href={signingUp ? '/sign-in' : '/sign-up'} style={styles.accountLink}>
-          <AppText style={{ color: colors.primary }}>
+          <AppText style={{ color: colors.brandText }}>
             {signingUp ? 'Already have an account? Sign in' : 'New to Langtify? Sign up'}
           </AppText>
         </Link>
@@ -173,14 +168,6 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
 }
 const styles = StyleSheet.create({
   intro: { gap: 10, paddingTop: 12, paddingBottom: 8 },
-  mark: {
-    height: 60,
-    width: 60,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
   divider: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   line: { flex: 1, height: StyleSheet.hairlineWidth },
   accountLink: { paddingVertical: 14, textAlign: 'center' },

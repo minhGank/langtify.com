@@ -166,7 +166,7 @@ function Editor({ identity, username, onChanged }: Props) {
       </View>
       {draft && (
         <>
-          <AppText variant="caption" style={{ color: colors.muted }}>
+          <AppText variant="caption" style={{ color: colors.textSecondary }}>
             Your profile photo is visible to people who can view your profile.
           </AppText>
           <Button
@@ -197,7 +197,7 @@ function Editor({ identity, username, onChanged }: Props) {
         <Button label="Reload profile photo" variant="ghost" onPress={() => void query.refresh()} />
       )}
       {error && (
-        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+        <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {error}
         </AppText>
       )}

@@ -188,11 +188,14 @@ export function PhotoContent({
         </>
       )}
       {library.busy && (
-        <ActivityIndicator accessibilityLabel="Preparing library photo" color={colors.primary} />
+        <ActivityIndicator
+          accessibilityLabel="Preparing library photo"
+          color={colors.brandPrimary}
+        />
       )}
       {(library.error || library.eligibilityError) && (
         <View style={styles.error}>
-          <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          <AppText accessibilityRole="alert" style={{ color: colors.error }}>
             {library.error || library.eligibilityError}
           </AppText>
           {library.eligibilityError && (
@@ -225,7 +228,7 @@ export function PhotoContent({
       )}
       {state.error ? (
         <View style={styles.error}>
-          <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          <AppText accessibilityRole="alert" style={{ color: colors.error }}>
             {state.error}
           </AppText>
           <Button

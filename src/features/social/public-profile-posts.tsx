@@ -92,11 +92,16 @@ function ProfilePosts({
         ))}
       </View>
       {state.loading && (
-        <ActivityIndicator accessibilityLabel="Loading public photos" color={colors.primary} />
+        <ActivityIndicator accessibilityLabel="Loading public photos" color={colors.brandPrimary} />
       )}
       {!state.loading && !state.error && state.items.length === 0 && (
         <View style={[styles.empty, { backgroundColor: colors.surfaceMuted }]}>
-          <Ionicons name="images-outline" size={30} color={colors.muted} accessible={false} />
+          <Ionicons
+            name="images-outline"
+            size={30}
+            color={colors.textSecondary}
+            accessible={false}
+          />
           <AppText variant="label">
             {state.hasMore
               ? 'More photos to explore'

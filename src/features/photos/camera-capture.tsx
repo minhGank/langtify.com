@@ -54,14 +54,17 @@ export function CameraCapture({
   if (!permission || asking)
     return (
       <View style={styles.permission}>
-        <ActivityIndicator accessibilityLabel="Checking camera permission" color={colors.primary} />
+        <ActivityIndicator
+          accessibilityLabel="Checking camera permission"
+          color={colors.brandPrimary}
+        />
         <Button label="Cancel camera" variant="ghost" onPress={onCancel} />
       </View>
     );
   if (!permission.granted)
     return (
       <View style={styles.permission}>
-        <Ionicons name="camera-outline" size={40} color={colors.muted} />
+        <Ionicons name="camera-outline" size={40} color={colors.textSecondary} />
         <AppText variant="heading">Camera access needed</AppText>
         <AppText style={styles.center}>
           {permission.canAskAgain
@@ -81,7 +84,7 @@ export function CameraCapture({
           />
         ) : null}
         {error ? (
-          <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          <AppText accessibilityRole="alert" style={{ color: colors.error }}>
             {error}
           </AppText>
         ) : null}
@@ -120,7 +123,7 @@ export function CameraCapture({
   };
   return (
     <View style={styles.capture}>
-      <View style={styles.camera}>
+      <View style={[styles.camera, { backgroundColor: colors.mediaBackground }]}>
         <CameraView
           key={attempt}
           ref={camera}
@@ -137,13 +140,13 @@ export function CameraCapture({
           <ActivityIndicator
             style={StyleSheet.absoluteFill}
             accessibilityLabel="Starting camera"
-            color="#FFFFFF"
+            color={colors.mediaForeground}
           />
         )}
       </View>
       {error ? (
         <View style={styles.error}>
-          <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          <AppText accessibilityRole="alert" style={{ color: colors.error }}>
             {error}
           </AppText>
           {!ready && (
@@ -178,10 +181,17 @@ export function CameraCapture({
           onPress={() => void capture()}
           style={({ pressed }) => [
             styles.shutter,
-            { borderColor: colors.text, opacity: !ready || busy || pressed ? 0.45 : 1 },
+            {
+              borderColor:
+                !ready || busy
+                  ? colors.textSecondary
+                  : pressed
+                    ? colors.brandPrimary
+                    : colors.textPrimary,
+            },
           ]}
         >
-          <View style={[styles.shutterInner, { backgroundColor: colors.text }]}>
+          <View style={[styles.shutterInner, { backgroundColor: colors.textPrimary }]}>
             {busy && <ActivityIndicator color={colors.background} />}
           </View>
         </Pressable>
@@ -193,9 +203,12 @@ export function CameraCapture({
               accessibilityState={{ disabled: busy }}
               disabled={busy}
               onPress={onChooseLibrary}
-              style={({ pressed }) => [styles.library, { opacity: pressed || busy ? 0.5 : 1 }]}
+              style={({ pressed }) => [
+                styles.library,
+                { backgroundColor: pressed && !busy ? colors.brandSoft : undefined },
+              ]}
             >
-              <Ionicons name="images-outline" size={26} color={colors.text} />
+              <Ionicons name="images-outline" size={26} color={colors.textPrimary} />
               <AppText variant="caption" style={styles.center}>
                 Photo library
               </AppText>
@@ -214,7 +227,6 @@ const styles = StyleSheet.create({
     maxHeight: 440,
     borderRadius: 24,
     overflow: 'hidden',
-    backgroundColor: '#101820',
   },
   controls: {
     flexDirection: 'row',

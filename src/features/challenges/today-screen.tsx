@@ -122,7 +122,7 @@ function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone
       )}
       {error ? (
         <>
-          <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+          <AppText accessibilityRole="alert" style={{ color: colors.error }}>
             {error}
           </AppText>
           <Button label="Retry challenge" onPress={() => void refresh()} />
@@ -142,7 +142,7 @@ function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone
           ))}
           {replacementError ? (
             <View style={styles.word}>
-              <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+              <AppText accessibilityRole="alert" style={{ color: colors.error }}>
                 {replacementError}
               </AppText>
               <Button
@@ -207,7 +207,7 @@ function WordCard({
         <AppText accessibilityRole="header" variant="heading" style={styles.term}>
           {displayTerm(word.targetTerm)}
         </AppText>
-        <AppText style={{ color: colors.muted }}>{displayTerm(word.referenceTerm)}</AppText>
+        <AppText style={{ color: colors.textSecondary }}>{displayTerm(word.referenceTerm)}</AppText>
       </View>
       <Button
         label={completed ? 'View photo' : word.submission ? 'Resume photo' : 'Take photo'}

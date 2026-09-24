@@ -36,19 +36,27 @@ function Bell({ identity }: { identity: SafetyIdentity }) {
       accessibilityLabel={count ? `Notifications, ${count} unread` : 'Notifications'}
       accessibilityHint="Open your notification inbox"
       onPress={() => router.push('/notifications')}
-      style={({ pressed }) => [styles.button, { opacity: pressed ? 0.6 : 1 }]}
+      style={({ pressed }) => [
+        styles.button,
+        { backgroundColor: pressed ? colors.surfaceMuted : undefined },
+      ]}
     >
-      <Ionicons name="notifications-outline" size={25} color={colors.text} accessible={false} />
+      <Ionicons
+        name="notifications-outline"
+        size={25}
+        color={colors.textPrimary}
+        accessible={false}
+      />
       {count > 0 && (
         <View
           pointerEvents="none"
           style={[
             styles.badge,
-            { backgroundColor: colors.primary, borderColor: colors.background },
+            { backgroundColor: colors.brandPrimary, borderColor: colors.background },
           ]}
         >
           <AppText
-            style={[styles.badgeText, { color: colors.onPrimary }]}
+            style={[styles.badgeText, { color: colors.textOnPrimary }]}
             maxFontSizeMultiplier={1}
           >
             {count > 99 ? '99+' : count}

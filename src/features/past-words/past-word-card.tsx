@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { AccentBadge } from '@/components/ui/accent-badge';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
@@ -32,7 +33,7 @@ export function PastWordCard({ word }: { word: PastWord }) {
         <Ionicons
           name={completed ? 'checkmark-circle' : deleting ? 'time-outline' : 'camera-outline'}
           size={18}
-          color={completed ? colors.success : colors.muted}
+          color={completed ? colors.success : colors.textSecondary}
           accessible={false}
         />
         <AppText variant="caption" style={{ flex: 1 }}>
@@ -44,11 +45,7 @@ export function PastWordCard({ word }: { word: PastWord }) {
                 ? 'Photo in progress'
                 : 'No photo yet'}
         </AppText>
-        {!word.hasCapture && !deleting && (
-          <AppText variant="label" style={{ color: colors.primary }}>
-            +10 XP
-          </AppText>
-        )}
+        {!word.hasCapture && !deleting && <AccentBadge tone="reward" label="+10 XP" />}
       </View>
       <Button
         label={label}

@@ -14,7 +14,7 @@ export function RatingAggregate({
 }) {
   const { colors } = useAppTheme();
   return (
-    <AppText variant={compact ? 'caption' : 'body'} style={{ color: colors.muted }}>
+    <AppText variant={compact ? 'caption' : 'body'} style={{ color: colors.textSecondary }}>
       {summary.ratingCount === 0
         ? 'No ratings yet'
         : `${summary.averageRating?.toFixed(1)} / 5 · ${summary.ratingCount} ${summary.ratingCount === 1 ? 'rating' : 'ratings'}`}
@@ -67,22 +67,25 @@ export function SemanticRating({
                   style={({ pressed }) => [
                     styles.option,
                     {
-                      backgroundColor: active ? colors.primarySoft : colors.surface,
-                      borderColor: active ? colors.primary : colors.border,
-                      opacity: disabled || pressed ? 0.6 : 1,
+                      backgroundColor: disabled
+                        ? colors.surfaceMuted
+                        : active || pressed
+                          ? colors.brandSoft
+                          : colors.surface,
+                      borderColor: active ? colors.brandPrimary : colors.controlBorder,
                     },
                   ]}
                 >
                   <AppText
                     variant="label"
-                    style={{ color: active ? colors.primary : colors.text, flexShrink: 1 }}
+                    style={{ color: active ? colors.brandText : colors.textPrimary, flexShrink: 1 }}
                   >
                     {option.label}
                   </AppText>
                   <Ionicons
                     name={active ? 'checkmark-circle' : 'ellipse-outline'}
                     size={22}
-                    color={active ? colors.primary : colors.muted}
+                    color={active ? colors.brandPrimary : colors.textSecondary}
                   />
                 </Pressable>
               );
@@ -91,12 +94,12 @@ export function SemanticRating({
           <View accessibilityLiveRegion="polite">
             {action?.status === 'saving' ? (
               <View style={styles.saving}>
-                <ActivityIndicator color={colors.primary} />
+                <ActivityIndicator color={colors.brandPrimary} />
                 <AppText variant="caption">Saving your rating…</AppText>
               </View>
             ) : summary.viewerRating !== null ? (
               <>
-                <AppText variant="label" style={{ color: colors.primary }}>
+                <AppText variant="label" style={{ color: colors.brandText }}>
                   Your rating: {ratingOptions[summary.viewerRating - 1].label}
                 </AppText>
                 <AppText variant="caption">Tap another match to change it.</AppText>
@@ -107,7 +110,7 @@ export function SemanticRating({
           </View>
           {action?.status === 'error' && (
             <>
-              <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+              <AppText accessibilityRole="alert" style={{ color: colors.error }}>
                 Your rating couldn’t be confirmed. Check it before retrying.
               </AppText>
               <Button

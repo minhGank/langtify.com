@@ -27,13 +27,13 @@ export function FormField({
     <View style={styles.field}>
       <AppText variant="label">
         {label}
-        {required && <AppText style={{ color: colors.muted }}> *</AppText>}
+        {required && <AppText style={{ color: colors.textSecondary }}> *</AppText>}
       </AppText>
       <TextInput
         accessibilityLabel={label}
         accessibilityHint={[required ? 'Required.' : '', error ?? hint].filter(Boolean).join(' ')}
-        placeholderTextColor={colors.muted}
-        selectionColor={colors.primary}
+        placeholderTextColor={colors.textSecondary}
+        selectionColor={colors.brandPrimary}
         {...props}
         onFocus={(event) => {
           setFocused(true);
@@ -46,10 +46,13 @@ export function FormField({
         style={[
           styles.input,
           {
-            color: colors.text,
-            borderColor: error ? colors.danger : focused ? colors.primary : colors.border,
-            backgroundColor: colors.surface,
-            opacity: props.editable === false ? 0.6 : 1,
+            color: props.editable === false ? colors.textSecondary : colors.textPrimary,
+            borderColor: error
+              ? colors.error
+              : focused
+                ? colors.brandPrimary
+                : colors.controlBorder,
+            backgroundColor: props.editable === false ? colors.surfaceMuted : colors.surface,
           },
           style,
         ]}
@@ -60,7 +63,7 @@ export function FormField({
           variant="caption"
           accessibilityRole="alert"
           accessibilityLiveRegion="polite"
-          style={{ color: colors.danger }}
+          style={{ color: colors.error }}
         >
           {error}
         </AppText>

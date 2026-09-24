@@ -47,13 +47,16 @@ export function FeedPhoto({
           </Pressable>
           {!loaded && (
             <View pointerEvents="none" style={styles.center}>
-              <ActivityIndicator color={colors.primary} accessibilityLabel="Loading feed photo" />
+              <ActivityIndicator
+                color={colors.brandPrimary}
+                accessibilityLabel="Loading feed photo"
+              />
             </View>
           )}
         </>
       ) : (
         <View style={styles.center}>
-          <Ionicons name="image-outline" size={30} color={colors.muted} />
+          <Ionicons name="image-outline" size={30} color={colors.textSecondary} />
           <AppText variant="caption">Photo unavailable</AppText>
           <Button label="Reload photos" variant="secondary" onPress={reload} />
         </View>

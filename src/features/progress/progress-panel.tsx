@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { createServerCache, serverScope } from '@/lib/server-cache';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { AccentBadge } from '@/components/ui/accent-badge';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
@@ -35,14 +36,14 @@ export function ProgressPanel({
         <Button label="Retry progress" variant="ghost" onPress={() => void refresh()} />
       </View>
     ) : (
-      <ActivityIndicator accessibilityLabel="Loading progress" color={colors.primary} />
+      <ActivityIndicator accessibilityLabel="Loading progress" color={colors.brandPrimary} />
     );
   if (!detailed)
     return (
-      <View style={[styles.daily, { backgroundColor: colors.primarySoft }]}>
+      <View style={[styles.daily, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <View style={styles.row}>
           <AppText variant="heading">{data.completedWords} / 3 completed</AppText>
-          <AppText variant="caption">{data.totalXp} XP</AppText>
+          <AccentBadge tone="reward" label={`${data.totalXp} XP`} />
         </View>
         <View
           accessible
@@ -56,7 +57,7 @@ export function ProgressPanel({
               key={word}
               style={[
                 styles.segment,
-                { backgroundColor: data.completedWords >= word ? colors.primary : colors.border },
+                { backgroundColor: data.completedWords >= word ? colors.success : colors.border },
               ]}
             />
           ))}
@@ -66,13 +67,11 @@ export function ProgressPanel({
             <AppText variant="label" style={{ color: colors.success }}>
               Daily Challenge Complete
             </AppText>
-            <AppText variant="caption" style={{ color: colors.success }}>
-              +10 XP bonus
-            </AppText>
+            <AccentBadge tone="reward" label="+10 XP bonus" />
           </View>
         )}
         <View style={styles.row}>
-          <AppText variant="label">🔥 {data.currentStreak} day streak</AppText>
+          <AccentBadge tone="energy" icon="flame" label={`${data.currentStreak} day streak`} />
           <AppText variant="caption">Level {data.level}</AppText>
         </View>
       </View>
@@ -81,9 +80,7 @@ export function ProgressPanel({
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <View style={styles.row}>
         <AppText variant="heading">Level {data.level}</AppText>
-        <AppText variant="label" style={{ color: colors.primary }}>
-          {data.totalXp} XP
-        </AppText>
+        <AccentBadge tone="reward" label={`${data.totalXp} XP`} />
       </View>
       <View style={styles.loading}>
         <View
@@ -97,7 +94,9 @@ export function ProgressPanel({
             style={{
               height: 8,
               width: `${(100 * data.xpIntoLevel) / data.xpForNextLevel}%`,
-              backgroundColor: colors.primary,
+              backgroundColor: colors.accentReward,
+              borderColor: colors.textOnAccent,
+              borderWidth: data.xpIntoLevel > 0 ? 1 : 0,
             }}
           />
         </View>
@@ -106,31 +105,45 @@ export function ProgressPanel({
         </AppText>
       </View>
       <View style={[styles.stats, { borderColor: colors.border }]}>
-        <Stat value={`${data.currentStreak}`} label="Current streak" suffix="days" />
-        <Stat value={`${data.longestStreak}`} label="Longest streak" suffix="days" />
+        <Stat value={`${data.currentStreak}`} label="Current streak" suffix="days" energy />
+        <Stat value={`${data.longestStreak}`} label="Longest streak" suffix="days" energy />
         <Stat value={`${data.totalWordsCompleted}`} label="Words completed" />
         <Stat value={`${data.totalChallengesCompleted}`} label="Full challenges" />
       </View>
     </View>
   );
 }
-function Stat({ value, label, suffix }: { value: string; label: string; suffix?: string }) {
+function Stat({
+  value,
+  label,
+  suffix,
+  energy,
+}: {
+  value: string;
+  label: string;
+  suffix?: string;
+  energy?: boolean;
+}) {
   return (
     <View
       style={styles.stat}
       accessible
       accessibilityLabel={`${label}: ${value}${suffix ? ` ${suffix}` : ''}`}
     >
-      <AppText variant="heading">
-        {value}
-        {suffix ? <AppText variant="caption"> {suffix}</AppText> : null}
-      </AppText>
+      {energy ? (
+        <AccentBadge tone="energy" icon="flame" label={`${value}${suffix ? ` ${suffix}` : ''}`} />
+      ) : (
+        <AppText variant="heading">
+          {value}
+          {suffix ? <AppText variant="caption"> {suffix}</AppText> : null}
+        </AppText>
+      )}
       <AppText variant="caption">{label}</AppText>
     </View>
   );
 }
 const styles = StyleSheet.create({
-  daily: { padding: 20, borderRadius: 24, gap: 16 },
+  daily: { borderWidth: 1, padding: 20, borderRadius: 24, gap: 16 },
   card: { padding: 20, borderWidth: 1, borderRadius: 24, gap: 20 },
   row: {
     flexDirection: 'row',

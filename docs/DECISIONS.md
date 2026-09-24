@@ -811,3 +811,27 @@ for visual dictionary counts. A private derived projection makes missing-first
 keysets efficient without loading all prior challenges. No social label, new
 uploader, Storage capability, remote notification type or separate XP engine.
 See [PAST_WORDS.md](PAST_WORDS.md); physical acceptance remains pending.
+
+## 038 — Semantic visual identity, separate from progression
+
+The focused visual-identity request authorizes color presentation only. Indigo
+expresses brand/actions/selection, orange energy/streak/discovery, yellow XP/reward,
+green confirmed completion and red errors. Keep large surfaces neutral. Semantic
+tokens replace legacy ambiguous color names; use readable ink on exact bright
+accent fills and contrast-tested stronger text/control roles. Light success/error
+are slightly darkened for normal-text contrast. Preserve third-party branding,
+logo artwork and all product/backend behavior. See [COLOR_SYSTEM.md](COLOR_SYSTEM.md)
+for exact values, measured pairs, verification and required physical iPhone review.
+
+## 039 — Integrate the user's existing wordmark
+
+The user approved replacing placeholder branding with the supplied Langtify SVG.
+Preserve all lettering and marks; trim only transparent padding for in-app use.
+Use derived PNGs with React Native Image, avoiding a runtime dependency, with
+the established dark primary for dark surfaces. Auth, onboarding and session
+restore share an accessible logo component. Configure native icons, light/dark
+splash and web favicon explicitly, replacing the iOS Expo Icon Composer override
+with the supported opaque PNG. Keep the complete artwork in launcher assets;
+small-size readability still requires physical review. No backend, product,
+notification or navigation behavior changes. See `assets/branding/README.md`
+for reproducible conversion and local native rebuild commands. No deployment.

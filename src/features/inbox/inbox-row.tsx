@@ -61,7 +61,7 @@ export function InboxRow({
       style={[
         styles.card,
         {
-          backgroundColor: item.read ? colors.surface : colors.primarySoft,
+          backgroundColor: colors.surface,
           borderColor: colors.border,
         },
       ]}
@@ -73,15 +73,13 @@ export function InboxRow({
         accessibilityState={{ disabled }}
         disabled={disabled}
         onPress={open}
-        style={({ pressed }) => [styles.main, { opacity: pressed ? 0.6 : 1 }]}
+        style={({ pressed }) => [
+          styles.main,
+          { backgroundColor: pressed ? colors.surfaceMuted : undefined },
+        ]}
       >
-        <View
-          style={[
-            styles.icon,
-            { backgroundColor: item.read ? colors.surfaceMuted : colors.surface },
-          ]}
-        >
-          <Ionicons name={icon(item)} size={23} color={colors.primary} accessible={false} />
+        <View style={[styles.icon, { backgroundColor: colors.surfaceMuted }]}>
+          <Ionicons name={icon(item)} size={23} color={colors.textSecondary} accessible={false} />
         </View>
         <View style={styles.body}>
           <AppText style={{ fontWeight: item.read ? '500' : '700' }}>{label}</AppText>
@@ -90,10 +88,15 @@ export function InboxRow({
         {!item.read && (
           <View
             accessibilityElementsHidden
-            style={[styles.dot, { backgroundColor: colors.primary }]}
+            style={[styles.dot, { backgroundColor: colors.brandPrimary }]}
           />
         )}
-        <Ionicons name="chevron-forward" size={18} color={colors.muted} accessible={false} />
+        <Ionicons
+          name="chevron-forward"
+          size={18}
+          color={colors.textSecondary}
+          accessible={false}
+        />
       </Pressable>
       <View style={styles.footer}>
         <AppText variant="caption" style={styles.timestamp}>
@@ -105,9 +108,12 @@ export function InboxRow({
           accessibilityState={{ disabled }}
           disabled={disabled}
           onPress={toggleRead}
-          style={({ pressed }) => [styles.readButton, { opacity: pressed ? 0.6 : 1 }]}
+          style={({ pressed }) => [
+            styles.readButton,
+            { backgroundColor: pressed ? colors.surfaceMuted : undefined },
+          ]}
         >
-          <AppText variant="caption" style={{ color: colors.primary, fontWeight: '600' }}>
+          <AppText variant="caption" style={{ color: colors.brandText, fontWeight: '600' }}>
             Mark {item.read ? 'unread' : 'read'}
           </AppText>
         </Pressable>

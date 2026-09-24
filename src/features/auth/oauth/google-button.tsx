@@ -42,7 +42,7 @@ export function GoogleButton({ disabled = false }: { disabled?: boolean }) {
         />
       )}
       {googleLoginUnavailable ? (
-        <AppText variant="caption" style={{ color: colors.muted }}>
+        <AppText variant="caption" style={{ color: colors.textSecondary }}>
           {googleLoginUnavailable}
         </AppText>
       ) : null}

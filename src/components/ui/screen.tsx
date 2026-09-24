@@ -36,7 +36,7 @@ export function Screen({
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor={colors.primary}
+                tintColor={colors.brandPrimary}
               />
             ) : undefined
           }

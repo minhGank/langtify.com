@@ -22,17 +22,19 @@ export function Button({
 }: ButtonProps) {
   const { colors } = useAppTheme();
   const backgroundColor = {
-    primary: colors.primary,
+    primary: colors.brandPrimary,
     secondary: colors.surfaceMuted,
     ghost: 'transparent',
-    danger: colors.dangerSoft,
+    danger: colors.errorSoft,
   }[variant];
-  const foregroundColor = {
-    primary: colors.onPrimary,
-    secondary: colors.text,
-    ghost: colors.primary,
-    danger: colors.danger,
-  }[variant];
+  const foregroundColor = disabled
+    ? colors.textSecondary
+    : {
+        primary: colors.textOnPrimary,
+        secondary: colors.textPrimary,
+        ghost: colors.brandText,
+        danger: colors.error,
+      }[variant];
   return (
     <Pressable
       accessibilityRole="button"
@@ -42,7 +44,18 @@ export function Button({
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
-        { backgroundColor, opacity: disabled ? 0.45 : pressed ? 0.75 : 1 },
+        {
+          backgroundColor: disabled
+            ? colors.surfaceMuted
+            : pressed && !loading
+              ? variant === 'primary'
+                ? colors.brandPrimaryPressed
+                : variant === 'danger'
+                  ? colors.errorSoft
+                  : colors.brandSoft
+              : backgroundColor,
+          borderColor: pressed && variant === 'danger' ? colors.error : 'transparent',
+        },
       ]}
     >
       {loading && <ActivityIndicator color={foregroundColor} />}
@@ -57,6 +70,7 @@ export function Button({
 const styles = StyleSheet.create({
   button: {
     minHeight: 50,
+    borderWidth: 1,
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: radius.md,

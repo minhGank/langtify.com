@@ -72,19 +72,34 @@ function ExploreContent({
     >
       <Stack.Screen options={{ headerLeft: nativeBackFallback() }} />
       <View style={styles.header}>
-        <View style={[styles.search, { backgroundColor: colors.surfaceMuted }]}>
-          <Ionicons name="search-outline" size={21} color={colors.muted} accessible={false} />
+        <View
+          style={[
+            styles.search,
+            {
+              backgroundColor: colors.surfaceMuted,
+              borderColor: colors.controlBorder,
+              borderWidth: 1,
+            },
+          ]}
+        >
+          <Ionicons
+            name="search-outline"
+            size={21}
+            color={colors.textSecondary}
+            accessible={false}
+          />
           <TextInput
             accessibilityLabel={category === 'words' ? 'Search vocabulary' : 'Search usernames'}
             placeholder={category === 'words' ? `Search ${language} words` : 'Search usernames'}
-            placeholderTextColor={colors.muted}
+            selectionColor={colors.brandPrimary}
+            placeholderTextColor={colors.textSecondary}
             value={input}
             onChangeText={setInput}
             autoCorrect={false}
             autoCapitalize="none"
             returnKeyType="search"
             maxLength={category === 'words' ? 64 : 30}
-            style={[styles.input, { color: colors.text }]}
+            style={[styles.input, { color: colors.textPrimary }]}
           />
           {!!input && (
             <IconButton
@@ -111,14 +126,22 @@ function ExploreContent({
               style={[styles.segment, category === value && { backgroundColor: colors.surface }]}
             >
               <Ionicons
-                name={value === 'words' ? 'book-outline' : 'people-outline'}
+                name={
+                  value === 'words'
+                    ? category === value
+                      ? 'book'
+                      : 'book-outline'
+                    : category === value
+                      ? 'people'
+                      : 'people-outline'
+                }
                 size={18}
-                color={category === value ? colors.text : colors.muted}
+                color={category === value ? colors.brandText : colors.textSecondary}
                 accessible={false}
               />
               <AppText
                 variant="label"
-                style={{ color: category === value ? colors.text : colors.muted }}
+                style={{ color: category === value ? colors.brandText : colors.textSecondary }}
               >
                 {value === 'words' ? 'Words' : 'People'}
               </AppText>

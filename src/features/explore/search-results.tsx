@@ -19,10 +19,22 @@ export function SearchEmpty({
   return (
     <View style={styles.empty}>
       {loading ? (
-        <ActivityIndicator accessibilityLabel="Searching" color={colors.primary} />
+        <ActivityIndicator accessibilityLabel="Searching" color={colors.brandPrimary} />
       ) : (
         <>
-          <Ionicons name="search-outline" size={32} color={colors.muted} accessible={false} />
+          <View
+            style={[
+              styles.discoveryIcon,
+              { backgroundColor: error ? colors.surfaceMuted : colors.accentEnergy },
+            ]}
+          >
+            <Ionicons
+              name="search-outline"
+              size={28}
+              color={error ? colors.textSecondary : colors.textOnAccent}
+              accessible={false}
+            />
+          </View>
           <AppText variant="heading">{error ? 'Search unavailable' : title}</AppText>
           {hint && (
             <AppText variant="caption" style={styles.center}>
@@ -63,6 +75,13 @@ export function SearchFooter({
   );
 }
 const styles = StyleSheet.create({
+  discoveryIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   empty: { padding: 28, gap: 12, alignItems: 'center' },
   center: { textAlign: 'center' },
   footer: { paddingVertical: 20, gap: 12 },

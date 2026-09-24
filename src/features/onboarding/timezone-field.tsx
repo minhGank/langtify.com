@@ -27,7 +27,7 @@ export function TimezoneField({
   return (
     <View style={styles.field}>
       <AppText variant="label">
-        Timezone <AppText style={{ color: colors.muted }}>*</AppText>
+        Timezone <AppText style={{ color: colors.textSecondary }}>*</AppText>
       </AppText>
       <Pressable
         accessibilityRole="button"
@@ -43,23 +43,22 @@ export function TimezoneField({
         style={[
           styles.select,
           {
-            backgroundColor: colors.surface,
-            borderColor: error ? colors.danger : colors.border,
-            opacity: disabled ? 0.5 : 1,
+            backgroundColor: disabled ? colors.surfaceMuted : colors.surface,
+            borderColor: error ? colors.error : colors.controlBorder,
           },
         ]}
       >
         <AppText style={styles.selection}>
           {value ? timezoneLabel(value) : 'Choose a timezone'}
         </AppText>
-        <Ionicons name="chevron-down" size={18} color={colors.muted} />
+        <Ionicons name="chevron-down" size={18} color={colors.textSecondary} />
       </Pressable>
       {error ? (
-        <AppText variant="caption" style={{ color: colors.danger }} accessibilityRole="alert">
+        <AppText variant="caption" style={{ color: colors.error }} accessibilityRole="alert">
           {error}
         </AppText>
       ) : (
-        <AppText variant="caption" style={{ color: colors.muted }}>
+        <AppText variant="caption" style={{ color: colors.textSecondary }}>
           Used for your daily challenge and streak.
         </AppText>
       )}
@@ -98,11 +97,13 @@ export function TimezoneField({
               style={[styles.option, { borderBottomColor: colors.border }]}
             >
               <AppText style={styles.selection}>{timezoneLabel(item)}</AppText>
-              {value === item && <Ionicons name="checkmark" size={22} color={colors.primary} />}
+              {value === item && (
+                <Ionicons name="checkmark" size={22} color={colors.brandPrimary} />
+              )}
             </Pressable>
           )}
           ListEmptyComponent={
-            <AppText style={{ color: colors.muted, paddingVertical: 24 }}>
+            <AppText style={{ color: colors.textSecondary, paddingVertical: 24 }}>
               No timezone found. Try a nearby city or region.
             </AppText>
           }

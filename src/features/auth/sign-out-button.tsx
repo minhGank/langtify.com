@@ -26,7 +26,7 @@ export function SignOutButton() {
   return (
     <>
       {error && (
-        <AppText style={{ color: colors.danger }} accessibilityRole="alert">
+        <AppText style={{ color: colors.error }} accessibilityRole="alert">
           {error}
         </AppText>
       )}

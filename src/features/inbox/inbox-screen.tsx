@@ -79,7 +79,7 @@ export function InboxContent({ identity }: { identity: SafetyIdentity }) {
         ListHeaderComponent={
           error ? (
             <View style={styles.error}>
-              <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+              <AppText accessibilityRole="alert" style={{ color: colors.error }}>
                 {error}
               </AppText>
               <Button
@@ -95,17 +95,17 @@ export function InboxContent({ identity }: { identity: SafetyIdentity }) {
           <View style={styles.empty}>
             {state.loading ? (
               <ActivityIndicator
-                color={colors.primary}
+                color={colors.brandPrimary}
                 accessibilityLabel="Loading notifications"
               />
             ) : (
               !error && (
                 <>
-                  <View style={[styles.emptyIcon, { backgroundColor: colors.primarySoft }]}>
+                  <View style={[styles.emptyIcon, { backgroundColor: colors.surfaceMuted }]}>
                     <Ionicons
                       name="notifications-outline"
                       size={32}
-                      color={colors.primary}
+                      color={colors.brandPrimary}
                       accessible={false}
                     />
                   </View>

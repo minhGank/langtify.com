@@ -16,6 +16,10 @@ New UI lives in `src/features/social/` and `src/features/profile/`; cache code l
 in `src/lib/server-cache.ts`, `src/lib/image-memory.ts` and `src/hooks/use-server-query.ts`.
 
 Langtify uses Expo SDK 57, React Native, strict TypeScript, npm, and Expo Router.
+The supplied wordmark lives in `assets/branding/`; shared `BrandLogo` renders
+local light/dark PNG derivatives without a native SVG dependency. Native icon,
+splash and favicon paths are explicit in `app.json`. See the asset README for
+conversion and rebuild instructions; no runtime branding network request is used.
 Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
@@ -507,3 +511,12 @@ Separate private historical facts share the assignment XP entitlement while dail
 facts alone drive streaks and completion metrics. A derived indexed owner read
 projection provides missing-first keyset pages; it never grants rewards. No new
 Edge Function or Storage access is added. See [PAST_WORDS.md](PAST_WORDS.md).
+
+## Semantic color system
+
+`src/lib/theme.ts` owns the light/dark semantic palette consumed by `useAppTheme`.
+Brand actions are separate from reward, streak and completion. Shared controls
+use readable pressed/disabled states; `AccentBadge` pairs bright energy/reward
+fills with accessible ink. Static native splash backgrounds are kept in sync by
+a regression test. No data/cache/backend authority changes. See
+[COLOR_SYSTEM.md](COLOR_SYSTEM.md); physical iPhone review remains pending.

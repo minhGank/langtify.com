@@ -130,13 +130,16 @@ export function PastWordsResults({
       ListEmptyComponent={
         <View style={styles.empty}>
           {query.loading ? (
-            <ActivityIndicator accessibilityLabel="Loading past words" color={colors.primary} />
+            <ActivityIndicator
+              accessibilityLabel="Loading past words"
+              color={colors.brandPrimary}
+            />
           ) : (
             <>
               <Ionicons
                 name={filtered ? 'search-outline' : 'albums-outline'}
                 size={36}
-                color={colors.muted}
+                color={colors.textSecondary}
                 accessible={false}
               />
               <AppText variant="heading">

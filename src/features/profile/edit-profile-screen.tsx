@@ -117,7 +117,7 @@ function EditProfile({
         }}
       />
       {task.error && (
-        <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+        <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {task.error}
         </AppText>
       )}

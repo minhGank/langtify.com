@@ -47,32 +47,43 @@ export function QuickRating({
             style={({ pressed }) => [
               styles.chip,
               {
-                backgroundColor: selected === null ? colors.surfaceMuted : colors.primarySoft,
-                opacity: disabled || pressed ? 0.6 : 1,
+                backgroundColor: disabled
+                  ? colors.surfaceMuted
+                  : pressed || selected !== null
+                    ? colors.brandSoft
+                    : colors.surfaceMuted,
               },
             ]}
           >
             {saving ? (
-              <ActivityIndicator color={colors.primary} size="small" />
+              <ActivityIndicator color={colors.brandPrimary} size="small" />
             ) : (
               <Ionicons
                 name={selected === null ? 'scan-outline' : 'checkmark-circle'}
-                color={colors.primary}
+                color={colors.brandPrimary}
                 size={20}
                 accessible={false}
               />
             )}
-            <AppText variant="label" style={[styles.label, { color: colors.primary }]}>
+            <AppText
+              variant="label"
+              style={[styles.label, { color: disabled ? colors.textSecondary : colors.brandText }]}
+            >
               {saving ? 'Saving…' : label}
             </AppText>
             {!saving && (
-              <Ionicons name="chevron-down" color={colors.primary} size={14} accessible={false} />
+              <Ionicons
+                name="chevron-down"
+                color={colors.brandPrimary}
+                size={14}
+                accessible={false}
+              />
             )}
           </Pressable>
         )}
       </View>
       {action?.status === 'error' && (
-        <AppText accessibilityRole="alert" variant="caption" style={{ color: colors.danger }}>
+        <AppText accessibilityRole="alert" variant="caption" style={{ color: colors.error }}>
           Rating not confirmed. Tap to check or change it.
         </AppText>
       )}

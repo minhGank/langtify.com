@@ -91,11 +91,11 @@ export function PostDetail({
         />
         <View style={styles.body}>
           <View style={styles.wordBlock}>
-            <AppText variant="caption" style={{ color: colors.primary }}>
+            <AppText variant="caption" style={{ color: colors.textSecondary }}>
               {language} · {item.cefrLevel}
             </AppText>
             <AppText variant="title">{displayTerm(item.targetTerm)}</AppText>
-            <AppText variant="subtitle" style={{ color: colors.muted }}>
+            <AppText variant="subtitle" style={{ color: colors.textSecondary }}>
               {displayTerm(item.referenceTerm)}
             </AppText>
             <Pressable

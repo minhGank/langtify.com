@@ -100,15 +100,22 @@ function DiscoverContent({
               onPress={() => router.push('/explore')}
               style={({ pressed }) => [
                 styles.search,
-                { backgroundColor: colors.surfaceMuted, opacity: pressed ? 0.65 : 1 },
+                { backgroundColor: pressed ? colors.brandSoft : colors.surfaceMuted },
               ]}
             >
-              <Ionicons name="search-outline" size={22} color={colors.muted} accessible={false} />
-              <AppText style={{ color: colors.muted }}>Words and people</AppText>
+              <View style={[styles.discoveryIcon, { backgroundColor: colors.accentEnergy }]}>
+                <Ionicons
+                  name="search-outline"
+                  size={20}
+                  color={colors.textOnAccent}
+                  accessible={false}
+                />
+              </View>
+              <AppText style={{ color: colors.textSecondary }}>Words and people</AppText>
             </Pressable>
             {state.error && (
-              <View style={[styles.error, { backgroundColor: colors.dangerSoft }]}>
-                <AppText accessibilityRole="alert" style={{ color: colors.danger }}>
+              <View style={[styles.error, { backgroundColor: colors.errorSoft }]}>
+                <AppText accessibilityRole="alert" style={{ color: colors.error }}>
                   {state.error}
                 </AppText>
                 <Button
@@ -144,7 +151,7 @@ function DiscoverContent({
         ListEmptyComponent={
           !state.loading && !state.error ? (
             <View style={styles.empty}>
-              <Ionicons name="images-outline" size={44} color={colors.muted} />
+              <Ionicons name="images-outline" size={44} color={colors.textSecondary} />
               <AppText variant="heading">
                 {state.hasMore ? 'Photos no longer available' : 'No public photos yet'}
               </AppText>
@@ -159,7 +166,10 @@ function DiscoverContent({
         ListFooterComponent={
           <View style={styles.footer}>
             {state.loading && (
-              <ActivityIndicator accessibilityLabel="Loading Discover" color={colors.primary} />
+              <ActivityIndicator
+                accessibilityLabel="Loading Discover"
+                color={colors.brandPrimary}
+              />
             )}
             {state.hasMore && !state.loading && (
               <Button label="Load more" variant="ghost" onPress={() => void state.loadMore()} />
@@ -182,6 +192,13 @@ function DiscoverContent({
   );
 }
 const styles = StyleSheet.create({
+  discoveryIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: { flex: 1 },
   content: {
     paddingHorizontal: 16,
