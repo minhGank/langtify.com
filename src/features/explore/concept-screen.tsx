@@ -107,11 +107,11 @@ function ConceptContent({
           <ActivityIndicator accessibilityLabel="Loading word" color={colors.brandPrimary} />
         ) : (
           <AppText>
-            {query.error ? 'This word could not be loaded.' : 'This word is unavailable.'}
+            {query.error ? 'We couldn’t load this word. Try again.' : 'This word is unavailable.'}
           </AppText>
         )}
         {query.error && (
-          <Button label="Retry word" variant="secondary" onPress={() => void query.refresh()} />
+          <Button label="Try again" variant="secondary" onPress={() => void query.refresh()} />
         )}
       </View>
     );
@@ -172,10 +172,7 @@ function ConceptExamples({
       ListEmptyComponent={
         <View style={styles.empty}>
           {state.loading ? (
-            <ActivityIndicator
-              accessibilityLabel="Loading public examples"
-              color={colors.brandPrimary}
-            />
+            <ActivityIndicator accessibilityLabel="Loading photos" color={colors.brandPrimary} />
           ) : (
             <>
               <Ionicons
@@ -185,11 +182,11 @@ function ConceptExamples({
                 accessible={false}
               />
               <AppText variant="heading">
-                {state.error ? 'Photos unavailable' : 'A fresh perspective awaits'}
+                {state.error ? 'Photos unavailable' : 'No photos yet'}
               </AppText>
               <AppText variant="caption">
                 {state.error
-                  ? 'Try loading these photos again.'
+                  ? 'We couldn’t load these photos. Try again.'
                   : 'No public photos of this word yet.'}
               </AppText>
             </>
@@ -199,11 +196,7 @@ function ConceptExamples({
       ListFooterComponent={
         <View style={styles.footer}>
           {state.error && (
-            <Button
-              label="Retry public examples"
-              variant="secondary"
-              onPress={() => void state.refresh()}
-            />
+            <Button label="Try again" variant="secondary" onPress={() => void state.refresh()} />
           )}
           {state.hasMore && !state.loading && (
             <Button label="More photos" variant="secondary" onPress={() => void state.loadMore()} />

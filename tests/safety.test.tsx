@@ -100,7 +100,7 @@ it('shows a comment case and audited removal without requesting private photo in
   });
   render(<ModerationScreen />);
   fireEvent.press(
-    await screen.findByLabelText(`Review comment report: @learner · le chien · privacy`),
+    await screen.findByLabelText(`Review comment report: @learner · le chien · Privacy concern`),
   );
   await screen.findByText('Reported text');
   expect(mockGateway.photo).not.toHaveBeenCalled();
@@ -127,9 +127,11 @@ it.each(['Report photo', 'Report user'])(
     fireEvent.changeText(screen.getByLabelText('Additional details (optional)'), 'Some context');
     expect(mockGateway.report).not.toHaveBeenCalled();
     fireEvent.press(screen.getByText('Review report'));
-    expect(screen.getByText(/Your report is private/)).toBeVisible();
+    expect(screen.getByText(/Only moderators can see your report/)).toBeVisible();
     fireEvent.press(screen.getByText('Confirm report'));
-    expect(await screen.findByText('Thank you. Your report has been received.')).toBeVisible();
+    expect(
+      await screen.findByText('Thanks for letting us know. A moderator can review your report.'),
+    ).toBeVisible();
     expect(mockGateway.report).toHaveBeenCalledWith(
       id,
       label === 'Report photo' ? 'submission' : 'user',
@@ -150,7 +152,7 @@ it('makes blocking explicit and suppresses duplicate taps while pending', async 
   render(<CardActions identity={identity} item={item} close={jest.fn()} blocked={blocked} />);
   fireEvent.press(screen.getByText('Block user'));
   expect(screen.getByText('Block @learner?')).toBeVisible();
-  expect(screen.getByText(/each other’s public content/)).toBeVisible();
+  expect(screen.getByText(/each other’s public activity/)).toBeVisible();
   expect(mockGateway.block).not.toHaveBeenCalled();
   fireEvent.press(screen.getByText('Confirm block'));
   expect(screen.getByLabelText('Confirm block')).toBeDisabled();
@@ -185,7 +187,7 @@ it('unblocks only after confirmation, then reloads authoritative rows', async ()
   expect(mockGateway.unblock).not.toHaveBeenCalled();
   mockGateway.blocks.mockResolvedValue({ items: [], hasMore: false });
   fireEvent.press(screen.getByText('Confirm unblock'));
-  expect(await screen.findByText('No blocked users on this page.')).toBeVisible();
+  expect(await screen.findByText('No blocked people here.')).toBeVisible();
   expect(mockGateway.unblock).toHaveBeenCalledWith(id, expect.any(AbortSignal));
 });
 it('invalidates public relationship caches after unblock even if the list reload fails', async () => {
@@ -195,7 +197,7 @@ it('invalidates public relationship caches after unblock even if the list reload
   fireEvent.press(await screen.findByText('Unblock @learner'));
   mockGateway.blocks.mockRejectedValueOnce(new Error('offline after commit'));
   fireEvent.press(screen.getByText('Confirm unblock'));
-  await screen.findByText(/Request could not be confirmed/);
+  await screen.findByText(/couldn’t confirm the change/);
   expect(entry.getSnapshot().data).toBeNull();
 });
 it('replaces blocked pages instead of accumulating an unbounded list', async () => {
@@ -210,7 +212,7 @@ it('replaces blocked pages instead of accumulating an unbounded list', async () 
 });
 async function openCase() {
   render(<ModerationScreen />);
-  fireEvent.press(await screen.findByLabelText(/Review submission report:/));
+  fireEvent.press(await screen.findByLabelText(/Review photo report:/));
   await screen.findByLabelText('Reported photo');
 }
 it('discards public content after confirmed moderation even if case reconciliation fails', async () => {
@@ -220,7 +222,7 @@ it('discards public content after confirmed moderation even if case reconciliati
   fireEvent.press(screen.getByText('Remove photo from public view'));
   mockGateway.detail.mockRejectedValueOnce(new Error('offline after commit'));
   fireEvent.press(screen.getByText('Confirm moderation action'));
-  await screen.findByText(/Request could not be confirmed/);
+  await screen.findByText(/couldn’t confirm the change/);
   expect(entry.getSnapshot().data).toBeNull();
 });
 it('does not let a late moderation acknowledgement clear a subsequent account cache', async () => {
@@ -231,7 +233,7 @@ it('does not let a late moderation acknowledgement clear a subsequent account ca
     }),
   );
   const view = render(<ModerationScreen />);
-  fireEvent.press(await screen.findByLabelText(/Review submission report:/));
+  fireEvent.press(await screen.findByLabelText(/Review photo report:/));
   await screen.findByLabelText('Reported photo');
   fireEvent.press(screen.getByText('Remove photo from public view'));
   fireEvent.press(screen.getByText('Confirm moderation action'));
@@ -240,7 +242,7 @@ it('does not let a late moderation acknowledgement clear a subsequent account ca
   mockSession = makeSession('other');
   mockGateway.access.mockResolvedValue({ moderator: false, restricted: false });
   view.rerender(<ModerationScreen />);
-  await screen.findByText('Moderator access is required.');
+  await screen.findByText('You don’t have access to moderation.');
   const entry = createServerCache<string>().entry('new-account', ['comments']);
   entry.set('new account content');
   await act(async () => finish());
@@ -255,7 +257,7 @@ it('requires explicit moderator action confirmation and retries the same request
   expect(mockGateway.moderate).not.toHaveBeenCalled();
   mockGateway.moderate.mockRejectedValueOnce(new Error('lost response'));
   fireEvent.press(screen.getByText('Confirm moderation action'));
-  await screen.findByText(/Request could not be confirmed/);
+  await screen.findByText(/couldn’t confirm the change/);
   fireEvent.press(screen.getByText('Confirm moderation action'));
   await waitFor(() => expect(mockGateway.moderate).toHaveBeenCalledTimes(2));
   expect(mockGateway.moderate.mock.calls[0].slice(0, 4)).toEqual([
@@ -305,9 +307,9 @@ it('does not reuse another report status page or cursor after a failed filter ch
   render(<ModerationScreen />);
   await screen.findByText('Next reports');
   mockGateway.queue.mockRejectedValueOnce(new Error('offline'));
-  fireEvent.press(screen.getByLabelText('dismissed'));
-  await screen.findByText(/Request could not be confirmed/);
-  expect(screen.queryByLabelText(/Review submission report:/)).toBeNull();
+  fireEvent.press(screen.getByLabelText('Dismissed'));
+  await screen.findByText(/couldn’t confirm the change/);
+  expect(screen.queryByLabelText(/Review photo report:/)).toBeNull();
   expect(screen.queryByText('Next reports')).toBeNull();
   mockGateway.queue.mockResolvedValue({ items: [], hasMore: false });
   fireEvent.press(screen.getByLabelText('Refresh moderation'));
@@ -322,13 +324,13 @@ it('cannot install an old moderator case after switching to an ordinary account'
     }),
   );
   const { rerender } = render(<ModerationScreen />);
-  fireEvent.press(await screen.findByLabelText(/Review submission report:/));
+  fireEvent.press(await screen.findByLabelText(/Review photo report:/));
   await waitFor(() => expect(mockGateway.detail).toHaveBeenCalledTimes(1));
   const signal: AbortSignal = mockGateway.detail.mock.calls[0][1];
   mockSession = makeSession('other');
   mockGateway.access.mockResolvedValue({ moderator: false, restricted: false });
   rerender(<ModerationScreen />);
-  await screen.findByText('Moderator access is required.');
+  await screen.findByText('You don’t have access to moderation.');
   await act(async () => finish(caseValue));
   expect(signal.aborted).toBe(true);
   expect(screen.queryByText('Review this context')).toBeNull();

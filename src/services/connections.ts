@@ -79,7 +79,7 @@ export function connectionsGateway(
       if (result.error) {
         if (result.error.code === '42501')
           throw new SafetyUnavailable('This list is no longer available.');
-        throw new Error('Connections could not be loaded.');
+        throw new Error('We couldn’t load this list. Try again.');
       }
       return parseConnections(result.data, identity, profileId);
     },

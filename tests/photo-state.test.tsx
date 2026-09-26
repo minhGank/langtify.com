@@ -4,6 +4,9 @@ import type { PhotoGateway, Submission } from '@/services/submissions';
 import { makeSubmission, photoFixture, preparedPhoto } from './photo-fixtures';
 import { invalidateServerData } from '@/lib/server-cache';
 import type { PreparedPhoto } from '@/features/photos/photo-files';
+import { feedback } from '@/lib/haptics';
+jest.mock('@/lib/haptics', () => ({ feedback: { success: jest.fn(), warning: jest.fn() } }));
+beforeEach(() => jest.clearAllMocks());
 const libraryPhoto: PreparedPhoto = { ...preparedPhoto, source: 'library' };
 async function mounted(fixture = photoFixture()) {
   const hook = renderHook(() => useAssignmentPhoto(fixture.gateway, fixture.drafts));
@@ -22,6 +25,8 @@ it('previews captured photos with private default and never uploads automaticall
   });
   expect(gateway.finalize).toHaveBeenCalledWith(makeSubmission().id, 'private');
   expect(result.current.data?.submission?.status).toBe('completed');
+  expect(result.current.acknowledgedCompletionId).toBe(makeSubmission().id);
+  expect(feedback.success).toHaveBeenCalledTimes(1);
 });
 it('retake removes the old draft and resets sharing to private', async () => {
   const { result, drafts } = await mounted();
@@ -87,6 +92,7 @@ it('blocks duplicate taps and reconciles refresh after an in-flight upload', asy
     await pending;
   });
   expect(gateway.finalize).toHaveBeenCalledTimes(1);
+  expect(feedback.success).toHaveBeenCalledTimes(1);
 });
 it('clears account state and never continues a reserved upload after unmount/account switch', async () => {
   const first = await mounted();
@@ -136,6 +142,8 @@ it('uses the refreshed same-account gateway after an interrupted upload', async 
   expect(first.gateway.finalize).not.toHaveBeenCalled();
   expect(second.gateway.finalize).toHaveBeenCalledTimes(1);
   expect(result.current.data?.submission?.status).toBe('completed');
+  expect(result.current.acknowledgedCompletionId).toBeNull();
+  expect(feedback.success).not.toHaveBeenCalled();
 });
 it('requires previewing a recovered upload before finalizing it', async () => {
   const fixture = photoFixture();
@@ -248,6 +256,70 @@ it('recovers a committed finalization after its response is lost without another
   });
   expect(gateway.upload).toHaveBeenCalledTimes(1);
   expect(gateway.finalize).toHaveBeenCalledTimes(1);
+  expect(result.current.acknowledgedCompletionId).toBeNull();
+  expect(feedback.success).not.toHaveBeenCalled();
+});
+
+it('never celebrates an existing completion from load, refresh or an already-completed reservation', async () => {
+  const { result, gateway } = await mounted(photoFixture(makeSubmission({ status: 'completed' })));
+  await act(async () => result.current.refresh());
+  await act(async () => result.current.submit());
+  expect(gateway.finalize).not.toHaveBeenCalled();
+  expect(result.current.acknowledgedCompletionId).toBeNull();
+  expect(feedback.success).not.toHaveBeenCalled();
+});
+
+it('does not replay completion feedback when finalization settles after leaving and returning to the screen', async () => {
+  const fixture = photoFixture();
+  const view = renderHook(
+    ({ visible }: { visible: boolean }) =>
+      useAssignmentPhoto(fixture.gateway, fixture.drafts, visible),
+    { initialProps: { visible: true } },
+  );
+  await waitFor(() => expect(view.result.current.loading).toBe(false));
+  const finalize = fixture.gateway.finalize.getMockImplementation();
+  let finish = () => {};
+  fixture.gateway.finalize.mockImplementationOnce(async (id, visibility) => {
+    await new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    if (!finalize) throw new Error('Missing finalization fixture');
+    return finalize(id, visibility);
+  });
+  act(() => view.result.current.acceptPhoto(preparedPhoto));
+  let pending: Promise<void> | undefined;
+  act(() => {
+    pending = view.result.current.submit();
+  });
+  await waitFor(() => expect(fixture.gateway.finalize).toHaveBeenCalledTimes(1));
+  view.rerender({ visible: false });
+  view.rerender({ visible: true });
+  await act(async () => {
+    finish();
+    await pending;
+  });
+  expect(view.result.current.data?.submission?.status).toBe('completed');
+  expect(view.result.current.acknowledgedCompletionId).toBeNull();
+  expect(feedback.success).not.toHaveBeenCalled();
+});
+
+it('forgets presentation feedback on background without changing completion authority', async () => {
+  const fixture = photoFixture();
+  const view = renderHook(
+    ({ visible }: { visible: boolean }) =>
+      useAssignmentPhoto(fixture.gateway, fixture.drafts, visible),
+    { initialProps: { visible: true } },
+  );
+  await waitFor(() => expect(view.result.current.loading).toBe(false));
+  act(() => view.result.current.acceptPhoto(preparedPhoto));
+  await act(async () => view.result.current.submit());
+  expect(view.result.current.acknowledgedCompletionId).toBe(makeSubmission().id);
+  view.rerender({ visible: false });
+  view.rerender({ visible: true });
+  await act(async () => {});
+  expect(view.result.current.acknowledgedCompletionId).toBeNull();
+  expect(view.result.current.data?.submission?.status).toBe('completed');
+  expect(feedback.success).toHaveBeenCalledTimes(1);
 });
 
 it('reuses a completed owner photo on revisit and never polls when minutes pass', async () => {
@@ -395,7 +467,7 @@ it('keeps a restored daily gallery draft recoverable but refuses bytes after ser
   expect(gateway.upload).not.toHaveBeenCalled();
   expect(gateway.finalize).not.toHaveBeenCalled();
   expect(result.current.error).toBe(
-    'This word is not available for a new photo in this view. Return to Today or Past Words to refresh.',
+    'You can’t add a photo here right now. Refresh Today or Past Words.',
   );
   expect(result.current.photo).toEqual(libraryPhoto);
 });
@@ -423,7 +495,7 @@ it('rechecks current-day gallery eligibility before retrying a failed upload', a
   expect(gateway.upload).toHaveBeenCalledTimes(1);
   expect(gateway.finalize).not.toHaveBeenCalled();
   expect(result.current.error).toBe(
-    'This word is not available for a new photo in this view. Return to Today or Past Words to refresh.',
+    'You can’t add a photo here right now. Refresh Today or Past Words.',
   );
 });
 

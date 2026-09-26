@@ -44,8 +44,8 @@ export function ProfileIdentity({
       <View style={styles.identity}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Edit profile photo"
-          accessibilityHint="Opens Edit Profile."
+          accessibilityLabel="Edit profile"
+          accessibilityHint="Change your photo or username."
           onPress={() => router.push('/edit-profile')}
           style={({ pressed }) => [
             styles.avatarButton,

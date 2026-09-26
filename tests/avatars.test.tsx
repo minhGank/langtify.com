@@ -10,6 +10,10 @@ import {
   serverScope,
 } from '@/lib/server-cache';
 import { parseAvatarPreviews, parseAvatarState } from '@/services/avatars';
+import { feedback } from '@/lib/haptics';
+jest.mock('@/lib/haptics', () => ({
+  feedback: { confirm: jest.fn(), success: jest.fn() },
+}));
 
 const owner = 'a9000000-0000-4000-8000-000000000001';
 const id = 'a9000000-0000-4000-8000-000000000002';
@@ -71,12 +75,14 @@ it('requires explicit saving after choosing an avatar and reuses the reservation
   fireEvent.press(screen.getByRole('button', { name: 'Save photo' }));
   await screen.findByRole('button', { name: 'Retry saving photo' });
   expect(changed).not.toHaveBeenCalled();
+  expect(feedback.success).not.toHaveBeenCalled();
   mockApi.reserve.mockResolvedValue({ id, storagePath: `${id}.jpg`, current: true });
   fireEvent.press(screen.getByRole('button', { name: 'Retry saving photo' }));
   await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
   expect(mockApi.reserve.mock.calls[0][0]).toBe(mockApi.reserve.mock.calls[1][0]);
   expect(mockApi.upload).toHaveBeenCalledTimes(1);
   expect(mockApi.finalize).toHaveBeenCalledTimes(2);
+  expect(feedback.success).toHaveBeenCalledTimes(1);
 });
 it('ignores a selected photo returned after an account switch', async () => {
   let finish: (value: typeof prepared) => void = () => {};
@@ -99,6 +105,27 @@ it('ignores a selected photo returned after an account switch', async () => {
   expect(screen.queryByRole('button', { name: 'Save photo' })).toBeNull();
   expect(mockApi.reserve).not.toHaveBeenCalled();
   expect(changed).not.toHaveBeenCalled();
+});
+it('confirms avatar removal only once after the server accepts it', async () => {
+  let finish = (_: { avatarId: null }) => {};
+  mockApi.load.mockResolvedValueOnce({ avatarId: id });
+  mockApi.remove.mockReturnValueOnce(
+    new Promise<{ avatarId: null }>((resolve) => {
+      finish = resolve;
+    }),
+  );
+  const changed = jest.fn();
+  render(<AvatarEditor identity={identity} username="learner" onChanged={changed} />);
+  fireEvent.press(await screen.findByRole('button', { name: 'Remove profile photo' }));
+  expect(feedback.confirm).not.toHaveBeenCalled();
+  fireEvent.press(screen.getByRole('button', { name: 'Remove photo' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Remove photo' }));
+  expect(mockApi.remove).toHaveBeenCalledTimes(1);
+  expect(feedback.confirm).not.toHaveBeenCalled();
+  await act(async () => finish({ avatarId: null }));
+  expect(feedback.confirm).toHaveBeenCalledTimes(1);
+  expect(feedback.success).not.toHaveBeenCalled();
+  expect(changed).toHaveBeenCalledTimes(1);
 });
 it('reconciles an avatar that was saved before its acknowledgement was lost without replaying the write', async () => {
   mockApi.load.mockResolvedValueOnce({ avatarId: null }).mockResolvedValue({ avatarId: id });
@@ -154,6 +181,7 @@ it('rejects stale finalization responses after an account switch', async () => {
   expect(signal.aborted).toBe(true);
   expect(changed).not.toHaveBeenCalled();
   expect(newAccountEntry.getSnapshot().data).toEqual({ avatarId: id });
+  expect(feedback.success).not.toHaveBeenCalled();
 });
 it('cancels an upload on background and never finalizes its late result', async () => {
   const listeners: ((state: 'active' | 'background') => void)[] = [];
@@ -182,20 +210,21 @@ it('cancels an upload on background and never finalizes its late result', async 
   await waitFor(() => expect(mockApi.load).toHaveBeenCalledTimes(2));
   expect(mockApi.finalize).not.toHaveBeenCalled();
   spy.mockRestore();
+  expect(feedback.success).not.toHaveBeenCalled();
 });
 it('keeps downloaded avatar pixels cached when returning to the same profile', async () => {
   const uri = `https://example.test/storage/v1/object/sign/profile-avatars/${id}.jpg?token=test`;
   mockApi.previews.mockResolvedValue({ [id]: uri });
   const view = render(<ProfileAvatar identity={identity} username="learner" avatarId={id} />);
   await waitFor(() =>
-    expect(screen.getByLabelText("learner's avatar")).toHaveProp('source', {
+    expect(screen.getByLabelText("learner's profile photo")).toHaveProp('source', {
       uri: 'data:image/jpeg;base64,/9j/2Q==',
       cache: 'reload',
     }),
   );
   view.unmount();
   render(<ProfileAvatar identity={identity} username="learner" avatarId={id} />);
-  await screen.findByLabelText("learner's avatar");
+  await screen.findByLabelText("learner's profile photo");
   expect(mockApi.previews).toHaveBeenCalledTimes(1);
   expect(mockImageFetch).toHaveBeenCalledTimes(1);
 });
@@ -205,7 +234,7 @@ it('never refetches an already downloaded avatar because its original signed acc
     mockApi.previews.mockResolvedValue({ [id]: `https://example.test/${id}?token=old` });
     const view = render(<ProfileAvatar identity={identity} username="learner" avatarId={id} />);
     await waitFor(() =>
-      expect(screen.getByLabelText("learner's avatar")).toHaveProp('source', {
+      expect(screen.getByLabelText("learner's profile photo")).toHaveProp('source', {
         uri: 'data:image/jpeg;base64,/9j/2Q==',
         cache: 'reload',
       }),
@@ -215,7 +244,7 @@ it('never refetches an already downloaded avatar because its original signed acc
     expect(mockImageFetch).toHaveBeenCalledTimes(1);
     view.unmount();
     render(<ProfileAvatar identity={identity} username="learner" avatarId={id} />);
-    expect(screen.getByLabelText("learner's avatar")).toHaveProp('source', {
+    expect(screen.getByLabelText("learner's profile photo")).toHaveProp('source', {
       uri: 'data:image/jpeg;base64,/9j/2Q==',
       cache: 'reload',
     });
@@ -225,7 +254,7 @@ it('never refetches an already downloaded avatar because its original signed acc
     // cannot reuse either the discarded bitmap or its expired bearer URL.
     mockApi.previews.mockReturnValueOnce(new Promise(() => {}));
     act(() => invalidateServerData(['media'], { discard: true }));
-    expect(screen.getByLabelText("learner's avatar")).not.toHaveProp('source');
+    expect(screen.getByLabelText("learner's profile photo")).not.toHaveProp('source');
     await waitFor(() => expect(mockApi.previews).toHaveBeenCalledTimes(2));
     expect(mockImageFetch).toHaveBeenCalledTimes(1);
   } finally {
@@ -246,7 +275,7 @@ it('discards replaced avatar pixels and never lets them cross a viewer account',
     />,
   );
   await waitFor(() => expect(mockApi.previews).toHaveBeenCalledTimes(2));
-  expect(screen.getByLabelText("other's avatar")).not.toHaveProp('source');
+  expect(screen.getByLabelText("other's profile photo")).not.toHaveProp('source');
   expect(mockImageFetch).toHaveBeenCalledTimes(1);
 });
 it('rejects cross-account avatar payloads, arbitrary signed paths and duplicate IDs', () => {

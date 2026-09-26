@@ -37,9 +37,7 @@ export function safetyGateway(identity: SafetyIdentity) {
     if (result.error) {
       if (record(result.error).code === '42501')
         throw new SafetyUnavailable('This action or account is no longer available.');
-      throw new Error(
-        'Request could not be confirmed. Refresh to check current state before retrying.',
-      );
+      throw new Error('We couldn’t confirm the change. Refresh before trying again.');
     }
     return envelope(result.data, identity);
   }

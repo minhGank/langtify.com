@@ -3,15 +3,15 @@ export function challengeError(error: unknown, replacing = false): string {
     typeof error === 'object' && error !== null && 'message' in error ? error.message : '';
   if (message === 'insufficient_vocabulary')
     return replacing
-      ? 'No more eligible words are available for this slot today. Your current word is unchanged.'
-      : 'There are not enough eligible words for your language pair and level yet. Please try again later.';
+      ? 'No other words are available at this level today. Your word hasn’t changed.'
+      : 'We don’t have enough words for these languages and level yet. Try again later.';
   if (message === 'assignment_unavailable')
-    return 'This word has already changed or is unavailable. Refresh today’s challenge.';
+    return 'This word has changed or is no longer available. Refresh Today.';
   if (message === 'assignment_has_submission')
-    return 'This word has a photo or an upload in progress. Open its photo to finish or delete it.';
+    return 'Open this word’s photo to view it or finish uploading.';
   if (message === 'onboarding_required')
-    return 'Your learning profile is unavailable. Please sign in again.';
+    return 'We couldn’t load your learning settings. Sign in again.';
   return replacing
-    ? 'We could not replace this word. Refresh to check its saved state, then try again.'
-    : 'We could not load your challenge. Check your connection and try again.';
+    ? 'We couldn’t confirm the replacement. Refresh Today before trying again.'
+    : 'We couldn’t load today’s words. Check your connection and try again.';
 }

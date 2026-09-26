@@ -3,7 +3,7 @@
 // Trailing bytes after EOI are discarded. Malformed input fails closed.
 export function stripJpegMetadata(bytes: Uint8Array): Uint8Array {
   const fail = () => {
-    throw new Error('The image returned an invalid JPEG. Please choose or take another photo.');
+    throw new Error('We couldn’t read this photo. Choose or take another.');
   };
   if (bytes[0] !== 0xff || bytes[1] !== 0xd8) return fail();
   const chunks: Uint8Array[] = [bytes.slice(0, 2)];

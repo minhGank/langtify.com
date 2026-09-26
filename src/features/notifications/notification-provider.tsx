@@ -63,7 +63,7 @@ export function NotificationProvider({ children }: PropsWithChildren) {
       active.abort();
       if (generation.current === revision) {
         setBusy(false);
-        setError('Device registration could not be confirmed. Refresh to retry.');
+        setError('We couldn’t turn on reminders for this device. Try again.');
       }
     }, 15000);
     try {
@@ -92,10 +92,10 @@ export function NotificationProvider({ children }: PropsWithChildren) {
       }
       if (identity && state === 'granted' && !token)
         setError(
-          'A physical development build with an EAS project ID is required for push registration.',
+          'Reminders aren’t available in this build. You can still check Notifications in the app.',
         );
     } catch {
-      if (valid()) setError('Device registration could not be confirmed. Refresh to retry.');
+      if (valid()) setError('We couldn’t turn on reminders for this device. Try again.');
     } finally {
       clearTimeout(timer);
       if (generation.current === revision) {

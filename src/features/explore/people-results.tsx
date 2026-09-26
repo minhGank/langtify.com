@@ -145,7 +145,7 @@ export function PeopleResults({
         <SearchEmpty
           loading={query.loading}
           error={!!query.error}
-          title="No matching learners"
+          title="No people found"
           hint={query.error ? 'Pull down to try again.' : 'Try another username.'}
         />
       }

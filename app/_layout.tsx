@@ -6,8 +6,9 @@ import { AuthProvider, useAuth } from '@/features/auth/auth-provider';
 
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { postScreenOptions } from '@/features/discover/navigation-options';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 
-export { ErrorBoundary } from 'expo-router';
+export { AppErrorBoundary as ErrorBoundary } from '@/components/app-error-boundary';
 
 export default function RootLayout() {
   return (
@@ -20,6 +21,7 @@ export default function RootLayout() {
 export function RootNavigator() {
   const { status } = useAuth();
   const { isDark, colors } = useAppTheme();
+  const reduced = useReducedMotion();
   const baseTheme = isDark ? DarkTheme : DefaultTheme;
 
   return (
@@ -39,7 +41,7 @@ export function RootNavigator() {
     >
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <NotificationProvider>
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack screenOptions={{ headerShown: false, animation: reduced ? 'none' : 'default' }}>
           <Stack.Protected
             guard={status === 'loading' || status === 'error' || status === 'unconfigured'}
           >

@@ -24,11 +24,13 @@ export default function SessionScreen() {
             <AppText style={{ color: colors.textSecondary }}>Getting things ready…</AppText>
           </>
         ) : status === 'unconfigured' ? (
-          <AppText>Langtify is not configured yet. Please contact the app developer.</AppText>
+          <AppText>
+            This version of Langtify isn’t ready to connect. Please use the latest build.
+          </AppText>
         ) : (
           <>
             <AppText style={{ color: colors.error }} accessibilityRole="alert">
-              We could not load your account. Check your connection and try again.
+              We couldn’t load your account. Check your connection and try again.
             </AppText>
             <Button label="Try again" onPress={reload} />
             <SignOutButton />

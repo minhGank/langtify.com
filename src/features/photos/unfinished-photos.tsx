@@ -33,7 +33,7 @@ export function UnfinishedPhotos({
   if (!earlier.length && !error) return null;
   return (
     <View style={[styles.panel, { backgroundColor: colors.surfaceMuted }]}>
-      <AppText variant="label">Unfinished photos</AppText>
+      <AppText variant="label">Photos in progress</AppText>
       {earlier.map((photo) => (
         <Button
           key={photo.assignmentId}
@@ -46,8 +46,8 @@ export function UnfinishedPhotos({
       ))}
       {error ? (
         <>
-          <AppText variant="caption">Unfinished photos could not be loaded.</AppText>
-          <Button variant="ghost" label="Retry unfinished photos" onPress={() => void refresh()} />
+          <AppText variant="caption">We couldn’t load your unfinished photos. Try again.</AppText>
+          <Button variant="ghost" label="Try again" onPress={() => void refresh()} />
         </>
       ) : null}
     </View>

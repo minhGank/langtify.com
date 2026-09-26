@@ -107,9 +107,7 @@ it.each([
   await f.coordinator.receive(url);
   expect(f.exchange).not.toHaveBeenCalled();
   expect(f.install).not.toHaveBeenCalled();
-  expect(f.coordinator.snapshot().message).toBe(
-    'Google sign-in could not be completed. Please try again.',
-  );
+  expect(f.coordinator.snapshot().message).toBe('We couldn’t sign you in with Google. Try again.');
 });
 it.each(['https://evil.test/auth/callback', 'langtify://evil/callback', 'langtify://auth/other'])(
   'ignores injected links %s without consuming a valid attempt',
@@ -271,9 +269,7 @@ it('rejects server-invalid codes without exposing SDK details and allows a fresh
   await flush();
   await f.coordinator.receive(callback);
   expect(f.install).not.toHaveBeenCalled();
-  expect(f.coordinator.snapshot().message).toBe(
-    'Google sign-in could not be completed. Please try again.',
-  );
+  expect(f.coordinator.snapshot().message).toBe('We couldn’t sign you in with Google. Try again.');
   void f.coordinator.start();
   await flush();
   await f.coordinator.receive(callback);

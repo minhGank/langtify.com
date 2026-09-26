@@ -12,6 +12,8 @@ import type { SafetyIdentity } from '@/features/safety/model';
 import { normalizeUsername } from '@/features/onboarding/validation';
 import { socialGateway } from '@/services/social';
 import { socialChanged } from '@/features/social/cache';
+import { feedback } from '@/lib/haptics';
+import { usernameError } from './profile-errors';
 import { AvatarEditor } from './avatar-editor';
 
 export function EditProfileScreen() {
@@ -56,11 +58,11 @@ function EditProfile({
   return (
     <Screen>
       <IconButton name="chevron-back" label="Back to Profile" onPress={close} />
-      <AppText variant="title">Edit public profile</AppText>
+      <AppText variant="title">Edit profile</AppText>
       <AvatarEditor
         identity={identity}
         username={username}
-        onChanged={() => setPhotoNotice('Profile photo updated.')}
+        onChanged={() => setPhotoNotice('Profile photo updated')}
       />
       {!!photoNotice && (
         <AppText variant="caption" accessibilityLiveRegion="polite">
@@ -79,7 +81,7 @@ function EditProfile({
         autoCorrect={false}
         editable={!task.busy}
         error={error}
-        hint="3–30 letters, numbers or underscores. Visible with your public activity."
+        hint="3–30 letters, numbers or underscores. Other learners can search for this name."
       />
       <Button
         label="Save username"
@@ -103,7 +105,7 @@ function EditProfile({
                 await saved();
                 return null;
               } catch (cause) {
-                return cause instanceof Error ? cause.message : 'Could not save your username.';
+                return usernameError(cause);
               }
             },
             (message) => {
@@ -111,6 +113,7 @@ function EditProfile({
                 setError(message);
                 return;
               }
+              feedback.success();
               close();
             },
           );

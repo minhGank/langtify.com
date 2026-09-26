@@ -7,9 +7,11 @@ import { FormField } from '@/components/ui/form-field';
 import { IconButton } from '@/components/ui/icon-button';
 import { ChoiceField } from '@/components/ui/choice-field';
 import { Sheet } from '@/components/ui/sheet';
+import { MotionView } from '@/components/ui/motion-view';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useServerQuery } from '@/hooks/use-server-query';
 import { invalidateServerData, serverScope } from '@/lib/server-cache';
+import { feedback } from '@/lib/haptics';
 import { socialGateway, type Comment, type CommentCursor } from '@/services/social';
 import {
   isReportReason,
@@ -37,6 +39,7 @@ export function Comments({
   const [attemptedBody, setAttemptedBody] = useState('');
   const [cursor, setCursor] = useState<CommentCursor | null>(null);
   const [selected, setSelected] = useState<Comment | null>(null);
+  const [notice, setNotice] = useState<{ text: string; revision: number } | null>(null);
   const intent = useRef<{ body: string; id: string } | null>(null);
   const gateway = useMemo(() => socialGateway(identity), [identity]);
   const entry = useMemo(
@@ -61,7 +64,10 @@ export function Comments({
   );
   const query = useServerQuery(entry, load, { staleTime: 30000, discardOnError });
   const task = useSafetyTask(
-    () => setSelected(null),
+    () => {
+      setSelected(null);
+      setNotice(null);
+    },
     undefined,
     () => {
       discardPublicData(identity);
@@ -105,6 +111,11 @@ export function Comments({
         intent.current = null;
         setCursor(null);
         reconcile();
+        setNotice((previous) => ({
+          text: 'Comment posted.',
+          revision: (previous?.revision ?? 0) + 1,
+        }));
+        feedback.confirm();
       },
     );
   };
@@ -113,13 +124,15 @@ export function Comments({
       <View style={styles.row}>
         <View style={{ flex: 1 }}>
           <AppText variant="heading">Comments</AppText>
-          <AppText variant="caption">Newest first</AppText>
         </View>
       </View>
       <FormField
         label="Add a comment"
         value={body}
-        onChangeText={setBody}
+        onChangeText={(value) => {
+          setBody(value);
+          setNotice(null);
+        }}
         multiline
         maxLength={500}
         editable={!task.busy}
@@ -132,6 +145,13 @@ export function Comments({
         disabled={!body.trim()}
         onPress={send}
       />
+      {notice && (
+        <MotionView trigger={notice.revision} kind="change" animateOnMount>
+          <AppText variant="caption" accessibilityLiveRegion="polite">
+            {notice.text}
+          </AppText>
+        </MotionView>
+      )}
       {task.error && (
         <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {task.error}
@@ -143,9 +163,9 @@ export function Comments({
       {query.error && (
         <>
           <AppText accessibilityRole="alert" style={{ color: colors.error }}>
-            Comments could not be loaded.
+            We couldn’t load comments. Try again.
           </AppText>
-          <Button label="Retry comments" variant="secondary" onPress={refresh} />
+          <Button label="Try again" variant="secondary" onPress={refresh} />
         </>
       )}
       {query.data?.items.length === 0 && <AppText variant="caption">No comments yet.</AppText>}
@@ -198,6 +218,11 @@ export function Comments({
           changed={() => {
             reconcile(selected.id);
             setSelected(null);
+            setNotice((previous) => ({
+              text: 'Comment deleted.',
+              revision: (previous?.revision ?? 0) + 1,
+            }));
+            feedback.confirm();
           }}
           blocked={() => {
             setSelected(null);
@@ -266,7 +291,8 @@ function CommentActions({
       {mode === 'block' && (
         <>
           <AppText>
-            Block @{comment.username}? You will stop seeing each other’s public content.
+            Block @{comment.username}? You won’t see each other’s public activity or be able to
+            interact.
           </AppText>
           <Button
             label="Confirm block"
@@ -298,7 +324,7 @@ function CommentActions({
             editable={!task.busy}
           />
           <AppText variant="caption">
-            Your report is private. The commenter will not see who reported it.
+            Only moderators can see your report. Your name won’t be shared with this person.
           </AppText>
           <Button
             label="Submit report"
@@ -312,7 +338,7 @@ function CommentActions({
           />
         </>
       )}
-      {mode === 'done' && <AppText>Your report has been received.</AppText>}
+      {mode === 'done' && <AppText>Thanks for letting us know.</AppText>}
       {task.error && (
         <AppText accessibilityRole="alert" style={{ color: colors.error }}>
           {task.error}

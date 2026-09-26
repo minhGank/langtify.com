@@ -1,5 +1,5 @@
 import { palette } from '@/lib/theme';
-import { AppState, View } from 'react-native';
+import { Animated, AppState, View } from 'react-native';
 import type * as ReactTypes from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { ProgressPanel } from '@/features/progress/progress-panel';
@@ -8,6 +8,7 @@ import { parseProgress, progressGateway, receiptGateway } from '@/services/progr
 import { invalidateServerData } from '@/lib/server-cache';
 
 const mockRpc = jest.fn();
+jest.mock('@/hooks/use-reduced-motion', () => ({ useReducedMotion: () => false }));
 jest.mock('@/lib/supabase', () => ({ requireSupabase: () => ({ rpc: mockRpc }) }));
 jest.mock('expo-router', () => ({
   useFocusEffect: (callback: () => () => void) => {
@@ -58,10 +59,10 @@ it('rejects obsolete foreground callbacks after a token change and defers backgr
 it('renders server daily completion and full bonus with formula-correct level', async () => {
   render(<ProgressPanel userId="owner" accessToken="token" challengeId="challenge" />);
   expect(await screen.findByText('3 / 3 completed')).toBeVisible();
-  expect(screen.getByText('Daily Challenge Complete')).toBeVisible();
+  expect(screen.getByText('Daily challenge complete')).toBeVisible();
   expect(screen.getByText('+10 XP bonus')).toBeVisible();
   expect(screen.getByText('+10 XP bonus')).toHaveStyle({ color: palette.light.textOnAccent });
-  expect(screen.getByText('Daily Challenge Complete')).toHaveStyle({
+  expect(screen.getByText('Daily challenge complete')).toHaveStyle({
     color: palette.light.success,
   });
   expect(screen.getByText('Level 3')).toBeVisible();
@@ -84,9 +85,9 @@ it('renders accessible within-level progress and profile totals', async () => {
 it('does not manufacture zero XP when the server fails and supports retry', async () => {
   header.mockResolvedValueOnce({ data: null, error: { message: 'offline' } });
   render(<ProgressPanel userId="owner" accessToken="token" />);
-  expect(await screen.findByText('Progress is unavailable.')).toBeVisible();
+  expect(await screen.findByText('We couldn’t load your progress. Try again.')).toBeVisible();
   expect(screen.queryByText('0 XP')).toBeNull();
-  fireEvent.press(screen.getByText('Retry progress'));
+  fireEvent.press(screen.getByText('Try again'));
   expect(await screen.findByText('620 XP')).toBeVisible();
 });
 it('drops a late previous-account response after switching accounts', async () => {
@@ -145,6 +146,69 @@ it('shows a server receipt including word, full challenge and milestone feedback
   expect(await screen.findByText('+10 XP · word completed')).toBeVisible();
   expect(screen.getByText('+10 XP · full challenge bonus')).toBeVisible();
   expect(screen.getByText('+25 XP · streak milestone')).toBeVisible();
+});
+
+it.each([
+  [0, 0, null],
+  [10, 0, 'Daily challenge complete'],
+  [10, 25, 'Streak milestone reached'],
+] as const)(
+  'distinguishes confirmed bonus %i and milestone %i feedback without replaying a stored receipt',
+  async (challengeBonus, milestone, heading) => {
+    const spring = jest.spyOn(Animated, 'spring');
+    const timing = jest.spyOn(Animated, 'timing');
+    try {
+      header.mockResolvedValue({
+        data: {
+          user_id: 'owner',
+          submission_id: 'photo',
+          word_xp: 10,
+          challenge_bonus_xp: challengeBonus,
+          milestone_xp: milestone,
+        },
+        error: null,
+      });
+      render(<SubmissionXpFeedback userId="owner" accessToken="token" submissionId="photo" />);
+      await screen.findByText('+10 XP · word completed');
+      if (heading) expect(screen.getByText(heading)).toBeVisible();
+      expect(spring).not.toHaveBeenCalled();
+      expect(timing).not.toHaveBeenCalled();
+    } finally {
+      spring.mockRestore();
+      timing.mockRestore();
+    }
+  },
+);
+
+it('plays one fresh full-challenge receipt transition and never replays it after XP reconciliation', async () => {
+  const spring = jest.spyOn(Animated, 'spring');
+  const receipt = {
+    user_id: 'owner',
+    submission_id: 'photo',
+    word_xp: 10,
+    challenge_bonus_xp: 10,
+    milestone_xp: 0,
+  };
+  try {
+    header.mockResolvedValue({ data: receipt, error: null });
+    render(
+      <SubmissionXpFeedback userId="owner" accessToken="token" submissionId="photo" celebrate />,
+    );
+    await screen.findByText('Daily challenge complete');
+    expect(spring).toHaveBeenCalledTimes(1);
+    header.mockResolvedValue({
+      data: { ...receipt, word_xp: 0, challenge_bonus_xp: 0 },
+      error: null,
+    });
+    act(() => invalidateServerData(['progress']));
+    await waitFor(() => expect(screen.queryByText('Daily challenge complete')).toBeNull());
+    header.mockResolvedValue({ data: receipt, error: null });
+    act(() => invalidateServerData(['progress']));
+    expect(await screen.findByText('Daily challenge complete')).toBeVisible();
+    expect(spring).toHaveBeenCalledTimes(1);
+  } finally {
+    spring.mockRestore();
+  }
 });
 
 it('shows only the server historical +10 XP receipt without daily or streak completion wording', async () => {
@@ -238,7 +302,7 @@ it('a late expired-token failure cannot clear newer same-account progress', asyn
   expect(await screen.findByText('620 XP')).toBeVisible();
   await act(async () => fail(new Error('session expired')));
   expect(screen.getByText('620 XP')).toBeVisible();
-  expect(screen.queryByText('Progress is unavailable.')).toBeNull();
+  expect(screen.queryByText('We couldn’t load your progress. Try again.')).toBeNull();
 });
 it('drops old-account photo XP feedback after switching to another account', async () => {
   const oldReceipt = {

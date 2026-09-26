@@ -2,21 +2,15 @@ import { displayTerm } from '@/utils/display-term';
 import { TabHeading } from '@/components/ui/tab-heading';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  View,
-} from 'react-native';
+import { FlatList, Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Sheet } from '@/components/ui/sheet';
+import { LoadingPlaceholder } from '@/components/ui/loading-placeholder';
+import { feedback } from '@/lib/haptics';
 import { useAuth } from '@/features/auth/auth-provider';
 import { cefrOptions } from '@/features/onboarding/validation';
 import { serverScope } from '@/lib/server-cache';
@@ -96,7 +90,7 @@ export function VocabularyContent({
     >
       <FlatList
         ref={listRef}
-        accessibilityLabel={conceptId ? 'Vocabulary captures' : 'My vocabulary'}
+        accessibilityLabel={conceptId ? 'Photos of this word' : 'My vocabulary'}
         data={state.data?.items ?? []}
         numColumns={conceptId ? 1 : 2}
         columnWrapperStyle={!conceptId ? styles.columns : undefined}
@@ -117,7 +111,7 @@ export function VocabularyContent({
                     router.canGoBack() ? router.back() : router.replace('/vocabulary')
                   }
                 />
-                <AppText variant="label">Vocabulary history</AppText>
+                <AppText variant="label">Your photos</AppText>
                 <View style={styles.headerSpacer} />
               </View>
             ) : (
@@ -127,7 +121,7 @@ export function VocabularyContent({
                   {state.data && (
                     <AppText variant="caption">
                       {state.data.totalConcepts} {state.data.totalConcepts === 1 ? 'word' : 'words'}{' '}
-                      captured
+                      collected
                     </AppText>
                   )}
                 </View>
@@ -214,23 +208,20 @@ export function VocabularyContent({
                 </AppText>
                 <AppText variant="caption">
                   {state.data.concept.captureCount}{' '}
-                  {state.data.concept.captureCount === 1 ? 'capture' : 'captures'}
+                  {state.data.concept.captureCount === 1 ? 'photo' : 'photos'}
                 </AppText>
               </View>
             )}
             {state.loading && !state.data && (
-              <ActivityIndicator
-                accessibilityLabel="Loading vocabulary"
-                color={colors.brandPrimary}
-              />
+              <LoadingPlaceholder label="Loading vocabulary" photo />
             )}
             {state.error && (
               <View style={styles.notice}>
                 <AppText accessibilityRole="alert" style={{ color: colors.error }}>
-                  Vocabulary could not be loaded.
+                  We couldn’t load your vocabulary. Try again.
                 </AppText>
                 <Button
-                  label="Retry vocabulary"
+                  label="Try again"
                   variant="secondary"
                   onPress={() => void state.refresh()}
                 />
@@ -281,8 +272,8 @@ export function VocabularyContent({
                   : input || level
                     ? 'Try another word or a different level.'
                     : state.data?.totalConcepts === 0
-                      ? 'Complete your first photo challenge to start building your visual vocabulary.'
-                      : 'Pull down to return to your latest captures.'}
+                      ? 'Add a photo to today’s words to start your collection.'
+                      : 'Pull down to see your latest photos.'}
               </AppText>
               {!conceptId && !input && !level && state.data?.totalConcepts === 0 && (
                 <Button label="Go to Today" onPress={() => router.navigate('/')} />
@@ -294,7 +285,7 @@ export function VocabularyContent({
           <View style={styles.footer}>
             {state.data?.hasMore && (
               <Button
-                label={conceptId ? 'More captures' : 'More words'}
+                label={conceptId ? 'More photos' : 'More words'}
                 variant="secondary"
                 disabled={state.loading}
                 onPress={() => {
@@ -325,6 +316,7 @@ export function VocabularyContent({
             accessibilityLabel={option.value || 'All levels'}
             accessibilityState={{ selected: level === option.value }}
             onPress={() => {
+              if (level !== option.value) feedback.selection();
               setLevel(option.value);
               setFilters(false);
             }}
@@ -374,7 +366,7 @@ function CaptureCard({
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`${detail ? 'Open photo' : 'View captures'}: ${displayTerm(capture.targetTerm)}. ${displayTerm(capture.referenceTerm)}, ${capture.cefrLevel}. ${detail ? new Date(capture.submittedAt).toLocaleDateString() : `${capture.captureCount} captures`}. ${capture.visibility === 'public' ? 'Public' : 'Private'}.`}
+        accessibilityLabel={`${detail ? 'Open photo' : 'View photos'}: ${displayTerm(capture.targetTerm)}. ${displayTerm(capture.referenceTerm)}, ${capture.cefrLevel}. ${detail ? new Date(capture.submittedAt).toLocaleDateString() : `${capture.captureCount} photos`}. ${capture.visibility === 'public' ? 'Public' : 'Private'}.`}
         onPress={open}
         style={({ pressed }) => ({
           backgroundColor: pressed ? colors.surfaceMuted : colors.surface,
@@ -411,7 +403,7 @@ function CaptureCard({
                     day: 'numeric',
                     year: 'numeric',
                   })
-                : `${capture.captureCount} ${capture.captureCount === 1 ? 'capture' : 'captures'}`}
+                : `${capture.captureCount} ${capture.captureCount === 1 ? 'photo' : 'photos'}`}
             </AppText>
             <Ionicons
               accessible

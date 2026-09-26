@@ -139,7 +139,7 @@ export function PhotoContent({
               ? 'Take a photo'
               : state.data?.captureKind === 'historical'
                 ? 'Past Word'
-                : 'Photo challenge'}
+                : 'Today’s word'}
         </AppText>
         <View style={styles.headerSpacer} />
       </View>
@@ -200,7 +200,7 @@ export function PhotoContent({
           </AppText>
           {library.eligibilityError && (
             <Button
-              label="Retry photo library"
+              label="Try photo library again"
               variant="secondary"
               disabled={library.busy || state.busy}
               onPress={library.retryEligibility}
@@ -208,7 +208,7 @@ export function PhotoContent({
           )}
           {library.permissionDenied && Platform.OS !== 'web' && (
             <Button
-              label="Open photo settings"
+              label="Open Settings"
               variant="secondary"
               onPress={() => {
                 void Linking.openSettings().catch(() => {});
@@ -224,6 +224,7 @@ export function PhotoContent({
           accessToken={token}
           submissionId={submission.id}
           historical={submission.capture_kind === 'historical'}
+          celebrate={state.acknowledgedCompletionId === submission.id && focused && active}
         />
       )}
       {state.error ? (
@@ -232,7 +233,7 @@ export function PhotoContent({
             {state.error}
           </AppText>
           <Button
-            label="Retry photo"
+            label="Try again"
             variant="secondary"
             disabled={state.busy}
             onPress={() => void state.refresh()}

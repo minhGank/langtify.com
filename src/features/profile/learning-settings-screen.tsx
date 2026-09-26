@@ -68,11 +68,10 @@ function LearningSettings({
       <IconButton name="chevron-back" label="Back to Profile" onPress={close} />
       <AppText variant="title">Learning preferences</AppText>
       <AppText variant="caption">
-        Saved challenges keep their original words and languages. New challenges use your updated
-        setup. Your timezone determines your local learning day.
+        Language and level changes apply to new challenges. Your timezone sets when each day begins.
       </AppText>
       <ChoiceField
-        label="Reference language"
+        label="Translation language"
         value={draft.referenceLanguageId}
         options={options}
         disabled={task.busy}
@@ -80,7 +79,7 @@ function LearningSettings({
         onChange={(value) => update('referenceLanguageId', value)}
       />
       <ChoiceField
-        label="Target language"
+        label="Learning language"
         value={draft.targetLanguageId}
         options={options}
         disabled={task.busy}

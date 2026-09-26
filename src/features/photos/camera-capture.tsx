@@ -40,7 +40,7 @@ export function CameraCapture({
     try {
       await requestPermission();
     } catch {
-      if (alive.current) setError('Camera permission could not be requested. Please try again.');
+      if (alive.current) setError('We couldn’t open camera access. Try again.');
     } finally {
       if (alive.current) setAsking(false);
     }
@@ -65,17 +65,17 @@ export function CameraCapture({
     return (
       <View style={styles.permission}>
         <Ionicons name="camera-outline" size={40} color={colors.textSecondary} />
-        <AppText variant="heading">Camera access needed</AppText>
+        <AppText variant="heading">Capture this word</AppText>
         <AppText style={styles.center}>
           {permission.canAskAgain
-            ? 'Allow camera access to capture this word.'
-            : 'Enable camera access in Settings, then return here.'}
+            ? 'Use your camera to show this word in the world around you.'
+            : 'Turn on camera access in Settings, then come back.'}
         </AppText>
         {permission.canAskAgain ? (
           <Button label="Allow camera" onPress={() => void askPermission()} />
         ) : Platform.OS !== 'web' ? (
           <Button
-            label="Open settings"
+            label="Open Settings"
             onPress={() => {
               void Linking.openSettings().catch(() =>
                 setError('Open your device settings to allow camera access.'),
@@ -115,7 +115,7 @@ export function CameraCapture({
       }
       await onCapture(photo);
     } catch {
-      if (alive.current) setError('The photo could not be captured or prepared. Please try again.');
+      if (alive.current) setError('We couldn’t take this photo. Try again.');
     } finally {
       capturing.current = false;
       if (alive.current) setBusy(false);
@@ -133,7 +133,7 @@ export function CameraCapture({
           onCameraReady={() => setReady(true)}
           onMountError={() => {
             setReady(false);
-            setError('The camera could not start. Check camera access and try again.');
+            setError('We couldn’t start the camera. Check camera access and try again.');
           }}
         />
         {!ready && (

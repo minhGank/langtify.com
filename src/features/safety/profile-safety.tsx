@@ -23,7 +23,8 @@ export function ProfileSafety({ userId, token }: SafetyIdentity) {
       />
       {access?.restricted && (
         <AppText>
-          Your account’s public access is restricted. Your private learning data remains available.
+          Your public activity is restricted. You can still use your private photos and learning
+          tools.
         </AppText>
       )}
       {access?.moderator && (
@@ -32,7 +33,7 @@ export function ProfileSafety({ userId, token }: SafetyIdentity) {
       {task.error && (
         <Button
           variant="ghost"
-          label="Refresh account safety status"
+          label="Check account access"
           onPress={() => void task.run(gateway.access, setAccess)}
         />
       )}

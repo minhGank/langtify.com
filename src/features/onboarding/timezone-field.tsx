@@ -5,6 +5,7 @@ import { AppText } from '@/components/ui/app-text';
 import { FormField } from '@/components/ui/form-field';
 import { Sheet } from '@/components/ui/sheet';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { feedback } from '@/lib/haptics';
 import { detectTimezone } from './validation';
 import { filterTimezones, timezoneLabel, timezoneOptions } from './timezones';
 
@@ -91,6 +92,7 @@ export function TimezoneField({
               accessibilityLabel={timezoneLabel(item)}
               accessibilityState={{ checked: value === item }}
               onPress={() => {
+                if (item !== value) feedback.selection();
                 onChange(item);
                 setOpen(false);
               }}

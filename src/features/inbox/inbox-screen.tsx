@@ -33,7 +33,7 @@ export function InboxContent({ identity }: { identity: SafetyIdentity }) {
   };
   const error =
     state.taskError ??
-    (state.error ? 'Notifications could not be loaded. Pull down to try again.' : null);
+    (state.error ? 'We couldn’t load your notifications. Pull down to try again.' : null);
   const disabled = state.busy || state.loading;
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -48,7 +48,7 @@ export function InboxContent({ identity }: { identity: SafetyIdentity }) {
         </View>
         <View style={styles.summary}>
           <AppText variant="caption">
-            {state.data?.unreadCount ? `${state.data.unreadCount} unread` : 'Your latest updates'}
+            {state.data?.unreadCount ? `${state.data.unreadCount} unread` : 'Your updates'}
           </AppText>
           {!!state.data?.unreadCount && state.data.readCursor && (
             <Button
@@ -111,7 +111,7 @@ export function InboxContent({ identity }: { identity: SafetyIdentity }) {
                   </View>
                   <AppText variant="heading">All caught up</AppText>
                   <AppText variant="subtitle" style={styles.emptyText}>
-                    New followers, photo ratings and daily words will appear here.
+                    New followers, ratings and daily words will appear here.
                   </AppText>
                 </>
               )

@@ -33,7 +33,7 @@ beforeEach(() => {
 });
 it('requests permission once after the capture action and permits an explicit denied-access retry', async () => {
   render(<CameraCapture onCapture={jest.fn()} onCancel={jest.fn()} />);
-  expect(await screen.findByText('Camera access needed')).toBeVisible();
+  expect(await screen.findByText('Capture this word')).toBeVisible();
   expect(mockRequest).toHaveBeenCalledTimes(1);
   expect(screen.queryByTestId('camera-preview')).toBeNull();
   fireEvent.press(screen.getByRole('button', { name: 'Allow camera' }));
@@ -44,14 +44,14 @@ it('offers settings when permission cannot be requested again', async () => {
   const settings = jest.spyOn(Linking, 'openSettings').mockResolvedValue();
   render(<CameraCapture onCapture={jest.fn()} onCancel={jest.fn()} />);
   expect(screen.queryByRole('button', { name: 'Allow camera' })).toBeNull();
-  await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Open settings' })));
+  await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Open Settings' })));
   expect(settings).toHaveBeenCalledTimes(1);
   settings.mockRestore();
 });
 it('does not repeat the native permission prompt on an unchanged denied state', async () => {
   const props = { onCapture: jest.fn(), onCancel: jest.fn() };
   const { rerender } = render(<CameraCapture {...props} />);
-  await screen.findByText('Camera access needed');
+  await screen.findByText('Capture this word');
   mockPermission = { granted: false, canAskAgain: true };
   rerender(<CameraCapture {...props} />);
   await act(async () => {});
@@ -73,7 +73,7 @@ it('shows a recoverable capture error and permits another attempt', async () => 
   render(<CameraCapture onCapture={jest.fn()} onCancel={jest.fn()} />);
   fireEvent(screen.getByTestId('camera-preview'), 'cameraReady');
   await act(async () => fireEvent.press(screen.getByRole('button', { name: 'Take photo' })));
-  expect(screen.getByText(/could not be captured/)).toBeVisible();
+  expect(screen.getByText(/couldn’t take this photo/)).toBeVisible();
   expect(screen.getByRole('button', { name: 'Take photo' })).toBeEnabled();
 });
 

@@ -7,10 +7,10 @@ export class PhotoLibraryError extends Error {
   constructor(public readonly code: LibraryErrorCode) {
     super(
       code === 'permission'
-        ? 'Photo access is unavailable. Choose another photo or check access in Settings.'
+        ? 'We can’t access this photo. Choose another or check photo access in Settings.'
         : code === 'invalid-photo'
-          ? 'This photo could not be opened. Please choose another photo.'
-          : 'The photo library could not be opened. Please try again.',
+          ? 'We couldn’t open this photo. Choose another.'
+          : 'We couldn’t open your photo library. Try again.',
     );
     this.name = 'PhotoLibraryError';
   }

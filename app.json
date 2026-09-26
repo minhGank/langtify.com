@@ -48,7 +48,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Langtify to take photos for your vocabulary challenges.",
+          "cameraPermission": "Use your camera to capture the words you’re learning.",
           "microphonePermission": false,
           "recordAudioAndroid": false,
           "barcodeScannerEnabled": false
@@ -57,8 +57,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Langtify to choose vocabulary photos and your profile avatar.",
-          "cameraPermission": "Allow Langtify to take photos for your vocabulary challenges.",
+          "photosPermission": "Choose photos for your words and profile.",
+          "cameraPermission": "Use your camera to capture the words you’re learning.",
           "microphonePermission": false
         }
       ],

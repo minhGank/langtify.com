@@ -1,11 +1,12 @@
 import type * as ReactTypes from 'react';
-import { AppState } from 'react-native';
+import { Animated, AppState } from 'react-native';
 import { fireEvent, render, screen, waitFor, act } from '@testing-library/react-native';
 import { TodayScreen } from '@/features/challenges/today-screen';
 import { makeAccount, makeSession } from './fixtures';
 import { makeChallenge } from './challenge-fixtures';
 import type { TodayChallenge } from '@/services/challenges';
 jest.mock('@/features/inbox/notification-bell', () => ({ NotificationBell: () => null }));
+jest.mock('@/hooks/use-reduced-motion', () => ({ useReducedMotion: () => false }));
 let mockAccount = makeAccount();
 let mockSession = makeSession();
 const mockLoad = jest.fn<Promise<TodayChallenge>, []>();
@@ -61,11 +62,44 @@ it('renders linked vocabulary cards and accessible replacement actions', async (
   fireEvent.press(screen.getAllByRole('button', { name: 'Replace' })[0]);
   await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('assignment-review'));
 });
+it('keeps the previous word visible during replacement and transitions only the confirmed changed slot', async () => {
+  const timing = jest.spyOn(Animated, 'timing');
+  let finish: (challenge: TodayChallenge) => void = () => {};
+  mockReplace.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  try {
+    render(<TodayScreen />);
+    await screen.findByText('La fenêtre');
+    expect(timing).not.toHaveBeenCalled();
+    fireEvent.press(screen.getAllByRole('button', { name: 'Replace' })[0]);
+    expect(screen.getByText('La fenêtre')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Take photo · review' })).toBeDisabled();
+    const replacement = makeChallenge();
+    replacement.words[0] = {
+      ...replacement.words[0],
+      id: 'replacement-review',
+      targetTerm: 'la porte',
+      referenceTerm: 'door',
+    };
+    await act(async () => finish(replacement));
+    expect(screen.getByText('La porte')).toBeVisible();
+    expect(screen.queryByText('La fenêtre')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Take photo · review' })).toBeEnabled();
+    expect(timing).toHaveBeenCalledTimes(1);
+    expect(mockLoad).toHaveBeenCalledTimes(1);
+    expect(mockReplace).toHaveBeenCalledTimes(1);
+  } finally {
+    timing.mockRestore();
+  }
+});
 it('shows controlled failure and a working retry', async () => {
   mockLoad.mockRejectedValueOnce({ message: 'insufficient_vocabulary' });
   render(<TodayScreen />);
-  expect(await screen.findByText(/not enough eligible/)).toBeVisible();
-  fireEvent.press(screen.getByRole('button', { name: 'Retry challenge' }));
+  expect(await screen.findByText(/enough words for these languages and level/)).toBeVisible();
+  fireEvent.press(screen.getByRole('button', { name: 'Reload words' }));
   expect(await screen.findByText('La fenêtre')).toBeVisible();
 });
 it('clears cards across account and language-profile configuration changes', async () => {
@@ -155,7 +189,7 @@ it('offers authoritative state recovery after an uncertain replacement without r
   mockReplace.mockRejectedValueOnce(new Error('network interrupted'));
   render(<TodayScreen />);
   fireEvent.press((await screen.findAllByRole('button', { name: 'Replace' }))[0]);
-  const check = await screen.findByRole('button', { name: 'Check challenge state' });
+  const check = await screen.findByRole('button', { name: 'Refresh Today' });
   const reads = mockLoad.mock.calls.length;
   fireEvent.press(check);
   await waitFor(() => expect(mockLoad.mock.calls.length).toBeGreaterThan(reads));

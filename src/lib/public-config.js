@@ -29,7 +29,7 @@ function isLocalHost(hostname) {
  * @returns {ConfigResult}
  */
 function validatePublicConfig(url, key) {
-  const error = 'Langtify is not configured yet. Please contact the app developer.';
+  const error = 'This version of Langtify isn’t ready to connect. Please use the latest build.';
   if (!url?.trim() || !key?.trim()) return { config: null, error };
   try {
     const parsed = new URL(url.trim());

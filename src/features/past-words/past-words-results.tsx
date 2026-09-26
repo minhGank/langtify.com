@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { LoadingPlaceholder } from '@/components/ui/loading-placeholder';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
@@ -130,10 +131,7 @@ export function PastWordsResults({
       ListEmptyComponent={
         <View style={styles.empty}>
           {query.loading ? (
-            <ActivityIndicator
-              accessibilityLabel="Loading past words"
-              color={colors.brandPrimary}
-            />
+            <LoadingPlaceholder label="Loading past words" />
           ) : (
             <>
               <Ionicons
@@ -147,14 +145,14 @@ export function PastWordsResults({
                   ? 'Past words unavailable'
                   : filtered
                     ? 'No matching words'
-                    : 'More words to revisit soon'}
+                    : 'No past words yet'}
               </AppText>
               <AppText variant="subtitle" style={styles.center}>
                 {query.error
-                  ? 'Your words are safe. Try again when you’re connected.'
+                  ? 'We couldn’t load your past words. Check your connection and try again.'
                   : filtered
                     ? 'Try another word or a different level.'
-                    : 'Words from previous challenges will appear here, ready for a photo.'}
+                    : 'Words from earlier challenges will appear here.'}
               </AppText>
             </>
           )}
@@ -165,16 +163,18 @@ export function PastWordsResults({
           {query.error && (
             <>
               {!!items.length && (
-                <AppText accessibilityRole="alert">Past words could not be updated.</AppText>
+                <AppText accessibilityRole="alert">
+                  We couldn’t update your past words. Try again.
+                </AppText>
               )}
-              <Button label="Retry past words" variant="secondary" onPress={refresh} />
+              <Button label="Try again" variant="secondary" onPress={refresh} />
             </>
           )}
           {!query.error && query.data?.hasMore && (
             <Button
               label="More past words"
               variant="secondary"
-              disabled={query.loading}
+              loading={query.loading}
               onPress={more}
             />
           )}

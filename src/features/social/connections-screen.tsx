@@ -13,6 +13,7 @@ import { useSafetyTask } from '@/features/safety/use-safety-task';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useServerQuery } from '@/hooks/use-server-query';
 import { serverScope } from '@/lib/server-cache';
+import { feedback } from '@/lib/haptics';
 import {
   connectionsGateway,
   type Connection,
@@ -228,7 +229,15 @@ export function ConnectionsContent({
                       followWithRecovery(identity, signal, () =>
                         social.follow(item.id, !item.isFollowing, signal),
                       ),
-                    (receipt) => followChanged(identity, receipt),
+                    (receipt) => {
+                      followChanged(identity, receipt);
+                      if (
+                        receipt.profile &&
+                        receipt.viewerProfile &&
+                        receipt.profile.isFollowing !== item.isFollowing
+                      )
+                        feedback.confirm();
+                    },
                   )
                 }
                 style={({ pressed }) => [
@@ -286,13 +295,7 @@ export function ConnectionsContent({
                       ? 'No followers yet'
                       : 'Not following anyone yet'}
                 </AppText>
-                <AppText variant="caption">
-                  {query.error
-                    ? 'Pull down to try again.'
-                    : kind === 'followers'
-                      ? 'Learners who follow this profile will appear here.'
-                      : 'Followed learners will appear here.'}
-                </AppText>
+                {query.error && <AppText variant="caption">Pull down to try again.</AppText>}
               </>
             )}
           </View>
@@ -302,7 +305,7 @@ export function ConnectionsContent({
             {(query.error || task.error) && (
               <>
                 <AppText accessibilityRole="alert" style={{ color: colors.error }}>
-                  {task.error ?? 'Connections could not be loaded.'}
+                  {task.error ?? 'We couldn’t load this list. Try again.'}
                 </AppText>
                 <Button label="Refresh list" variant="secondary" onPress={refresh} />
               </>

@@ -6,9 +6,11 @@ import { AppText } from '@/components/ui/app-text';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Sheet } from '@/components/ui/sheet';
+import { MotionView } from '@/components/ui/motion-view';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useServerQuery } from '@/hooks/use-server-query';
 import { createServerCache, invalidateServerData, serverScope } from '@/lib/server-cache';
+import { feedback } from '@/lib/haptics';
 import { avatarGateway, type AvatarIdentity, type AvatarState } from '@/services/avatars';
 import { pickAvatar, type PreparedAvatar } from './prepare-avatar';
 import { ProfileAvatar } from './profile-avatar';
@@ -44,6 +46,7 @@ function Editor({ identity, username, onChanged }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmRemove, setConfirmRemove] = useState(false);
+  const [acknowledgement, setAcknowledgement] = useState<number | null>(null);
   const controller = useRef<AbortController | null>(null);
   const generation = useRef(0);
   const active = useRef(false);
@@ -65,7 +68,7 @@ function Editor({ identity, username, onChanged }: Props) {
           setBusy(false);
           if (saving) {
             reconcile();
-            setError('Saving could not be confirmed. Retry to check the same photo safely.');
+            setError('We couldn’t confirm your profile photo was saved. Try again to check it.');
           }
         }
       });
@@ -90,7 +93,7 @@ function Editor({ identity, username, onChanged }: Props) {
       const photo = await pickAvatar(current);
       if (current() && photo) setDraft({ ...photo, requestId: randomUUID() });
     } catch {
-      if (current()) setError('This photo could not be prepared. Please choose another image.');
+      if (current()) setError('We couldn’t prepare this photo. Choose another.');
     } finally {
       if (current()) {
         working.current = false;
@@ -123,6 +126,9 @@ function Editor({ identity, username, onChanged }: Props) {
       entry.set(result);
       setDraft(null);
       setConfirmRemove(false);
+      setAcknowledgement((previous) => (previous ?? 0) + 1);
+      if (removeId) feedback.confirm();
+      else feedback.success();
       onChanged();
     } catch {
       if (current()) {
@@ -132,8 +138,8 @@ function Editor({ identity, username, onChanged }: Props) {
         setConfirmRemove(false);
         setError(
           removeId
-            ? 'Removal could not be confirmed. Your current profile photo is being refreshed.'
-            : 'Saving could not be confirmed. Retry to check the same photo safely.',
+            ? 'We couldn’t confirm the photo was removed. Checking your profile…'
+            : 'We couldn’t confirm your profile photo was saved. Try again to check it.',
         );
       }
     } finally {
@@ -147,16 +153,18 @@ function Editor({ identity, username, onChanged }: Props) {
   return (
     <View style={styles.section}>
       <View style={styles.photo}>
-        {draft ? (
-          <Avatar username={username} uri={draft.uri} size={88} />
-        ) : (
-          <ProfileAvatar
-            identity={identity}
-            username={username}
-            avatarId={query.data?.avatarId ?? null}
-            size={88}
-          />
-        )}
+        <MotionView trigger={acknowledgement} kind="change">
+          {draft ? (
+            <Avatar username={username} uri={draft.uri} size={88} />
+          ) : (
+            <ProfileAvatar
+              identity={identity}
+              username={username}
+              avatarId={query.data?.avatarId ?? null}
+              size={88}
+            />
+          )}
+        </MotionView>
         <Button
           label="Choose profile photo"
           variant="secondary"
@@ -167,7 +175,7 @@ function Editor({ identity, username, onChanged }: Props) {
       {draft && (
         <>
           <AppText variant="caption" style={{ color: colors.textSecondary }}>
-            Your profile photo is visible to people who can view your profile.
+            Shown on your public profile.
           </AppText>
           <Button
             label={error ? 'Retry saving photo' : 'Save photo'}

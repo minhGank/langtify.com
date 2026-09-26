@@ -13,6 +13,8 @@ import {
 import { SafetyUnavailable } from '@/features/safety/model';
 import { serverScope } from '@/lib/server-cache';
 import { makeSession } from './fixtures';
+import { feedback } from '@/lib/haptics';
+jest.mock('@/lib/haptics', () => ({ feedback: { confirm: jest.fn() } }));
 
 const mockLoad = jest.fn(),
   mockFollow = jest.fn(),
@@ -111,11 +113,12 @@ it('shows followers with one avatar batch and opens the opaque public profile ta
     params: { profileId: id(3) },
   });
   expect(mockLoad).toHaveBeenCalledTimes(1);
+  expect(feedback.confirm).not.toHaveBeenCalled();
 });
 it('keeps loaded pages and pixels on return regardless of elapsed time; refresh is explicit', async () => {
   const view = render(content());
   await waitFor(() => expect(mockAvatars).toHaveBeenCalledTimes(1));
-  await screen.findByLabelText("learner3's avatar");
+  await screen.findByLabelText("learner3's profile photo");
   view.unmount();
   const now = jest.spyOn(performance, 'now').mockReturnValue(36000000);
   const revisit = render(content());
@@ -165,6 +168,7 @@ it('installs confirmed follow state immediately without rereading the list', asy
   await screen.findByLabelText('Unfollow @learner3');
   expect(mockFollow).toHaveBeenCalledWith(id(3), true, expect.any(AbortSignal));
   expect(mockLoad).toHaveBeenCalledTimes(1);
+  expect(feedback.confirm).toHaveBeenCalledTimes(1);
 });
 it('patches own counts and removes an unfollowed row from cached following while isolating other sessions', () => {
   const scope = serverScope(identity().userId, identity().token);
@@ -199,12 +203,13 @@ it('requires authoritative refresh before retrying an uncertain follow', async (
   mockFollow.mockRejectedValueOnce(new Error('Lost acknowledgement'));
   render(content());
   fireEvent.press(await screen.findByLabelText('Follow @learner3'));
-  await screen.findByText(/Request could not be confirmed/);
+  await screen.findByText(/couldn’t confirm the change/);
   expect(screen.queryByLabelText('Follow @learner3')).toBeNull();
   fireEvent.press(screen.getByText('Refresh list'));
   await waitFor(() => expect(screen.getByLabelText('Follow @learner3')).not.toBeDisabled());
   expect(mockLoad).toHaveBeenCalledTimes(2);
   expect(mockFollow).toHaveBeenCalledTimes(1);
+  expect(feedback.confirm).not.toHaveBeenCalled();
 });
 it('clears rows after a block/restriction denial and does not silently retry', async () => {
   mockFollow.mockRejectedValueOnce(new SafetyUnavailable('List unavailable.'));
@@ -292,10 +297,10 @@ it('uses initials after a failed avatar batch and retries that batch only on exp
   const view = render(content());
   await screen.findByText('@learner3');
   await waitFor(() => expect(mockAvatars).toHaveBeenCalledTimes(1));
-  expect(screen.getByLabelText("learner3's avatar")).not.toHaveProp('source');
+  expect(screen.getByLabelText("learner3's profile photo")).not.toHaveProp('source');
   fireEvent(view.UNSAFE_getByType(FlatList), 'refresh');
   await waitFor(() =>
-    expect(screen.getByLabelText("learner3's avatar")).toHaveProp('source', {
+    expect(screen.getByLabelText("learner3's profile photo")).toHaveProp('source', {
       uri: 'data:image/jpeg;base64,/9j/2Q==',
       cache: 'reload',
     }),

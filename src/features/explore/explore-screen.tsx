@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppText } from '@/components/ui/app-text';
 import { IconButton } from '@/components/ui/icon-button';
+import { MotionView } from '@/components/ui/motion-view';
 import { nativeBackFallback } from '@/components/ui/native-back';
 import { useAuth } from '@/features/auth/auth-provider';
 import { useAppTheme } from '@/hooks/use-app-theme';
@@ -64,6 +65,8 @@ function ExploreContent({
     category === 'people'
       ? /^[a-z0-9][a-z0-9_]{1,29}$/.test(normalized)
       : /^[\p{L}\p{N}][\p{L}\p{M}\p{N}\s'’\-]{1,63}$/u.test(normalized);
+  // A changed query retires its obsolete request immediately. Stable skeletons
+  // bridge the debounce without retaining stale results or weakening admission.
   const ready = normalized === settled && valid;
   return (
     <SafeAreaView
@@ -112,7 +115,8 @@ function ExploreContent({
             />
           )}
         </View>
-        <View
+        <MotionView
+          trigger={category}
           accessibilityRole="tablist"
           style={[styles.segments, { backgroundColor: colors.surfaceMuted }]}
         >
@@ -147,7 +151,7 @@ function ExploreContent({
               </AppText>
             </Pressable>
           ))}
-        </View>
+        </MotionView>
       </View>
       {ready ? (
         category === 'words' ? (
@@ -158,13 +162,9 @@ function ExploreContent({
       ) : (
         <SearchEmpty
           loading={valid && normalized !== settled}
-          title={
-            category === 'words' ? 'Find a word. See it in real life.' : 'Find your fellow learners'
-          }
+          title={category === 'words' ? 'Find a word. See it in real life.' : 'Find other learners'}
           hint={
-            category === 'words'
-              ? 'Search with at least 2 characters.'
-              : 'Enter at least 2 characters of a username.'
+            category === 'words' ? 'Enter at least 2 characters.' : 'Enter at least 2 characters.'
           }
         />
       )}

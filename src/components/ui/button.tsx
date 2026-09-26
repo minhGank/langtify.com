@@ -1,8 +1,9 @@
-import { ActivityIndicator, Pressable, StyleSheet } from 'react-native';
+import { ActivityIndicator, Animated, Pressable, StyleSheet } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { radius } from '@/lib/theme';
+import { usePressMotion } from '@/hooks/use-press-motion';
 
 type ButtonProps = {
   label: string;
@@ -21,6 +22,7 @@ export function Button({
   variant = 'primary',
 }: ButtonProps) {
   const { colors } = useAppTheme();
+  const press = usePressMotion(disabled || loading);
   const backgroundColor = {
     primary: colors.brandPrimary,
     secondary: colors.surfaceMuted,
@@ -36,35 +38,39 @@ export function Button({
         danger: colors.error,
       }[variant];
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel ?? label}
-      accessibilityState={{ disabled: disabled || loading, busy: loading }}
-      disabled={disabled || loading}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        {
-          backgroundColor: disabled
-            ? colors.surfaceMuted
-            : pressed && !loading
-              ? variant === 'primary'
-                ? colors.brandPrimaryPressed
-                : variant === 'danger'
-                  ? colors.errorSoft
-                  : colors.brandSoft
-              : backgroundColor,
-          borderColor: pressed && variant === 'danger' ? colors.error : 'transparent',
-        },
-      ]}
-    >
-      {loading && <ActivityIndicator color={foregroundColor} />}
-      <AppText
-        style={{ color: foregroundColor, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}
+    <Animated.View style={press.style}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel ?? label}
+        accessibilityState={{ disabled: disabled || loading, busy: loading }}
+        disabled={disabled || loading}
+        onPress={onPress}
+        onPressIn={press.onPressIn}
+        onPressOut={press.onPressOut}
+        style={({ pressed }) => [
+          styles.button,
+          {
+            backgroundColor: disabled
+              ? colors.surfaceMuted
+              : pressed && !loading
+                ? variant === 'primary'
+                  ? colors.brandPrimaryPressed
+                  : variant === 'danger'
+                    ? colors.errorSoft
+                    : colors.brandSoft
+                : backgroundColor,
+            borderColor: pressed && variant === 'danger' ? colors.error : 'transparent',
+          },
+        ]}
       >
-        {label}
-      </AppText>
-    </Pressable>
+        {loading && <ActivityIndicator color={foregroundColor} />}
+        <AppText
+          style={{ color: foregroundColor, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}
+        >
+          {label}
+        </AppText>
+      </Pressable>
+    </Animated.View>
   );
 }
 const styles = StyleSheet.create({

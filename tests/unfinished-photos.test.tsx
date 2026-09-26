@@ -53,9 +53,9 @@ it('recovers earlier-date operations even when today has different assignments o
 it('offers retry when recovery history is offline', async () => {
   mockLoad.mockRejectedValueOnce(new Error('offline')).mockResolvedValue([]);
   render(<UnfinishedPhotos userId="owner" token="token" currentAssignments={[]} />);
-  fireEvent.press(await screen.findByRole('button', { name: 'Retry unfinished photos' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Try again' }));
   await waitFor(() =>
-    expect(screen.queryByText('Unfinished photos could not be loaded.')).toBeNull(),
+    expect(screen.queryByText('We couldn’t load your unfinished photos. Try again.')).toBeNull(),
   );
 });
 it('does not restore another account’s pending operations after unmount', async () => {

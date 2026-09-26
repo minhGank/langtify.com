@@ -7,6 +7,7 @@ import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Sheet } from '@/components/ui/sheet';
+import { feedback } from '@/lib/haptics';
 import { useAuth } from '@/features/auth/auth-provider';
 import { cefrOptions, type CefrLevel } from '@/features/onboarding/validation';
 import { useAppTheme } from '@/hooks/use-app-theme';
@@ -66,7 +67,7 @@ function PastWordsContent({ identity }: { identity: PastWordsIdentity }) {
         }}
       />
       <View style={styles.header}>
-        <AppText variant="subtitle">Give words from earlier challenges a picture.</AppText>
+        <AppText variant="subtitle">Revisit a word. Add a photo.</AppText>
         <View style={styles.searchRow}>
           <View
             style={[
@@ -132,6 +133,7 @@ function PastWordsContent({ identity }: { identity: PastWordsIdentity }) {
             accessibilityLabel={option.value || 'All levels'}
             accessibilityState={{ selected: level === option.value }}
             onPress={() => {
+              if (level !== option.value) feedback.selection();
               setLevel(option.value);
               setFilters(false);
             }}

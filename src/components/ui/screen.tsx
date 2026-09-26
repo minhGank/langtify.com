@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react';
+import { useEffect, useRef, type PropsWithChildren } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -15,8 +15,22 @@ export function Screen({
   hasTabBar = false,
   onRefresh,
   refreshing = false,
-}: PropsWithChildren<{ hasTabBar?: boolean; onRefresh?: () => void; refreshing?: boolean }>) {
+  scrollResetKey,
+}: PropsWithChildren<{
+  hasTabBar?: boolean;
+  onRefresh?: () => void;
+  refreshing?: boolean;
+  scrollResetKey?: string | number;
+}>) {
   const { colors } = useAppTheme();
+  const scroll = useRef<ScrollView>(null);
+  const previous = useRef(scrollResetKey);
+  useEffect(() => {
+    if (previous.current !== scrollResetKey) {
+      previous.current = scrollResetKey;
+      scroll.current?.scrollTo({ y: 0, animated: false });
+    }
+  }, [scrollResetKey]);
   return (
     <SafeAreaView
       edges={hasTabBar ? ['top', 'left', 'right'] : ['top', 'left', 'right', 'bottom']}
@@ -27,6 +41,7 @@ export function Screen({
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
+          ref={scroll}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
           showsVerticalScrollIndicator={false}

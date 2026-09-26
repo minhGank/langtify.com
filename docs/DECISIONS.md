@@ -835,3 +835,40 @@ with the supported opaque PNG. Keep the complete artwork in launcher assets;
 small-size readability still requires physical review. No backend, product,
 notification or navigation behavior changes. See `assets/branding/README.md`
 for reproducible conversion and local native rebuild commands. No deployment.
+
+## 040 — Restrained motion and confirmed native feedback
+
+The dedicated motion brief authorizes presentation polish without Phase 11 or
+backend changes. Use built-in native-driver Animated and one shared accessibility
+preference store; add only SDK-compatible `expo-haptics`. Keep native stack/back
+behavior, disable movement under Reduce Motion and suppress background feedback.
+Ordinary navigation, typing, loading and scroll remain silent. Existing account,
+focus and mutation-admission guards must precede confirmation haptics.
+
+Progressively disclose the same onboarding fields; intermediate steps are local
+drafts and only Finish calls the existing onboarding RPC. Photo completion gets
+one acknowledgement for an accepted explicit finalize, never passive restoration
+or uncertain-response recovery. Server XP receipts distinguish word/full-day/
+milestone presentation without new progression rules or duplicate haptics. Retain
+the local photo and busy state through authoritative completion refresh to avoid
+a blank preview or repeat action. Use static initial-load placeholders, unchanged
+immediate obsolete-query cancellation, and no animation-triggered reads. Physical
+acceptance remains pending; see [MOTION_POLISH.md](MOTION_POLISH.md).
+
+## 041 — Consumer copy and enumeration-safe signup recovery
+
+The product-copy audit authorizes interface changes, not new account policies.
+Do not claim email delivery from a successful Supabase signup/resend response:
+existing OAuth identities may produce an obfuscated no-op. Show the same conditional
+inbox guidance, explicit resend, Sign in and Continue with Google for indistinguishable
+signup outcomes. Keep Auth serialization, backend session/onboarding gates and
+automatic identity linking. Password creation for an existing Google user and
+forgotten-password recovery remain separately proposed security flows.
+
+Use human-readable length guidance with the existing exact UTF-8 validation rather
+than inventing a six-visible-character minimum. Live feedback confirms length only,
+not password strength or future server acceptance. Known breach errors are safe
+field errors; raw service messages must never become interface copy. Dev's length
+and character policy were rechecked read-only on 2026-09-26. SMTP and leaked-password
+settings require separate Dashboard confirmation; no hosted configuration was changed.
+See [COPY_GUIDE.md](COPY_GUIDE.md) and [AUTH_COPY_AUDIT.md](AUTH_COPY_AUDIT.md).

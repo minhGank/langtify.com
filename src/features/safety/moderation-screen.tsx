@@ -15,6 +15,9 @@ import { safetyGateway, type SafetyGateway } from '@/services/safety';
 import {
   isReportStatus,
   moderationActions,
+  reportKindLabels,
+  reportReasonLabel,
+  reportStatusLabels,
   type AuditEvent,
   type ModerationAction,
   type ModerationCase,
@@ -175,7 +178,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
       </View>
       {!allowed && (
         <AppText>
-          {task.busy ? 'Checking moderator access…' : 'Moderator access is required.'}
+          {task.busy ? 'Checking moderator access…' : 'You don’t have access to moderation.'}
         </AppText>
       )}
       {allowed && (
@@ -194,14 +197,14 @@ function Moderation({ userId, token }: SafetyIdentity) {
               {detail.report.kind === 'comment' && (
                 <AppText>{detail.report.comment || 'Comment unavailable.'}</AppText>
               )}
-              <AppText>Reason: {detail.report.reason}</AppText>
+              <AppText>Reason: {reportReasonLabel(detail.report.reason)}</AppText>
               <AppText>{detail.report.details || 'No additional details.'}</AppText>
               <AppText>
-                Status: {detail.report.status} ·{' '}
+                Status: {reportStatusLabels[detail.report.status]} ·{' '}
                 {new Date(detail.report.createdAt).toLocaleString()}
               </AppText>
               <AppText>
-                Public removal:{' '}
+                {detail.report.kind === 'comment' ? 'Comment hidden:' : 'Photo hidden:'}{' '}
                 {(detail.report.kind === 'comment' ? detail.commentRemoved : detail.removed)
                   ? 'Yes'
                   : 'No'}{' '}
@@ -217,7 +220,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
                     onError={() => setPhoto((current) => (current === photo ? null : current))}
                   />
                 ) : (
-                  <AppText>Photo unavailable or preview expired.</AppText>
+                  <AppText>This preview is no longer available. Reload it to try again.</AppText>
                 ))}
               <Button
                 variant="ghost"
@@ -271,7 +274,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
                     Confirm: {moderationActions.find((a) => a.value === intent.action)?.label}?
                   </AppText>
                   <AppText>{intent.reason || 'No additional reason.'}</AppText>
-                  <AppText>This action will be recorded in the moderation audit history.</AppText>
+                  <AppText>This action will appear in the moderation history.</AppText>
                   <Button
                     label="Confirm moderation action"
                     loading={task.busy}
@@ -306,19 +309,21 @@ function Moderation({ userId, token }: SafetyIdentity) {
                   />
                 </>
               )}
-              <AppText variant="heading">Audit history</AppText>
+              <AppText variant="heading">Moderation history</AppText>
               {history?.items.length === 0 && <AppText>No moderation actions yet.</AppText>}
               {history?.items.map((event) => (
                 <AppText key={event.id}>
-                  {new Date(event.createdAt).toLocaleString()} · {event.action} · Moderator{' '}
-                  {event.moderatorId}
+                  {new Date(event.createdAt).toLocaleString()} ·{' '}
+                  {moderationActions.find((action) => action.value === event.action)?.label ??
+                    'Moderation action'}{' '}
+                  · Moderator {event.moderatorId}
                   {event.reason ? ` · ${event.reason}` : ''}
                 </AppText>
               ))}
               {history?.hasMore && (
                 <Button
                   variant="secondary"
-                  label="Older audit events"
+                  label="Earlier actions"
                   disabled={task.busy}
                   onPress={() =>
                     void task.run(
@@ -341,9 +346,9 @@ function Moderation({ userId, token }: SafetyIdentity) {
               <ChoiceField
                 label="Report status"
                 value={status}
-                options={['open', 'resolved', 'dismissed'].map((value) => ({
+                options={Object.entries(reportStatusLabels).map(([value, label]) => ({
                   value,
-                  label: value,
+                  label,
                 }))}
                 disabled={task.busy}
                 onChange={(value) => {
@@ -355,7 +360,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
                 <Pressable
                   key={report.id}
                   accessibilityRole="button"
-                  accessibilityLabel={`Review ${report.kind} report: @${report.username} · ${report.word} · ${report.reason}`}
+                  accessibilityLabel={`Review ${reportKindLabels[report.kind]} report: @${report.username} · ${report.word} · ${reportReasonLabel(report.reason)}`}
                   disabled={task.busy}
                   onPress={() => open(report.id)}
                   style={[
@@ -376,7 +381,7 @@ function Moderation({ userId, token }: SafetyIdentity) {
                     </AppText>
                     <AppText variant="subtitle">{report.word || `@${report.username}`}</AppText>
                     <AppText variant="caption">
-                      @{report.username} · {report.reason.replaceAll('_', ' ')}
+                      @{report.username} · {reportReasonLabel(report.reason)}
                     </AppText>
                   </View>
                   <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />

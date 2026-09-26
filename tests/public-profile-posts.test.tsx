@@ -80,7 +80,7 @@ beforeEach(() => {
 it('loads the selected public profile in the saved language and opens its existing post experience', async () => {
   render(<PublicProfilePosts identity={identity()} profileId={profileId} />);
   expect(await screen.findByText('Le chien')).toBeVisible();
-  expect(screen.getByText('French · Newest first')).toBeVisible();
+  expect(screen.getByText('French')).toBeVisible();
   expect(mockFeedGateway).toHaveBeenCalledWith(
     { ...identity(), targetLanguageId: 'fr' },
     profileId,
@@ -141,7 +141,7 @@ it('clears public posts when invalidated eligibility is denied by a block or res
   act(() =>
     invalidateServerData(['discover'], { scope: serverScope(identity().userId, identity().token) }),
   );
-  await screen.findByText('Public photos could not be loaded.');
+  await screen.findByText('We couldn’t load these photos. Try again.');
   expect(screen.queryByText('Le chien')).toBeNull();
   expect(screen.queryByLabelText('Photo of Le chien')).toBeNull();
   expect(parentProfile.getSnapshot().data).toBeNull();

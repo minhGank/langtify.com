@@ -71,7 +71,7 @@ export function ProfileScreen() {
           </View>
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
           <View style={styles.row}>
-            <AppText style={{ color: colors.textSecondary }}>Reference language</AppText>
+            <AppText style={{ color: colors.textSecondary }}>Translation language</AppText>
             <AppText variant="label" style={styles.value}>
               {reference?.name ?? 'Unavailable'}
             </AppText>

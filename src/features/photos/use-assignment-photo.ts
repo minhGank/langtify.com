@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AssignmentPhoto, PhotoGateway, Visibility } from '@/services/submissions';
 import type { PreparedPhoto } from './photo-files';
 import { createServerCache, isolatedCacheKey } from '@/lib/server-cache';
+import { feedback } from '@/lib/haptics';
 
 const assignments = createServerCache<AssignmentPhoto>({ maxEntries: 12 });
 
@@ -18,7 +19,7 @@ export function photoError(error: unknown) {
   if (message === 'assignment_unavailable')
     return 'This word is no longer available. Return to Today and refresh.';
   if (message === 'review_uploaded_photo')
-    return 'An uploaded photo was recovered. Review it before submitting.';
+    return 'Your photo is ready to finish. Review it, then tap Add photo.';
   if (
     [
       'photo_capture_unavailable',
@@ -27,8 +28,8 @@ export function photoError(error: unknown) {
       'past_word_requires_historical_capture',
     ].includes(String(message))
   )
-    return 'This word is not available for a new photo in this view. Return to Today or Past Words to refresh.';
-  return 'We could not finish this action. Check your connection and refresh to recover the saved state.';
+    return 'You can’t add a photo here right now. Refresh Today or Past Words.';
+  return 'We couldn’t confirm the change. Check your connection and refresh before trying again.';
 }
 export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, visible = true) {
   const key = gateway.cacheKey ?? isolatedCacheKey(gateway);
@@ -50,6 +51,10 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
   const [loading, setLoading] = useState(!data);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  // Presentation only. A restored completed row is never a new success event.
+  const [acknowledgedCompletionId, setAcknowledgedCompletionId] = useState<string | null>(null);
+  const presentationRevision = useRef(0),
+    lastAcknowledgedId = useRef<string | null>(null);
   const [isPublic, setPublic] = useState(data?.submission?.visibility === 'public');
   const visibleRef = useRef(visible),
     currentData = useRef<AssignmentPhoto | null>(data);
@@ -133,6 +138,8 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
         invalidation = snapshot.invalidation;
         setRemoteUri(null);
         if (snapshot.retired) {
+          presentationRevision.current++;
+          setAcknowledgedCompletionId(null);
           generation.current++;
           previewRequest.current?.abort();
           reading.current = false;
@@ -149,14 +156,17 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
   }, [entry, visible]);
   useEffect(() => {
     currentGateway.current = gateway;
+    presentationRevision.current++;
     generation.current++;
     previewRequest.current?.abort();
     reading.current = false;
     const status = entry.getSnapshot().data?.submission?.status;
     const revision = generation.current;
     void Promise.resolve().then(() => {
-      if (alive.current && generation.current === revision)
+      if (alive.current && generation.current === revision) {
+        setAcknowledgedCompletionId(null);
         void refresh(status === 'pending' || status === 'deleting');
+      }
     });
   }, [gateway, refresh, entry]);
   useEffect(() => {
@@ -175,12 +185,16 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
           void refresh(false);
       });
     } else {
+      presentationRevision.current++;
       generation.current++;
       previewRequest.current?.abort();
       reading.current = false;
       const revision = generation.current;
       void Promise.resolve().then(() => {
-        if (alive.current && generation.current === revision) setLoading(false);
+        if (alive.current && generation.current === revision) {
+          setAcknowledgedCompletionId(null);
+          setLoading(false);
+        }
       });
     }
   }, [visible, refresh, entry]);
@@ -203,9 +217,11 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
       } finally {
         working.current = false;
         if (alive.current) {
-          setBusy(false);
           await refresh();
-          if (alive.current && failure) setError(failure);
+          if (alive.current) {
+            setBusy(false);
+            if (failure) setError(failure);
+          }
         }
       }
     },
@@ -213,6 +229,8 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
   );
   const submit = () =>
     run(async (check) => {
+      const presentation = presentationRevision.current;
+      const startedGateway = currentGateway.current;
       const saved = await currentGateway.current.reserve();
       check();
       if (saved.status === 'completed') return;
@@ -233,10 +251,26 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
         await currentGateway.current.upload(saved, photo.bytes);
         check();
       }
-      await currentGateway.current.finalize(saved.id, isPublic ? 'public' : 'private');
+      const finalized = await currentGateway.current.finalize(
+        saved.id,
+        isPublic ? 'public' : 'private',
+      );
       check();
-      drafts.remove();
-      setPhoto(null);
+      // Keep the reviewed local image while refresh installs the completed row
+      // and remote pixels. That existing recovery path also removes the draft.
+      if (
+        finalized.status === 'completed' &&
+        visibleRef.current &&
+        presentation === presentationRevision.current &&
+        startedGateway === currentGateway.current &&
+        lastAcknowledgedId.current !== finalized.id
+      ) {
+        lastAcknowledgedId.current = finalized.id;
+        setAcknowledgedCompletionId(finalized.id);
+        // One acknowledgement for the photo; the asynchronous XP receipt never
+        // adds a second vibration for the same completion.
+        feedback.success();
+      }
     });
   const changeVisibility = (visibility: Visibility) =>
     run(async (check) => {
@@ -246,6 +280,7 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
     });
   const deletePhoto = () =>
     run(async (check) => {
+      setAcknowledgedCompletionId(null);
       if (data?.submission) {
         const saved = await currentGateway.current.beginDelete(data.submission.id);
         check();
@@ -290,6 +325,7 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
     loading,
     busy,
     error,
+    acknowledgedCompletionId,
     isPublic,
     setPublic,
     refresh,

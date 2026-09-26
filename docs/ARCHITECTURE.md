@@ -24,6 +24,42 @@ Root `app/` contains routes/layouts; `src/` contains implementation. Metro and
 Babel retain Expo defaults; `@/` maps to `src/`. iOS and Android are primary, with
 web-compatible components and a shared `expo-router/js-tabs` layout.
 
+## Product copy and authentication feedback
+
+Interface terminology follows [COPY_GUIDE.md](COPY_GUIDE.md). Auth signup responses
+without a session, including known duplicate-account errors, share the same neutral
+confirmation screen. Its manual resend uses Supabase `resend({ type: 'signup' })`
+through the existing serialized Auth mutation boundary; it never inspects returned
+identities or installs a fabricated session. Late unmounted responses are ignored.
+The Google entry remains mounted across form/confirmation presentation changes.
+
+Password guidance mirrors the verified server byte bounds with plain-language copy
+and live length feedback, without adding character classes or changing sign-in rules.
+Raw Auth refresh errors cannot reach username-editing UI. Typed service errors remain
+controlled, and moderation enum values are translated only for display. Vocabulary
+snapshots, database enums and all privacy/learning authority stay unchanged.
+The root route's custom error boundary offers retry without rendering thrown
+messages, stacks or route parameters and does not depend on authenticated state.
+See [AUTH_COPY_AUDIT.md](AUTH_COPY_AUDIT.md) for hosted verification limitations.
+
+## Motion and native feedback
+
+`src/lib/motion.ts` centralizes restrained timing/spring values. `MotionView` and
+`usePressMotion` use React Native Animated's native driver for opacity/transform,
+without layout animation, blocking interaction handles or list entrance loops.
+`useReducedMotion` shares one OS preference subscription, starts conservatively,
+and rejects stale preference answers. Active custom movement stops on background
+or Reduce Motion changes. Native stack/selection-sheet transitions respect that
+preference without changing routes, back gestures or cache lifetimes.
+
+`src/lib/haptics.ts` wraps SDK-compatible Expo Haptics with foreground/native-only,
+best-effort calls. Ordinary controls remain silent; account/focus-guarded accepted
+mutations select their own feedback. Photo success uses an ephemeral acknowledged
+completion marker, never cached/restored completion or a client XP calculation.
+The existing authoritative receipt supplies reward tiers. Onboarding progressively
+discloses the same five fields and retains one serialized, backend-gated final save.
+See [MOTION_POLISH.md](MOTION_POLISH.md) for triggers, native rebuild and acceptance.
+
 ## Phase 10 boundaries
 
 - `src/components/ui/`: typed, accessible shared presentation primitives.

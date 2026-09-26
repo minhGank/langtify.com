@@ -3,6 +3,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/app-text';
+import { MotionView } from '@/components/ui/motion-view';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import type { InboxNotification } from '@/services/inbox';
 
@@ -13,7 +14,7 @@ export function notificationLabel(item: InboxNotification) {
     case 'NEW_RATING':
       return `Someone rated your photo for “${displayTerm(item.targetTerm)}”`;
     case 'DAILY_WORDS_READY':
-      return 'Your daily words are ready';
+      return 'Today’s words are ready';
   }
 }
 function icon(item: InboxNotification): ComponentProps<typeof Ionicons>['name'] {
@@ -113,9 +114,11 @@ export function InboxRow({
             { backgroundColor: pressed ? colors.surfaceMuted : undefined },
           ]}
         >
-          <AppText variant="caption" style={{ color: colors.brandText, fontWeight: '600' }}>
-            Mark {item.read ? 'unread' : 'read'}
-          </AppText>
+          <MotionView trigger={item.read ? 'read' : 'unread'} kind="change">
+            <AppText variant="caption" style={{ color: colors.brandText, fontWeight: '600' }}>
+              Mark {item.read ? 'unread' : 'read'}
+            </AppText>
+          </MotionView>
         </Pressable>
       </View>
     </View>

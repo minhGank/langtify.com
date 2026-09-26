@@ -18,6 +18,10 @@ import {
   type InboxPage,
 } from '@/services/inbox';
 import { makeSession } from './fixtures';
+import { feedback } from '@/lib/haptics';
+jest.mock('@/lib/haptics', () => ({
+  feedback: { confirm: jest.fn(), selection: jest.fn(), success: jest.fn() },
+}));
 
 const mockGateway = {
   summary: jest.fn(),
@@ -117,7 +121,7 @@ it('shows follower, anonymous rating and daily-word notifications without push p
   render(<InboxContent identity={identity} />);
   await screen.findByText('@learner started following you');
   expect(screen.getByText('Someone rated your photo for “Le chien”')).toBeVisible();
-  expect(screen.getByText('Your daily words are ready')).toBeVisible();
+  expect(screen.getByText('Today’s words are ready')).toBeVisible();
   expect(screen.getByText('3 unread')).toBeVisible();
   expect(mockGateway.page).toHaveBeenCalledWith(null, expect.any(AbortSignal));
 });
@@ -148,6 +152,9 @@ it.each([
     expect(mockGateway.resolve.mock.invocationCallOrder[0]).toBeLessThan(
       mockGateway.read.mock.invocationCallOrder[0],
     );
+    expect(feedback.confirm).not.toHaveBeenCalled();
+    expect(feedback.selection).not.toHaveBeenCalled();
+    expect(feedback.success).not.toHaveBeenCalled();
   },
 );
 
@@ -412,7 +419,7 @@ it('reconciles when a mutation transport stalls past its deadline without holdin
   expect(result.current.busy).toBe(false);
   expect(mockGateway.page).toHaveBeenCalledTimes(2);
   expect(mockGateway.read).toHaveBeenCalledTimes(1);
-  expect(result.current.taskError).toMatch(/could not be confirmed/);
+  expect(result.current.taskError).toMatch(/couldn’t confirm/);
 });
 
 it('returns an older inbox window to the top only after an explicit successful latest refresh', async () => {
@@ -446,7 +453,7 @@ it('keeps the current inbox position and older page when latest refresh fails', 
   mockGateway.page.mockRejectedValueOnce(new Error('Offline'));
   render(<InboxContent identity={identity} />);
   fireEvent.press(screen.getByText('Back to latest notifications'));
-  await screen.findByText('Notifications could not be loaded. Pull down to try again.');
+  await screen.findByText('We couldn’t load your notifications. Pull down to try again.');
   expect(screen.getByText('Back to latest notifications')).toBeVisible();
   expect(scroll).not.toHaveBeenCalled();
 });

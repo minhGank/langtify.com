@@ -1,7 +1,7 @@
 import { friendlyError } from '@/features/auth/errors';
 it('maps auth, duplicate account and username errors without leaking server details', () => {
   expect(friendlyError({ code: 'invalid_credentials', message: 'internal' }, 'fallback')).toContain(
-    'email or password',
+    'Email or password',
   );
   expect(friendlyError({ code: 'email_exists' }, 'fallback')).toContain('Try signing in');
   expect(friendlyError({ code: '23505' }, 'fallback')).toContain('username');

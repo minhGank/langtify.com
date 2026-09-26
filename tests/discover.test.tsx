@@ -14,6 +14,8 @@ import {
 } from '@/services/discover';
 import { makeAccount, makeSession } from './fixtures';
 import { RatingUnavailable, type RatingScore, type RatingSummary } from '@/features/ratings/rating';
+import { feedback } from '@/lib/haptics';
+jest.mock('@/lib/haptics', () => ({ feedback: { selection: jest.fn() } }));
 jest.mock('@/features/inbox/notification-bell', () => ({ NotificationBell: () => null }));
 let mockSession = makeSession(),
   mockAccount = makeAccount(),
@@ -102,7 +104,7 @@ it('shows vocabulary, username, photo; retries failed images with fresh instance
   expect(await screen.findByLabelText('Photo of Le chien')).toBeVisible();
   mockLoad.mockResolvedValue({ items: [], hasMore: false });
   fireEvent(rendered.UNSAFE_getByType(FlatList), 'refresh');
-  expect(await screen.findByText(/No public photos/)).toBeVisible();
+  expect(await screen.findByText(/No photos yet/)).toBeVisible();
   expect(screen.queryByText('Le chien')).toBeNull();
   expect(mockLoad).toHaveBeenLastCalledWith(null, expect.any(AbortSignal));
   await act(async () => jest.advanceTimersByTime(100));
@@ -110,12 +112,12 @@ it('shows vocabulary, username, photo; retries failed images with fresh instance
 it('offers network retry and reloads account when backend target differs', async () => {
   mockLoad.mockRejectedValueOnce(new Error('offline'));
   render(<DiscoverScreen />);
-  expect(await screen.findByText(/Discover could not/)).toBeVisible();
+  expect(await screen.findByText(/couldn’t load Discover/)).toBeVisible();
   mockLoad.mockRejectedValueOnce(new FeedSettingsChanged('Learning settings changed.'));
-  fireEvent.press(screen.getByText('Retry feed'));
-  fireEvent.press(await screen.findByText('Reload account'));
+  fireEvent.press(screen.getByText('Try again'));
+  fireEvent.press(await screen.findByText('Refresh account'));
   expect(mockReload).toHaveBeenCalledTimes(1);
-  fireEvent.press(screen.getByText('Retry feed'));
+  fireEvent.press(screen.getByText('Try again'));
   expect(await screen.findByText('Le chien')).toBeVisible();
 });
 it('bounds the retained window and each signing request, preserves exact cursor, deduplicates and refreshes newest', async () => {
@@ -417,13 +419,16 @@ it('keeps the picker transient, prevents double votes and installs confirmed edi
   );
   render(<DiscoverScreen />);
   fireEvent.press(await screen.findByLabelText('Rate photo: Le chien'));
+  expect(feedback.selection).not.toHaveBeenCalled();
   fireEvent.press(screen.getByLabelText('5 — Perfect match for Le chien'));
   expect(screen.queryByLabelText('3 — Understandable for Le chien')).toBeNull();
   expect(screen.getByLabelText('Rate photo: Le chien')).toBeDisabled();
   expect(screen.getByText('No ratings yet')).toBeVisible();
   fireEvent.press(screen.getByLabelText('Rate photo: Le chien'));
   await waitFor(() => expect(mockRate).toHaveBeenCalledTimes(1));
+  expect(feedback.selection).not.toHaveBeenCalled();
   await act(async () => finish(rated(5)));
+  expect(feedback.selection).toHaveBeenCalledTimes(1);
   expect(screen.getByText('5.0 / 5 · 1 rating')).toBeVisible();
   fireEvent.press(
     screen.getByLabelText('Your rating: 5 — Perfect match. Edit rating for Le chien'),
@@ -432,6 +437,7 @@ it('keeps the picker transient, prevents double votes and installs confirmed edi
   expect(
     await screen.findByLabelText('Your rating: 3 — Understandable. Edit rating for Le chien'),
   ).toBeVisible();
+  expect(feedback.selection).toHaveBeenCalledTimes(2);
 });
 it('shows owners their aggregate without allowing a self-rating', async () => {
   catalog = [{ ...item, canRate: false, averageRating: 4, ratingCount: 3 }];
@@ -446,6 +452,24 @@ it('shows owners their aggregate without allowing a self-rating', async () => {
     await result.current.rate(item.id, 5);
   });
   expect(mockRate).not.toHaveBeenCalled();
+  expect(feedback.selection).not.toHaveBeenCalled();
+});
+it('does not replay feedback for an already confirmed score or a later cache read', async () => {
+  const { result } = renderHook(() => useDiscover(gateway));
+  await waitFor(() => expect(result.current.loading).toBe(false));
+  expect(feedback.selection).not.toHaveBeenCalled();
+  await act(async () => {
+    await result.current.rate(item.id, 4);
+  });
+  expect(feedback.selection).toHaveBeenCalledTimes(1);
+  await act(async () => {
+    await result.current.rate(item.id, 4);
+  });
+  await act(async () => {
+    await result.current.renew();
+  });
+  expect(result.current.items[0].viewerRating).toBe(4);
+  expect(feedback.selection).toHaveBeenCalledTimes(1);
 });
 it('supersedes an older renewal response when a vote is saved', async () => {
   const { result } = renderHook(() => useDiscover(gateway));
@@ -497,13 +521,15 @@ it('queues explicit refresh behind a mutation and never automatically replays an
   await waitFor(() => expect(result.current.items[0].viewerRating).toBe(3));
   expect(result.current.ratingAction).toBeNull();
   expect(mockRate).toHaveBeenCalledTimes(2);
+  // Reconciliation of a lost acknowledgement does not replay tactile rewards.
+  expect(feedback.selection).toHaveBeenCalledTimes(1);
 });
 it('keeps failed votes unconfirmed, accepts an explicit new choice and hides denied photos', async () => {
   mockRate.mockRejectedValueOnce(new Error('offline'));
   render(<DiscoverScreen />);
   fireEvent.press(await screen.findByLabelText('Rate photo: Le chien'));
   fireEvent.press(screen.getByLabelText('4 — Clear match for Le chien'));
-  await screen.findByText('Rating not confirmed. Tap to check or change it.');
+  await screen.findByText('We couldn’t confirm your rating. Open it to check or try again.');
   expect(mockRate).toHaveBeenCalledTimes(1);
   fireEvent.press(screen.getByLabelText('Rate photo: Le chien'));
   fireEvent.press(screen.getByLabelText('4 — Clear match for Le chien'));
@@ -512,7 +538,7 @@ it('keeps failed votes unconfirmed, accepts an explicit new choice and hides den
   fireEvent.press(screen.getByLabelText('Your rating: 4 — Clear match. Edit rating for Le chien'));
   fireEvent.press(screen.getByLabelText('5 — Perfect match for Le chien'));
   expect(
-    await screen.findByText('This photo or your learning settings changed. Refresh Discover.'),
+    await screen.findByText('This photo or your language settings have changed. Refresh Discover.'),
   ).toBeVisible();
   expect(screen.queryByText('Le chien')).toBeNull();
 });
@@ -546,6 +572,7 @@ it.each(['account', 'target', 'signout'])(
     await act(async () => finish(rated(5)));
     expect(signal.aborted).toBe(true);
     expect(screen.queryByText(/Your rating:/)).toBeNull();
+    expect(feedback.selection).not.toHaveBeenCalled();
   },
 );
 it('keeps downloaded pixels during uncertain vote recovery and discards a backgrounded mutation', async () => {

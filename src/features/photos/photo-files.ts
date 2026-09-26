@@ -8,7 +8,7 @@ export const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
 export const PHOTO_MAX_EDGE = 1600;
 export function resizeDimensions(width: number, height: number) {
   if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0)
-    throw new Error('Invalid image dimensions. Please choose or take another photo.');
+    throw new Error('We couldn’t read this photo. Choose or take another.');
   const scale = Math.min(1, PHOTO_MAX_EDGE / Math.max(width, height));
   return {
     width: Math.max(1, Math.round(width * scale)),
@@ -101,7 +101,7 @@ export async function preparePhoto(
       rendered.width <= 0 ||
       rendered.height <= 0
     )
-      throw new Error('The image could not be resized. Please choose or take another photo.');
+      throw new Error('We couldn’t prepare this photo. Choose or take another.');
     const saved = await rendered.saveAsync({ format: SaveFormat.JPEG, compress: 0.8 });
     savedUri = saved.uri;
     requireCurrent();
@@ -111,7 +111,7 @@ export async function preparePhoto(
         : await new File(saved.uri).arrayBuffer();
     const bytes = stripJpegMetadata(new Uint8Array(buffer));
     if (bytes.length > PHOTO_MAX_BYTES)
-      throw new Error('The photo is too large. Please choose or take another photo.');
+      throw new Error('This photo is too large. Choose or take another.');
     requireCurrent();
     if (Platform.OS === 'web')
       return { uri: jpegDataUri(bytes), bytes, ...(source ? { source } : {}) };

@@ -1,8 +1,9 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useCallback, useMemo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { AppText } from '@/components/ui/app-text';
+import { MotionView } from '@/components/ui/motion-view';
 import { useAuth } from '@/features/auth/auth-provider';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useServerQuery } from '@/hooks/use-server-query';
@@ -48,7 +49,9 @@ function Bell({ identity }: { identity: SafetyIdentity }) {
         accessible={false}
       />
       {count > 0 && (
-        <View
+        <MotionView
+          trigger={count}
+          kind="change"
           pointerEvents="none"
           style={[
             styles.badge,
@@ -61,7 +64,7 @@ function Bell({ identity }: { identity: SafetyIdentity }) {
           >
             {count > 99 ? '99+' : count}
           </AppText>
-        </View>
+        </MotionView>
       )}
     </Pressable>
   );

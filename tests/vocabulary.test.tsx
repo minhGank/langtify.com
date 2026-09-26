@@ -82,11 +82,11 @@ it.each(['email', 'google'])(
   async (provider) => {
     mockSession.user.app_metadata = { provider };
     render(<VocabularyScreen />);
-    expect(await screen.findByText('1 word captured')).toBeVisible();
+    expect(await screen.findByText('1 word collected')).toBeVisible();
     expect(await screen.findByLabelText('Your photo of Le chien')).toBeVisible();
     expect(screen.getByText('Dog · A1')).toBeVisible();
-    expect(screen.getByText('3 captures')).toBeVisible();
-    fireEvent.press(screen.getByRole('button', { name: /^View captures: Le chien\./ }));
+    expect(screen.getByText('3 photos')).toBeVisible();
+    fireEvent.press(screen.getByRole('button', { name: /^View photos: Le chien\./ }));
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/vocabulary-concept',
       params: { conceptId: 'concept' },
@@ -97,15 +97,13 @@ it.each(['email', 'google'])(
 it('shows an empty state, network failure/retry and refresh after last deletion', async () => {
   mockLoad.mockRejectedValueOnce(new Error('offline'));
   render(<VocabularyScreen />);
-  expect(await screen.findByText('Vocabulary could not be loaded.')).toBeVisible();
-  fireEvent.press(screen.getByText('Retry vocabulary'));
+  expect(await screen.findByText('We couldn’t load your vocabulary. Try again.')).toBeVisible();
+  fireEvent.press(screen.getByText('Try again'));
   await screen.findByText('Le chien');
   mockLoad.mockResolvedValue({ ...page, items: [], concept: null, totalConcepts: 0 });
   fireEvent(screen.getByLabelText('My vocabulary'), 'refresh');
   expect(
-    await screen.findByText(
-      'Complete your first photo challenge to start building your visual vocabulary.',
-    ),
+    await screen.findByText('Add a photo to today’s words to start your collection.'),
   ).toBeVisible();
   expect(screen.queryByText('Le chien')).toBeNull();
 });
@@ -140,7 +138,7 @@ it('drops pending history and photo responses on account switch or sign-out', as
   mockSession = makeSession('different');
   mockLoad.mockResolvedValue({ ...page, items: [], totalConcepts: 0 });
   rerender(<VocabularyScreen />);
-  await screen.findByText('0 words captured');
+  await screen.findByText('0 words collected');
   await act(async () => finish(page));
   expect(screen.queryByText('Le chien')).toBeNull();
   let sign: (value: Record<string, string>) => void = () => {};
@@ -285,7 +283,7 @@ it('opens existing photo management from a concept capture without copying delet
   const conceptId = '66000000-0000-4000-8000-000000000010';
   mockParams = { conceptId };
   render(<VocabularyScreen detail />);
-  expect(await screen.findByText('3 captures')).toBeVisible();
+  expect(await screen.findByText('3 photos')).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: /^Open photo: Le chien\./ }));
   expect(mockPush).toHaveBeenCalledWith({
     pathname: '/photo',
@@ -385,7 +383,7 @@ it('retries a failed image even if batch signing returns the same still-valid UR
 it('normalizes an uppercase concept deep link and provides a safe direct-entry return', async () => {
   mockParams = { conceptId: '66000000-AAAA-4000-8000-000000000010' };
   render(<VocabularyScreen detail />);
-  await screen.findByText('3 captures');
+  await screen.findByText('3 photos');
   expect(mockGatewayArgs).toHaveBeenLastCalledWith(mockSession.user.id, mockSession.access_token, {
     conceptId: mockParams.conceptId?.toLowerCase(),
     search: '',

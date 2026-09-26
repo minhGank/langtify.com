@@ -42,7 +42,7 @@ export function SemanticRating({
     <View style={styles.gap}>
       {!compact && (
         <View style={styles.heading}>
-          <AppText variant="heading">Vocabulary match</AppText>
+          <AppText variant="heading">Photo match</AppText>
           <RatingAggregate summary={summary} />
         </View>
       )}
@@ -98,20 +98,15 @@ export function SemanticRating({
                 <AppText variant="caption">Saving your rating…</AppText>
               </View>
             ) : summary.viewerRating !== null ? (
-              <>
-                <AppText variant="label" style={{ color: colors.brandText }}>
-                  Your rating: {ratingOptions[summary.viewerRating - 1].label}
-                </AppText>
-                <AppText variant="caption">Tap another match to change it.</AppText>
-              </>
-            ) : (
-              <AppText variant="caption">Tap a match to rate this photo.</AppText>
-            )}
+              <AppText variant="label" style={{ color: colors.brandText }}>
+                Your rating: {ratingOptions[summary.viewerRating - 1].label}
+              </AppText>
+            ) : null}
           </View>
           {action?.status === 'error' && (
             <>
               <AppText accessibilityRole="alert" style={{ color: colors.error }}>
-                Your rating couldn’t be confirmed. Check it before retrying.
+                We couldn’t confirm your rating. Try again to check it.
               </AppText>
               <Button
                 label="Retry rating"
@@ -123,7 +118,7 @@ export function SemanticRating({
           )}
         </>
       ) : (
-        <AppText variant="caption">Your photo — you cannot rate it.</AppText>
+        <AppText variant="caption">You can’t rate your own photo.</AppText>
       )}
     </View>
   );

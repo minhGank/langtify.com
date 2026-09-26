@@ -11,6 +11,10 @@ import { SafetyUnavailable } from '@/features/safety/model';
 import { createServerCache, serverScope } from '@/lib/server-cache';
 import { profileCache } from '@/features/social/cache';
 import { makeAccount, makeSession } from './fixtures';
+import { feedback } from '@/lib/haptics';
+jest.mock('@/lib/haptics', () => ({
+  feedback: { confirm: jest.fn(), success: jest.fn() },
+}));
 
 const mockGateway = {
   profile: jest.fn(),
@@ -109,12 +113,44 @@ it('uses authoritative follow state and shares a fresh public profile cache on r
   await waitFor(() =>
     expect(mockGateway.follow).toHaveBeenCalledWith(id, true, expect.any(AbortSignal)),
   );
-  await screen.findByText('Following · Unfollow');
+  await screen.findByText('Unfollow');
+  expect(feedback.confirm).toHaveBeenCalledTimes(1);
   expect(mockGateway.profile).toHaveBeenCalledTimes(1);
   first.unmount();
   render(<PublicProfilePanel identity={identity} target={target} close={jest.fn()} />);
   await screen.findByText('@learner');
   expect(mockGateway.profile).toHaveBeenCalledTimes(1);
+  expect(feedback.confirm).toHaveBeenCalledTimes(1);
+});
+it('confirms follow and unfollow only after their accepted responses and serializes rapid taps', async () => {
+  let finish = (_: unknown) => {};
+  mockGateway.follow.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  render(<PublicProfilePanel identity={identity} target={{ profileId: id }} close={jest.fn()} />);
+  fireEvent.press(await screen.findByText('Follow'));
+  fireEvent.press(screen.getByText('Follow'));
+  expect(mockGateway.follow).toHaveBeenCalledTimes(1);
+  expect(feedback.confirm).not.toHaveBeenCalled();
+  await act(async () =>
+    finish({
+      profile: { ...profile, isFollowing: true, followerCount: 3 },
+      viewerProfile: { ...profile, id: '79000000-0000-4000-8000-000000000002', isSelf: true },
+      followedAt: '2026-09-22T12:00:00Z',
+    }),
+  );
+  expect(feedback.confirm).toHaveBeenCalledTimes(1);
+  mockGateway.follow.mockResolvedValueOnce({
+    profile,
+    viewerProfile: { ...profile, id: '79000000-0000-4000-8000-000000000002', isSelf: true },
+    followedAt: null,
+  });
+  fireEvent.press(screen.getByText('Unfollow'));
+  await screen.findByText('Follow');
+  expect(mockGateway.follow).toHaveBeenLastCalledWith(id, false, expect.any(AbortSignal));
+  expect(feedback.confirm).toHaveBeenCalledTimes(2);
 });
 it('does not offer self-follow and confirms a block', async () => {
   mockGateway.profile.mockResolvedValueOnce({ ...profile, isSelf: true });
@@ -130,6 +166,21 @@ it('does not offer self-follow and confirms a block', async () => {
   await waitFor(() => expect(mockGateway.block).toHaveBeenCalledWith(id, expect.any(AbortSignal)));
   expect(close).toHaveBeenCalled();
 });
+it.each(['profile', 'viewerProfile'])(
+  'does not acknowledge follow when %s eligibility disappeared',
+  async (missing) => {
+    mockGateway.follow.mockResolvedValueOnce({
+      profile: missing === 'profile' ? null : { ...profile, isFollowing: true },
+      viewerProfile: missing === 'viewerProfile' ? null : { ...profile, isSelf: true },
+      followedAt: '2026-09-22T12:00:00Z',
+    });
+    render(<PublicProfilePanel identity={identity} target={{ profileId: id }} close={jest.fn()} />);
+    fireEvent.press(await screen.findByText('Follow'));
+    await act(async () => {});
+    expect(mockGateway.follow).toHaveBeenCalledTimes(1);
+    expect(feedback.confirm).not.toHaveBeenCalled();
+  },
+);
 it('does not reopen a cached public profile after the server rejects its eligibility', async () => {
   const related = createServerCache<string>().entry(
     `${serverScope(identity.userId, identity.token)}:related`,
@@ -143,6 +194,7 @@ it('does not reopen a cached public profile after the server rejects its eligibi
   mockGateway.profile.mockRejectedValue(new SafetyUnavailable('Profile unavailable.'));
   fireEvent.press(screen.getByText('Follow'));
   await screen.findByText('Profile unavailable.');
+  expect(feedback.confirm).not.toHaveBeenCalled();
   expect(related.getSnapshot().data).toBeNull();
   view.unmount();
   render(<PublicProfilePanel identity={identity} target={target} close={jest.fn()} />);
@@ -184,14 +236,14 @@ it('clears alternate profile lookups after a denied read without automatically r
   const view = render(
     <PublicProfilePanel identity={identity} target={{ profileId: id }} close={jest.fn()} />,
   );
-  await screen.findByText('This profile could not be loaded.');
+  await screen.findByText('We couldn’t load this profile. Try again.');
   expect(alternate.getSnapshot().data).toBeNull();
   expect(mockGateway.profile).toHaveBeenCalledTimes(1);
   view.unmount();
   render(
     <PublicProfilePanel identity={identity} target={{ submissionId: id }} close={jest.fn()} />,
   );
-  await screen.findByText('This profile could not be loaded.');
+  await screen.findByText('We couldn’t load this profile. Try again.');
   expect(mockGateway.profile).toHaveBeenCalledTimes(2);
   expect(screen.queryByText('@learner')).toBeNull();
 });
@@ -214,6 +266,8 @@ it('retries uncertain comment creation using the same durable request ID and pre
     mockGateway.createComment.mock.calls[1].slice(0, 3),
   );
   await waitFor(() => expect(screen.getByLabelText('Add a comment')).toHaveProp('value', ''));
+  expect(screen.getByText('Comment posted.')).toBeVisible();
+  expect(feedback.confirm).toHaveBeenCalledTimes(1);
 });
 it('deletes only through confirmed owner actions and reloads comments', async () => {
   render(
@@ -247,7 +301,7 @@ it('offers private reporting and blocking for someone else’s comment', async (
   expect(screen.queryByText('Delete comment')).toBeNull();
   fireEvent.press(screen.getByText('Report comment'));
   fireEvent.press(screen.getByText('Submit report'));
-  await screen.findByText('Your report has been received.');
+  await screen.findByText('Thanks for letting us know.');
   expect(mockGateway.reportComment).toHaveBeenCalledWith(
     id,
     'harassment_hate',
@@ -266,14 +320,16 @@ it('validates and saves username without sending unrelated learning preferences'
     expect(mockGateway.updateUsername).toHaveBeenCalledWith('new_name', expect.any(AbortSignal)),
   );
   expect(mockReload).toHaveBeenCalled();
+  expect(feedback.success).toHaveBeenCalledTimes(1);
 });
 it('keeps a rejected username editable and shows the safe error', async () => {
   mockGateway.updateUsername.mockRejectedValue(new Error('That username is already taken.'));
   render(<EditProfileScreen />);
   fireEvent.changeText(screen.getByLabelText('Username'), 'someone');
   fireEvent.press(screen.getByText('Save username'));
-  await screen.findByText('That username is already taken.');
+  await screen.findByText('That username is taken. Try another.');
   expect(mockReload).not.toHaveBeenCalled();
+  expect(feedback.success).not.toHaveBeenCalled();
 });
 it('discards a username response after an account switch', async () => {
   let finish = () => {};
@@ -292,6 +348,7 @@ it('discards a username response after an account switch', async () => {
   await act(async () => finish());
   expect(signal.aborted).toBe(true);
   expect(mockReload).not.toHaveBeenCalled();
+  expect(feedback.success).not.toHaveBeenCalled();
 });
 it('debounces bounded prefix search and rejects broad wildcard input', async () => {
   jest.useFakeTimers();
@@ -309,7 +366,7 @@ it('shares vocabulary context without bearer URLs or unsupported post links', as
   await sharePost({ targetTerm: 'le chien', referenceTerm: 'dog', username: 'learner' });
   expect(share).toHaveBeenCalledWith({
     title: 'le chien · Langtify',
-    message: 'le chien — dog\nA vocabulary photo by @learner on Langtify.\nhttps://langtify.com',
+    message: 'le chien — dog\nA word in photos by @learner on Langtify.\nhttps://langtify.com',
   });
 });
 it('validates public profiles and comments without accepting malformed counts or hidden identity fields', () => {
@@ -351,7 +408,7 @@ it('reconciles a public-profile follow whose acknowledgement was interrupted by 
   first.unmount();
   mockGateway.profile.mockResolvedValue({ ...profile, isFollowing: true, followerCount: 3 });
   render(<PublicProfilePanel identity={identity} target={target} close={jest.fn()} />);
-  await screen.findByText('Following · Unfollow');
+  await screen.findByText('Unfollow');
   expect(mockGateway.profile).toHaveBeenCalledTimes(2);
   await act(async () =>
     finish({
@@ -360,8 +417,9 @@ it('reconciles a public-profile follow whose acknowledgement was interrupted by 
       followedAt: '2026-09-22T12:00:00Z',
     }),
   );
-  expect(screen.getByText('Following · Unfollow')).toBeVisible();
+  expect(screen.getByText('Unfollow')).toBeVisible();
   expect(mockGateway.follow).toHaveBeenCalledTimes(1);
+  expect(feedback.confirm).not.toHaveBeenCalled();
 });
 
 it('keeps comments visible while a successful new comment reconciles without a reload control', async () => {
@@ -398,6 +456,30 @@ it('keeps comments visible while a successful new comment reconciles without a r
   expect(screen.getByText('A clear example!')).toBeVisible();
 });
 
+it('does not acknowledge a comment response after its screen is no longer active', async () => {
+  let finish = () => {};
+  mockGateway.createComment.mockReturnValueOnce(
+    new Promise<void>((resolve) => {
+      finish = resolve;
+    }),
+  );
+  const view = render(
+    <Comments
+      identity={identity}
+      submissionId={id}
+      openProfile={jest.fn()}
+      unavailable={jest.fn()}
+    />,
+  );
+  await screen.findByText('A clear example!');
+  fireEvent.changeText(screen.getByLabelText('Add a comment'), 'A comment');
+  fireEvent.press(screen.getByText('Post comment'));
+  await waitFor(() => expect(mockGateway.createComment).toHaveBeenCalledTimes(1));
+  view.unmount();
+  await act(async () => finish());
+  expect(feedback.confirm).not.toHaveBeenCalled();
+});
+
 it('removes a confirmed deletion locally while retaining the rest of the loaded conversation', async () => {
   const surviving = {
     ...comment,
@@ -428,6 +510,8 @@ it('removes a confirmed deletion locally while retaining the rest of the loaded 
   await waitFor(() => expect(mockGateway.comments).toHaveBeenCalledTimes(2));
   expect(screen.queryByText('A clear example!')).toBeNull();
   expect(screen.getByText('Keep this comment')).toBeVisible();
+  expect(screen.getByText('Comment deleted.')).toBeVisible();
+  expect(feedback.confirm).toHaveBeenCalledTimes(1);
   await act(async () => finish({ items: [surviving], hasMore: false }));
   expect(screen.queryByText('A clear example!')).toBeNull();
 });

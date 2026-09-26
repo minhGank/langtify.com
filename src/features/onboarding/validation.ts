@@ -48,16 +48,16 @@ export function validateOnboarding(
     errors.username = 'Use 3–30 letters, numbers or underscores, starting with a letter or number.';
   }
   if (!activeLanguageIds.includes(input.referenceLanguageId)) {
-    errors.referenceLanguageId = 'Choose a reference language.';
+    errors.referenceLanguageId = 'Choose your translation language.';
   }
   if (!activeLanguageIds.includes(input.targetLanguageId)) {
-    errors.targetLanguageId = 'Choose a target language.';
+    errors.targetLanguageId = 'Choose the language you’re learning.';
   } else if (input.referenceLanguageId === input.targetLanguageId) {
-    errors.targetLanguageId = 'Choose a target language different from your reference language.';
+    errors.targetLanguageId = 'Choose two different languages.';
   }
   if (!isCefrLevel(input.cefrLevel)) errors.cefrLevel = 'Choose your current level.';
   if (!isValidTimezone(input.timezone.trim())) {
-    errors.timezone = 'Enter an IANA timezone, such as America/Toronto or Europe/Paris.';
+    errors.timezone = 'Choose your timezone from the list.';
   }
   return errors;
 }

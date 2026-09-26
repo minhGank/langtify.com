@@ -35,11 +35,7 @@ export function useSafetyTask(
       let cancel = () => {};
       const cancelled = new Promise<never>((_, reject) => {
         cancel = () =>
-          reject(
-            new Error(
-              'Request could not be confirmed. Refresh to check current state before retrying.',
-            ),
-          );
+          reject(new Error('We couldn’t confirm the change. Refresh before trying again.'));
       });
       current.signal.addEventListener('abort', cancel, { once: true });
       const timer = setTimeout(() => current.abort(), 20000);
@@ -53,7 +49,7 @@ export function useSafetyTask(
           setError(
             cause instanceof SafetyUnavailable
               ? cause.message
-              : 'Request could not be confirmed. Refresh to check current state before retrying.',
+              : 'We couldn’t confirm the change. Refresh before trying again.',
           );
         }
       } finally {

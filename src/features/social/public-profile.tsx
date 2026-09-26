@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Screen } from '@/components/ui/screen';
 import { Sheet } from '@/components/ui/sheet';
+import { MotionView } from '@/components/ui/motion-view';
 import { useAuth } from '@/features/auth/auth-provider';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useServerQuery } from '@/hooks/use-server-query';
 import { serverScope } from '@/lib/server-cache';
+import { feedback } from '@/lib/haptics';
 import { socialGateway, type PublicProfileTarget } from '@/services/social';
 import { SafetyUnavailable, type SafetyIdentity } from '@/features/safety/model';
 import { useSafetyTask } from '@/features/safety/use-safety-task';
@@ -32,6 +34,7 @@ export function PublicProfilePanel({
 }) {
   const { colors } = useAppTheme();
   const [confirmBlock, setConfirmBlock] = useState(false);
+  const [followAcknowledgement, setFollowAcknowledgement] = useState<number | null>(null);
   const gateway = useMemo(() => socialGateway(identity), [identity]);
   const key = target
     ? 'profileId' in target
@@ -91,7 +94,7 @@ export function PublicProfilePanel({
               size={88}
             />
             <AppText variant="title">@{profile.username}</AppText>
-            <View style={styles.counts}>
+            <MotionView trigger={followAcknowledgement} kind="change" style={styles.counts}>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={`${profile.followerCount} followers`}
@@ -110,11 +113,11 @@ export function PublicProfilePanel({
                 <AppText variant="heading">{profile.followingCount}</AppText>
                 <AppText variant="caption">Following</AppText>
               </Pressable>
-            </View>
+            </MotionView>
           </View>
           {!profile.isSelf && (
             <Button
-              label={profile.isFollowing ? 'Following · Unfollow' : 'Follow'}
+              label={profile.isFollowing ? 'Unfollow' : 'Follow'}
               variant={profile.isFollowing ? 'secondary' : 'primary'}
               loading={task.busy}
               disabled={!!task.error}
@@ -124,7 +127,17 @@ export function PublicProfilePanel({
                     followWithRecovery(identity, signal, () =>
                       gateway.follow(profile.id, !profile.isFollowing, signal),
                     ),
-                  (receipt) => followChanged(identity, receipt),
+                  (receipt) => {
+                    followChanged(identity, receipt);
+                    if (
+                      receipt.profile &&
+                      receipt.viewerProfile &&
+                      receipt.profile.isFollowing !== profile.isFollowing
+                    ) {
+                      setFollowAcknowledgement((previous) => (previous ?? 0) + 1);
+                      feedback.confirm();
+                    }
+                  },
                 )
               }
             />
@@ -143,10 +156,10 @@ export function PublicProfilePanel({
       {(query.error || task.error) && (
         <>
           <AppText accessibilityRole="alert" style={{ color: colors.error }}>
-            {task.error ?? 'This profile could not be loaded.'}
+            {task.error ?? 'We couldn’t load this profile. Try again.'}
           </AppText>
           <Button
-            label="Retry profile"
+            label="Try again"
             variant="secondary"
             onPress={() =>
               void task.run(
@@ -163,8 +176,8 @@ export function PublicProfilePanel({
       <Sheet visible={confirmBlock} title="Block account" onClose={() => setConfirmBlock(false)}>
         <AppText>Block @{profile?.username}?</AppText>
         <AppText>
-          You will stop seeing each other’s public content and social relationships. You can unblock
-          them in Profile.
+          You won’t see each other’s public activity or be able to interact. You can unblock them in
+          Profile.
         </AppText>
         <Button
           label="Confirm block"

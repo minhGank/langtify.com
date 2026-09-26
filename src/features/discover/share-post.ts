@@ -6,6 +6,6 @@ import type { FeedItem } from '@/services/discover';
 export async function sharePost(item: Pick<FeedItem, 'targetTerm' | 'referenceTerm' | 'username'>) {
   return Share.share({
     title: `${item.targetTerm} · Langtify`,
-    message: `${item.targetTerm} — ${item.referenceTerm}\nA vocabulary photo by @${item.username} on Langtify.\nhttps://langtify.com`,
+    message: `${item.targetTerm} — ${item.referenceTerm}\nA word in photos by @${item.username} on Langtify.\nhttps://langtify.com`,
   });
 }

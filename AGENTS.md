@@ -29,6 +29,18 @@ physical iPhone review is required. See `docs/COLOR_SYSTEM.md`.
 Read `docs/PRODUCT.md`, `docs/ARCHITECTURE.md`, `docs/DATA_MODEL.md` and
 `docs/DECISIONS.md` before changes. Do not begin Phase 11 or add future product rules.
 
+The dedicated motion/native-feel brief authorizes presentation-only guided onboarding,
+shared reduced-motion-aware feedback and SDK-compatible haptics. Preserve the same
+fields, backend authority, cache triggers and native navigation. Confirmed-action
+feedback must retain account/focus guards; no passive reward replay or delayed writes.
+See `docs/MOTION_POLISH.md`; physical iPhone acceptance remains required.
+
+The product-copy/authentication-UX audit authorizes interface wording, neutral signup
+confirmation/resend guidance and truthful password feedback. Preserve Supabase's
+obscured responses, automatic identity linking and backend password policy. Never
+probe account existence or print raw provider errors. Hosted email configuration is
+read-only in this scope; see `docs/AUTH_COPY_AUDIT.md` and `docs/COPY_GUIDE.md`.
+
 ## Engineering
 
 - Use npm and keep `package-lock.json` in sync. Use `npm ci` on existing checkouts.

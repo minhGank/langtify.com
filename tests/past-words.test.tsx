@@ -113,12 +113,12 @@ it('continues existing pending and deleting photos using their authoritative kin
   );
   render(<PastWordsScreen />);
   await screen.findByText('Photo in progress');
-  fireEvent.press(screen.getByRole('button', { name: 'Continue photo: La fenêtre' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Resume photo: La fenêtre' }));
   expect(router.push).toHaveBeenLastCalledWith({
     pathname: '/photo',
     params: { assignmentId: id(1), captureKind: 'daily' },
   });
-  expect(screen.getByText('Photo deletion in progress')).toBeVisible();
+  expect(screen.getByText('Deleting photo')).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Manage photo: Mot 2' }));
   expect(router.push).toHaveBeenLastCalledWith({
     pathname: '/photo',
@@ -137,7 +137,7 @@ it('provides native back for pushed screens and a fixed Vocabulary fallback for 
 it('shows distinct empty and filtered-empty states and sends search/CEFR to the backend', async () => {
   mockLoad.mockResolvedValue(page([]));
   render(<PastWordsScreen />);
-  await screen.findByText('More words to revisit soon');
+  await screen.findByText('No past words yet');
   fireEvent.changeText(screen.getByLabelText('Search past words'), ' WINDOW ');
   fireEvent(screen.getByLabelText('Search past words'), 'submitEditing');
   await screen.findByText('No matching words');
@@ -157,7 +157,7 @@ it('shows distinct empty and filtered-empty states and sends search/CEFR to the 
   );
   fireEvent.press(screen.getByRole('button', { name: 'Clear level filter' }));
   fireEvent.press(screen.getByRole('button', { name: 'Clear past words search' }));
-  expect(await screen.findByText('More words to revisit soon')).toBeVisible();
+  expect(await screen.findByText('No past words yet')).toBeVisible();
 });
 
 it('debounces typing and cancels superseded search responses', async () => {
@@ -258,10 +258,10 @@ it('retains data after a network error, supports retry and clears it on lost acc
   await screen.findByText('La fenêtre');
   mockLoad.mockRejectedValueOnce(new Error('offline'));
   fireEvent(screen.getByLabelText('Past words'), 'refresh');
-  await screen.findByRole('button', { name: 'Retry past words' });
+  await screen.findByRole('button', { name: 'Try again' });
   expect(screen.getByText('La fenêtre')).toBeVisible();
   mockLoad.mockRejectedValueOnce(new PastWordsUnavailable());
-  fireEvent.press(screen.getByRole('button', { name: 'Retry past words' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
   await screen.findByText('Past words unavailable');
   expect(screen.queryByText('La fenêtre')).toBeNull();
 });
@@ -281,7 +281,7 @@ it('aborts pending account data and ignores it after account/session switching',
   mockLoad.mockResolvedValue(page([]));
   act(() => setServerScope(serverScope(mockSession.user.id, mockSession.access_token)));
   rerender(<PastWordsScreen />);
-  await screen.findByText('More words to revisit soon');
+  await screen.findByText('No past words yet');
   expect(signal.aborted).toBe(true);
   await act(async () => finish(page()));
   expect(screen.queryByText('La fenêtre')).toBeNull();
@@ -345,7 +345,7 @@ it('separates a new Auth session for the same user from the previous session cac
   mockSession = makeOAuthSession(undefined, 'second-session');
   mockLoad.mockResolvedValue(page([]));
   view.rerender(<PastWordsScreen />);
-  await screen.findByText('More words to revisit soon');
+  await screen.findByText('No past words yet');
   expect(mockLoad).toHaveBeenCalledTimes(2);
   expect(screen.queryByText('La fenêtre')).toBeNull();
 });
@@ -357,9 +357,9 @@ it('does not scroll on failed refresh; successful explicit refresh returns to ne
     await screen.findByText('La fenêtre');
     mockLoad.mockRejectedValueOnce(new Error('offline'));
     fireEvent(screen.getByLabelText('Past words'), 'refresh');
-    await screen.findByRole('button', { name: 'Retry past words' });
+    await screen.findByRole('button', { name: 'Try again' });
     expect(scroll).not.toHaveBeenCalled();
-    fireEvent.press(screen.getByRole('button', { name: 'Retry past words' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
     await waitFor(() => expect(scroll).toHaveBeenCalledWith({ offset: 0, animated: false }));
   } finally {
     scroll.mockRestore();
@@ -374,7 +374,7 @@ it('partitions cached eligibility by the persisted timezone and retains server d
   mockAccount = { ...mockAccount, learning: { ...learning, timezone: 'Pacific/Honolulu' } };
   mockLoad.mockResolvedValue(page([]));
   view.rerender(<PastWordsScreen />);
-  await screen.findByText('More words to revisit soon');
+  await screen.findByText('No past words yet');
   expect(mockLoad).toHaveBeenCalledTimes(2);
   expect(pastWordDate('2026-03-08')).toContain('8');
   expect(pastWordDate('2026-11-01')).toContain('1');

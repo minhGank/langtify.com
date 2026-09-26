@@ -103,7 +103,7 @@ export function CardActions({
                 maxLength={500}
                 multiline
                 editable={!task.busy}
-                hint="500 characters maximum. Keep personal information private."
+                hint="Up to 500 characters. Leave out personal details."
               />
               <Button label="Review report" onPress={() => setConfirm(true)} />
             </>
@@ -112,7 +112,7 @@ export function CardActions({
               <AppText>{reportReasons.find((r) => r.value === reason)?.label}</AppText>
               {details.length > 0 && <AppText>{details}</AppText>}
               <AppText>
-                Your report is private. The reported user will not see who submitted it.
+                Only moderators can see your report. Your name won’t be shared with this person.
               </AppText>
               <Button
                 label="Confirm report"
@@ -138,8 +138,8 @@ export function CardActions({
         <>
           <AppText>Block @{item.username}?</AppText>
           <AppText>
-            You will stop seeing each other’s public content and cannot rate each other’s photos.
-            You can unblock them in Profile.
+            You won’t see each other’s public activity or be able to interact. You can unblock them
+            in Profile.
           </AppText>
           <Button
             variant="danger"
@@ -160,7 +160,7 @@ export function CardActions({
       {mode === 'done' && (
         <View style={styles.received}>
           <Ionicons name="checkmark-circle-outline" size={42} color={colors.success} />
-          <AppText>Thank you. Your report has been received.</AppText>
+          <AppText>Thanks for letting us know. A moderator can review your report.</AppText>
         </View>
       )}
       {task.error && (

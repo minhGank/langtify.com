@@ -56,9 +56,9 @@ function BlockedUsers({ userId, token }: SafetyIdentity) {
         <AppText variant="heading">Blocked users</AppText>
       </View>
       <AppText>
-        You won’t see each other’s public photos. Unblock someone to see their posts again.
+        Blocked people can’t interact with you, and you won’t see each other’s public activity.
       </AppText>
-      {page?.items.length === 0 && <AppText>No blocked users on this page.</AppText>}
+      {page?.items.length === 0 && <AppText>No blocked people here.</AppText>}
       {page?.items.map((user) => (
         <Button
           key={user.id}
@@ -71,7 +71,7 @@ function BlockedUsers({ userId, token }: SafetyIdentity) {
       {selected && (
         <Sheet visible title="Unblock account" onClose={() => setSelected(null)}>
           <AppText>
-            Unblock @{selected.username}? Eligible public content will be visible again.
+            Unblock @{selected.username}? You may see each other’s public activity again.
           </AppText>
           <Button
             label="Confirm unblock"

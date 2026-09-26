@@ -1,26 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AccessibilityInfo, BackHandler, Keyboard, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
 import { BrandLogo } from '@/components/ui/brand-logo';
 import { Button } from '@/components/ui/button';
-import { ChoiceField } from '@/components/ui/choice-field';
-import { FormField } from '@/components/ui/form-field';
+import { IconButton } from '@/components/ui/icon-button';
+import { MotionView } from '@/components/ui/motion-view';
 import { Screen } from '@/components/ui/screen';
 import { useAuth } from '@/features/auth/auth-provider';
 import { friendlyError } from '@/features/auth/errors';
 import { SignOutButton } from '@/features/auth/sign-out-button';
 import {
-  cefrOptions,
   detectTimezone,
-  normalizeUsername,
   validateOnboarding,
   type OnboardingErrors,
   type OnboardingInput,
 } from '@/features/onboarding/validation';
 import { completeOnboarding } from '@/services/account';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { TimezoneField } from './timezone-field';
+import { OnboardingStep, onboardingSteps } from './onboarding-steps';
 
 export function OnboardingScreen() {
   const { session } = useAuth();
@@ -57,10 +55,49 @@ function OnboardingForm() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const submitting = useRef(false);
+  const [stepIndex, setStepIndex] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const currentStep = onboardingSteps[stepIndex] ?? onboardingSteps[0];
+  const lastStep = stepIndex === onboardingSteps.length - 1;
+  const changeStep = useCallback(
+    (nextIndex: number) => {
+      if (submitting.current || nextIndex < 0 || nextIndex >= onboardingSteps.length) return;
+      Keyboard.dismiss();
+      setDirection(nextIndex < stepIndex ? -1 : 1);
+      setStepIndex(nextIndex);
+      const nextStep = onboardingSteps[nextIndex];
+      if (nextStep) {
+        AccessibilityInfo.announceForAccessibility(
+          `Step ${nextIndex + 1} of ${onboardingSteps.length}. ${nextStep.title}`,
+        );
+      }
+    },
+    [stepIndex],
+  );
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (submitting.current) return true;
+      if (stepIndex === 0) return false;
+      changeStep(stepIndex - 1);
+      return true;
+    });
+    return () => subscription.remove();
+  }, [changeStep, stepIndex]);
+
   function update(field: keyof OnboardingInput, value: string) {
     setInput((previous) => ({ ...previous, [field]: value }));
     setErrors((previous) => ({ ...previous, [field]: undefined }));
     setError('');
+  }
+  function next() {
+    if (submitting.current || languages.length < 2 || lastStep) return;
+    const validation = validateOnboarding(
+      input,
+      languages.map((language) => language.id),
+    );
+    const fieldError = validation[currentStep.field];
+    setErrors((previous) => ({ ...previous, [currentStep.field]: fieldError }));
+    if (!fieldError) changeStep(stepIndex + 1);
   }
   async function submit() {
     if (submitting.current || !session) return;
@@ -70,20 +107,33 @@ function OnboardingForm() {
     );
     setErrors(validation);
     setError('');
-    if (Object.keys(validation).length > 0) return;
+    const invalidStep = onboardingSteps.findIndex((step) => validation[step.field]);
+    if (invalidStep >= 0) {
+      changeStep(invalidStep);
+      return;
+    }
     submitting.current = true;
     setBusy(true);
     try {
       await completeOnboarding(input, session.access_token);
       if (mounted.current) reload(); // Never unlock tabs from an optimistic/local completion flag.
     } catch (cause) {
-      if (mounted.current)
+      if (mounted.current) {
         setError(
-          friendlyError(
-            cause,
-            'We could not save your setup. Check your connection and try again. Your account is safe to retry.',
-          ),
+          friendlyError(cause, 'We couldn’t save your setup. Check your connection and try again.'),
         );
+        if (
+          typeof cause === 'object' &&
+          cause !== null &&
+          'code' in cause &&
+          cause.code === '23505'
+        ) {
+          // This exact backend error already means a username collision. Preserve
+          // the draft and make its correction reachable without restarting setup.
+          submitting.current = false;
+          changeStep(onboardingSteps.findIndex((step) => step.field === 'username'));
+        }
+      }
     } finally {
       submitting.current = false;
       if (mounted.current) setBusy(false);
@@ -94,98 +144,108 @@ function OnboardingForm() {
     label: `${language.name} (${language.native_name})`,
   }));
   return (
-    <Screen>
-      <View style={styles.intro}>
+    <Screen scrollResetKey={stepIndex}>
+      <View style={styles.brand}>
         <BrandLogo />
-        <AppText variant="label" style={{ color: colors.brandText }}>
-          YOUR LEARNING PROFILE
-        </AppText>
-        <AppText variant="title">Make it yours</AppText>
-        <AppText style={{ color: colors.textSecondary }}>
-          A few details to shape your daily words.
-        </AppText>
       </View>
-      <FormField
-        label="Username"
-        required
-        value={input.username}
-        onChangeText={(value) => update('username', value)}
-        onBlur={() => update('username', normalizeUsername(input.username))}
-        autoCapitalize="none"
-        autoCorrect={false}
-        autoComplete="username-new"
-        maxLength={30}
-        editable={!busy}
-        error={errors.username}
-        hint="3–30 letters, numbers or underscores. Shown with public photos."
-      />
-      {languages.length < 2 ? (
-        <>
-          <AppText style={{ color: colors.error }} accessibilityRole="alert">
-            Learning languages are unavailable. Please try again shortly.
-          </AppText>
-          <Button variant="secondary" label="Reload languages" onPress={reload} />
-        </>
-      ) : (
-        <>
-          <ChoiceField
-            label="Reference language"
-            required
-            value={input.referenceLanguageId}
-            options={options}
+      <View style={styles.progressHeader}>
+        {stepIndex > 0 ? (
+          <IconButton
+            name="arrow-back"
+            label="Previous setup step"
+            onPress={() => changeStep(stepIndex - 1)}
             disabled={busy}
-            onChange={(value) => update('referenceLanguageId', value)}
-            error={errors.referenceLanguageId}
           />
-          <AppText variant="caption" style={{ color: colors.textSecondary }}>
-            The language you use for translations.
-          </AppText>
-          <ChoiceField
-            label="Target language"
-            required
-            value={input.targetLanguageId}
-            options={options}
-            disabled={busy}
-            onChange={(value) => update('targetLanguageId', value)}
-            error={errors.targetLanguageId}
-          />
-        </>
-      )}
-      <ChoiceField
-        label="Your current level"
-        required
-        value={input.cefrLevel}
-        disabled={busy}
-        options={cefrOptions.map((option) => ({
-          value: option.value,
-          label: `${option.value} — ${option.label}`,
-        }))}
-        onChange={(value) => update('cefrLevel', value)}
-        error={errors.cefrLevel}
-      />
-      <TimezoneField
-        value={input.timezone}
-        onChange={(value) => update('timezone', value)}
-        disabled={busy}
-        error={errors.timezone}
-      />
-      {error && (
-        <AppText
-          style={{ color: colors.error }}
-          accessibilityRole="alert"
-          accessibilityLiveRegion="polite"
+        ) : (
+          <View style={styles.backSpace} />
+        )}
+        <View
+          accessible
+          accessibilityRole="progressbar"
+          accessibilityLabel="Setup progress"
+          accessibilityValue={{
+            min: 1,
+            max: onboardingSteps.length,
+            now: stepIndex + 1,
+            text: `Step ${stepIndex + 1} of ${onboardingSteps.length}`,
+          }}
+          style={styles.progress}
         >
-          {error}
-        </AppText>
-      )}
-      <Button
-        label="Finish setup"
-        loading={busy}
-        disabled={languages.length < 2}
-        onPress={() => void submit()}
-      />
-      {!busy && <SignOutButton />}
+          <AppText variant="caption">
+            Step {stepIndex + 1} of {onboardingSteps.length}
+          </AppText>
+          <View style={styles.track}>
+            {onboardingSteps.map((step, index) => (
+              <View
+                key={step.field}
+                style={[
+                  styles.segment,
+                  { backgroundColor: index <= stepIndex ? colors.brandPrimary : colors.border },
+                ]}
+              />
+            ))}
+          </View>
+        </View>
+      </View>
+      <MotionView trigger={stepIndex} kind="step" direction={direction} style={styles.step}>
+        <View
+          key={currentStep.field}
+          style={styles.step}
+          onAccessibilityEscape={() => changeStep(stepIndex - 1)}
+        >
+          <View style={styles.intro}>
+            <AppText variant="title">{currentStep.title}</AppText>
+            <AppText style={{ color: colors.textSecondary }}>{currentStep.description}</AppText>
+          </View>
+          {languages.length < 2 ? (
+            <>
+              <AppText style={{ color: colors.error }} accessibilityRole="alert">
+                We couldn’t load the languages. Try again.
+              </AppText>
+              <Button variant="secondary" label="Reload languages" onPress={reload} />
+            </>
+          ) : (
+            <OnboardingStep
+              field={currentStep.field}
+              input={input}
+              errors={errors}
+              options={options}
+              busy={busy}
+              onChange={update}
+              onNext={next}
+            />
+          )}
+          {error && (
+            <AppText
+              style={{ color: colors.error }}
+              accessibilityRole="alert"
+              accessibilityLiveRegion="polite"
+            >
+              {error}
+            </AppText>
+          )}
+        </View>
+      </MotionView>
+      <View style={styles.actions}>
+        <Button
+          label={lastStep ? 'Finish setup' : 'Continue'}
+          loading={busy}
+          disabled={languages.length < 2}
+          onPress={lastStep ? () => void submit() : next}
+        />
+        {!busy && <SignOutButton />}
+      </View>
     </Screen>
   );
 }
-const styles = StyleSheet.create({ intro: { gap: 10, paddingVertical: 8 } });
+const styles = StyleSheet.create({
+  brand: { alignItems: 'center', paddingTop: 8 },
+  intro: { gap: 12 },
+  progressHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  backSpace: { width: 48, height: 48 },
+  progress: { flex: 1, gap: 8 },
+  track: { flexDirection: 'row', gap: 6 },
+  segment: { flex: 1, height: 4, borderRadius: 2 },
+  step: { gap: 28, flexGrow: 1 },
+  actions: { gap: 8 },
+});

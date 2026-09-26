@@ -1,8 +1,9 @@
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { LoadingPlaceholder } from '@/components/ui/loading-placeholder';
 
 export function SearchEmpty({
   loading = false,
@@ -19,7 +20,7 @@ export function SearchEmpty({
   return (
     <View style={styles.empty}>
       {loading ? (
-        <ActivityIndicator accessibilityLabel="Searching" color={colors.brandPrimary} />
+        <LoadingPlaceholder label="Searching" />
       ) : (
         <>
           <View
@@ -35,7 +36,7 @@ export function SearchEmpty({
               accessible={false}
             />
           </View>
-          <AppText variant="heading">{error ? 'Search unavailable' : title}</AppText>
+          <AppText variant="heading">{error ? 'We couldn’t load your search.' : title}</AppText>
           {hint && (
             <AppText variant="caption" style={styles.center}>
               {hint}
@@ -64,10 +65,10 @@ export function SearchFooter({
   return (
     <View style={styles.footer}>
       {error ? (
-        <Button label="Retry search" variant="secondary" onPress={refresh} />
+        <Button label="Try again" variant="secondary" onPress={refresh} />
       ) : (
         hasMore && (
-          <Button label="More results" variant="secondary" disabled={loading} onPress={more} />
+          <Button label="More results" variant="secondary" loading={loading} onPress={more} />
         )
       )}
       {!fromStart && <Button label="Back to first results" variant="ghost" onPress={refresh} />}

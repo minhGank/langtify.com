@@ -296,7 +296,7 @@ it('does not prepare a photo when the server day changes while the picker is ope
   await act(async () => result.current.choose());
   expect(result.current.available).toBe(false);
   expect(result.current.error).toBe(
-    'This word is no longer available for a new photo. Return to Today or Past Words to refresh.',
+    'You can’t add a photo to this word right now. Refresh Today or Past Words.',
   );
   expect(prepare).not.toHaveBeenCalled();
   expect(options.onPrepared).not.toHaveBeenCalled();
@@ -331,9 +331,7 @@ it('does not leak preprocessing errors and releases controls for another explici
   prepare.mockRejectedValueOnce(new Error('private-source-path-and-metadata'));
   const { result } = await mounted();
   await act(async () => result.current.choose());
-  expect(result.current.error).toBe(
-    'This photo could not be prepared. Please try again or choose another photo.',
-  );
+  expect(result.current.error).toBe('We couldn’t prepare this photo. Try again or choose another.');
   expect(result.current.busy).toBe(false);
   expect(result.current.permissionDenied).toBe(false);
 });
@@ -395,7 +393,7 @@ it('exposes a safe eligibility failure and recovers through an explicit retry', 
   fixture.gateway.canChooseLibraryPhoto.mockRejectedValueOnce(new Error('private-gateway-details'));
   const { result } = await mounted({ gateway: fixture.gateway });
   expect(result.current.eligibilityError).toBe(
-    'Photo library availability could not be checked. Check your connection and try again.',
+    'We couldn’t check whether you can add a photo. Check your connection and try again.',
   );
   expect(result.current.available).toBe(false);
   act(() => result.current.retryEligibility());

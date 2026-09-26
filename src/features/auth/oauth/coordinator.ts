@@ -40,7 +40,7 @@ export type OAuthPorts = {
   dismiss: () => void;
 };
 const idle: OAuthState = { busy: false, message: '', receiving: false };
-const failure = 'Google sign-in could not be completed. Please try again.';
+const failure = 'We couldn’t sign you in with Google. Try again.';
 const lifetime = 10 * 60 * 1000;
 export class OAuthCoordinator {
   private state = idle;

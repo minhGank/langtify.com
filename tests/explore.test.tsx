@@ -213,14 +213,14 @@ it('paginates with untouched stored terms, deduplicates and bounds the retained 
 it('shows empty and denied results without retaining blocked profiles in related caches', async () => {
   mockPeople.mockResolvedValueOnce({ items: [], hasMore: false });
   const view = render(<PeopleResults identity={identity()} query="none" />);
-  await screen.findByText('No matching learners');
+  await screen.findByText('No people found');
   view.unmount();
   mockPeople.mockResolvedValueOnce({ items: [person()], hasMore: false });
   render(<PeopleResults identity={identity()} query="lea" />);
   await screen.findByText('@learner1');
   mockPeople.mockRejectedValue(new SafetyUnavailable());
   act(() => socialChanged('block'));
-  await screen.findByText('Search unavailable');
+  await screen.findByText('We couldn’t load your search.');
   expect(screen.queryByText('@learner1')).toBeNull();
 });
 it('patches loaded People relationship state after a confirmed follow without refetch', async () => {
@@ -392,7 +392,7 @@ it.each(['words', 'people'] as const)(
     search.gateway.mockRejectedValueOnce(new Error('Offline'));
     render(search.screen());
     fireEvent.press(screen.getByText('Back to first results'));
-    await screen.findByText('Retry search');
+    await screen.findByText('Try again');
     expect(scroll).not.toHaveBeenCalled();
     expect(screen.getByText('Back to first results')).toBeVisible();
   },

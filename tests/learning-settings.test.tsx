@@ -39,13 +39,11 @@ beforeEach(() => {
 
 it('validates the language pair and saves the selected CEFR with the persisted timezone', async () => {
   render(<LearningSettingsScreen />);
-  fireEvent.press(within(screen.getByLabelText('Target language')).getByLabelText('English'));
+  fireEvent.press(within(screen.getByLabelText('Learning language')).getByLabelText('English'));
   fireEvent.press(screen.getByText('Save learning preferences'));
   expect(mockUpdateLearning).not.toHaveBeenCalled();
-  expect(
-    screen.getByText('Choose a target language different from your reference language.'),
-  ).toBeVisible();
-  fireEvent.press(within(screen.getByLabelText('Target language')).getByLabelText('French'));
+  expect(screen.getByText('Choose two different languages.')).toBeVisible();
+  fireEvent.press(within(screen.getByLabelText('Learning language')).getByLabelText('French'));
   fireEvent.press(screen.getByLabelText('Advanced'));
   fireEvent.press(screen.getByText('Save learning preferences'));
   await waitFor(() => expect(mockReload).toHaveBeenCalledTimes(1));

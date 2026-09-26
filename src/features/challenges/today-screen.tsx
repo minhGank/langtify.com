@@ -9,6 +9,7 @@ import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
 import { IconButton } from '@/components/ui/icon-button';
+import { MotionView } from '@/components/ui/motion-view';
 import { useAuth } from '@/features/auth/auth-provider';
 import { useTodayChallenge } from '@/features/challenges/use-today-challenge';
 import { UnfinishedPhotos } from '@/features/photos/unfinished-photos';
@@ -27,7 +28,7 @@ export function TodayScreen() {
     return (
       <Screen hasTabBar>
         <TabHeading title="Today's Challenge" />
-        <AppText>Your learning profile is unavailable.</AppText>
+        <AppText>We couldn’t load your learning settings. Try signing in again.</AppText>
       </Screen>
     );
   const key = [
@@ -109,7 +110,7 @@ function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone
     >
       <TabHeading title="Today's Challenge" />
       <ProgressPanel
-        key={`${userId}:${challenge?.id ?? 'today'}:${challenge?.words.map((word) => `${word.submission?.id}:${word.submission?.status}`).join(',')}`}
+        key={`${serverScope(userId, accessToken)}:${challenge?.id ?? 'today'}`}
         userId={userId}
         accessToken={accessToken}
         challengeId={challenge?.id}
@@ -117,7 +118,7 @@ function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone
       {loading && !challenge && (
         <View accessibilityRole="progressbar" accessibilityLabel="Loading challenge">
           <ActivityIndicator />
-          <AppText>Loading your challenge…</AppText>
+          <AppText>Finding today’s words…</AppText>
         </View>
       )}
       {error ? (
@@ -125,7 +126,7 @@ function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone
           <AppText accessibilityRole="alert" style={{ color: colors.error }}>
             {error}
           </AppText>
-          <Button label="Retry challenge" onPress={() => void refresh()} />
+          <Button label="Reload words" onPress={() => void refresh()} />
         </>
       ) : null}
       {challenge && (
@@ -133,7 +134,7 @@ function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone
           <AppText variant="caption">Find these words in the world around you.</AppText>
           {challenge.words.map((word) => (
             <WordCard
-              key={word.id}
+              key={`${challenge.id}:${word.slot}`}
               word={word}
               loading={replacing === word.id}
               disabled={replacing !== null}
@@ -145,11 +146,7 @@ function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone
               <AppText accessibilityRole="alert" style={{ color: colors.error }}>
                 {replacementError}
               </AppText>
-              <Button
-                label="Check challenge state"
-                variant="secondary"
-                onPress={() => void refresh()}
-              />
+              <Button label="Refresh Today" variant="secondary" onPress={() => void refresh()} />
             </View>
           ) : null}
         </>
@@ -199,16 +196,16 @@ function WordCard({
           />
         ) : (
           <AppText variant="caption">
-            {word.submission.status === 'deleting' ? 'Deleting…' : 'Unfinished photo'}
+            {word.submission.status === 'deleting' ? 'Deleting…' : 'Photo in progress'}
           </AppText>
         )}
       </View>
-      <View style={styles.word}>
+      <MotionView trigger={word.id} style={styles.word}>
         <AppText accessibilityRole="header" variant="heading" style={styles.term}>
           {displayTerm(word.targetTerm)}
         </AppText>
         <AppText style={{ color: colors.textSecondary }}>{displayTerm(word.referenceTerm)}</AppText>
-      </View>
+      </MotionView>
       <Button
         label={completed ? 'View photo' : word.submission ? 'Resume photo' : 'Take photo'}
         accessibilityLabel={

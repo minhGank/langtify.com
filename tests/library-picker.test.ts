@@ -81,7 +81,7 @@ it.each(['ERR_USER_REJECTED_PERMISSIONS', 'E_NO_LIBRARY_PERMISSION'])(
     await expect(pickLibraryPhoto()).rejects.toMatchObject({
       name: 'PhotoLibraryError',
       code: 'permission',
-      message: 'Photo access is unavailable. Choose another photo or check access in Settings.',
+      message: 'We can’t access this photo. Choose another or check photo access in Settings.',
     });
   },
 );

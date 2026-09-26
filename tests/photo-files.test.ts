@@ -257,7 +257,7 @@ it.each([0, NaN, Infinity])(
         () => true,
         { removeSource: false },
       ),
-    ).rejects.toThrow('Invalid image dimensions');
+    ).rejects.toThrow('We couldn’t read this photo');
     expect(mockSave).not.toHaveBeenCalled();
     expect(await loadDraft(photoUser, photoAssignment)).toBeNull();
     expect(mockOrientedRelease).toHaveBeenCalledTimes(1);
@@ -276,7 +276,7 @@ it('failed resizing releases both render resources and never writes an oversized
       () => true,
       { removeSource: false },
     ),
-  ).rejects.toThrow('could not be resized');
+  ).rejects.toThrow('We couldn’t prepare this photo');
   expect(mockSave).not.toHaveBeenCalled();
   expect(await loadDraft(photoUser, photoAssignment)).toBeNull();
   expect(mockOrientedRelease).toHaveBeenCalledTimes(1);

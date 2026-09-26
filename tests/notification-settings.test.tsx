@@ -47,12 +47,12 @@ it('keeps permission denial separate from preferences and never claims success a
   const settings = jest.spyOn(Linking, 'openSettings').mockResolvedValue();
   render(<NotificationSettingsScreen />);
   await screen.findByText(/Times use your saved timezone: America \/ Toronto/);
-  expect(screen.getByText('Daily 3 words')).toBeVisible();
+  expect(screen.getByText('Daily words')).toBeVisible();
   expect(screen.queryByText('Allow notifications')).toBeNull();
-  fireEvent.press(screen.getByText('Open device Settings'));
+  fireEvent.press(screen.getByText('Open Settings'));
   expect(settings).toHaveBeenCalledTimes(1);
   expect(screen.queryByText('Reload preferences')).toBeNull();
-  expect(screen.queryByText('Retry device registration')).toBeNull();
+  expect(screen.queryByText('Try again')).toBeNull();
   fireEvent.press(screen.getByRole('button', { name: 'Daily time' }));
   expect(screen.queryByLabelText('Hour 25')).toBeNull();
   fireEvent.press(screen.getByLabelText('Hour 09'));
@@ -63,7 +63,7 @@ it('keeps permission denial separate from preferences and never claims success a
   });
   mockApi.save.mockRejectedValueOnce(new Error('internal secret database message'));
   fireEvent.press(screen.getByText('Save preferences'));
-  await screen.findByText(/Request could not be confirmed/);
+  await screen.findByText(/couldn’t confirm the change/);
   expect(screen.queryByText(/Preferences saved/)).toBeNull();
   expect(screen.queryByText(/internal secret/)).toBeNull();
   fireEvent.press(screen.getByText('Reload preferences'));
@@ -95,28 +95,28 @@ it('aborts old account preference loads and ignores their late result', async ()
 it('keeps unavailable push builds usable without offering a permission prompt or registration retry', async () => {
   mockNative.permission = 'unavailable';
   render(<NotificationSettingsScreen />);
-  await screen.findByText('Daily 3 words');
-  expect(screen.getByText('Push notifications are unavailable on this device')).toBeVisible();
+  await screen.findByText('Daily words');
+  expect(screen.getByText('Reminders aren’t available on this device')).toBeVisible();
   expect(screen.queryByText('Allow notifications')).toBeNull();
-  expect(screen.queryByText('Retry device registration')).toBeNull();
+  expect(screen.queryByText('Try again')).toBeNull();
   expect(screen.getByRole('button', { name: 'Save preferences' })).toBeEnabled();
   expect(mockNative.refresh).not.toHaveBeenCalled();
 });
 
 it('exposes explicit registration recovery only after a native error and does not ask permission again', async () => {
-  mockNative.error = 'Device registration could not be confirmed. Refresh to retry.';
+  mockNative.error = 'We couldn’t turn on reminders for this device. Try again.';
   render(<NotificationSettingsScreen />);
-  await screen.findByText('Daily 3 words');
-  fireEvent.press(screen.getByRole('button', { name: 'Retry device registration' }));
+  await screen.findByText('Daily words');
+  fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
   expect(mockNative.refresh).toHaveBeenCalledWith(false, true);
 });
 
 it('preserves reminder preferences while the master switch disables their controls', async () => {
   render(<NotificationSettingsScreen />);
-  await screen.findByText('Daily 3 words');
-  fireEvent(screen.getByLabelText('Notifications enabled'), 'valueChange', false);
+  await screen.findByText('Daily words');
+  fireEvent(screen.getByLabelText('Allow reminders'), 'valueChange', false);
   expect(screen.getByRole('button', { name: 'Daily time' })).toBeDisabled();
-  expect(screen.getByLabelText('Daily 3 words')).toBeDisabled();
+  expect(screen.getByLabelText('Daily words')).toBeDisabled();
   fireEvent.press(screen.getByRole('button', { name: 'Save preferences' }));
   await waitFor(() =>
     expect(mockApi.save).toHaveBeenCalledWith(
@@ -128,9 +128,9 @@ it('preserves reminder preferences while the master switch disables their contro
 
 it('confirms saved preferences without claiming a notification was delivered', async () => {
   render(<NotificationSettingsScreen />);
-  await screen.findByText('Daily 3 words');
+  await screen.findByText('Daily words');
   fireEvent.press(screen.getByText('Save preferences'));
-  expect(await screen.findByText('Notification preferences saved.')).toBeVisible();
+  expect(await screen.findByText('Reminders saved')).toBeVisible();
   expect(screen.queryByText(/reminders will not be sent/)).toBeNull();
   expect(screen.queryByText(/notification delivered/i)).toBeNull();
 });

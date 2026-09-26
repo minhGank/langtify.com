@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText } from '@/components/ui/app-text';
 import { IconButton } from '@/components/ui/icon-button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import { ratingOptions, type RatingScore } from './rating';
 
 const matchIcons: Record<RatingScore, ComponentProps<typeof Ionicons>['name']> = {
@@ -29,11 +30,17 @@ export function RatingPalette({
   choose: (score: RatingScore) => void;
 }) {
   const { colors } = useAppTheme();
+  const reducedMotion = useReducedMotion();
   const { width, fontScale } = useWindowDimensions();
   // Larger text becomes a short vertical list rather than clipping semantic labels.
   const vertical = width < 360 || fontScale > 1.2;
   return (
-    <Modal visible transparent animationType="fade" onRequestClose={close}>
+    <Modal
+      visible
+      transparent
+      animationType={reducedMotion ? 'none' : 'fade'}
+      onRequestClose={close}
+    >
       <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
         <Pressable
           style={StyleSheet.absoluteFill}
@@ -49,7 +56,7 @@ export function RatingPalette({
         >
           <View style={styles.heading}>
             <View style={styles.title}>
-              <AppText variant="caption">VOCABULARY MATCH</AppText>
+              <AppText variant="caption">PHOTO MATCH</AppText>
               <AppText variant="heading">{word}</AppText>
             </View>
             <IconButton name="close" label="Close rating" onPress={close} />

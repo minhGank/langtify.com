@@ -16,7 +16,7 @@ it('loads authoritative data and retries a controlled empty pool', async () => {
     await result.current.refresh();
   });
   expect(result.current.challenge).toBeNull();
-  expect(result.current.error).toContain('not enough eligible');
+  expect(result.current.error).toContain('enough words for these languages and level');
   await act(async () => {
     await result.current.refresh();
   });
@@ -31,7 +31,7 @@ it('preserves the saved card on a failed replacement and allows retry', async ()
     await result.current.replace('assignment-review');
   });
   expect(result.current.challenge).toEqual(makeChallenge());
-  expect(result.current.replacementError).toContain('current word is unchanged');
+  expect(result.current.replacementError).toContain('word hasn’t changed');
   await act(async () => {
     await result.current.replace('assignment-review');
   });

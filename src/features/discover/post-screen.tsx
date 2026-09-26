@@ -78,8 +78,8 @@ function PostContent({
         )}
         {state.error && (
           <>
-            <AppText accessibilityRole="alert">This photo could not be loaded.</AppText>
-            <Button label="Retry photo" variant="secondary" onPress={() => void state.refresh()} />
+            <AppText accessibilityRole="alert">We couldn’t load this photo. Try again.</AppText>
+            <Button label="Try again" variant="secondary" onPress={() => void state.refresh()} />
           </>
         )}
       </SafeAreaView>

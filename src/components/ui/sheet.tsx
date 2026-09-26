@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText } from '@/components/ui/app-text';
 import { IconButton } from '@/components/ui/icon-button';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 
 type SheetProps = PropsWithChildren<{
   title: string;
@@ -23,12 +24,13 @@ type SheetProps = PropsWithChildren<{
 
 export function Sheet({ title, visible, onClose, children, scroll = true }: SheetProps) {
   const { colors } = useAppTheme();
+  const reduced = useReducedMotion();
   const nativeSheet = Platform.OS === 'ios';
 
   return (
     <Modal
       visible={visible}
-      animationType="slide"
+      animationType={reduced ? 'none' : 'slide'}
       transparent={!nativeSheet}
       presentationStyle={nativeSheet ? 'pageSheet' : 'overFullScreen'}
       allowSwipeDismissal={nativeSheet}

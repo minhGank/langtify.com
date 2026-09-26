@@ -68,7 +68,7 @@ function ProfilePosts({
   return (
     <View style={styles.content}>
       <AppText variant="heading">{isOwn ? 'Your public photos' : 'Photos'}</AppText>
-      <AppText variant="caption">{language} · Newest first</AppText>
+      <AppText variant="caption">{language}</AppText>
       <View style={styles.grid}>
         {state.items.map((item) => (
           <View key={item.id} style={[styles.tile, { backgroundColor: colors.surfaceMuted }]}>
@@ -111,22 +111,18 @@ function ProfilePosts({
           </AppText>
           {isOwn && !state.hasMore && (
             <AppText variant="caption" style={styles.emptyText}>
-              Your public captures will appear here.
+              Photos you share publicly will appear here.
             </AppText>
           )}
         </View>
       )}
       {state.error && (
         <>
-          <AppText accessibilityRole="alert">Public photos could not be loaded.</AppText>
-          <Button
-            label="Retry public photos"
-            variant="secondary"
-            onPress={() => void state.refresh()}
-          />
+          <AppText accessibilityRole="alert">We couldn’t load these photos. Try again.</AppText>
+          <Button label="Try again" variant="secondary" onPress={() => void state.refresh()} />
           {state.settingsChanged && (
             <Button
-              label="Reload account"
+              label="Refresh account"
               variant="secondary"
               onPress={() => void reloadAccount()}
             />

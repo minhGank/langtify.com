@@ -2,6 +2,7 @@ import { TabHeading } from '@/components/ui/tab-heading';
 import { useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { LoadingPlaceholder } from '@/components/ui/loading-placeholder';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppText } from '@/components/ui/app-text';
@@ -93,7 +94,7 @@ function DiscoverContent({
         ListHeaderComponent={
           <View style={styles.header}>
             <TabHeading title="Discover" />
-            <AppText variant="caption">{language} · Newest first</AppText>
+            <AppText variant="caption">{language}</AppText>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Search words and people"
@@ -119,13 +120,13 @@ function DiscoverContent({
                   {state.error}
                 </AppText>
                 <Button
-                  label="Retry feed"
+                  label="Try again"
                   variant="secondary"
                   onPress={() => void state.refresh()}
                 />
                 {state.settingsChanged && (
                   <Button
-                    label="Reload account"
+                    label="Refresh account"
                     variant="secondary"
                     onPress={() => void reloadAccount()}
                   />
@@ -149,23 +150,25 @@ function DiscoverContent({
           />
         )}
         ListEmptyComponent={
-          !state.loading && !state.error ? (
+          state.loading ? (
+            <LoadingPlaceholder label="Loading Discover" photo />
+          ) : !state.error ? (
             <View style={styles.empty}>
               <Ionicons name="images-outline" size={44} color={colors.textSecondary} />
               <AppText variant="heading">
-                {state.hasMore ? 'Photos no longer available' : 'No public photos yet'}
+                {state.hasMore ? 'No more photos here' : 'No photos yet'}
               </AppText>
               <AppText style={styles.center}>
                 {state.hasMore
-                  ? 'These photos are no longer available. Keep browsing to see more.'
-                  : 'Photos shared by learners will appear here.'}
+                  ? 'These photos are no longer available. Try loading more.'
+                  : 'Shared photos will appear here.'}
               </AppText>
             </View>
           ) : null
         }
         ListFooterComponent={
           <View style={styles.footer}>
-            {state.loading && (
+            {state.loading && state.items.length > 0 && (
               <ActivityIndicator
                 accessibilityLabel="Loading Discover"
                 color={colors.brandPrimary}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppText } from '@/components/ui/app-text';
+import { MotionView } from '@/components/ui/motion-view';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { ratingOptions, type RatingAction, type RatingScore, type RatingSummary } from './rating';
 import { RatingAggregate } from './semantic-rating';
@@ -33,58 +34,63 @@ export function QuickRating({
           {!summary.canRate && <AppText variant="caption">Your photo</AppText>}
         </View>
         {summary.canRate && (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={
-              selected === null
-                ? `Rate photo: ${word}`
-                : `Your rating: ${selected} — ${label}. Edit rating for ${word}`
-            }
-            accessibilityHint="Choose how well the photo matches the word."
-            accessibilityState={{ expanded: open, disabled: disabled || saving, busy: saving }}
-            disabled={disabled || saving}
-            onPress={() => setOpen(true)}
-            style={({ pressed }) => [
-              styles.chip,
-              {
-                backgroundColor: disabled
-                  ? colors.surfaceMuted
-                  : pressed || selected !== null
-                    ? colors.brandSoft
-                    : colors.surfaceMuted,
-              },
-            ]}
-          >
-            {saving ? (
-              <ActivityIndicator color={colors.brandPrimary} size="small" />
-            ) : (
-              <Ionicons
-                name={selected === null ? 'scan-outline' : 'checkmark-circle'}
-                color={colors.brandPrimary}
-                size={20}
-                accessible={false}
-              />
-            )}
-            <AppText
-              variant="label"
-              style={[styles.label, { color: disabled ? colors.textSecondary : colors.brandText }]}
+          <MotionView trigger={selected} kind="change" style={styles.choice}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={
+                selected === null
+                  ? `Rate photo: ${word}`
+                  : `Your rating: ${selected} — ${label}. Edit rating for ${word}`
+              }
+              accessibilityHint="Choose how well the photo matches the word."
+              accessibilityState={{ expanded: open, disabled: disabled || saving, busy: saving }}
+              disabled={disabled || saving}
+              onPress={() => setOpen(true)}
+              style={({ pressed }) => [
+                styles.chip,
+                {
+                  backgroundColor: disabled
+                    ? colors.surfaceMuted
+                    : pressed || selected !== null
+                      ? colors.brandSoft
+                      : colors.surfaceMuted,
+                },
+              ]}
             >
-              {saving ? 'Saving…' : label}
-            </AppText>
-            {!saving && (
-              <Ionicons
-                name="chevron-down"
-                color={colors.brandPrimary}
-                size={14}
-                accessible={false}
-              />
-            )}
-          </Pressable>
+              {saving ? (
+                <ActivityIndicator color={colors.brandPrimary} size="small" />
+              ) : (
+                <Ionicons
+                  name={selected === null ? 'scan-outline' : 'checkmark-circle'}
+                  color={colors.brandPrimary}
+                  size={20}
+                  accessible={false}
+                />
+              )}
+              <AppText
+                variant="label"
+                style={[
+                  styles.label,
+                  { color: disabled ? colors.textSecondary : colors.brandText },
+                ]}
+              >
+                {saving ? 'Saving…' : label}
+              </AppText>
+              {!saving && (
+                <Ionicons
+                  name="chevron-down"
+                  color={colors.brandPrimary}
+                  size={14}
+                  accessible={false}
+                />
+              )}
+            </Pressable>
+          </MotionView>
         )}
       </View>
       {action?.status === 'error' && (
         <AppText accessibilityRole="alert" variant="caption" style={{ color: colors.error }}>
-          Rating not confirmed. Tap to check or change it.
+          We couldn’t confirm your rating. Open it to check or try again.
         </AppText>
       )}
       {open && summary.canRate && (
@@ -113,6 +119,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   summary: { gap: 4, flexShrink: 1 },
+  choice: { flexShrink: 1 },
   chip: {
     minHeight: 48,
     paddingHorizontal: 12,

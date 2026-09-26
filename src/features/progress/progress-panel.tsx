@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { createServerCache, serverScope } from '@/lib/server-cache';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { AccentBadge } from '@/components/ui/accent-badge';
+import { MotionView } from '@/components/ui/motion-view';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
@@ -32,8 +33,8 @@ export function ProgressPanel({
   if (!data)
     return error ? (
       <View style={styles.loading}>
-        <AppText variant="caption">Progress is unavailable.</AppText>
-        <Button label="Retry progress" variant="ghost" onPress={() => void refresh()} />
+        <AppText variant="caption">We couldn’t load your progress. Try again.</AppText>
+        <Button label="Try again" variant="ghost" onPress={() => void refresh()} />
       </View>
     ) : (
       <ActivityIndicator accessibilityLabel="Loading progress" color={colors.brandPrimary} />
@@ -42,8 +43,12 @@ export function ProgressPanel({
     return (
       <View style={[styles.daily, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <View style={styles.row}>
-          <AppText variant="heading">{data.completedWords} / 3 completed</AppText>
-          <AccentBadge tone="reward" label={`${data.totalXp} XP`} />
+          <MotionView trigger={data.completedWords}>
+            <AppText variant="heading">{data.completedWords} / 3 completed</AppText>
+          </MotionView>
+          <MotionView trigger={data.totalXp}>
+            <AccentBadge tone="reward" label={`${data.totalXp} XP`} />
+          </MotionView>
         </View>
         <View
           accessible
@@ -65,7 +70,7 @@ export function ProgressPanel({
         {data.completedWords === 3 && (
           <View style={styles.completion}>
             <AppText variant="label" style={{ color: colors.success }}>
-              Daily Challenge Complete
+              Daily challenge complete
             </AppText>
             <AccentBadge tone="reward" label="+10 XP bonus" />
           </View>
@@ -79,8 +84,12 @@ export function ProgressPanel({
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <View style={styles.row}>
-        <AppText variant="heading">Level {data.level}</AppText>
-        <AccentBadge tone="reward" label={`${data.totalXp} XP`} />
+        <MotionView trigger={data.level}>
+          <AppText variant="heading">Level {data.level}</AppText>
+        </MotionView>
+        <MotionView trigger={data.totalXp}>
+          <AccentBadge tone="reward" label={`${data.totalXp} XP`} />
+        </MotionView>
       </View>
       <View style={styles.loading}>
         <View

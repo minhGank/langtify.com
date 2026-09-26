@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createServerCache, isolatedCacheKey, discardServerData } from '@/lib/server-cache';
 import { AppState } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { feedback } from '@/lib/haptics';
 import { RatingUnavailable, type RatingAction, type RatingScore } from '@/features/ratings/rating';
 import {
   FeedSettingsChanged,
@@ -173,7 +174,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
           setError(
             cause instanceof FeedSettingsChanged
               ? cause.message
-              : 'Discover could not be loaded. Please retry.',
+              : 'We couldn’t load Discover. Try again.',
           );
         }
       } finally {
@@ -197,6 +198,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
         !current.current.items.some((item) => item.id === id && item.canRate)
       )
         return;
+      const previousScore = current.current.items.find((item) => item.id === id)?.viewerRating;
       const request = ++generation.current;
       abort.current?.abort();
       const controller = new AbortController();
@@ -240,6 +242,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
             };
           });
         setRatingAction(null);
+        if (summary.viewerRating === score && previousScore !== score) feedback.selection();
       } catch (cause) {
         if (request !== generation.current) return;
         if (cause instanceof RatingUnavailable || cause instanceof FeedSettingsChanged) {
@@ -259,7 +262,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
             );
           clear();
           entry.clear();
-          setError('This photo or your learning settings changed. Refresh Discover.');
+          setError('This photo or your language settings have changed. Refresh Discover.');
           setSettingsChanged(cause instanceof FeedSettingsChanged);
           queuedRead.current = null;
         } else {

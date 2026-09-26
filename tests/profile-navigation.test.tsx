@@ -130,7 +130,7 @@ it.each([false, true])(
   async (changed) => {
     const app = renderRouter(routes, { initialUrl: '/profile' });
     await screen.findByText('@learner');
-    fireEvent.press(screen.getByRole('button', { name: 'Edit profile photo' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Edit profile' }));
     await screen.findByLabelText('Username');
     expect(app.getPathname()).toBe('/edit-profile');
     if (changed) fireEvent.changeText(screen.getByLabelText('Username'), 'New_Name');
@@ -179,7 +179,7 @@ it.each([false, true])(
 it('treats equivalent normalized usernames as a no-op and ignores duplicate save presses', async () => {
   const app = renderRouter(routes, { initialUrl: '/profile' });
   await screen.findByText('@learner');
-  fireEvent.press(screen.getByRole('button', { name: 'Edit profile photo' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Edit profile' }));
   fireEvent.changeText(await screen.findByLabelText('Username'), ' LEARNER ');
   const save = screen.getByText('Save username');
   fireEvent.press(save);
@@ -193,7 +193,7 @@ it('treats equivalent normalized usernames as a no-op and ignores duplicate save
 it('waits for one authoritative account refresh while retaining the Edit Profile route', async () => {
   const app = renderRouter(routes, { initialUrl: '/profile' });
   await screen.findByText('@learner');
-  fireEvent.press(screen.getByRole('button', { name: 'Edit profile photo' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Edit profile' }));
   fireEvent.changeText(await screen.findByLabelText('Username'), 'new_name');
   let finish = () => {};
   mockAccountRead.mockImplementationOnce(
@@ -214,7 +214,7 @@ it('waits for one authoritative account refresh while retaining the Edit Profile
 it('opens Edit Profile through the accessible profile-photo action', async () => {
   const app = renderRouter(routes, { initialUrl: '/profile' });
   await screen.findByText('@learner');
-  fireEvent.press(screen.getByRole('button', { name: 'Edit profile photo' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Edit profile' }));
   expect(await screen.findByLabelText('Username')).toBeVisible();
   expect(app.getPathname()).toBe('/edit-profile');
 });
@@ -241,9 +241,9 @@ it('opens follower lists from own and public profiles without blur cleanup poppi
 it('disables Save again after changing a username back and removes redundant profile actions', async () => {
   const app = renderRouter(routes, { initialUrl: '/profile' });
   await screen.findByText('@learner');
-  expect(screen.queryByRole('button', { name: 'Edit profile' })).toBeNull();
+  expect(screen.getAllByRole('button', { name: 'Edit profile' })).toHaveLength(1);
   expect(screen.queryByRole('button', { name: 'View public profile' })).toBeNull();
-  fireEvent.press(screen.getByRole('button', { name: 'Edit profile photo' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Edit profile' }));
   const input = await screen.findByLabelText('Username');
   fireEvent.changeText(input, 'another_name');
   expect(screen.getByRole('button', { name: 'Save username' })).toBeEnabled();

@@ -33,5 +33,5 @@ it.each([
   [255, 216, 255, 217],
   [255, 216, 255, 218, 0, 2, 1],
 ])('rejects malformed/truncated camera output %#', (...input) => {
-  expect(() => stripJpegMetadata(Uint8Array.from(input))).toThrow('invalid JPEG');
+  expect(() => stripJpegMetadata(Uint8Array.from(input))).toThrow('We couldn’t read this photo');
 });

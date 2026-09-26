@@ -41,9 +41,9 @@ function hasBrowserPKCEStorage() {
 }
 export const googleLoginUnavailable =
   Platform.OS !== 'web' && Constants.executionEnvironment === ExecutionEnvironment.StoreClient
-    ? 'Google sign-in requires a Langtify development build. Expo Go is not supported.'
+    ? 'Google sign-in isn’t available in Expo Go. Open the installed Langtify app.'
     : Platform.OS === 'web' && (!browserAuthority() || !hasBrowserPKCEStorage())
-      ? 'Google sign-in requires a secure browser with storage and Web Locks enabled.'
+      ? 'Google sign-in isn’t available in this browser. Try another browser or the Langtify app.'
       : null;
 const store = {
   async getItem(key: string) {

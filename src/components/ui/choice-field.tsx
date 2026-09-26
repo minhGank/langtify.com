@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/app-text';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { radius } from '@/lib/theme';
+import { feedback } from '@/lib/haptics';
 
 type ChoiceFieldProps = {
   label: string;
@@ -38,7 +39,11 @@ export function ChoiceField({
             accessibilityLabel={option.label}
             accessibilityState={{ checked: value === option.value, disabled: Boolean(disabled) }}
             disabled={disabled}
-            onPress={() => onChange(option.value)}
+            onPress={() => {
+              if (disabled || value === option.value) return;
+              feedback.selection();
+              onChange(option.value);
+            }}
             style={({ pressed }) => [
               styles.choice,
               {

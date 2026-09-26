@@ -18,7 +18,9 @@ export function SignOutButton() {
       const result = await authMutation(() => requireSupabase().auth.signOut({ scope: 'local' }));
       if (result.error) throw result.error;
     } catch (cause) {
-      setError(friendlyError(cause, 'Unable to sign out. Check your connection and try again.'));
+      setError(
+        friendlyError(cause, 'We couldn’t sign you out. Check your connection and try again.'),
+      );
     } finally {
       setBusy(false);
     }

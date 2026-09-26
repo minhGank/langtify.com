@@ -1,5 +1,5 @@
 export const reportReasons = [
-  { value: 'inappropriate', label: 'Unrelated or inappropriate image' },
+  { value: 'inappropriate', label: 'Unrelated or inappropriate photo' },
   { value: 'sexual_content', label: 'Sexual content' },
   { value: 'violence', label: 'Violence' },
   { value: 'harassment_hate', label: 'Harassment or hate' },
@@ -10,12 +10,25 @@ export const reportReasons = [
 export type ReportReason = (typeof reportReasons)[number]['value'];
 export type ReportKind = 'submission' | 'user' | 'comment';
 export type ReportStatus = 'open' | 'resolved' | 'dismissed';
+export const reportStatusLabels: Record<ReportStatus, string> = {
+  open: 'Open',
+  resolved: 'Resolved',
+  dismissed: 'Dismissed',
+};
+export const reportKindLabels: Record<ReportKind, string> = {
+  submission: 'photo',
+  user: 'account',
+  comment: 'comment',
+};
+export function reportReasonLabel(reason: ReportReason): string {
+  return reportReasons.find((option) => option.value === reason)?.label ?? 'Other';
+}
 export const moderationActions = [
   { value: 'remove_submission', label: 'Remove photo from public view' },
-  { value: 'restore_submission', label: 'Restore photo eligibility' },
+  { value: 'restore_submission', label: 'Restore public photo access' },
   { value: 'remove_comment', label: 'Remove comment' },
-  { value: 'suspend_user', label: 'Restrict account public access' },
-  { value: 'restore_user', label: 'Restore account public access' },
+  { value: 'suspend_user', label: 'Restrict public activity' },
+  { value: 'restore_user', label: 'Restore public activity' },
   { value: 'resolve_report', label: 'Resolve report' },
   { value: 'dismiss_report', label: 'Dismiss report' },
 ] as const;

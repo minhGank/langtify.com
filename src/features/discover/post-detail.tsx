@@ -133,7 +133,7 @@ export function PostDetail({
             }}
           />
           {shareError && (
-            <AppText accessibilityRole="alert">Sharing is unavailable. Please try again.</AppText>
+            <AppText accessibilityRole="alert">We couldn’t open sharing. Try again.</AppText>
           )}
           <AppText variant="caption">
             Shared{' '}

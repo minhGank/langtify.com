@@ -16,7 +16,7 @@ export default function OAuthCallback() {
       <AppText>
         {oauth.busy || auth.status === 'loading'
           ? 'Finishing sign-in…'
-          : oauth.message || 'This sign-in link is unavailable. Please try again.'}
+          : oauth.message || 'This sign-in link no longer works. Start again from Sign in.'}
       </AppText>
       <Button
         label="Back to sign in"

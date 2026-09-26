@@ -19,7 +19,7 @@ export function PastWordCard({ word }: { word: PastWord }) {
     : deleting
       ? 'Manage photo'
       : pending
-        ? 'Continue photo'
+        ? 'Resume photo'
         : 'Add photo';
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -40,7 +40,7 @@ export function PastWordCard({ word }: { word: PastWord }) {
           {completed
             ? 'Captured'
             : deleting
-              ? 'Photo deletion in progress'
+              ? 'Deleting photo'
               : pending
                 ? 'Photo in progress'
                 : 'No photo yet'}

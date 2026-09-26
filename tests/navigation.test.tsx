@@ -124,7 +124,7 @@ it('shows no moderator navigation or data to an ordinary learner', async () => {
   expect(screen.queryByRole('button', { name: 'Moderation' })).toBeNull();
   app.unmount();
   renderRouter(routes, { initialUrl: '/moderation' });
-  expect(await screen.findByText('Moderator access is required.')).toBeVisible();
+  expect(await screen.findByText('You don’t have access to moderation.')).toBeVisible();
   expect(mockModerationQueue).not.toHaveBeenCalled();
 });
 
@@ -231,7 +231,7 @@ it('keeps a malformed signed-out callback outside protected content', async () =
   mockState = { ...mockState, status: 'signed-out', session: null, account: null };
   const app = renderRouter(routes, { initialUrl: '/auth/callback' });
   expect(
-    await screen.findByText('This sign-in link is unavailable. Please try again.'),
+    await screen.findByText('This sign-in link no longer works. Start again from Sign in.'),
   ).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Back to sign in' }));
   expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();

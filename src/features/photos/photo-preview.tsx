@@ -6,6 +6,8 @@ import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Sheet } from '@/components/ui/sheet';
+import { MotionView } from '@/components/ui/motion-view';
+import { feedback } from '@/lib/haptics';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import type { useAssignmentPhoto } from './use-assignment-photo';
 
@@ -27,13 +29,14 @@ function VisibilityChoice({
         color={colors.textSecondary}
       />
       <View style={styles.choiceText}>
-        <AppText variant="label">Share in Discover</AppText>
+        <AppText variant="label">Share publicly</AppText>
         <AppText variant="caption">
-          {value ? 'Visible to other learners' : 'Private · only you'}
+          {value ? 'Visible to other learners' : 'Private · not shared'}
         </AppText>
       </View>
       <Switch
-        accessibilityLabel="Share with the Langtify community"
+        accessibilityLabel="Share this photo publicly"
+        accessibilityHint="Show this photo on your profile and in Discover."
         accessibilityState={{ disabled }}
         value={value}
         disabled={disabled}
@@ -96,7 +99,9 @@ export function PhotoPreview({
           ) : null}
           {failedUri === preview ? (
             <View style={styles.previewError}>
-              <AppText accessibilityRole="alert">The photo could not be displayed.</AppText>
+              <AppText accessibilityRole="alert">
+                We couldn’t display this photo. Try reloading it.
+              </AppText>
               <Button
                 label="Reload photo"
                 variant="secondary"
@@ -113,7 +118,7 @@ export function PhotoPreview({
       ) : !completed && !deleting ? (
         <View style={[styles.empty, { backgroundColor: colors.surfaceMuted }]}>
           <Ionicons name="camera-outline" size={44} color={colors.textSecondary} />
-          <AppText variant="caption">Capture this word in your world.</AppText>
+          <AppText variant="caption">Take a photo or choose one from your library.</AppText>
         </View>
       ) : null}
       <View style={styles.context}>
@@ -135,21 +140,28 @@ export function PhotoPreview({
       </View>
       {completed ? (
         <View style={styles.context}>
-          <View style={styles.status}>
+          <MotionView
+            trigger={state.acknowledgedCompletionId}
+            kind="reward"
+            animateOnMount={state.acknowledgedCompletionId === submission.id}
+            style={styles.status}
+          >
             <Ionicons name="checkmark-circle" size={18} color={colors.success} />
             <AppText variant="caption" style={{ color: colors.success }}>
               {historical ? 'Added to Vocabulary' : 'Completed'}
             </AppText>
-          </View>
+          </MotionView>
           <AppText variant="caption">
             {submission.visibility === 'public' ? 'Public' : 'Private'}
           </AppText>
         </View>
       ) : deleting ? (
         <View style={styles.group}>
-          <AppText>Deletion is unfinished. Complete it to make this word available again.</AppText>
+          <AppText>
+            This photo hasn’t finished deleting. Finish deleting it before adding another.
+          </AppText>
           <Button
-            label="Finish deletion"
+            label="Finish deleting"
             loading={state.busy}
             onPress={() => void state.deletePhoto()}
           />
@@ -162,7 +174,7 @@ export function PhotoPreview({
             onChange={state.setPublic}
           />
           <Button
-            label="Submit photo"
+            label="Add photo"
             disabled={!ready || choosing || !state.data?.canCapture}
             loading={state.busy}
             onPress={() => void state.submit()}
@@ -215,7 +227,7 @@ export function PhotoPreview({
       )}
       {!completed && !deleting && state.data && !state.data.canCapture && (
         <AppText variant="caption">
-          This word is not available for a new photo. Return to Vocabulary or Today to refresh.
+          You can’t add a photo to this word right now. Refresh Vocabulary or Today.
         </AppText>
       )}
       {submission && !completed && !deleting && !preview && (
@@ -241,8 +253,10 @@ export function PhotoPreview({
           <>
             <AppText>
               {completed
-                ? 'This removes your photo and its earned progress. You can capture this word again.'
-                : 'Your unsaved photo will be removed. You can take another one.'}
+                ? historical
+                  ? 'This removes the photo and its XP. Your daily progress and streak won’t change.'
+                  : 'This removes the photo and its XP. It may also affect your challenge bonus and streak.'
+                : 'This photo hasn’t been added yet. Discard it and choose another?'}
             </AppText>
             <Button
               label={completed ? 'Delete photo' : 'Discard photo'}
@@ -250,6 +264,7 @@ export function PhotoPreview({
               variant="danger"
               loading={state.busy}
               onPress={() => {
+                feedback.warning();
                 setSheet(null);
                 void state.deletePhoto();
               }}
@@ -276,7 +291,7 @@ export function PhotoPreview({
                   {state.error}
                 </AppText>
                 <Button
-                  label="Check saved visibility"
+                  label="Refresh privacy setting"
                   variant="secondary"
                   disabled={state.busy}
                   onPress={() => void state.refresh()}
@@ -287,7 +302,7 @@ export function PhotoPreview({
               <AppText variant="caption">Challenge · {state.data?.localDate}</AppText>
               {submission && (
                 <AppText variant="caption">
-                  Submitted ·{' '}
+                  Added ·{' '}
                   {new Date(submission.submitted_at ?? submission.created_at).toLocaleString()}
                 </AppText>
               )}

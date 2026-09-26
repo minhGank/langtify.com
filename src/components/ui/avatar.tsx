@@ -26,7 +26,7 @@ export function Avatar({
         <Image
           key={uri}
           source={{ uri, cache: 'reload' }}
-          accessibilityLabel={`${username}'s avatar`}
+          accessibilityLabel={`${username}'s profile photo`}
           resizeMode="cover"
           style={StyleSheet.absoluteFill}
           onError={() => setFailedUri(uri)}
@@ -34,7 +34,7 @@ export function Avatar({
       ) : (
         <AppText
           variant="label"
-          accessibilityLabel={`${username || 'Langtify'}'s avatar`}
+          accessibilityLabel={`${username || 'Langtify'}'s profile photo`}
           // This initial is artwork inside a fixed circular mask. Its accessible
           // label remains available independently of the decorative text size.
           allowFontScaling={false}

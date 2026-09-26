@@ -42,10 +42,10 @@ function Settings({ userId, token }: NotificationIdentity) {
     },
   );
   const permissionCopy = {
-    granted: 'Notifications allowed on this device',
-    denied: 'Notifications are off on this device',
-    undetermined: 'A little reminder to keep learning',
-    unavailable: 'Push notifications are unavailable on this device',
+    granted: 'Reminders are allowed on this device',
+    denied: 'Reminders are off on this device',
+    undetermined: 'Make time for a few words',
+    unavailable: 'Reminders aren’t available on this device',
   }[native.permission];
   return (
     <Screen>
@@ -86,7 +86,7 @@ function Settings({ userId, token }: NotificationIdentity) {
         {native.permission === 'denied' && (
           <Button
             variant="secondary"
-            label="Open device Settings"
+            label="Open Settings"
             onPress={() => {
               setSettingsError(false);
               void Linking.openSettings().catch(() => setSettingsError(true));
@@ -95,12 +95,12 @@ function Settings({ userId, token }: NotificationIdentity) {
         )}
         {native.permission === 'unavailable' && (
           <AppText variant="caption" style={{ color: colors.textSecondary }}>
-            You can still save your reminder preferences below.
+            You can still read your updates in the app.
           </AppText>
         )}
         {settingsError && (
           <AppText style={{ color: colors.error }} accessibilityRole="alert">
-            Unable to open Settings. Open your device’s Settings app.
+            Open your device’s Settings app to change notification access.
           </AppText>
         )}
         {native.error && (
@@ -110,7 +110,7 @@ function Settings({ userId, token }: NotificationIdentity) {
             </AppText>
             <Button
               variant="secondary"
-              label="Retry device registration"
+              label="Try again"
               loading={native.busy}
               onPress={() => void native.refresh(false, true)}
             />
@@ -123,7 +123,7 @@ function Settings({ userId, token }: NotificationIdentity) {
             style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
           >
             <PreferenceSwitch
-              label="Notifications enabled"
+              label="Allow reminders"
               value={value.enabled}
               disabled={task.busy}
               onChange={(enabled) => {
@@ -136,8 +136,8 @@ function Settings({ userId, token }: NotificationIdentity) {
             style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
           >
             <PreferenceSwitch
-              label="Daily 3 words"
-              hint="Your daily challenge, ready to explore."
+              label="Daily words"
+              hint="A reminder with your three words for the day."
               value={value.dailyWords}
               disabled={task.busy || !value.enabled}
               onChange={(dailyWords) => {
@@ -161,7 +161,7 @@ function Settings({ userId, token }: NotificationIdentity) {
           >
             <PreferenceSwitch
               label="Streak reminder"
-              hint="A nudge when your streak needs a word."
+              hint="A reminder if you haven’t completed a word today."
               value={value.streakReminder}
               disabled={task.busy || !value.enabled}
               onChange={(streakReminder) => {
@@ -200,11 +200,11 @@ function Settings({ userId, token }: NotificationIdentity) {
           />
           {saved && (
             <AppText style={{ color: colors.success }} accessibilityLiveRegion="polite">
-              Notification preferences saved.
+              Reminders saved
             </AppText>
           )}
           <AppText variant="caption" style={{ color: colors.textSecondary }}>
-            Reminders depend on device permissions and service availability.
+            Reminders may not always arrive. Check Today for your daily words.
           </AppText>
         </>
       ) : task.busy ? (

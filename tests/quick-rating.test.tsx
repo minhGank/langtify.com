@@ -1,6 +1,13 @@
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { Modal } from 'react-native';
 import { QuickRating } from '@/features/ratings/quick-rating';
 import { ratingOptions, type RatingSummary } from '@/features/ratings/rating';
+
+let mockReducedMotion = true;
+jest.mock('@/hooks/use-reduced-motion', () => ({ useReducedMotion: () => mockReducedMotion }));
+beforeEach(() => {
+  mockReducedMotion = true;
+});
 
 afterEach(async () => {
   await act(async () => {});
@@ -122,3 +129,25 @@ it('prevents duplicate pending writes and preserves the confirmed score after un
   ).toBeEnabled();
   expect(screen.getByRole('alert')).toBeVisible();
 });
+
+it.each([true, false])(
+  'respects reduced motion (%s) while keeping all rating choices available',
+  (reduced) => {
+    mockReducedMotion = reduced;
+    const onRate = jest.fn();
+    render(
+      <QuickRating
+        word="Le chien"
+        summary={unrated}
+        action={null}
+        disabled={false}
+        onRate={onRate}
+      />,
+    );
+    fireEvent.press(screen.getByLabelText('Rate photo: Le chien'));
+    expect(screen.UNSAFE_getByType(Modal).props.animationType).toBe(reduced ? 'none' : 'fade');
+    expect(screen.getAllByRole('radio')).toHaveLength(5);
+    fireEvent.press(screen.getByLabelText('Close rating'));
+    expect(onRate).not.toHaveBeenCalled();
+  },
+);

@@ -34,7 +34,7 @@ export function FeedPhoto({
             accessible={Boolean(open)}
             accessibilityRole={open ? 'button' : undefined}
             accessibilityLabel={open ? `Open photo: ${word}` : undefined}
-            accessibilityHint={open ? 'View the full photo and vocabulary rating' : undefined}
+            accessibilityHint={open ? 'Open the photo and its ratings' : undefined}
           >
             <Image
               source={{ uri, cache: 'reload' }}
@@ -47,10 +47,7 @@ export function FeedPhoto({
           </Pressable>
           {!loaded && (
             <View pointerEvents="none" style={styles.center}>
-              <ActivityIndicator
-                color={colors.brandPrimary}
-                accessibilityLabel="Loading feed photo"
-              />
+              <ActivityIndicator color={colors.brandPrimary} accessibilityLabel="Loading photo" />
             </View>
           )}
         </>

@@ -148,7 +148,7 @@ it('rejects malformed direct IDs without fetching or accepting route injection',
 it('keeps owner details non-rateable and removes a displayed post after privacy invalidation', async () => {
   mockItem = { ...item, canRate: false };
   renderRouter(routes, { initialUrl: `/post?submissionId=${item.id}` });
-  await screen.findByText('Your photo — you cannot rate it.');
+  await screen.findByText('You can’t rate your own photo.');
   expect(screen.queryByLabelText('5 — Perfect match for Le chien')).toBeNull();
   mockLoad.mockResolvedValue({ items: [], hasMore: false });
   mockPreviews.mockResolvedValue({ items: [], photos: {} });

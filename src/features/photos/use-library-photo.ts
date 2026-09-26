@@ -98,7 +98,7 @@ export function useLibraryPhoto({
             key: eligibilityKey,
             available: false,
             error:
-              'Photo library availability could not be checked. Check your connection and try again.',
+              'We couldn’t check whether you can add a photo. Check your connection and try again.',
           });
       } finally {
         if (eligibilityRequest.current === controller) eligibilityRequest.current = null;
@@ -154,8 +154,7 @@ export function useLibraryPhoto({
           setInteraction({
             scope,
             busy: true,
-            error:
-              'This word is no longer available for a new photo. Return to Today or Past Words to refresh.',
+            error: 'You can’t add a photo to this word right now. Refresh Today or Past Words.',
             permissionDenied: false,
           });
         }
@@ -179,7 +178,7 @@ export function useLibraryPhoto({
           error:
             cause instanceof PhotoLibraryError
               ? cause.message
-              : 'This photo could not be prepared. Please try again or choose another photo.',
+              : 'We couldn’t prepare this photo. Try again or choose another.',
           permissionDenied: cause instanceof PhotoLibraryError && cause.code === 'permission',
         });
       }
