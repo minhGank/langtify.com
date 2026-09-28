@@ -20,6 +20,7 @@ import { ProfileAvatar } from '@/features/profile/profile-avatar';
 import { followWithRecovery } from './follow-operation';
 import { openConnections } from './connections-navigation';
 import { PublicProfilePosts } from './public-profile-posts';
+import { BlockedProfile } from '@/features/safety/blocked-profile';
 
 export function PublicProfilePanel({
   identity,
@@ -88,6 +89,7 @@ export function PublicProfilePanel({
         <>
           <View style={styles.identity}>
             <ProfileAvatar
+              isSelf={profile.isSelf}
               identity={identity}
               username={profile.username}
               avatarId={profile.avatarId}
@@ -95,6 +97,10 @@ export function PublicProfilePanel({
             />
             <AppText variant="title">@{profile.username}</AppText>
             <MotionView trigger={followAcknowledgement} kind="change" style={styles.counts}>
+              <View style={styles.count} accessible accessibilityLabel={`Level ${profile.level}`}>
+                <AppText variant="heading">{profile.level}</AppText>
+                <AppText variant="caption">Level</AppText>
+              </View>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={`${profile.followerCount} followers`}
@@ -216,7 +222,10 @@ export function PublicProfileSheet({
 }
 export function PublicProfileScreen() {
   const { status, session } = useAuth();
-  const { profileId } = useLocalSearchParams<{ profileId?: string | string[] }>();
+  const { profileId, blockId } = useLocalSearchParams<{
+    profileId?: string | string[];
+    blockId?: string | string[];
+  }>();
   const identity = useMemo(
     () => (session ? { userId: session.user.id, token: session.access_token } : null),
     [session],
@@ -231,6 +240,24 @@ export function PublicProfileScreen() {
   );
   const close = () => (router.canGoBack() ? router.back() : router.replace('/profile'));
   if (status !== 'ready' || !identity) return null;
+  if (blockId !== undefined)
+    return (
+      <Screen>
+        <IconButton name="chevron-back" label="Back" onPress={close} />
+        {profileId === undefined &&
+        typeof blockId === 'string' &&
+        /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(blockId) ? (
+          <BlockedProfile
+            key={`${identity.userId}:${identity.token}:${blockId}`}
+            identity={identity}
+            blockId={blockId.toLowerCase()}
+            close={close}
+          />
+        ) : (
+          <AppText>This blocked account is unavailable.</AppText>
+        )}
+      </Screen>
+    );
   return (
     <Screen>
       <IconButton name="chevron-back" label="Back" onPress={close} />

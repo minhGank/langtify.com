@@ -271,6 +271,7 @@ A source balance can only be zero or its fixed reward. Repeated restoration uses
 new signed revisions of the same source; it cannot farm a positive-only lifetime
 counter. Level derives from cumulative `25 × L × (L + 3)`, starting at zero.
 The supplied formula resolves the inconsistent illustrative 620-XP level example.
+This original curve is superseded by QA #32 / decision 050; reward rules remain.
 
 Use server finalization time and the current persisted IANA timezone, snapshot both,
 and qualify distinct local completion dates. This preserves Phase 4's interrupted
@@ -869,6 +870,186 @@ Use human-readable length guidance with the existing exact UTF-8 validation rath
 than inventing a six-visible-character minimum. Live feedback confirms length only,
 not password strength or future server acceptance. Known breach errors are safe
 field errors; raw service messages must never become interface copy. Dev's length
-and character policy were rechecked read-only on 2026-09-26. SMTP and leaked-password
-settings require separate Dashboard confirmation; no hosted configuration was changed.
+and character policy were rechecked read-only on 2026-09-26. The user subsequently
+confirmed custom Resend SMTP is enabled for hosted Dev, sending as
+Langtify <no-reply@langtify.com>. Actual delivery remains pending a fresh-signup
+hosted/physical test; neutral signup/resend guidance is unchanged. Leaked-password
+protection still requires Dashboard confirmation. This documentation update changes
+no auth logic or hosted configuration.
 See [COPY_GUIDE.md](COPY_GUIDE.md) and [AUTH_COPY_AUDIT.md](AUTH_COPY_AUDIT.md).
+
+## 042 — Today and one canonical post destination (QA #14–17)
+
+Keep account totals/levels on Profile and daily progress/streak on Today. Today
+word taps open Search's existing concept route with owned immutable assignment
+context; expose existing private photo history without widening public examples.
+
+Photo selection has one fixed primary Add photo action and a compact public/private
+switch. Photo options progressively disclose retake, library selection and confirmed
+discard. Cancelling retake/reselection preserves the reviewed draft. Uploaded
+recovery objects cannot be silently replaced; existing discard/delete authority remains.
+
+Replace the capture route with the shared post route after authoritative completion,
+so native Back returns to the source rather than a result page. Extend the existing
+post presentation to private owners using existing owner RLS and signing; never make
+the public feed query return private content. Gate public interactions separately.
+Only the exact bytes uploaded by this operation may seed the owner pixel cache after
+trusted finalization. Fresh acknowledgements get one haptic and a brief server XP
+receipt; lost responses, restored completions and ordinary revisits do not replay it.
+No schema, function, entitlement, streak or bonus changes. Physical acceptance and
+local integration verification must be reported separately from export success.
+
+## 043 — Compact post conversation and restrained accents (QA #18/#20/#21)
+
+Share one compact rating picker between Discover and detail, preserving the same
+five meanings, confirmed selection and request ordering. Keep the photo and word
+primary, an avatar/username author row secondary, and conversation ahead of its
+docked multiline composer. Send uses a labeled 44-point icon; errors preserve
+the draft and existing idempotent request ID. Owner privacy/delete and public
+share/report/block remain menu actions with unchanged admission/confirmations.
+
+Keep brand and semantic base colors intact. Neutral search icons distinguish tools
+from orange streaks and yellow rewards; semantic badges use soft backgrounds,
+neutral text and contrast-tested accent icons. Initial avatars respect the current
+username-only feed projection without N+1 reads or backend changes. Uploaded feed
+avatars required separately approved read-projection work (now authorized in decision 044). No display-name
+field, feature, backend/progression change, dependency or Phase 11 work is introduced.
+Physical review remains required; see `QA18_20_21_POST_POLISH.md`.
+
+## 044 — Controlled Discover author avatars (QA #20 follow-up)
+
+The user explicitly approves the smallest read-only backend extension for uploaded
+author photos. Add one nullable opaque avatar ID to Discover feed, canonical post
+and service-only photo-signing target responses. Keep profile/concept initial-page
+RPCs unchanged; their existing shared signing revalidation supplies the reference.
+No Auth owner ID, path, email or new profile field enters the public projection.
+
+Reuse current-avatar verification and the existing partial unique index after
+bounded pagination. Preserve eligibility, ratings, cursors and all writes. Reuse
+the followers/People batch-avatar hook for Discover and canonical public detail;
+fetch only distinct missing avatars in groups of at most 24. Keep downloaded
+pixels session-scoped and bounded, preserve signed URL deadlines, cancel obsolete
+reads and retain initials for missing or failed photos. No time-based refresh or
+new dependency is introduced. See `QA20_DISCOVER_AVATARS.md` for staged rollout,
+verification and physical acceptance.
+
+## 045 — Identity-first Profile and owner visibility browsing (QA #19/#22)
+
+Remove Profile's redundant public-feed section. Place the backend-derived Level
+beside Followers/Following; preserve the existing avatar edit affordance. My photos
+opens existing My Vocabulary instead of adding another gallery. Put existing XP,
+streak and completion statistics behind a Learning progress disclosure, without
+repeating Level or issuing another progress read. Consolidate learning settings into
+one link to the existing form. Today stays free of level and total XP.
+
+Use a restrained All/Public/Private segmented control in the owner browser and
+concept history. Apply visibility in the existing security-invoker RPC before
+latest-per-concept grouping, so older matching captures remain reachable. Count
+only matching captures/concepts; search and CEFR continue to describe the displayed
+latest capture. Existing invoker RLS, Auth-derived ownership, public-profile
+eligibility, private Storage and 60-second batch access are unchanged.
+
+Partition query caches/cursors by visibility and mask the previous query at render
+boundaries. Keep session isolation, explicit refresh and mutation invalidation.
+No unrelated profile feature, new public field, progression rule or Phase 11 work.
+See `QA19_22_PROFILE_VISIBILITY.md` for verification and physical acceptance.
+
+## 046 — Shared avatar reconciliation and honest loading (QA #23/#24)
+
+Use one authoritative current-self-avatar pointer per Auth session, shared across
+all author rows. Successful avatar changes patch that pointer and only affected
+avatar-access batches; do not reset/refetch feed/search/comment pages. Exact bytes
+from the matching confirmed owner upload may seed the existing bounded pixel cache.
+Other avatars continue to use controlled projected IDs and batch signing; comment
+and follower-inbox projections gain that minimal reference only. No public bucket,
+new remote notifications, realtime subscription or identity-by-username heuristic.
+
+Reserve media geometry with static neutral placeholders. Initial loading must not
+show failure controls. Cached refresh keeps usable content, with a small pending or
+error state; authority failures still clear it. Owner and non-owner post overflow
+use the same plain trigger. See `QA23_24_AVATARS_MEDIA.md`; physical acceptance is pending.
+
+## 047 — Signup code rollout without account disclosure (QA #25)
+
+Redesign logged-out forms around restrained branding and one primary action. Add
+supported email/password signup code verification, not passwordless signup. Keep
+link mode by default until the manual hosted Confirm signup template change is
+complete and the public digit-count rollout setting matches the verified provider
+configuration. Verification stages a nonpersistent candidate and reuses the audited
+session write/admission/recovery guards, including account and browser intent fences.
+Do not put codes or emails in navigation or log provider responses. Normalize new,
+obfuscated and known existing-account responses; never promise email delivery.
+Preserve Google linking, password policy and authoritative onboarding. No hosted
+configuration change or Phase 11 work. See QA25_AUTH_EMAIL_CODES.md.
+
+## 048 — Onboarding hierarchy and optional language facts (QA #26/#27)
+
+Keep the existing five onboarding decisions and authoritative final save. Present
+language/CEFR choices as generous full-width rows, with restrained progress and one
+persistent Continue action. Show a compact wordmark on the first step only; later
+steps use a quiet setup label. Keep sign-out in an accessible options sheet.
+
+Use a small sourced editorial catalog for optional facts during account restoration
+and initial challenge preparation. Select once per mounted wait; reveal after
+1.5 seconds without delaying completion. Reserve the chosen text's natural height
+before revealing it, hide unrevealed copy from accessibility, and honor Reduce
+Motion. No rotating trivia, new learning rules, stored vocabulary edits or facts
+during routine mutations, pagination or cached refresh. Physical acceptance remains
+required; see `QA26_27_ONBOARDING_LOADING.md`.
+
+## 049 — Recognition without public eligibility; durable inbox opening (QA #28–31)
+
+Show owner-history navigation only for actual captures. Add only authoritative
+Level to eligible public profiles, using existing rules; QA #32 remains separate.
+A blocked-account route is a recognition view, not a public-profile exception:
+block ID, username and controlled avatar only. Keep normal mutual eligibility
+denial. Explicit Unblock needs no second confirmation and reconciles scoped public
+caches without refetching private learning data.
+
+Treat a fresh inbox route opening as one server-admitted read event. Use a durable
+UUID receipt rather than a caller timestamp or repeated "mark all" request. Snapshot
+membership and no-write retries protect notifications committed after admission.
+A network-delayed opening is admitted when it reaches the database; immediate
+cosmetic zero is deliberately avoided until acknowledgement. Preserve cached rows
+and pagination, and route ratings directly to canonical post detail. Retain receipts
+until account deletion: this small storage cost preserves arbitrarily old retry
+idempotency. No polling, new social event type or remote-push change.
+
+On 2026-09-28 the user explicitly authorized applying this migration and running
+the persistent local Supabase verification, resolving the earlier approval gate.
+Hosted migration/function deployment remains unauthorized in this pass. See
+QA28_31_PROFILES_INBOX.md for results and remaining physical acceptance.
+
+## 050 — QA #32: Level 1 and a faster early curve
+
+Explicitly approved: threshold(L) = `10 × (L - 1) × (L + 2)`, starting at Level 1.
+One perfect current day reaches Level 2 (40 XP); adjacent costs grow by 20 XP.
+Only total-XP-to-Level mapping changes. Keep the signed ledger, +10 word/+10 full-day,
+historical +10, milestones, reversals and restoration untouched. Replace the shared
+backend helper in one tracked additive migration; no persisted level/data rewrite.
+Profile shows within-level XP (620 total = Level 7, 80/160 to Level 8).
+
+Never interpret a migration/read/cache refresh as earning XP. Remove passive Level
+and total-XP pulse animation; preserve existing one-use confirmed-finalize acknowledgement
+and silent recovery/revisits. No new celebration system. Keep public Level-only privacy,
+exact bigint boundary corrections, safe-integer client admission and scoped cache
+invalidation after real XP-affecting photo operations. No new dependency/native build
+requirement or Phase 11. See `QA32_LEVEL_PROGRESSION.md` for verification and rollout.
+
+## 051 — Completed concepts never return as new Daily Words
+
+The physical-QA request explicitly changes generation and replacement eligibility:
+once a user genuinely completes a concept, exclude it permanently across languages.
+Use verified server finalization, including Past Words, rather than active photo count
+or positive net XP. Deleting a photo reverses its rewards as before but cannot reset
+this learning history. Keep old assignments/reuploads valid and account erasure complete.
+
+Store one private, immutable `(user_id, concept_id)` record with its original source
+and time. Backfill retained verified submissions and linked durable positive word
+events; refuse unresolved legacy identities rather than silently misclassifying them.
+Use the existing owner lock and progress revision to serialize completion/selection.
+Keep exact CEFR slots, current-challenge uniqueness, and unseen-first/oldest assignment
+ordering for the remaining never-completed concepts. Exhaustion fails atomically;
+never recycle completed words to mask the small development catalog. No seed expansion,
+public read grant, new reward, Edge Function or client-side eligibility filter.
+See `COMPLETED_CONCEPT_EXCLUSION.md` for verification and Dev rollout.

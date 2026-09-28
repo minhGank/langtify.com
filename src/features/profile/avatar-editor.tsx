@@ -9,13 +9,12 @@ import { Sheet } from '@/components/ui/sheet';
 import { MotionView } from '@/components/ui/motion-view';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useServerQuery } from '@/hooks/use-server-query';
-import { createServerCache, invalidateServerData, serverScope } from '@/lib/server-cache';
 import { feedback } from '@/lib/haptics';
 import { avatarGateway, type AvatarIdentity, type AvatarState } from '@/services/avatars';
 import { pickAvatar, type PreparedAvatar } from './prepare-avatar';
 import { ProfileAvatar } from './profile-avatar';
+import { ownAvatarEntry, avatarChanged } from './avatar-state';
 
-const metadata = createServerCache<AvatarState>({ maxEntries: 4 });
 const discardUnavailable = () => true;
 type Props = { identity: AvatarIdentity; username: string; onChanged: () => void };
 export function AvatarEditor(props: Props) {
@@ -28,15 +27,12 @@ function Editor({ identity, username, onChanged }: Props) {
     [identity.userId, identity.token],
   );
   const entry = useMemo(
-    () => metadata.entry(`${serverScope(identity.userId, identity.token)}:avatar`, ['avatars']),
+    () => ownAvatarEntry({ userId: identity.userId, token: identity.token }),
     [identity.userId, identity.token],
   );
   const reconcile = useCallback(() => {
-    invalidateServerData(['avatars', 'public-profile', 'user-search'], {
-      discard: true,
-      scope: serverScope(identity.userId, identity.token),
-    });
-  }, [identity.userId, identity.token]);
+    entry.invalidate({ discard: true });
+  }, [entry]);
   const query = useServerQuery(
     entry,
     useCallback((signal: AbortSignal) => api.load(signal), [api]),
@@ -113,17 +109,22 @@ function Editor({ identity, username, onChanged }: Props) {
       active.current && generation.current === version && !request.signal.aborted;
     try {
       let result: AvatarState;
+      let uploaded: Uint8Array | undefined;
+      let uploadedId: string | undefined;
       if (removeId) result = await api.remove(removeId, request.signal);
       else if (draft) {
         const reservation = await api.reserve(draft.requestId, request.signal);
         if (!current()) return;
-        if (!reservation.current) await api.upload(reservation, draft.bytes, request.signal);
+        if (!reservation.current) {
+          await api.upload(reservation, draft.bytes, request.signal);
+          uploaded = draft.bytes;
+          uploadedId = reservation.id;
+        }
         if (!current()) return;
         result = await api.finalize(reservation.id, request.signal);
       } else return;
       if (!current()) return;
-      reconcile();
-      entry.set(result);
+      avatarChanged(identity, result, result.avatarId === uploadedId ? uploaded : undefined);
       setDraft(null);
       setConfirmRemove(false);
       setAcknowledgement((previous) => (previous ?? 0) + 1);
@@ -158,6 +159,7 @@ function Editor({ identity, username, onChanged }: Props) {
             <Avatar username={username} uri={draft.uri} size={88} />
           ) : (
             <ProfileAvatar
+              isSelf
               identity={identity}
               username={username}
               avatarId={query.data?.avatarId ?? null}

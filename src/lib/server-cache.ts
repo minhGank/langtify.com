@@ -120,6 +120,10 @@ export function createServerCache<T>({
   };
   return {
     clear: registry.clear,
+    invalidateWhere(match: (key: string, data: T | null) => boolean) {
+      for (const [key, saved] of entries)
+        if (match(key, saved.entry.getSnapshot().data)) saved.entry.invalidate();
+    },
     update(match: (key: string, data: T) => T) {
       for (const [key, saved] of entries) {
         const data = saved.entry.getSnapshot().data;

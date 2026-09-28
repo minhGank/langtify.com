@@ -22,6 +22,7 @@ export function projectFeedPhotos(targets: Target[], signed: SignedPhoto[]) {
       reference_term: row.reference_term,
       cefr_level: row.cefr_level,
       username: row.username,
+      avatar_id: row.avatar_id,
       submitted_at: row.submitted_at,
       signed_path: uri.pathname + uri.search,
     };

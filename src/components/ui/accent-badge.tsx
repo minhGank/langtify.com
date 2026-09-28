@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText } from './app-text';
 import { useAppTheme } from '@/hooks/use-app-theme';
 
-// Bright orange/yellow are fills, never low-contrast text on a light surface.
+// Soft surfaces keep streak/reward accents distinct without dominating the page.
 export function AccentBadge({
   label,
   tone,
@@ -21,14 +21,21 @@ export function AccentBadge({
     <View
       style={[
         styles.badge,
-        { backgroundColor: tone === 'energy' ? colors.accentEnergy : colors.accentReward },
+        { backgroundColor: tone === 'energy' ? colors.energySoft : colors.rewardSoft },
       ]}
     >
-      {icon && <Ionicons name={icon} size={16} color={colors.textOnAccent} accessible={false} />}
+      {icon && (
+        <Ionicons
+          name={icon}
+          size={16}
+          color={tone === 'energy' ? colors.energyInk : colors.rewardInk}
+          accessible={false}
+        />
+      )}
       <AppText
         variant="caption"
         accessibilityLiveRegion={announce ? 'polite' : undefined}
-        style={{ color: colors.textOnAccent, fontWeight: '600', flexShrink: 1 }}
+        style={{ color: colors.textPrimary, fontWeight: '600', flexShrink: 1 }}
       >
         {label}
       </AppText>

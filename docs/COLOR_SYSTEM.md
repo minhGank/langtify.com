@@ -164,3 +164,21 @@ Physical iPhone review is required before considering this identity final:
    appearance, and native launch in light/dark mode after rebuilding.
 
 No physical review, native rebuild, hosted deployment, commit or push is implied.
+
+## QA #21 — restrained semantic treatments
+
+The approved primary/base palette stays unchanged. Badges now pair neutral text
+with these soft backgrounds and small contrasting icons rather than solid accent
+fills. Orange is reserved for streak/energy; yellow for XP/reward, distinct from
+warning states. The XP progress bar retains its yellow fill and contrasting outline.
+
+| Role         | Light     | Dark      |
+| ------------ | --------- | --------- |
+| `energySoft` | `#FFF0E9` | `#352B29` |
+| `energyInk`  | `#A34325` | `#FF8D6D` |
+| `rewardSoft` | `#FFF7DB` | `#332F23` |
+| `rewardInk`  | `#765C12` | `#FFD966` |
+
+Text and icon/background pairs are tested at 4.5:1 or better. Search affordances
+and empty-state icons use neutral surfaces/secondary ink; selected navigation and
+rating states retain indigo. See `QA18_20_21_POST_POLISH.md` for device acceptance.

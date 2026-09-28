@@ -11,12 +11,7 @@ import { useProgressRead } from './use-progress-read';
 
 const cache = createServerCache<Progress>({ maxEntries: 12 });
 
-export function ProgressPanel({
-  userId,
-  accessToken,
-  challengeId,
-  detailed = false,
-}: ProgressIdentity & { challengeId?: string; detailed?: boolean }) {
+export function useProgress({ userId, accessToken }: ProgressIdentity, challengeId?: string) {
   const load = useMemo(
     () => progressGateway({ userId, accessToken }, challengeId),
     [userId, accessToken, challengeId],
@@ -28,7 +23,16 @@ export function ProgressPanel({
       ]),
     [userId, accessToken, challengeId],
   );
-  const { data, error, refresh } = useProgressRead(load, resource);
+  return useProgressRead(load, resource);
+}
+
+export function ProgressPanel({
+  userId,
+  accessToken,
+  challengeId,
+  detailed = false,
+}: ProgressIdentity & { challengeId?: string; detailed?: boolean }) {
+  const { data, error, refresh } = useProgress({ userId, accessToken }, challengeId);
   const { colors } = useAppTheme();
   if (!data)
     return error ? (
@@ -45,9 +49,6 @@ export function ProgressPanel({
         <View style={styles.row}>
           <MotionView trigger={data.completedWords}>
             <AppText variant="heading">{data.completedWords} / 3 completed</AppText>
-          </MotionView>
-          <MotionView trigger={data.totalXp}>
-            <AccentBadge tone="reward" label={`${data.totalXp} XP`} />
           </MotionView>
         </View>
         <View
@@ -72,31 +73,42 @@ export function ProgressPanel({
             <AppText variant="label" style={{ color: colors.success }}>
               Daily challenge complete
             </AppText>
-            <AccentBadge tone="reward" label="+10 XP bonus" />
+            <AccentBadge tone="reward" icon="sparkles-outline" label="+10 XP bonus" />
           </View>
         )}
         <View style={styles.row}>
           <AccentBadge tone="energy" icon="flame" label={`${data.currentStreak} day streak`} />
-          <AppText variant="caption">Level {data.level}</AppText>
         </View>
       </View>
     );
+  return <ProgressDetails data={data} />;
+}
+
+export function ProgressDetails({
+  data,
+  showLevel = true,
+}: {
+  data: Progress;
+  showLevel?: boolean;
+}) {
+  const { colors, isDark } = useAppTheme();
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <View style={styles.row}>
-        <MotionView trigger={data.level}>
-          <AppText variant="heading">Level {data.level}</AppText>
-        </MotionView>
-        <MotionView trigger={data.totalXp}>
-          <AccentBadge tone="reward" label={`${data.totalXp} XP`} />
-        </MotionView>
+        {showLevel && <AppText variant="heading">Level {data.level}</AppText>}
+        <AccentBadge tone="reward" icon="sparkles-outline" label={`${data.totalXp} XP`} />
       </View>
       <View style={styles.loading}>
         <View
           accessible
           accessibilityRole="progressbar"
-          accessibilityLabel="Progress toward next level"
-          accessibilityValue={{ min: 0, max: data.xpForNextLevel, now: data.xpIntoLevel }}
+          accessibilityLabel={`Progress to Level ${data.level + 1}`}
+          accessibilityValue={{
+            min: 0,
+            max: data.xpForNextLevel,
+            now: data.xpIntoLevel,
+            text: `${data.xpIntoLevel} of ${data.xpForNextLevel} XP. ${data.xpForNextLevel - data.xpIntoLevel} XP to Level ${data.level + 1}.`,
+          }}
           style={[styles.track, { backgroundColor: colors.border }]}
         >
           <View
@@ -104,13 +116,13 @@ export function ProgressPanel({
               height: 8,
               width: `${(100 * data.xpIntoLevel) / data.xpForNextLevel}%`,
               backgroundColor: colors.accentReward,
-              borderColor: colors.textOnAccent,
+              borderColor: isDark ? colors.textOnAccent : colors.rewardInk,
               borderWidth: data.xpIntoLevel > 0 ? 1 : 0,
             }}
           />
         </View>
         <AppText variant="caption">
-          {data.totalXp} / {data.nextLevelXp} XP · next level
+          {data.xpIntoLevel} / {data.xpForNextLevel} XP to Level {data.level + 1}
         </AppText>
       </View>
       <View style={[styles.stats, { borderColor: colors.border }]}>

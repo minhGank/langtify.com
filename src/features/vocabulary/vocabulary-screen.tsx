@@ -9,18 +9,29 @@ import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
 import { Sheet } from '@/components/ui/sheet';
+import { MediaPlaceholder } from '@/components/ui/media-placeholder';
 import { LoadingPlaceholder } from '@/components/ui/loading-placeholder';
 import { feedback } from '@/lib/haptics';
 import { useAuth } from '@/features/auth/auth-provider';
 import { cefrOptions } from '@/features/onboarding/validation';
 import { serverScope } from '@/lib/server-cache';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { vocabularyGateway, type Capture } from '@/services/vocabulary';
+import {
+  vocabularyGateway,
+  isVisibilityFilter,
+  type VisibilityFilter,
+  type Capture,
+} from '@/services/vocabulary';
+import { VisibilityFilterControl } from './visibility-filter';
 import { useVocabulary } from './use-vocabulary';
 
 export function VocabularyScreen({ detail = false }: { detail?: boolean }) {
   const { status, session } = useAuth();
-  const { conceptId } = useLocalSearchParams<{ conceptId?: string | string[] }>();
+  const { conceptId, visibility } = useLocalSearchParams<{
+    conceptId?: string | string[];
+    visibility?: string | string[];
+  }>();
+  const routeVisibility = isVisibilityFilter(visibility) ? visibility : 'all';
   if (status !== 'ready' || !session) return null;
   if (
     detail &&
@@ -35,10 +46,11 @@ export function VocabularyScreen({ detail = false }: { detail?: boolean }) {
     );
   return (
     <VocabularyContent
-      key={`${session.user.id}:${detail ? conceptId : 'library'}`}
+      key={`${session.user.id}:${detail ? conceptId : 'library'}:${routeVisibility}`}
       userId={session.user.id}
       token={session.access_token}
       conceptId={detail && typeof conceptId === 'string' ? conceptId.toLowerCase() : undefined}
+      initialVisibility={routeVisibility}
     />
   );
 }
@@ -46,11 +58,14 @@ export function VocabularyContent({
   userId,
   token,
   conceptId,
+  initialVisibility = 'all',
 }: {
   userId: string;
   token: string;
   conceptId?: string;
+  initialVisibility?: VisibilityFilter;
 }) {
+  const [visibility, setVisibility] = useState<VisibilityFilter>(initialVisibility);
   const [input, setInput] = useState(''),
     [search, setSearch] = useState(''),
     [level, setLevel] = useState(''),
@@ -63,24 +78,32 @@ export function VocabularyContent({
   const gateway = useMemo(
     () => ({
       cachedPreviews: (ids: string[]) =>
-        vocabularyGateway(userId, token, { conceptId, search, level }).cachedPreviews?.(ids) ?? {},
+        vocabularyGateway(userId, token, { conceptId, search, level, visibility }).cachedPreviews?.(
+          ids,
+        ) ?? {},
       load: (
         cursor: Parameters<ReturnType<typeof vocabularyGateway>['load']>[0],
         signal?: AbortSignal,
       ) =>
         Promise.resolve().then(() =>
-          vocabularyGateway(userId, token, { conceptId, search, level }).load(cursor, signal),
+          vocabularyGateway(userId, token, { conceptId, search, level, visibility }).load(
+            cursor,
+            signal,
+          ),
         ),
       previews: (ids: string[], signal?: AbortSignal) =>
         Promise.resolve().then(() =>
-          vocabularyGateway(userId, token, { conceptId, search, level }).previews(ids, signal),
+          vocabularyGateway(userId, token, { conceptId, search, level, visibility }).previews(
+            ids,
+            signal,
+          ),
         ),
     }),
-    [userId, token, conceptId, search, level],
+    [userId, token, conceptId, search, level, visibility],
   );
   const state = useVocabulary(
     gateway,
-    `${serverScope(userId, token)}:vocabulary:${conceptId ?? ''}:${search}:${level}`,
+    `${serverScope(userId, token)}:vocabulary:${conceptId ?? ''}:${search}:${level}:${visibility}`,
   );
   const listRef = useRef<FlatList<Capture>>(null);
   return (
@@ -121,7 +144,7 @@ export function VocabularyContent({
                   {state.data && (
                     <AppText variant="caption">
                       {state.data.totalConcepts} {state.data.totalConcepts === 1 ? 'word' : 'words'}{' '}
-                      collected
+                      {visibility === 'all' ? 'collected' : `with ${visibility} photos`}
                     </AppText>
                   )}
                 </View>
@@ -212,6 +235,13 @@ export function VocabularyContent({
                 </AppText>
               </View>
             )}
+            <VisibilityFilterControl
+              value={visibility}
+              onChange={(next) => {
+                setVisibility(next);
+                listRef.current?.scrollToOffset({ offset: 0, animated: false });
+              }}
+            />
             {state.loading && !state.data && (
               <LoadingPlaceholder label="Loading vocabulary" photo />
             )}
@@ -245,7 +275,9 @@ export function VocabularyContent({
             key={`${item.id}:${state.photoRevision}`}
             capture={item}
             uri={state.photos[item.id] ?? null}
+            pending={!state.photoError && !state.error}
             detail={!!conceptId}
+            visibilityFilter={visibility}
             reload={() => void state.refresh()}
           />
         )}
@@ -258,26 +290,34 @@ export function VocabularyContent({
                 color={colors.textSecondary}
               />
               <AppText variant="heading">
-                {conceptId
-                  ? 'No saved photos'
-                  : input || level
-                    ? 'No matching words'
-                    : state.data?.totalConcepts === 0
-                      ? 'Your words, in pictures'
-                      : 'No words on this page'}
+                {input || level
+                  ? 'No matching words'
+                  : visibility !== 'all'
+                    ? `No ${visibility} photos${state.hasPrevious ? ' on this page' : ' yet'}`
+                    : conceptId
+                      ? 'No saved photos'
+                      : state.data?.totalConcepts === 0
+                        ? 'Your words, in pictures'
+                        : 'No words on this page'}
               </AppText>
               <AppText style={[styles.emptyCopy, { color: colors.textSecondary }]}>
-                {conceptId
-                  ? 'Photos you delete are removed from your history.'
-                  : input || level
-                    ? 'Try another word or a different level.'
-                    : state.data?.totalConcepts === 0
-                      ? 'Add a photo to today’s words to start your collection.'
-                      : 'Pull down to see your latest photos.'}
+                {input || level
+                  ? 'Try another word or a different filter.'
+                  : visibility !== 'all'
+                    ? 'Try All to see your other photos.'
+                    : conceptId
+                      ? 'Photos you delete are removed from your history.'
+                      : state.data?.totalConcepts === 0
+                        ? 'Add a photo to today’s words to start your collection.'
+                        : 'Pull down to see your latest photos.'}
               </AppText>
-              {!conceptId && !input && !level && state.data?.totalConcepts === 0 && (
-                <Button label="Go to Today" onPress={() => router.navigate('/')} />
-              )}
+              {!conceptId &&
+                !input &&
+                !level &&
+                visibility === 'all' &&
+                state.data?.totalConcepts === 0 && (
+                  <Button label="Go to Today" onPress={() => router.navigate('/')} />
+                )}
             </View>
           ) : null
         }
@@ -340,21 +380,29 @@ export function VocabularyContent({
 function CaptureCard({
   capture,
   uri,
+  pending,
   detail,
+  visibilityFilter,
   reload,
 }: {
   capture: Capture;
   uri: string | null;
+  pending: boolean;
   detail: boolean;
+  visibilityFilter: VisibilityFilter;
   reload: () => void;
 }) {
   const { colors } = useAppTheme();
+  const [loaded, setLoaded] = useState<string | null>(null);
   const [failed, setFailed] = useState<string | null>(null);
   const open = () =>
     router.push(
       detail
         ? { pathname: '/photo', params: { assignmentId: capture.assignmentId } }
-        : { pathname: '/vocabulary-concept', params: { conceptId: capture.conceptId } },
+        : {
+            pathname: '/vocabulary-concept',
+            params: { conceptId: capture.conceptId, visibility: visibilityFilter },
+          },
     );
   return (
     <View
@@ -372,21 +420,31 @@ function CaptureCard({
           backgroundColor: pressed ? colors.surfaceMuted : colors.surface,
         })}
       >
-        <View style={{ backgroundColor: colors.surfaceMuted }}>
+        <View
+          style={[
+            styles.photo,
+            detail && styles.detailPhoto,
+            { backgroundColor: colors.surfaceMuted },
+          ]}
+        >
           {uri && failed !== uri ? (
             <Image
               key={uri}
               source={{ uri, cache: 'reload' }}
-              style={[styles.photo, detail && styles.detailPhoto]}
+              style={StyleSheet.absoluteFill}
               accessibilityLabel={`Your photo of ${displayTerm(capture.targetTerm)}`}
+              onLoad={() => setLoaded(uri)}
               onError={() => setFailed(uri)}
             />
-          ) : (
+          ) : !pending || failed ? (
             <View style={styles.unavailable}>
               <Ionicons name="image-outline" size={28} color={colors.textSecondary} />
               <AppText variant="caption">Photo unavailable</AppText>
             </View>
-          )}
+          ) : null}
+          {(!uri && pending) || (uri && loaded !== uri && failed !== uri) ? (
+            <MediaPlaceholder label={`Loading photo of ${displayTerm(capture.targetTerm)}`} />
+          ) : null}
         </View>
         <View style={styles.caption}>
           <AppText variant={detail ? 'heading' : 'label'} numberOfLines={2}>
@@ -415,7 +473,7 @@ function CaptureCard({
           </View>
         </View>
       </Pressable>
-      {(!uri || failed === uri) && (
+      {((!uri && !pending) || (uri && failed === uri)) && (
         <View style={styles.reload}>
           <Button label="Reload photo" variant="ghost" onPress={reload} />
         </View>
@@ -477,7 +535,7 @@ const styles = StyleSheet.create({
   gridCard: { flex: 1, maxWidth: '50%' },
   photo: { width: '100%', aspectRatio: 1 },
   detailPhoto: { aspectRatio: 4 / 3 },
-  unavailable: { aspectRatio: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
+  unavailable: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
   caption: { padding: 12, gap: 4 },
   meta: {
     flexDirection: 'row',

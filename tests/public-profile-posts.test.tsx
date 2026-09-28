@@ -53,6 +53,7 @@ const item: FeedItem = {
   targetTerm: 'le chien',
   referenceTerm: 'dog',
   cefrLevel: 'A1',
+  avatarId: null,
   username: 'photographer',
   submittedAt: '2026-09-21T12:00:00.123456Z',
   averageRating: null,
@@ -133,6 +134,7 @@ it('clears public posts when invalidated eligibility is denied by a block or res
     isFollowing: false,
     followerCount: 0,
     followingCount: 0,
+    level: 1,
     avatarId: null,
   });
   render(<PublicProfilePosts identity={identity()} profileId={profileId} />);

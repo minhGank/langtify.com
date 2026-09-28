@@ -1,5 +1,25 @@
 # Langtify product decisions
 
+QA #19/#22 makes Profile identity-first: avatar/username, Level/Followers/Following,
+a My photos entry into the existing Vocabulary browser, and a Learning progress
+disclosure for existing XP/streak details. Learning preferences remain on their
+existing screen. The owner browser offers All/Public/Private; other users’ profiles
+remain eligible-public-only. See [QA19_22_PROFILE_VISIBILITY.md](QA19_22_PROFILE_VISIBILITY.md).
+
+QA #18, #20 and #21 refine the existing post into photo, word/context, author,
+compact rating and conversation. The comment composer stays below the thread;
+sharing and safety actions are secondary menu actions. Search uses neutral tool
+styling; streak/XP use restrained semantic tints. No product/backend rule changes.
+See [QA18_20_21_POST_POLISH.md](QA18_20_21_POST_POLISH.md).
+
+QA #14–17 narrows Today to assigned words, daily completion and streak; account
+level and total XP stay on Profile. Words open the existing canonical concept
+screen. The photo preview has one primary Add photo action, a sharing switch and
+an overflow menu. Successful submission replaces capture with the canonical post,
+with brief server-backed XP feedback rather than a result page. Private owner
+photos stay private; public interactions retain existing eligibility. All progression
+rules remain unchanged. See [QA14_17_TODAY_PHOTO_FLOW.md](QA14_17_TODAY_PHOTO_FLOW.md).
+
 The authorized [QA3 search and native navigation pass](QA3_SEARCH_NAVIGATION.md)
 adds catalog Search/Explore and controlled public examples, a native post route,
 compact semantic rating and profile/comment presentation corrections. Existing
@@ -53,9 +73,20 @@ and have an active reference-language equivalent. Insufficient pools return an
 error without substitutions at another level or partial challenge creation.
 
 Selection excludes every concept already assigned in that challenge, including
-replaced words. It prefers never-assigned concepts, then least recently assigned
-concepts, randomizing ties. Repeat history is concept-based across the user's
-challenges; no mastery score or spaced repetition is implemented.
+replaced words, and every concept this user has ever genuinely completed. A verified
+daily or Past Words photo finalized by the server permanently excludes its semantic
+concept across all languages from future generation and replacement. Deletion,
+XP reversal, privacy changes and moderation do not erase this fact. Pending, failed
+or abandoned uploads do not count. Account erasure removes its private history.
+
+Among never-completed concepts, selection still prefers never-assigned concepts,
+then least recently assigned concepts, randomizing ties. An old unfinished assignment
+may therefore return. Existing challenge snapshots and reuploads of already assigned
+words remain valid; this rule changes new selection only. No mastery score or spaced
+repetition is implemented. An exhausted exact-level pool fails atomically, without
+reusing a completed concept or substituting another level. The UI explains that new
+words are unavailable and preserves Vocabulary access; a failed replacement retains
+the original word. The 36-concept development seed can exhaust quickly.
 
 Repeated replacements are allowed while eligible concepts remain. The server
 chooses a different concept at the original slot level/language, preserving the
@@ -122,15 +153,20 @@ Repeated submit/delete/resubmit cannot increase net/lifetime XP beyond currently
 valid sources. Historical deletion may reduce total XP, level, current/longest
 streak, completed-word count and fully completed-challenge count.
 
-Level starts at 0. Advancing from level L costs `100 + 50 × L` XP; the cumulative
-threshold to enter L is `25 × L × (L + 3)`. Thresholds are 0, 100, 250, 450, 700,
-1000, 1350… Therefore 620 XP is Level 3, with 170/250 XP toward Level 4 (700 total).
-The exact formula takes precedence over illustrative examples. Total XP and level
-come from the server's signed ledger; the client never awards either.
+QA #32 starts users at **Level 1 with 0 XP**. The cumulative threshold to enter
+Level L is `10 × (L - 1) × (L + 2)`; the next level costs `20 × (L + 1)` XP.
+Levels 1–10 start at 0, 40, 100, 180, 280, 400, 540, 700, 880 and 1080 XP.
+The formula continues without a product cap. At 620 XP the user is Level 7 with
+80/160 XP toward Level 8. At 120 XP they are Level 3 with 20/80 XP toward Level 4.
+The backend derives levels and thresholds from the signed ledger. Existing users
+resolve to the new level without XP backfill or historical reward/celebration replay.
+Photo deletion and resubmission can lower/restore level through unchanged signed XP.
 
-Today displays n/3, full-completion bonus, level, XP and current streak. Photo detail
-shows server-confirmed XP feedback. Profile adds progress toward the next level,
-longest streak and lifetime counts of currently valid words/full challenges.
+Today displays n/3, full-completion bonus and current streak. Profile holds Level,
+total XP and within-level progress, longest streak and valid word/challenge counts.
+Public profiles expose only Level alongside existing social identity/counts.
+Only confirmed new photo finalization can show the existing one-use XP acknowledgement;
+passive progress reads and a formula rollout never generate reward feedback.
 
 ## Future scope — not implemented
 
@@ -167,9 +203,12 @@ CEFR, submitted timestamp and current visibility. Cards and detail summaries sho
 the latest surviving capture, ordered by server submission time then submission UUID.
 Catalog edits, deactivation and learning-settings changes never rewrite history.
 
-Search is a case-insensitive literal substring of the latest card's target or
-reference term. CEFR filters that same latest capture. Older text remains visible
-in unfiltered concept detail. The unique-concept total ignores list search/filter;
+All/Public/Private selects the owner's matching captures before grouping. Each
+card uses the latest matching capture and counts only captures in that visibility
+selection. Concept detail inherits the visibility choice and can switch back to All.
+Search is a case-insensitive literal substring of that latest card's target or
+reference term. CEFR filters that same capture. Older text remains visible in
+concept detail. The unique-concept total respects visibility but ignores search/CEFR;
 it differs from Profile's completed-word count. There is no category filter,
 mastery score, new completion flag or social discovery.
 
@@ -347,3 +386,22 @@ days. A historical camera/library photo earns only the reversible +10 word XP,
 never daily completion, streak, milestone or 3/3 credit. Captured photos join normal
 Vocabulary/social eligibility. See [PAST_WORDS.md](PAST_WORDS.md) for exact admission,
 delete/resubmit semantics and required physical acceptance. Phase 11 stays closed.
+
+## QA #28–31: useful history, identity and a simpler inbox
+
+Concept detail offers Your photos only when completed owned captures exist, after
+public examples. This read affordance grants no new capture eligibility. Eligible
+public profiles show Level beside Followers/Following; total XP and streaks remain
+private. QA #32 subsequently updates the shared level curve; see above.
+
+Blocked accounts use recognizable avatar/username rows. Opening a blocked account
+shows only its recognition identity and blocked state. Only explicit Unblock changes
+the relationship; it then restores eligibility under existing rules. Counts, posts,
+comments and private fields remain unavailable while blocked.
+
+Opening a fresh Notification Center route records a server admission and marks
+currently visible eligible unread events as seen. Later arrivals stay unread;
+retrying the original opening cannot clear them. There are no manual read controls.
+History and existing fixed targets remain. Social events remain in-app only; remote
+push still contains only DAILY_WORDS and STREAK_AT_RISK. Physical acceptance remains
+pending; see QA28_31_PROFILES_INBOX.md for local verification and rollout status.

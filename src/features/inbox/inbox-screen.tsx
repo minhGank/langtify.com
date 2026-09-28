@@ -11,8 +11,10 @@ import { useAppTheme } from '@/hooks/use-app-theme';
 import { inboxGateway, type InboxNotification } from '@/services/inbox';
 import type { SafetyIdentity } from '@/features/safety/model';
 import { inboxDestination } from './navigation';
+import { useAvatarRows } from '@/features/social/connections-avatars';
 import { InboxRow } from './inbox-row';
 import { useInbox } from './use-inbox';
+import { serverScope } from '@/lib/server-cache';
 
 export function InboxScreen() {
   const { status, session } = useAuth();
@@ -21,12 +23,16 @@ export function InboxScreen() {
     [session],
   );
   if (status !== 'ready' || !identity) return null;
-  return <InboxContent key={`${identity.userId}:${identity.token}`} identity={identity} />;
+  return <InboxContent key={serverScope(identity.userId, identity.token)} identity={identity} />;
 }
 export function InboxContent({ identity }: { identity: SafetyIdentity }) {
   const { colors } = useAppTheme();
   const gateway = useMemo(() => inboxGateway(identity), [identity]);
   const state = useInbox(identity, gateway);
+  const avatars = useAvatarRows(
+    identity,
+    (state.data?.items ?? []).flatMap((item) => (item.kind === 'NEW_FOLLOWER' ? [item] : [])),
+  );
   const list = useRef<FlatList<InboxNotification>>(null);
   const backToLatest = async () => {
     if (await state.refresh()) list.current?.scrollToOffset({ offset: 0, animated: false });
@@ -46,19 +52,6 @@ export function InboxContent({ identity }: { identity: SafetyIdentity }) {
           />
           <AppText variant="heading">Notifications</AppText>
         </View>
-        <View style={styles.summary}>
-          <AppText variant="caption">
-            {state.data?.unreadCount ? `${state.data.unreadCount} unread` : 'Your updates'}
-          </AppText>
-          {!!state.data?.unreadCount && state.data.readCursor && (
-            <Button
-              label="Mark all read"
-              variant="ghost"
-              disabled={disabled}
-              onPress={state.readAll}
-            />
-          )}
-        </View>
       </View>
       <FlatList
         ref={list}
@@ -70,9 +63,9 @@ export function InboxContent({ identity }: { identity: SafetyIdentity }) {
         onRefresh={state.refresh}
         renderItem={({ item }) => (
           <InboxRow
+            avatarUri={item.kind === 'NEW_FOLLOWER' ? avatars.uri(item) : undefined}
             item={item}
             disabled={disabled}
-            toggleRead={() => state.read(item)}
             open={() => state.open(item, (target) => router.push(inboxDestination(target)))}
           />
         )}
@@ -154,13 +147,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   heading: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  summary: {
-    minHeight: 50,
-    paddingLeft: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   list: {
     flexGrow: 1,
     paddingHorizontal: 20,

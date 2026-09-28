@@ -35,7 +35,7 @@ export const moderationActions = [
 export type ModerationAction = (typeof moderationActions)[number]['value'];
 export type SafetyIdentity = { userId: string; token: string };
 export type SafetyAccess = { moderator: boolean; restricted: boolean };
-export type BlockedUser = { id: string; username: string };
+export type BlockedUser = { id: string; username: string; avatarId: string | null };
 export type Report = {
   id: string;
   kind: ReportKind;

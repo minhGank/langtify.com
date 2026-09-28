@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Sheet } from '@/components/ui/sheet';
@@ -18,11 +18,13 @@ export function CardActions({
   item,
   close,
   blocked,
+  share,
 }: {
   identity: SafetyIdentity;
   item: FeedItem;
   close: () => void;
   blocked: () => void;
+  share?: ReactNode;
 }) {
   const { colors } = useAppTheme();
   const gateway = useMemo(() => safetyGateway(identity), [identity]);
@@ -50,36 +52,38 @@ export function CardActions({
       </AppText>
       {mode === 'menu' && (
         <>
-          {(
-            [
-              { label: 'Report photo', mode: 'submission', icon: 'flag-outline' },
-              { label: 'Report user', mode: 'user', icon: 'person-outline' },
-              { label: 'Block user', mode: 'block', icon: 'ban-outline' },
-            ] as const
-          ).map((entry) => (
-            <Pressable
-              key={entry.mode}
-              accessibilityRole="button"
-              accessibilityLabel={entry.label}
-              onPress={() => setMode(entry.mode)}
-              style={[styles.menuRow, { borderBottomColor: colors.border }]}
-            >
-              <Ionicons
-                name={entry.icon}
-                size={22}
-                color={entry.mode === 'block' ? colors.error : colors.textPrimary}
-              />
-              <AppText
-                style={{
-                  flex: 1,
-                  color: entry.mode === 'block' ? colors.error : colors.textPrimary,
-                }}
+          {share}
+          {item.canRate &&
+            (
+              [
+                { label: 'Report photo', mode: 'submission', icon: 'flag-outline' },
+                { label: 'Report user', mode: 'user', icon: 'person-outline' },
+                { label: 'Block user', mode: 'block', icon: 'ban-outline' },
+              ] as const
+            ).map((entry) => (
+              <Pressable
+                key={entry.mode}
+                accessibilityRole="button"
+                accessibilityLabel={entry.label}
+                onPress={() => setMode(entry.mode)}
+                style={[styles.menuRow, { borderBottomColor: colors.border }]}
               >
-                {entry.label}
-              </AppText>
-              <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
-            </Pressable>
-          ))}
+                <Ionicons
+                  name={entry.icon}
+                  size={22}
+                  color={entry.mode === 'block' ? colors.error : colors.textPrimary}
+                />
+                <AppText
+                  style={{
+                    flex: 1,
+                    color: entry.mode === 'block' ? colors.error : colors.textPrimary,
+                  }}
+                >
+                  {entry.label}
+                </AppText>
+                <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
+              </Pressable>
+            ))}
         </>
       )}
       {(mode === 'submission' || mode === 'user') && (

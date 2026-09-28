@@ -1,5 +1,8 @@
 # Phase 5 implementation verification
 
+Level-rule update: [QA #32](QA32_LEVEL_PROGRESSION.md) supersedes the original
+Level 0 curve recorded below. Current acceptance starts at Level 1 (0/40 XP).
+
 Verified locally on 2026-09-12. Phase 6, social features, leaderboards, achievements
 and subscriptions were not implemented. No mobile dependencies, environment
 variables, routes or deployment services were added.

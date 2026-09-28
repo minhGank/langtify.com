@@ -57,8 +57,14 @@ try {
     p_cefr_level: 'B1',
     p_timezone: 'UTC',
   });
+  const initial = await rpc(a, 'get_my_progress');
+  assert.equal(initial.level, 1);
+  assert.equal(initial.total_xp, 0);
+  assert.equal(initial.xp_into_level, 0);
+  assert.equal(initial.xp_for_next_level, 40);
   // Seed two historical days using real verified photos. Only the isolated test
   // owner's backend facts are shifted; no production clock/function is replaced.
+  const completedConcepts = new Set();
   for (const days of [2, 1]) {
     const challenge =
       await execute(`begin; select set_config('request.jwt.claim.sub','${user}',true);
@@ -69,11 +75,19 @@ try {
     await reservePriorDailyFixture(user, assignment);
     const s = await reserve(a, assignment);
     await finalize(a, s);
+    completedConcepts.add(s.concept_id);
     await execute(`begin; update private.word_completions set completed_at=completed_at-interval '${days} days',local_date=local_date-${days} where submission_id='${s.id}';
       delete from private.qualified_days_seen where user_id='${user}';
       insert into private.qualified_days_seen(user_id,local_date) select distinct user_id,local_date from private.word_completions where user_id='${user}'; commit;`);
   }
   const challenge = await rpc(a, 'get_or_create_today_challenge');
+  assert.equal(completedConcepts.size, 2);
+  assert(challenge.words.every((word) => !completedConcepts.has(word.concept_id)));
+  assert.equal(
+    await execute(`select count(*) from private.completed_concepts where user_id='${user}';`),
+    '2',
+    'Real photo-authority finalization must persist concept eligibility history',
+  );
   const photos = await Promise.all(challenge.words.map((w) => reserve(a, w.id)));
   await Promise.all([
     finalize(a, photos[0]),
@@ -83,6 +97,10 @@ try {
   ]);
   const progress = await rpc(a, 'get_my_progress', { challenge_id: challenge.challenge.id });
   assert.equal(progress.total_xp, 70);
+  assert.equal(progress.level, 2);
+  assert.equal(progress.xp_into_level, 30);
+  assert.equal(progress.xp_for_next_level, 60);
+  assert.equal((await rpc(a, 'get_public_profile')).profile.level, progress.level);
   assert.equal(progress.current_streak, 3);
   assert.equal(progress.completed_words, 3);
   assert.equal(
@@ -144,6 +162,8 @@ try {
   );
   await erase(a, photos[2]);
   assert.equal((await rpc(a, 'get_my_progress')).total_xp, 20);
+  assert.equal((await rpc(a, 'get_my_progress')).level, 1);
+  assert.equal((await rpc(a, 'get_public_profile')).profile.level, 1);
   assert.equal((await rpc(a, 'get_my_progress')).current_streak, 2);
   assert.equal(
     await execute(
@@ -158,6 +178,8 @@ try {
   await finalize(b, retry);
   await finalize(a, retry);
   assert.equal((await rpc(a, 'get_my_progress')).total_xp, 40);
+  assert.equal((await rpc(a, 'get_my_progress')).level, 2);
+  assert.equal((await rpc(a, 'get_public_profile')).profile.level, 2);
   assert.equal(
     await execute(
       `select count(*) from (select source_key,source_revision from public.xp_events where user_id='${user}' group by 1,2 having count(*)>1) duplicates;`,

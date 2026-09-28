@@ -144,7 +144,7 @@ it.each([
 ])('protects %s from signed-out sessions', async (path) => {
   mockState = { ...mockState, status: 'signed-out', session: null };
   const app = renderRouter(routes, { initialUrl: path });
-  expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
+  expect(await screen.findByRole('button', { name: 'Sign in' })).toBeVisible();
   expect(app.getPathname()).toBe('/sign-in');
 });
 
@@ -188,7 +188,10 @@ it.each([
   mockState = { ...mockState, status };
   const app = renderRouter(routes, { initialUrl: '/profile' });
   expect(
-    await screen.findByRole(path === '/session' ? 'image' : 'header', { name: title }),
+    await screen.findByRole(
+      path === '/session' ? 'image' : path === '/sign-in' ? 'button' : 'header',
+      { name: title },
+    ),
   ).toBeVisible();
   expect(app.getPathname()).toBe(path);
   expect(screen.queryByRole('header', { name: 'Profile' })).toBeNull();
@@ -209,7 +212,7 @@ it('blocks direct photo routes without an authenticated onboarded account', asyn
   const app = renderRouter(routes, {
     initialUrl: '/photo?assignmentId=45000000-0000-4000-8000-000000000002',
   });
-  expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
+  expect(await screen.findByRole('button', { name: 'Sign in' })).toBeVisible();
   expect(app.getPathname()).toBe('/sign-in');
   expect(screen.queryByLabelText('Your challenge photo')).toBeNull();
 });
@@ -234,6 +237,6 @@ it('keeps a malformed signed-out callback outside protected content', async () =
     await screen.findByText('This sign-in link no longer works. Start again from Sign in.'),
   ).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Back to sign in' }));
-  expect(await screen.findByRole('header', { name: 'Sign in' })).toBeVisible();
+  expect(await screen.findByRole('button', { name: 'Sign in' })).toBeVisible();
   expect(app.getPathname()).toBe('/sign-in');
 });

@@ -40,6 +40,16 @@ for (const mode of ['light', 'dark'] as const) {
         expect(contrast(colors.textOnAccent, background)).toBeGreaterThanOrEqual(4.5);
       }
     });
+    it('keeps soft energy/reward treatments readable and visually distinct', () => {
+      expect(colors.energySoft).not.toBe(colors.rewardSoft);
+      for (const [ink, background] of [
+        [colors.energyInk, colors.energySoft],
+        [colors.rewardInk, colors.rewardSoft],
+      ]) {
+        expect(contrast(colors.textPrimary, background)).toBeGreaterThanOrEqual(4.5);
+        expect(contrast(ink, background)).toBeGreaterThanOrEqual(4.5);
+      }
+    });
     it('keeps confirmed completion and warning text readable on their neutral containers', () => {
       for (const background of [colors.background, colors.surface]) {
         expect(contrast(colors.success, background)).toBeGreaterThanOrEqual(4.5);
@@ -55,12 +65,10 @@ for (const mode of ['light', 'dark'] as const) {
       expect(contrast(colors.mediaForeground, colors.mediaBackground)).toBeGreaterThanOrEqual(4.5);
     });
     it('keeps XP progress distinguishable with an ink outline and completion segments readable', () => {
-      expect(contrast(colors.textOnAccent, colors.accentReward)).toBeGreaterThanOrEqual(3);
+      const outline = mode === 'light' ? colors.rewardInk : colors.textOnAccent;
+      expect(contrast(outline, colors.accentReward)).toBeGreaterThanOrEqual(3);
       expect(
-        Math.max(
-          contrast(colors.accentReward, colors.border),
-          contrast(colors.textOnAccent, colors.border),
-        ),
+        Math.max(contrast(colors.accentReward, colors.border), contrast(outline, colors.border)),
       ).toBeGreaterThanOrEqual(3);
       expect(contrast(colors.success, colors.surface)).toBeGreaterThanOrEqual(3);
       expect(contrast(colors.success, colors.border)).toBeGreaterThanOrEqual(3);

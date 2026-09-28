@@ -4,6 +4,12 @@ Scope: interface copy and safe signup recovery only, on the existing uncommitted
 motion/SDK patch work. No Phase 11, deployment, hosted configuration write, vocabulary
 edit, migration, new dependency or account-linking feature is included.
 
+QA #25 supersedes the form layout and adds rollout-gated signup codes, a password
+visibility toggle and resend cooldown. Link mode remains default; Resend SMTP is
+configured but code template/delivery acceptance is pending. See
+[QA25_AUTH_EMAIL_CODES.md](QA25_AUTH_EMAIL_CODES.md) for the current flow and exact
+manual Dashboard instructions. The earlier audit results below remain historical.
+
 ## Signup finding and fix
 
 Supabase can return an obfuscated user and no session when email signup reuses an
@@ -51,26 +57,34 @@ operation in the same identity-linking FAQ above.
 
 The authenticated CLI's explicitly read-only `supabase config diff --output-format
 json` succeeded. Its project target matches the app's Dev endpoint. Only safe policy
-facts were inspected; no secrets, SMTP credentials or raw Auth responses are in this
+facts were inspected; no secrets or raw Auth responses are in this
 report or the repository.
 
 - Minimum password length: **6**, equal to the explicit local setting.
 - Required character groups: **none**, remote `password_requirements: null`.
 - Recorded Auth version: **v2.196.0**. Exact UTF-8 length validation remains 6–72.
-- **Custom SMTP: unconfirmed.** This CLI projection does not establish whether Dev
-  uses built-in email, custom SMTP or a Send Email hook.
+- **Custom SMTP: configured and enabled**, subsequently confirmed by the user for
+  hosted Langtify Dev on 2026-09-26. Provider: **Resend**. Sender:
+  **Langtify <no-reply@langtify.com>**. Host: `smtp.resend.com`; port: `465`;
+  SMTP username: `resend`. The password is stored securely in Supabase SMTP settings;
+  no secret was retrieved, logged or added to the repository. This status records
+  the user's confirmation, not an independent hosted check or delivery test.
 - **Leaked-password protection: unconfirmed.** The CLI projection omits that flag.
 
 Automatic approval review rejected extracting the existing CLI credential from
 Keychain for a direct Management API GET because credential extraction was not
 specifically authorized. It was not retried through another credential path. The
 user was asked for non-secret Dashboard confirmation of SMTP and breach protection.
-No test signup/email was sent to hosted Dev and no provider was configured/purchased.
+The subsequent Resend confirmation resolves SMTP configuration status only;
+breach-protection status remains unconfirmed. This documentation update sent no
+hosted signup/email and made no provider purchase or hosted configuration change.
 
-Arbitrary-tester email delivery cannot be certified yet. If Dev uses Supabase's
-built-in sender, it is limited to authorized team addresses and a small email quota;
-custom SMTP is a pre-beta requirement for general testers. If a custom sender/hook
-already exists, verify its sender domain, limits and real delivery before acceptance.
+**Actual email delivery remains pending hosted/physical acceptance.** The custom
+SMTP setup requirement is now satisfied, but arbitrary-tester delivery is not yet
+verified. Test a fresh signup with a new tester email, confirm receipt from
+Langtify <no-reply@langtify.com> (including spam handling), follow the verification
+link and return to password sign-in. Verify resend, sender-domain setup and provider
+limits before email-auth acceptance; SMTP configuration alone does not prove delivery.
 See [Supabase email configuration](https://supabase.com/docs/guides/auth/auth-smtp).
 Check confirmation templates and the hosted confirmation landing URL too. This pass
 retains existing redirects and never routes email recovery into the Google callback.
@@ -150,8 +164,9 @@ LANGTIFY_DISABLE_IOS_PUSH=1 npm run build:ios:dev
 
 1. Existing Google email → email signup: neutral inbox guidance; Google returns to
    the same user/profile. Never show “email sent” or reveal that the address exists.
-2. Fresh allowed tester email: verify actual delivery, spam handling, confirmation
-   landing and return to password sign-in. Check unconfirmed-account resend.
+2. Fresh tester email: verify actual Resend delivery from Langtify
+   <no-reply@langtify.com>, spam handling, confirmation landing and return to
+   password sign-in. Check unconfirmed-account resend. This acceptance is pending.
 3. Try resend twice quickly, a provider limit, offline requests, switching auth
    screens and Google cancellation. No overlap, stale message or session replacement.
 4. Try short, ordinary, Unicode and overlong passwords. Verify readable live status,
@@ -164,5 +179,7 @@ LANGTIFY_DISABLE_IOS_PUSH=1 npm run build:ios:dev
 8. Exercise a controlled screen error in a test build: safe retry guidance only,
    without provider messages, route parameters or stack traces.
 
-SMTP/delivery confirmation, optional security-flow scope and physical acceptance
-remain open. No commit, push or deployment has been performed.
+Custom SMTP configuration is confirmed. Actual email delivery, leaked-password
+protection confirmation, optional security-flow scope and physical acceptance remain
+open. Auth logic is unchanged by this status update. No commit, push or deployment
+has been performed.

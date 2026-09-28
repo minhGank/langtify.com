@@ -41,9 +41,13 @@ export function parseProgress(data: Json, userId: string, challengeId?: string):
     totalChallengesCompleted: count(row.total_challenges_completed),
   };
   if (
+    progress.level < 1 ||
+    !Number.isSafeInteger(progress.level + 1) ||
     progress.completedWords > 3 ||
     progress.xpForNextLevel === 0 ||
-    progress.xpIntoLevel >= progress.xpForNextLevel
+    progress.xpIntoLevel >= progress.xpForNextLevel ||
+    progress.xpIntoLevel > progress.totalXp ||
+    progress.nextLevelXp - progress.totalXp !== progress.xpForNextLevel - progress.xpIntoLevel
   )
     throw new Error('Invalid progress response.');
   return progress;

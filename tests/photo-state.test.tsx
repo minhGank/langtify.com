@@ -1,3 +1,4 @@
+import { PhotoReadTransient } from '@/features/photos/photo-read-error';
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { useAssignmentPhoto } from '@/features/photos/use-assignment-photo';
 import type { PhotoGateway, Submission } from '@/services/submissions';
@@ -672,4 +673,22 @@ it('serializes two historical submit taps and reconciles without changing captur
   expect(gateway.reserve).toHaveBeenCalledTimes(1);
   expect(gateway.finalize).toHaveBeenCalledTimes(1);
   expect(result.current.data?.submission?.capture_kind).toBe('historical');
+});
+
+it('keeps verified cached owner content on a transient refresh failure, but clears it on an authority failure', async () => {
+  const fixture = photoFixture(makeSubmission({ status: 'completed' }));
+  const pixels = 'data:image/jpeg;base64,/9j/2Q==';
+  fixture.gateway.preview.mockResolvedValue(pixels);
+  const gateway: PhotoGateway = { ...fixture.gateway, cachedPreview: () => pixels };
+  const view = renderHook(() => useAssignmentPhoto(gateway, fixture.drafts));
+  await waitFor(() => expect(view.result.current.loading).toBe(false));
+  fixture.gateway.load.mockRejectedValueOnce(new PhotoReadTransient());
+  await act(async () => view.result.current.refresh());
+  expect(view.result.current.data?.submission?.status).toBe('completed');
+  expect(view.result.current.remoteUri).toBe(pixels);
+  expect(view.result.current.error).not.toBe('');
+  fixture.gateway.load.mockRejectedValueOnce(new Error('assignment_unavailable'));
+  await act(async () => view.result.current.refresh());
+  expect(view.result.current.data).toBeNull();
+  expect(view.result.current.remoteUri).toBeNull();
 });

@@ -12,7 +12,11 @@ export type AvatarGateway = {
   upload: (reservation: AvatarReservation, bytes: Uint8Array, signal: AbortSignal) => Promise<void>;
   finalize: (id: string, signal: AbortSignal) => Promise<AvatarState>;
   remove: (expectedId: string, signal: AbortSignal) => Promise<AvatarState>;
-  previews: (ids: string[], signal: AbortSignal) => Promise<Record<string, string>>;
+  previews: (
+    ids: string[],
+    signal: AbortSignal,
+    context?: 'blocked',
+  ) => Promise<Record<string, string>>;
 };
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const bucket = 'profile-avatars';
@@ -132,10 +136,10 @@ export function avatarGateway(identity: AvatarIdentity): AvatarGateway {
       if (result.error) throw result.error;
       return state(result.data);
     },
-    async previews(ids, signal) {
+    async previews(ids, signal, context) {
       if (!ids.length) return {};
       const result = await client.functions.invoke('avatar-authority', {
-        body: { action: 'previews', avatarIds: ids },
+        body: { action: context === 'blocked' ? 'blocked-previews' : 'previews', avatarIds: ids },
         signal,
       });
       if (result.error) throw result.error;

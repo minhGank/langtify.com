@@ -11,6 +11,7 @@ const target = {
   reference_term: 'dog',
   cefr_level: 'A1',
   username: 'learner',
+  avatar_id: '77000000-0000-4000-8000-000000000003',
   submitted_at: '2026-09-13T12:00:00.123456Z',
 };
 const signed = {
@@ -47,6 +48,7 @@ Deno.test(
       'reference_term',
       'cefr_level',
       'username',
+      'avatar_id',
       'submitted_at',
       'signed_path',
       'average_rating',
@@ -56,6 +58,9 @@ Deno.test(
     ].sort();
     if (JSON.stringify(Object.keys(result).sort()) !== JSON.stringify(expected))
       throw new Error('Private projection leak.');
+    if (result.avatar_id !== target.avatar_id) throw new Error('Avatar reference lost.');
+    if (projectFeedPhotos([{ ...target, avatar_id: null }], [signed])[0].avatar_id !== null)
+      throw new Error('Missing avatar must remain null.');
     if (result.signed_path !== new URL(signed.signedUrl).pathname + '?token=a.b.c')
       throw new Error('Incorrect signed capability.');
     if (projectFeedPhotos([], []).length)

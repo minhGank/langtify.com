@@ -31,6 +31,9 @@ export function photoFixture(
 ) {
   let saved: AssignmentPhoto = {
     assignmentId: photoAssignment,
+    conceptId: 'concept',
+    cefrLevel: 'A2',
+    targetLanguageId: 'fr',
     targetTerm: 'la fenêtre',
     referenceTerm: 'window',
     localDate: '2026-09-12',
@@ -43,6 +46,7 @@ export function photoFixture(
   };
   let uploaded = submission?.status === 'completed';
   const gateway = {
+    rememberUploadedPhoto: jest.fn(),
     load: jest.fn(async () => saved),
     canChooseLibraryPhoto: jest.fn(async (): Promise<boolean> => true),
     reserve: jest.fn(async () => {

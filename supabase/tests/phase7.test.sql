@@ -52,15 +52,31 @@ create temporary table pages as select public.get_discover_feed(page_size=>1) pa
 select is((select payload->'items'->0->>'id' from pages),(select id::text from photos order by id desc limit 1),'Timestamp ties use descending UUID');
 select is((select payload->>'has_more' from pages),'true','Lookahead indicates more');
 select is((select public.get_discover_feed((payload->'items'->0->>'submitted_at')::timestamptz,(payload->'items'->0->>'id')::uuid,1)->'items'->0->>'id' from pages),(select id::text from photos order by id desc offset 1 limit 1),'Strict keyset has no duplicate under ties');
-select is((select array_agg(key order by key) from jsonb_object_keys(public.get_discover_feed()->'items'->0) key),array['average_rating','can_rate','cefr_level','id','rating_count','reference_term','submitted_at','target_term','username','viewer_rating'],'Public projection contains only display fields');
+select is((select array_agg(key order by key) from jsonb_object_keys(public.get_discover_feed()->'items'->0) key),array['avatar_id','average_rating','can_rate','cefr_level','id','rating_count','reference_term','submitted_at','target_term','username','viewer_rating'],'Public projection contains only display fields');
 update public.vocabulary_terms set term='Changed catalog',is_active=false where id=(select vocabulary_term_id from public.submissions where id=(select id from photos where n=1));
 select isnt(public.get_discover_feed()->'items'->0->>'target_term','Changed catalog','Feed uses historical text');
 select set_config('request.jwt.claim.sub','77000000-0000-4000-8000-000000000002',true);
 select throws_ok($$select public.get_discover_feed()$$,'42501','feed_unavailable','Incomplete viewer onboarding denied');
 select public.complete_onboarding('discover_b','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','B1','UTC');
+-- QA #20: the bounded public projection exposes only a current verified avatar ID.
+select is(public.get_discover_feed()->'items'->0->'avatar_id','null'::jsonb,'No avatar is an explicit null');
+select set_config('request.jwt.claim.sub','77000000-0000-4000-8000-000000000001',true);
+create temporary table feed_avatar as select v->'avatar'->>'id' id,v->'avatar'->>'storage_path' path
+ from(select public.reserve_profile_avatar(gen_random_uuid()) v) r;
+select is(public.get_discover_feed()->'items'->0->'avatar_id','null'::jsonb,'Pending avatar is not exposed');
+insert into storage.objects(bucket_id,name,owner_id,version,metadata)
+ select 'profile-avatars',path,auth.uid()::text,'feed-avatar-v1','{"mimetype":"image/jpeg","size":100}' from feed_avatar;
+select public.activate_profile_avatar(a.id::uuid,auth.uid(),o.id,o.version,repeat('a',64),16,16)
+ from feed_avatar a join storage.objects o on o.bucket_id='profile-avatars' and o.name=a.path;
+select set_config('request.jwt.claim.sub','77000000-0000-4000-8000-000000000002',true);
+grant select on feed_avatar to authenticated;
 grant select on photos,pages to authenticated;
 set local role authenticated;
 select is(jsonb_array_length(public.get_discover_feed()->'items'),3,'Other onboarded viewer sees eligible public captures');
+select is(public.get_discover_feed(page_size=>1)->'items'->0->>'avatar_id',(select id from feed_avatar),'Feed exposes verified avatar only after bounded paging');
+select is(public.get_discover_submission((select id from photos where n=1))->'items'->0->>'avatar_id',(select id from feed_avatar),'Canonical post returns the same avatar reference');
+select throws_ok($$select * from private.profile_avatars$$,'42501',null,'Avatar rows remain private');
+select throws_ok($$select * from public.get_avatar_targets(auth.uid(),array[(select id::uuid from feed_avatar)])$$,'42501',null,'An avatar reference does not confer signing authority');
 select is((select count(*) from public.submissions),0::bigint,'Raw submissions remain owner only');
 select is((select count(*) from public.profiles where id='77000000-0000-4000-8000-000000000001'),0::bigint,'Private profile remains owner only');
 select throws_ok($$update public.submissions set visibility='public'$$,'42501',null,'Direct mutation denied');
@@ -70,6 +86,26 @@ select throws_ok($$select public.get_discover_feed(page_size=>25)$$,'22023','inv
 select throws_ok($$select public.get_discover_feed(before_id=>gen_random_uuid())$$,'22023','invalid_feed_query','Partial cursor denied');
 select throws_ok($$select public.get_discover_feed('infinity',gen_random_uuid(),1)$$,'22023','invalid_feed_query','Infinite cursor denied');
 reset role;
+select is((select avatar_id::text from public.get_discover_photo_targets(auth.uid(),'00000000-0000-4000-8000-000000000002',array[(select id from photos where n=1)])),(select id from feed_avatar),'Signing revalidation retains the avatar reference');
+insert into public.user_blocks(blocker_user_id,blocked_user_id) values(auth.uid(),'77000000-0000-4000-8000-000000000001');
+select is(jsonb_array_length(public.get_discover_feed()->'items'),0,'Blocked author and avatar disappear together');
+select is(jsonb_array_length(public.get_discover_submission((select id from photos where n=1))->'items'),0,'Blocked direct post is absent');
+select is((select count(*) from public.get_avatar_targets(auth.uid(),array[(select id::uuid from feed_avatar)])),0::bigint,'Previously exposed avatar cannot be signed after blocking');
+delete from public.user_blocks where blocker_user_id=auth.uid();
+insert into public.user_blocks(blocker_user_id,blocked_user_id) values('77000000-0000-4000-8000-000000000001',auth.uid());
+select is(jsonb_array_length(public.get_discover_feed()->'items'),0,'Reverse block excludes author');
+delete from public.user_blocks where blocked_user_id=auth.uid();
+update private.safety_accounts set restricted=true where user_id='77000000-0000-4000-8000-000000000001';
+select is(jsonb_array_length(public.get_discover_feed()->'items'),0,'Restricted author and avatar excluded');
+update private.safety_accounts set restricted=false where user_id='77000000-0000-4000-8000-000000000001';
+-- Corruption fixture only: production object immutability is tested elsewhere.
+set local session_replication_role=replica;
+update storage.objects set version='changed' where bucket_id='profile-avatars' and name=(select path from feed_avatar);
+set local session_replication_role=origin;
+select is(public.get_discover_feed()->'items'->0->'avatar_id','null'::jsonb,'Changed object version falls back without dropping a valid post');
+set local session_replication_role=replica;
+update storage.objects set version='feed-avatar-v1' where bucket_id='profile-avatars' and name=(select path from feed_avatar);
+set local session_replication_role=origin;
 update public.user_language_profiles set target_language_id='00000000-0000-4000-8000-000000000001',reference_language_id='00000000-0000-4000-8000-000000000002' where user_id=auth.uid();
 select is(jsonb_array_length(public.get_discover_feed()->'items'),0,'Saved viewer target is authoritative');
 select throws_ok($$select public.get_discover_photo_targets(auth.uid(),'00000000-0000-4000-8000-000000000002',array[(select id from photos limit 1)])$$,'42501','feed_settings_changed','Signer cannot override saved target');

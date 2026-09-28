@@ -14,11 +14,13 @@ export function TimezoneField({
   onChange,
   error,
   disabled,
+  presentation = 'field',
 }: {
   value: string;
   onChange: (value: string) => void;
   error?: string;
   disabled?: boolean;
+  presentation?: 'field' | 'setup';
 }) {
   const { colors } = useAppTheme();
   const [open, setOpen] = useState(false);
@@ -27,9 +29,11 @@ export function TimezoneField({
   const matches = useMemo(() => filterTimezones(options, query), [options, query]);
   return (
     <View style={styles.field}>
-      <AppText variant="label">
-        Timezone <AppText style={{ color: colors.textSecondary }}>*</AppText>
-      </AppText>
+      {presentation === 'field' && (
+        <AppText variant="label">
+          Timezone <AppText style={{ color: colors.textSecondary }}>*</AppText>
+        </AppText>
+      )}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Timezone"
@@ -43,26 +47,41 @@ export function TimezoneField({
         }}
         style={[
           styles.select,
+          presentation === 'setup' && styles.setup,
           {
             backgroundColor: disabled ? colors.surfaceMuted : colors.surface,
             borderColor: error ? colors.error : colors.controlBorder,
           },
         ]}
       >
-        <AppText style={styles.selection}>
-          {value ? timezoneLabel(value) : 'Choose a timezone'}
-        </AppText>
-        <Ionicons name="chevron-down" size={18} color={colors.textSecondary} />
+        {presentation === 'setup' ? (
+          <>
+            <Ionicons name="time-outline" size={28} color={colors.brandText} accessible={false} />
+            <View style={styles.selection}>
+              <AppText variant="heading">
+                {value
+                  ? (value.split('/').at(-1) ?? value).replaceAll('_', ' ')
+                  : 'Choose a timezone'}
+              </AppText>
+              {!!value && <AppText variant="caption">{timezoneLabel(value)}</AppText>}
+            </View>
+          </>
+        ) : (
+          <AppText style={styles.selection}>
+            {value ? timezoneLabel(value) : 'Choose a timezone'}
+          </AppText>
+        )}
+        <Ionicons name="chevron-down" size={18} color={colors.textSecondary} accessible={false} />
       </Pressable>
       {error ? (
         <AppText variant="caption" style={{ color: colors.error }} accessibilityRole="alert">
           {error}
         </AppText>
-      ) : (
+      ) : presentation === 'field' ? (
         <AppText variant="caption" style={{ color: colors.textSecondary }}>
           Used for your daily challenge and streak.
         </AppText>
-      )}
+      ) : null}
       <Sheet
         title="Choose your timezone"
         visible={open}
@@ -116,6 +135,7 @@ export function TimezoneField({
 }
 const styles = StyleSheet.create({
   field: { gap: 8 },
+  setup: { padding: 20, minHeight: 112, borderRadius: 20 },
   select: {
     flexDirection: 'row',
     alignItems: 'center',

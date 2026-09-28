@@ -58,6 +58,7 @@ const item: FeedItem = {
   targetTerm: 'le chien',
   referenceTerm: 'dog',
   cefrLevel: 'A1',
+  avatarId: null,
   username: 'learner',
   submittedAt: '2026-09-13T12:00:00.123456Z',
 };
@@ -98,7 +99,7 @@ it('shows vocabulary, username, photo; retries failed images with fresh instance
   const rendered = render(<DiscoverScreen />);
   expect(await screen.findByText('Le chien')).toBeVisible();
   expect(screen.getByText('Dog')).toBeVisible();
-  expect(screen.getByText('Photo by @learner')).toBeVisible();
+  expect(screen.getByText('@learner')).toBeVisible();
   fireEvent(screen.getByLabelText('Photo of Le chien'), 'error');
   fireEvent.press(screen.getByText('Reload photos'));
   expect(await screen.findByLabelText('Photo of Le chien')).toBeVisible();

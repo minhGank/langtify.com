@@ -2,6 +2,15 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path=public,extensions;
 select no_plan();
+-- Test-only capacity for long streak histories. Production seed stays at 36;
+-- valid completed concepts are intentionally never recycled by the selector.
+create temporary table completion_pool as select gen_random_uuid() id from generate_series(1,120);
+insert into public.vocabulary_concepts(id,concept_key,category,is_photographable)
+ select id,'XP_FIXTURE_'||upper(replace(id::text,'-','')),'test',true from completion_pool;
+insert into public.vocabulary_terms(concept_id,language_id,term,cefr_level,part_of_speech)
+ select id,l,'Fixture '||id::text,'A2','noun' from completion_pool
+ cross join unnest(array['00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002']::uuid[]) l;
+
 -- Test-only server clock replacement, rolled back with every fixture.
 create temporary table progress_clock(instant timestamptz);
 insert into progress_clock values('2026-01-01 12:00:00+00');
@@ -42,10 +51,10 @@ insert into auth.users(id,email) values('55000000-0000-4000-8000-000000000001','
 select set_config('request.jwt.claim.sub','55000000-0000-4000-8000-000000000001',true);
 select public.complete_onboarding('xp_a','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','B1','UTC');
 select is(public.get_my_progress()->>'total_xp','0','New account starts at zero XP');
-select is(public.get_my_progress()->>'level','0','New account starts at level zero');
-select is(private.level_progress(xp)->>'level',level::text,'Exact level at '||xp||' XP') from (values(0,0),(99,0),(100,1),(249,1),(250,2),(449,2),(450,3),(620,3),(699,3),(700,4),(999,4),(1000,5),(3250,10)) t(xp,level);
-select is(private.level_progress(700)->>'xp_for_next_level','300','Level 4 requires 300 more XP');
-select is(private.level_progress(620)->>'xp_into_level','170','Level progress is relative to start');
+select is(public.get_my_progress()->>'level','1','New account starts at Level 1');
+select is(private.level_progress(xp)->>'level',level::text,'Legacy test total uses new level at '||xp||' XP') from (values(0,1),(99,2),(100,3),(249,4),(250,4),(449,6),(450,6),(620,7),(699,7),(700,8),(999,9),(1000,9),(3250,17)) t(xp,level);
+select is(private.level_progress(700)->>'xp_for_next_level','180','Level 8 requires 180 XP to next level');
+select is(private.level_progress(620)->>'xp_into_level','80','Level progress is relative to start');
 create temporary table photos(day date,slot text,id uuid);
 insert into photos values('2026-01-01','review',pg_temp.photo('2026-01-01'));
 select is(public.get_my_progress()->>'total_xp','10','One word earns 10 XP');
@@ -59,6 +68,7 @@ select is(public.get_my_progress()->>'total_xp','20','Two words earn 20 XP');
 select is(public.get_my_progress()->>'current_streak','1','Multiple words do not add streak days');
 insert into photos values('2026-01-01','stretch',pg_temp.photo('2026-01-01','stretch'));
 select is(public.get_my_progress()->>'total_xp','40','Three words earn 40 XP');
+select is(public.get_my_progress()->>'level','2','First perfect day reaches Level 2');
 select is(public.get_my_progress()->>'completed_words','3','Daily progress 3/3');
 select is(public.get_my_progress()->>'total_challenges_completed','1','Full completion counted once');
 select pg_temp.photo('2026-01-01','stretch');
@@ -67,9 +77,11 @@ select public.begin_submission_deletion((select id from photos where slot='stret
 select is(public.get_my_progress()->>'total_xp','40','Delete intent retains completion until object retirement');
 select pg_temp.erase((select id from photos where slot='stretch'));
 select is(public.get_my_progress()->>'total_xp','20','Deletion reverses word and full bonus');
+select is(public.get_my_progress()->>'level','1','Deletion lowers level across threshold');
 select is(public.get_my_progress()->>'total_challenges_completed','0','Deletion removes full completion');
 select pg_temp.photo('2026-01-01','stretch');
 select is(public.get_my_progress()->>'total_xp','40','Resubmit restores balance without farming');
+select is(public.get_my_progress()->>'level','2','Resubmission restores Level 2 without extra XP');
 select pg_temp.erase((select id from public.submissions where status='completed' and daily_challenge_word_id=(select daily_challenge_word_id from public.submissions where id=(select id from photos where slot='stretch'))));
 select pg_temp.photo('2026-01-01','stretch');
 select is(public.get_my_progress()->>'total_xp','40','Repeated delete/resubmit still 40 XP');
@@ -83,7 +95,7 @@ select is((select sum(amount) from public.xp_events where source_key like 'miles
 select is(public.get_my_progress()->>'current_streak','100','100 consecutive local days');
 select is(public.get_my_progress()->>'longest_streak','100','Longest streak 100');
 select is(public.get_my_progress()->>'total_xp','1505','All words and exactly six milestones');
-select is(public.get_my_progress()->>'level','6','Multiple-level advancement derived from ledger');
+select is(public.get_my_progress()->>'level','11','Multiple-level advancement derived from ledger');
 select pg_temp.photo('2026-04-10','target');
 select is((select count(*) from public.xp_events where event_type='STREAK_MILESTONE'),6::bigint,'Extra same-day word cannot repeat milestone');
 select pg_temp.clock_at('2026-04-11 23:59:59+00');

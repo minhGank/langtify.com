@@ -1,3 +1,5 @@
+import { profileCache, connectionsCache } from '@/features/social/cache';
+import { PhotoReadTransient } from '@/features/photos/photo-read-error';
 import { parseAssignmentPhoto, parseSubmission, photoGateway } from '@/services/submissions';
 import { makeSubmission, photoAssignment, photoUser } from './photo-fixtures';
 import {
@@ -35,6 +37,21 @@ beforeEach(() => {
   });
 });
 afterEach(() => jest.restoreAllMocks());
+it('retains only confirmed owner JPEG pixels for immediate post presentation and clears them with the session', () => {
+  const gateway = photoGateway(photoUser, photoAssignment, 'test');
+  const bytes = new Uint8Array([255, 216, 255, 217]);
+  gateway.rememberUploadedPhoto?.(makeSubmission(), bytes);
+  expect(gateway.cachedPreview?.(makeSubmission())).toBeNull();
+  const completed = makeSubmission({ status: 'completed' });
+  gateway.rememberUploadedPhoto?.(completed, bytes);
+  expect(gateway.cachedPreview?.(completed)).toBe('data:image/jpeg;base64,/9j/2Q==');
+  expect(mockInvoke).not.toHaveBeenCalled();
+  expect(() => gateway.rememberUploadedPhoto?.({ ...completed, user_id: 'other' }, bytes)).toThrow(
+    'account',
+  );
+  clearServerData();
+  expect(gateway.cachedPreview?.(completed)).toBeNull();
+});
 it('pins Storage and RPCs to the submitting token without persisting another Auth session', async () => {
   mockRpc.mockResolvedValueOnce({ data: libraryEligibilityRows().photo, error: null });
   mockRpc.mockResolvedValueOnce({ data: makeSubmission(), error: null });
@@ -168,10 +185,13 @@ function libraryEligibilityRows() {
         replaced_at: null as string | null,
         target_term: 'la fenêtre',
         reference_term: 'window',
+        concept_id: 'concept',
+        cefr_level: 'A2',
       },
       challenge: {
         id: challengeId,
         user_id: photoUser,
+        target_language_id: 'fr',
         local_challenge_date: '2026-03-08',
         timezone: 'America/Toronto',
       },
@@ -360,5 +380,73 @@ it.each([false, true])(
     await gateway.finalize(makeSubmission().id, 'private');
     expect(own.getRevision() > ownRevision).toBe(today);
     expect(other.getRevision()).toBe(otherRevision);
+  },
+);
+
+it.each([0, 503, 401, 403, 400])(
+  'classifies status %s for cached owner reads without treating authority errors as offline',
+  async (status) => {
+    const error = { message: 'fixture', code: status === 403 ? '42501' : 'fixture' };
+    mockRpc.mockResolvedValueOnce({ data: null, error, status });
+    const load = photoGateway(photoUser, photoAssignment, 'test').load();
+    if (status === 0 || status >= 500)
+      await expect(load).rejects.toBeInstanceOf(PhotoReadTransient);
+    else await expect(load).rejects.toBe(error);
+  },
+);
+
+it.each(['finalize', 'finishDelete'] as const)(
+  '%s invalidates only same-session own public levels, fencing pending reads',
+  async (operation) => {
+    const scope = serverScope(photoUser, 'token');
+    const owner = {
+      id: photoUser,
+      username: 'learner',
+      avatarId: null,
+      isSelf: true,
+      isFollowing: false,
+      followerCount: 0,
+      followingCount: 0,
+      level: 1,
+    };
+    const own = profileCache.entry(`${scope}:profile:self`, ['public-profile']);
+    const other = profileCache.entry(`${scope}:profile:other`, ['public-profile']);
+    const switched = profileCache.entry(`${serverScope('other-user', 'new')}:profile:self`, [
+      'public-profile',
+    ]);
+    const pending = profileCache.entry(`${scope}:profile:pending`, ['public-profile']);
+    const list = connectionsCache.entry(`${scope}:following`, ['connections']);
+    own.set(owner);
+    other.set({ ...owner, isSelf: false });
+    switched.set(owner);
+    list.set({
+      profile: owner,
+      items: [],
+      kind: 'following',
+      cursor: null,
+      hasMore: false,
+      fromLatest: true,
+    });
+    let finish = (_: typeof owner) => {};
+    const late = pending.read(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+      { staleTime: 0 },
+    );
+    await Promise.resolve();
+    mockInvoke.mockResolvedValue({ data: { submission: makeSubmission() }, error: null });
+    mockRpc.mockResolvedValue({ data: makeSubmission(), error: null });
+    const gateway = photoGateway(photoUser, photoAssignment, 'token');
+    if (operation === 'finalize') await gateway.finalize(makeSubmission().id, 'private');
+    else await gateway.finishDelete(makeSubmission().id);
+    finish(owner);
+    await late;
+    expect(own.getSnapshot().updatedAt).toBe(-Infinity);
+    expect(list.getSnapshot().updatedAt).toBe(-Infinity);
+    expect(pending.getSnapshot().data).toBeNull();
+    expect(other.getSnapshot().invalidation).toBe(0);
+    expect(switched.getSnapshot().invalidation).toBe(0);
   },
 );

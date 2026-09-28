@@ -102,6 +102,8 @@ select throws_ok($$select public.create_submission_comment(null,'Clear meaning!'
 select is(jsonb_array_length(public.get_submission_comments((select id from photos))->'items'),1,'Retry creates only one visible comment');
 select is(public.get_submission_comments((select id from photos))->'items'->0->>'body','Clear meaning!','Comment whitespace trimmed');
 select is(public.get_submission_comments((select id from photos))->'items'->0->>'is_own','true','Viewer can identify own comment');
+select ok(public.get_submission_comments((select id from photos))->'items'->0 ? 'avatar_id','Comment projection includes a nullable controlled avatar reference');
+select is(public.get_submission_comments((select id from photos))->'items'->0->>'avatar_id',null::text,'No current avatar keeps initials fallback');
 select ok(not (public.get_submission_comments((select id from photos))->'items'->0 ?| array['author_user_id','request_id','email']),'Comment projection omits private identity and request token');
 select throws_ok($$select * from public.submission_comments$$,'42501',null,'Raw comments denied');
 select throws_ok($$update public.submission_comments set removed=false$$,'42501',null,'Cannot directly restore moderation state');

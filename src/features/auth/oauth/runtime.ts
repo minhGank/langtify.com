@@ -12,6 +12,7 @@ import { browserCoordination, type BrowserCoordination } from './browser-coordin
 import { createOAuthAttempt } from './pkce-attempt';
 import { appScheme, callbackPath } from './callback';
 import { OAuthCoordinator, type OAuthAttempt, type PendingLogin } from './coordinator';
+import { exchangeSignupCode } from '../email-verification';
 
 export function oauthRedirect() {
   return makeRedirectUri({ scheme: appScheme, path: callbackPath });
@@ -146,6 +147,7 @@ function attempt(id: string): OAuthAttempt {
   return value;
 }
 let mutationTail: Promise<unknown> = Promise.resolve();
+let authIntent = 0;
 function serialize<T>(work: () => Promise<T>): Promise<T> {
   const run = () => browserAuthority()?.run(work) ?? work();
   const next = mutationTail.then(run, run);
@@ -178,6 +180,7 @@ function connect() {
     ) {
       return;
     }
+    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') authIntent++;
     if (Platform.OS === 'web' && event !== 'INITIAL_SESSION') {
       // SDK broadcasts precede local admission. Wait for the originating tab's
       // mutation/rollback, then accept only the session still present in storage.
@@ -213,8 +216,12 @@ export function subscribeAuth(listener: Listener) {
     listeners.delete(listener);
   };
 }
-export function authMutation<T>(work: () => Promise<T>): Promise<T> {
-  browserAuthority()?.begin(Crypto.randomUUID());
+export function authMutation<T>(
+  work: () => Promise<T>,
+  intentId = Crypto.randomUUID(),
+): Promise<T> {
+  authIntent++;
+  browserAuthority()?.begin(intentId);
   const cancelled = coordinator.cancel('').then(
     () => true,
     () => false,
@@ -230,6 +237,7 @@ async function install(
   current: () => boolean,
   finish: () => Promise<void>,
   retain: () => Promise<void>,
+  prepare?: () => Promise<void>,
 ) {
   await serialize(async () => {
     connect();
@@ -243,6 +251,11 @@ async function install(
     if (!sessionId) {
       await finish();
       throw new Error('Invalid Auth session.');
+    }
+    await prepare?.();
+    if (!current()) {
+      await finish();
+      throw new Error('Session changed.');
     }
     const browser = browserAuthority();
     browser?.commit({ sessionId, userId: candidate.user.id });
@@ -319,12 +332,44 @@ async function readAuthSession() {
 export function restoreAuthSession() {
   return serialize(readAuthSession);
 }
+// Reuse the OAuth commit/recovery boundary without an OAuth redirect or browser.
+// Only non-secret session identity is persisted; the code stays in memory.
+export async function verifySignupCode(email: string, token: string, active: () => boolean) {
+  if (!config) throw new Error('Auth configuration unavailable.');
+  const id = Crypto.randomUUID();
+  const generation = authIntent + 1;
+  const current = () =>
+    active() &&
+    generation === authIntent &&
+    (browserAuthority()?.current(id) ?? Platform.OS !== 'web');
+  const candidate = await authMutation(async () => {
+    connect();
+    if (!current() || (await readAuthSession())) throw new Error('Session changed.');
+    return exchangeSignupCode(config, email, token);
+  }, id);
+  if (!current()) throw new Error('Session changed.');
+  const marker: PendingLogin = {
+    id,
+    createdAt: Date.now(),
+    redirect: oauthRedirect(),
+    phase: 'committing',
+    candidateUserId: candidate.user.id,
+    candidateSessionId: authSessionId(candidate.access_token) ?? undefined,
+  };
+  const retain = () => storageTask(() => store.setItem(pendingKey, JSON.stringify(marker)));
+  const finish = () =>
+    storageTask(async () => {
+      if ((await readPending())?.id === id) await store.removeItem(pendingKey);
+    });
+  await install(candidate, current, finish, retain, retain);
+}
 export const coordinator = new OAuthCoordinator({
   apiUrl: config?.url ?? '',
   redirect: oauthRedirect,
   randomId: Crypto.randomUUID,
   now: Date.now,
   begin: (id) => {
+    authIntent++;
     if (Platform.OS === 'web' && !browserAuthority())
       throw new Error('Secure browser coordination unavailable.');
     browserAuthority()?.begin(id);
@@ -338,7 +383,10 @@ export const coordinator = new OAuthCoordinator({
       if ((await readPending())?.id === id) await store.removeItem(pendingKey);
     }),
   attempt,
-  session: restoreAuthSession,
+  session: () => {
+    authIntent++;
+    return restoreAuthSession();
+  },
   install,
   async browser(url, redirect) {
     if (Platform.OS === 'web') {

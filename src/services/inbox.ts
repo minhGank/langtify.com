@@ -18,16 +18,20 @@ export type InboxCursor = { time: string; id: string };
 type NotificationBase = { id: string; createdAt: string; read: boolean };
 export type InboxNotification = NotificationBase &
   (
-    | { kind: 'NEW_FOLLOWER'; profileId: string; username: string }
+    | { kind: 'NEW_FOLLOWER'; profileId: string; username: string; avatarId?: string | null }
     | { kind: 'NEW_RATING'; assignmentId: string; targetTerm: string }
     | { kind: 'DAILY_WORDS_READY'; challengeId: string }
   );
 export type InboxSummary = { unreadCount: number; readCursor: InboxCursor | null };
 export type InboxPage = InboxSummary & { items: InboxNotification[]; hasMore: boolean };
 export type InboxReceipt = { unreadCount: number };
+export type InboxOpenReceipt = InboxSummary & {
+  openedAt: string;
+  readStates: { id: string; read: boolean }[];
+};
 export type InboxTarget =
   | { kind: 'NEW_FOLLOWER'; profileId: string }
-  | { kind: 'NEW_RATING'; assignmentId: string }
+  | { kind: 'NEW_RATING'; submissionId: string }
   | { kind: 'DAILY_WORDS_READY'; challengeId: string };
 
 function count(value: unknown) {
@@ -54,7 +58,13 @@ export function parseInboxNotification(value: unknown): InboxNotification {
   if (row.kind === 'NEW_FOLLOWER') {
     const username = text(row.username);
     if (!/^[a-z0-9][a-z0-9_]{2,29}$/.test(username)) throw new Error('Invalid username.');
-    return { ...base, kind: row.kind, profileId: identifier(row.profile_id), username };
+    return {
+      ...base,
+      kind: row.kind,
+      profileId: identifier(row.profile_id),
+      username,
+      avatarId: row.avatar_id == null ? null : identifier(row.avatar_id),
+    };
   }
   if (row.kind === 'NEW_RATING') {
     const targetTerm = text(row.target_term);
@@ -73,7 +83,7 @@ export function parseInboxTarget(value: unknown): InboxTarget {
   const row = record(value);
   if (row.kind === 'NEW_FOLLOWER') return { kind: row.kind, profileId: identifier(row.profile_id) };
   if (row.kind === 'NEW_RATING')
-    return { kind: row.kind, assignmentId: identifier(row.assignment_id) };
+    return { kind: row.kind, submissionId: identifier(row.submission_id) };
   if (row.kind === 'DAILY_WORDS_READY')
     return { kind: row.kind, challengeId: identifier(row.challenge_id) };
   throw new Error('Invalid notification target.');
@@ -103,6 +113,28 @@ export function inboxGateway(identity: SafetyIdentity) {
     return { unreadCount: count(row.unread_count) };
   }
   return {
+    async openInbox(
+      requestId: string,
+      ids: string[],
+      signal: AbortSignal,
+    ): Promise<InboxOpenReceipt> {
+      const row = await receive(
+        client
+          .rpc('open_notification_inbox', { request_id: requestId, displayed_ids: ids })
+          .abortSignal(signal),
+      );
+      if (!flag(row.ok) || !Array.isArray(row.read_states) || row.read_states.length > ids.length)
+        throw new Error('Invalid inbox opening.');
+      const readStates = row.read_states.map((value) => {
+        const state = record(value);
+        const id = identifier(state.id);
+        if (!ids.includes(id)) throw new Error('Invalid inbox state.');
+        return { id, read: flag(state.read) };
+      });
+      if (new Set(readStates.map((state) => state.id)).size !== readStates.length)
+        throw new Error('Duplicate inbox state.');
+      return { ...parseInboxSummary(row), openedAt: timestamp(row.opened_at), readStates };
+    },
     async summary(signal: AbortSignal) {
       return parseInboxSummary(
         await receive(client.rpc('get_notification_summary').abortSignal(signal)),

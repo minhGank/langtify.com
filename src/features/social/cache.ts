@@ -27,6 +27,15 @@ export type ConnectionsWindow = ConnectionsPage & {
 };
 export const connectionsCache = createServerCache<ConnectionsWindow>({ maxEntries: 12 });
 export const profileCache = createServerCache<PublicProfile>({ maxEntries: 16 });
+// A photo mutation changes only the actor's public level. Pending reads have no
+// subject yet, so fence them too; a late old response must not restore that level.
+export function invalidateOwnPublicLevel(identity: SafetyIdentity) {
+  const scope = `${serverScope(identity.userId, identity.token)}:`;
+  profileCache.invalidateWhere((key, data) => key.startsWith(scope) && (!data || data.isSelf));
+  connectionsCache.invalidateWhere(
+    (key, data) => key.startsWith(scope) && (!data || data.profile.isSelf),
+  );
+}
 export type SearchWindow = SafetyPage<UserResult> & {
   cursor?: UserCursor | null;
   fromStart?: boolean;

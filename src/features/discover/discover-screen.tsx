@@ -15,6 +15,7 @@ import { feedGateway, type FeedCursor, type FeedIdentity } from '@/services/disc
 import type { RatingScore } from '@/features/ratings/rating';
 import { useDiscover } from './use-discover';
 import { FeedCard } from './feed-card';
+import { useAvatarRows } from '@/features/social/connections-avatars';
 import { openPost } from './open-post';
 
 export function DiscoverScreen() {
@@ -68,6 +69,14 @@ function DiscoverContent({
     serverScope(userId, token),
   );
   const identity = useMemo(() => ({ userId, token }), [userId, token]);
+  const avatars = useAvatarRows(
+    identity,
+    state.items.map((item) => ({ avatarId: item.avatarId, isSelf: !item.canRate })),
+  );
+  const refresh = () => {
+    void state.refresh();
+    void avatars.refresh();
+  };
   const [authorId, setAuthorId] = useState<string | null>(null);
   const authorTarget = useMemo(
     () => (authorId ? { submissionId: authorId } : undefined),
@@ -84,7 +93,7 @@ function DiscoverContent({
         contentContainerStyle={styles.content}
         maintainVisibleContentPosition={{ minIndexForVisible: 1 }}
         refreshing={state.loading && state.items.length === 0}
-        onRefresh={() => void state.refresh()}
+        onRefresh={refresh}
         onEndReached={() => {
           if (!state.loading && !state.error && state.hasMore) void state.loadMore();
         }}
@@ -104,11 +113,11 @@ function DiscoverContent({
                 { backgroundColor: pressed ? colors.brandSoft : colors.surfaceMuted },
               ]}
             >
-              <View style={[styles.discoveryIcon, { backgroundColor: colors.accentEnergy }]}>
+              <View style={[styles.discoveryIcon, { backgroundColor: colors.surfaceMuted }]}>
                 <Ionicons
                   name="search-outline"
                   size={20}
-                  color={colors.textOnAccent}
+                  color={colors.textSecondary}
                   accessible={false}
                 />
               </View>
@@ -140,6 +149,7 @@ function DiscoverContent({
             item={item}
             language={language}
             uri={state.photos[item.id]}
+            avatarUri={avatars.uri({ avatarId: item.avatarId, isSelf: !item.canRate })}
             photoRevision={state.photoRevision}
             reload={() => void state.renew()}
             open={() => openPost({ userId, token, targetLanguageId }, item)}

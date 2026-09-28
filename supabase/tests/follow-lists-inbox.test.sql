@@ -102,6 +102,7 @@ select set_config('request.jwt.claim.sub',(select owner::text from people where 
 set local role authenticated;
 select is(public.get_notification_inbox()->'items'->0->>'kind','NEW_RATING','New rating appears at top');
 select is(public.get_notification_inbox()->'items'->0->>'username',null::text,'Rating never exposes rater identity');
+select is(public.get_notification_inbox()->'items'->0->>'avatar_id',null::text,'Rating never exposes a rater avatar');
 select is(public.get_notification_inbox()->'items'->0->>'profile_id',null::text,'Rating cannot become rater-history/profile lookup');
 select ok(not (public.get_notification_inbox()->'items'->0 ? 'score'),'Rating never exposes individual score');
 select ok(public.resolve_notification_target((select id from notifications where label='rating'))->>'assignment_id' is not null,'Rating resolves only owned assignment context');

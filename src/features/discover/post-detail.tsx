@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Stack } from 'expo-router';
-import { Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText } from '@/components/ui/app-text';
 import { IconButton } from '@/components/ui/icon-button';
-import { Button } from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { SemanticRating } from '@/features/ratings/semantic-rating';
+import { QuickRating } from '@/features/ratings/quick-rating';
 import type { RatingAction, RatingScore } from '@/features/ratings/rating';
 import { CardActions } from '@/features/safety/card-actions';
 import type { FeedItem } from '@/services/discover';
@@ -14,7 +13,10 @@ import { FeedPhoto } from './feed-photo';
 import { Comments } from '@/features/social/comments';
 import { PublicProfileSheet } from '@/features/social/public-profile';
 import type { PublicProfileTarget } from '@/services/social';
-import { sharePost } from './share-post';
+import { PostShareAction } from './post-share-action';
+import { useAvatarRows } from '@/features/social/connections-avatars';
+import { PostAuthor } from './post-author';
+import { PostLayout } from './post-layout';
 import { displayTerm } from '@/utils/display-term';
 
 export function PostDetail({
@@ -22,6 +24,8 @@ export function PostDetail({
   language,
   uri,
   photoRevision,
+  photoLoading = false,
+  status,
   userId,
   token,
   reload,
@@ -30,11 +34,15 @@ export function PostDetail({
   ratingDisabled,
   blocked,
   openAuthor,
+  owner,
+  socialAvailable = true,
 }: {
   item: FeedItem;
   language: string;
   uri?: string;
   photoRevision: number;
+  photoLoading?: boolean;
+  status?: React.ReactNode;
   userId: string;
   token: string;
   reload: () => void;
@@ -43,28 +51,87 @@ export function PostDetail({
   ratingDisabled: boolean;
   blocked: () => void;
   openAuthor?: () => void;
+  owner?: {
+    visibility: string;
+    controls: (share?: React.ReactNode) => React.ReactNode;
+    notice?: React.ReactNode;
+    message?: React.ReactNode;
+  };
+  socialAvailable?: boolean;
 }) {
   const { colors } = useAppTheme();
   const [actions, setActions] = useState(false);
   const [profileTarget, setProfileTarget] = useState<PublicProfileTarget>();
-  const [shareError, setShareError] = useState(false);
-  const mounted = useRef(true);
-  useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
   const identity = useMemo(() => ({ userId, token }), [userId, token]);
+  const avatars = useAvatarRows(
+    identity,
+    owner || socialAvailable
+      ? [{ avatarId: item.avatarId, isSelf: Boolean(owner) || !item.canRate }]
+      : [],
+  );
+  const share = socialAvailable ? (
+    <PostShareAction key={`${userId}:${token}:${item.id}`} item={item} />
+  ) : undefined;
+  const content = (
+    <>
+      <View>
+        <FeedPhoto
+          key={`${item.id}:${photoRevision}`}
+          uri={uri}
+          pending={photoLoading}
+          word={displayTerm(item.targetTerm)}
+          reload={reload}
+          detail
+        />
+      </View>
+      <View style={styles.body}>
+        {status}
+        {owner?.message}
+        <View style={styles.wordBlock}>
+          <AppText variant="caption" style={{ color: colors.textSecondary }}>
+            {language} · {item.cefrLevel}
+            {owner ? ` · ${owner.visibility === 'public' ? 'Public' : 'Private'}` : ''}
+          </AppText>
+          <AppText variant="title">{displayTerm(item.targetTerm)}</AppText>
+          <AppText variant="subtitle" style={{ color: colors.textSecondary }}>
+            {displayTerm(item.referenceTerm)}
+          </AppText>
+        </View>
+        <PostAuthor
+          username={item.username}
+          uri={
+            owner || socialAvailable
+              ? avatars.uri({ avatarId: item.avatarId, isSelf: Boolean(owner) || !item.canRate })
+              : undefined
+          }
+          date={item.submittedAt}
+          onPress={openAuthor ?? (() => setProfileTarget({ submissionId: item.id }))}
+        />
+        {socialAvailable && (
+          <View style={[styles.rating, { borderColor: colors.border }]}>
+            <QuickRating
+              word={displayTerm(item.targetTerm)}
+              summary={item}
+              action={ratingAction}
+              disabled={ratingDisabled}
+              onRate={rate}
+            />
+          </View>
+        )}
+      </View>
+    </>
+  );
   return (
     <SafeAreaView
-      edges={['left', 'right', 'bottom']}
-      style={[styles.container, { backgroundColor: colors.background }]}
+      edges={socialAvailable ? ['left', 'right'] : ['left', 'right', 'bottom']}
+      style={[styles.container, { backgroundColor: colors.surface }]}
     >
       <Stack.Screen
         options={{
           headerRight: () =>
-            item.canRate ? (
+            owner ? (
+              owner.controls(share)
+            ) : socialAvailable ? (
               <IconButton
                 name="ellipsis-horizontal"
                 label={`More actions for @${item.username}`}
@@ -74,77 +141,28 @@ export function PostDetail({
             ) : null,
         }}
       />
-      <ScrollView
-        automaticallyAdjustKeyboardInsets
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
-        contentContainerStyle={styles.content}
-        accessibilityElementsHidden={actions}
-        importantForAccessibility={actions ? 'no-hide-descendants' : 'auto'}
-      >
-        <FeedPhoto
-          key={`${item.id}:${photoRevision}`}
-          uri={uri}
-          word={displayTerm(item.targetTerm)}
-          reload={reload}
-          detail
-        />
-        <View style={styles.body}>
-          <View style={styles.wordBlock}>
-            <AppText variant="caption" style={{ color: colors.textSecondary }}>
-              {language} · {item.cefrLevel}
-            </AppText>
-            <AppText variant="title">{displayTerm(item.targetTerm)}</AppText>
-            <AppText variant="subtitle" style={{ color: colors.textSecondary }}>
-              {displayTerm(item.referenceTerm)}
-            </AppText>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={`View @${item.username}`}
-              onPress={openAuthor ?? (() => setProfileTarget({ submissionId: item.id }))}
-              style={styles.author}
-            >
-              <AppText variant="caption">Photo by @{item.username}</AppText>
-            </Pressable>
-          </View>
-          <View style={[styles.rating, { borderColor: colors.border }]}>
-            <SemanticRating
-              word={displayTerm(item.targetTerm)}
-              summary={item}
-              action={ratingAction}
-              disabled={ratingDisabled}
-              onRate={rate}
-            />
-          </View>
-          <Comments
-            identity={identity}
-            submissionId={item.id}
-            openProfile={(profileId) => setProfileTarget({ profileId })}
-            unavailable={blocked}
-          />
-          <Button
-            label="Share"
-            variant="ghost"
-            onPress={() => {
-              setShareError(false);
-              void sharePost(item).catch(() => {
-                if (mounted.current) setShareError(true);
-              });
-            }}
-          />
-          {shareError && (
-            <AppText accessibilityRole="alert">We couldn’t open sharing. Try again.</AppText>
+      {socialAvailable ? (
+        <Comments
+          key={`${userId}:${token}:${item.id}`}
+          identity={identity}
+          submissionId={item.id}
+          openProfile={(profileId) => setProfileTarget({ profileId })}
+          unavailable={blocked}
+          render={(thread, composer) => (
+            <PostLayout composer={composer} hidden={actions}>
+              {content}
+              <View style={styles.thread}>{thread}</View>
+            </PostLayout>
           )}
-          <AppText variant="caption">
-            Shared{' '}
-            {new Date(item.submittedAt).toLocaleDateString(undefined, {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-            })}
-          </AppText>
+        />
+      ) : (
+        <PostLayout>{content}</PostLayout>
+      )}
+      {owner?.notice && (
+        <View pointerEvents="none" style={styles.notice}>
+          {owner.notice}
         </View>
-      </ScrollView>
+      )}
       {profileTarget && (
         <PublicProfileSheet
           identity={identity}
@@ -152,13 +170,14 @@ export function PostDetail({
           close={() => setProfileTarget(undefined)}
         />
       )}
-      {actions && item.canRate && (
+      {actions && socialAvailable && (
         <CardActions
           key={`${userId}:${token}`}
           identity={identity}
           item={item}
           close={() => setActions(false)}
           blocked={blocked}
+          share={share}
         />
       )}
     </SafeAreaView>
@@ -166,9 +185,16 @@ export function PostDetail({
 }
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { width: '100%', maxWidth: 640, alignSelf: 'center', paddingBottom: 28 },
-  body: { padding: 22, gap: 24 },
-  wordBlock: { gap: 6 },
-  author: { minHeight: 44, justifyContent: 'center' },
-  rating: { borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 24 },
+  notice: {
+    position: 'absolute',
+    top: 12,
+    left: 20,
+    right: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  body: { paddingHorizontal: 20, paddingTop: 22, gap: 18 },
+  wordBlock: { gap: 5 },
+  rating: { borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 18 },
+  thread: { paddingHorizontal: 20, paddingTop: 22 },
 });

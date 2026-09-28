@@ -7,7 +7,7 @@ export function inboxDestination(target: InboxTarget) {
     case 'NEW_FOLLOWER':
       return { pathname: '/public-profile' as const, params: { profileId: target.profileId } };
     case 'NEW_RATING':
-      return { pathname: '/photo' as const, params: { assignmentId: target.assignmentId } };
+      return { pathname: '/post' as const, params: { submissionId: target.submissionId } };
     case 'DAILY_WORDS_READY':
       return '/' as const;
   }

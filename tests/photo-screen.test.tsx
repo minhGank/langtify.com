@@ -4,7 +4,9 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-
 import { AppState, View } from 'react-native';
 import { feedback } from '@/lib/haptics';
 import { PhotoContent, PhotoScreen } from '@/features/photos/photo-screen';
-import { makeSession } from './fixtures';
+import { OwnerPost } from '@/features/discover/owner-post';
+import { router } from 'expo-router';
+import { makeAccount, makeSession } from './fixtures';
 import {
   photoAssignment,
   photoUser,
@@ -21,9 +23,13 @@ const mockGateway = jest.fn();
 const mockRemoveDraft = jest.fn();
 const mockReceipt = jest.fn();
 let mockSession = makeSession(photoUser);
+const mockAccount = makeAccount();
 let mockParams: { assignmentId?: string; capture?: string; captureKind?: string | string[] } = {};
 jest.mock('@/features/auth/auth-provider', () => ({
-  useAuth: () => ({ status: 'ready', session: mockSession }),
+  useAuth: () => ({ status: 'ready', session: mockSession, account: mockAccount }),
+}));
+jest.mock('@/services/discover', () => ({
+  feedGateway: () => ({ load: async () => ({ items: [], hasMore: false }) }),
 }));
 jest.mock('@/services/progress', () => ({ receiptGateway: () => mockReceipt }));
 jest.mock('@/features/photos/pick-library-photo', () => ({
@@ -45,13 +51,16 @@ jest.mock('@/features/photos/camera-capture', () => ({
   CameraCapture: ({
     onCapture,
     onChooseLibrary,
+    onCancel,
   }: {
     onCapture: (photo: { uri: string; width: number; height: number }) => Promise<void>;
     onChooseLibrary?: () => void;
+    onCancel: () => void;
   }) => {
     const { Button }: typeof NativeTypes = jest.requireActual('react-native');
     return (
       <>
+        <Button title="Mock camera back" onPress={onCancel} />
         <Button
           title="Mock camera shutter"
           onPress={() => void onCapture({ uri: 'file:///raw.jpg', width: 3000, height: 2000 })}
@@ -62,7 +71,11 @@ jest.mock('@/features/photos/camera-capture', () => ({
   },
 }));
 jest.mock('expo-router', () => ({
-  router: { replace: jest.fn(), canGoBack: () => false },
+  router: { replace: jest.fn(), push: jest.fn(), canGoBack: () => false },
+  Stack: {
+    Screen: ({ options }: { options: { headerRight?: () => ReactTypes.ReactNode } }) =>
+      options?.headerRight?.() ?? null,
+  },
   useLocalSearchParams: () => mockParams,
   useFocusEffect: (callback: () => () => void) => {
     const React = jest.requireActual<typeof ReactTypes>('react');
@@ -83,6 +96,58 @@ beforeEach(() => {
   jest.mocked(AppState.addEventListener).mockReturnValue({ remove: jest.fn() });
   AppState.currentState = 'active';
 });
+it('cancelling a retake preserves the reviewed photo and privacy choice', async () => {
+  mockLoadDraft.mockResolvedValue(preparedPhoto);
+  render(<PhotoContent userId={photoUser} assignmentId={photoAssignment} token="test-token" />);
+  fireEvent(await screen.findByLabelText('Your challenge photo'), 'load');
+  fireEvent(screen.getByRole('switch'), 'valueChange', true);
+  fireEvent.press(screen.getByRole('button', { name: 'Photo options' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Retake photo' }));
+  expect(screen.queryByRole('button', { name: 'Add photo' })).toBeNull();
+  fireEvent.press(screen.getByRole('button', { name: 'Mock camera back' }));
+  expect(await screen.findByLabelText('Your challenge photo')).toHaveProp('source', {
+    uri: preparedPhoto.uri,
+  });
+  expect(screen.getByRole('switch').props.value).toBe(true);
+  expect(mockRemoveDraft).not.toHaveBeenCalled();
+  expect(mockFixture.gateway.reserve).not.toHaveBeenCalled();
+});
+it('does not navigate or celebrate a previous account’s late finalization', async () => {
+  mockLoadDraft.mockResolvedValue(preparedPhoto);
+  let finish: (value: ReturnType<typeof makeSubmission>) => void = () => {};
+  mockFixture.gateway.finalize.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const view = render(<PhotoScreen />);
+  fireEvent(await screen.findByLabelText('Your challenge photo'), 'load');
+  fireEvent.press(screen.getByRole('button', { name: 'Add photo' }));
+  await waitFor(() => expect(mockFixture.gateway.finalize).toHaveBeenCalledTimes(1));
+  mockSession = makeSession('45000000-0000-4000-8000-000000000009');
+  mockFixture = photoFixture(null, { targetTerm: 'new account word' });
+  view.rerender(<PhotoScreen />);
+  await screen.findByText('New account word');
+  await act(async () => finish(makeSubmission({ status: 'completed' })));
+  expect(router.replace).not.toHaveBeenCalled();
+  expect(feedback.success).not.toHaveBeenCalled();
+  expect(screen.getByText('New account word')).toBeVisible();
+});
+it('keeps discard behind overflow and confirmation without awarding or uploading', async () => {
+  mockLoadDraft.mockResolvedValueOnce(preparedPhoto);
+  render(<PhotoContent userId={photoUser} assignmentId={photoAssignment} token="test-token" />);
+  await screen.findByLabelText('Your challenge photo');
+  expect(screen.queryByRole('button', { name: 'Discard photo' })).toBeNull();
+  fireEvent.press(screen.getByRole('button', { name: 'Photo options' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Discard photo' }));
+  expect(mockRemoveDraft).not.toHaveBeenCalled();
+  fireEvent.press(screen.getByRole('button', { name: 'Confirm delete photo' }));
+  await screen.findByRole('button', { name: 'Take photo' });
+  expect(mockRemoveDraft).toHaveBeenCalled();
+  expect(mockFixture.gateway.upload).not.toHaveBeenCalled();
+  expect(mockFixture.gateway.finalize).not.toHaveBeenCalled();
+});
 it('shows a camera preview before submission, starts private, and supports retake', async () => {
   render(<PhotoContent userId={photoUser} assignmentId={photoAssignment} token="test-token" />);
   fireEvent.press(await screen.findByRole('button', { name: 'Take photo' }));
@@ -92,6 +157,10 @@ it('shows a camera preview before submission, starts private, and supports retak
   expect(screen.getByRole('switch', { name: 'Share this photo publicly' }).props.value).toBe(false);
   fireEvent(screen.getByRole('switch'), 'valueChange', true);
   expect(screen.getByText('Visible to other learners')).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Retake photo' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Discard photo' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Choose another photo' })).toBeNull();
+  fireEvent.press(screen.getByRole('button', { name: 'Photo options' }));
   fireEvent.press(screen.getByRole('button', { name: 'Retake photo' }));
   expect(screen.queryByLabelText('Your challenge photo')).toBeNull();
   fireEvent.press(screen.getByText('Mock camera shutter'));
@@ -100,7 +169,13 @@ it('shows a camera preview before submission, starts private, and supports retak
   expect(screen.getByRole('button', { name: 'Add photo' })).toBeDisabled();
   fireEvent(screen.getByLabelText('Your challenge photo'), 'load');
   fireEvent.press(screen.getByRole('button', { name: 'Add photo' }));
-  expect(await screen.findByText('Completed')).toBeVisible();
+  await waitFor(() =>
+    expect(router.replace).toHaveBeenCalledWith({
+      pathname: '/post',
+      params: { submissionId: makeSubmission().id },
+    }),
+  );
+  expect(screen.queryByText('Completed')).toBeNull();
   expect(feedback.success).toHaveBeenCalledTimes(1);
   expect(feedback.warning).not.toHaveBeenCalled();
 });
@@ -108,8 +183,14 @@ it('shows saved owner detail and requires confirmation before deletion', async (
   mockFixture = photoFixture(
     makeSubmission({ status: 'completed', submitted_at: '2026-09-12T13:00:00Z' }),
   );
-  render(<PhotoContent userId={photoUser} assignmentId={photoAssignment} token="test-token" />);
-  expect(await screen.findByText('Private')).toBeVisible();
+  render(
+    <OwnerPost
+      identity={{ userId: photoUser, token: 'test-token', targetLanguageId: 'fr' }}
+      id={makeSubmission().id}
+      assignmentId={photoAssignment}
+    />,
+  );
+  expect(await screen.findByText(/Private/)).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Photo options' }));
   expect(screen.queryByRole('button', { name: 'Add photo' })).toBeNull();
   fireEvent(screen.getByRole('switch'), 'valueChange', true);
@@ -118,12 +199,12 @@ it('shows saved owner detail and requires confirmation before deletion', async (
   expect(mockFixture.gateway.beginDelete).not.toHaveBeenCalled();
   expect(feedback.warning).not.toHaveBeenCalled();
   fireEvent.press(screen.getByRole('button', { name: 'Confirm delete photo' }));
-  expect(await screen.findByRole('button', { name: 'Take photo' })).toBeVisible();
+  expect(await screen.findByText('Photo unavailable')).toBeVisible();
   expect(feedback.warning).toHaveBeenCalledTimes(1);
   expect(feedback.success).not.toHaveBeenCalled();
 });
 
-it('keeps the reviewed image and disables submission while completed-photo recovery is loading', async () => {
+it('replaces preview immediately after acknowledgement without waiting for another photo download', async () => {
   mockLoadDraft.mockResolvedValue(preparedPhoto);
   let finish: (uri: string) => void = () => {};
   mockFixture.gateway.preview.mockResolvedValueOnce(null).mockImplementationOnce(
@@ -135,23 +216,13 @@ it('keeps the reviewed image and disables submission while completed-photo recov
   render(<PhotoContent userId={photoUser} assignmentId={photoAssignment} token="test-token" />);
   fireEvent(await screen.findByLabelText('Your challenge photo'), 'load');
   fireEvent.press(screen.getByRole('button', { name: 'Add photo' }));
-  await waitFor(() => expect(mockFixture.gateway.finalize).toHaveBeenCalledTimes(1));
-  await waitFor(() => expect(mockFixture.gateway.preview).toHaveBeenCalledTimes(2));
-  expect(screen.getByLabelText('Your challenge photo').props.source.uri).toBe(preparedPhoto.uri);
-  expect(screen.getByRole('button', { name: 'Add photo' })).toBeDisabled();
-  expect(screen.queryByRole('button', { name: 'Take photo' })).toBeNull();
-  expect(mockRemoveDraft).not.toHaveBeenCalled();
-  fireEvent.press(screen.getByRole('button', { name: 'Add photo' }));
-  expect(mockFixture.gateway.reserve).toHaveBeenCalledTimes(1);
-  await act(async () => finish('https://example.test/confirmed-photo'));
-  expect(await screen.findByText('Completed')).toBeVisible();
-  expect(screen.getByLabelText('Your challenge photo').props.source.uri).toBe(
-    'https://example.test/confirmed-photo',
-  );
+  await waitFor(() => expect(router.replace).toHaveBeenCalledTimes(1));
   expect(screen.queryByRole('button', { name: 'Add photo' })).toBeNull();
+  expect(screen.queryByText('Completed')).toBeNull();
   expect(mockFixture.gateway.finalize).toHaveBeenCalledTimes(1);
-  expect(mockRemoveDraft).toHaveBeenCalled();
   expect(feedback.success).toHaveBeenCalledTimes(1);
+  await act(async () => finish('https://example.test/confirmed-photo'));
+  expect(router.replace).toHaveBeenCalledTimes(1);
 });
 it('does not expose the old account preview when the account-scoped screen remounts', async () => {
   const view = render(
@@ -242,7 +313,13 @@ it('exposes uncertain visibility recovery inside photo options without replaying
     makeSubmission({ status: 'completed', submitted_at: '2026-09-12T13:00:00Z' }),
   );
   mockFixture.gateway.visibility.mockRejectedValueOnce(new Error('network interrupted'));
-  render(<PhotoContent userId={photoUser} assignmentId={photoAssignment} token="test-token" />);
+  render(
+    <OwnerPost
+      identity={{ userId: photoUser, token: 'test-token', targetLanguageId: 'fr' }}
+      id={makeSubmission().id}
+      assignmentId={photoAssignment}
+    />,
+  );
   fireEvent.press(await screen.findByRole('button', { name: 'Photo options' }));
   fireEvent(screen.getByRole('switch'), 'valueChange', true);
   const recovery = await screen.findByRole('button', { name: 'Refresh privacy setting' });
@@ -282,7 +359,13 @@ it('offers the library alongside the camera and submits only its normalized prev
   fireEvent(preview, 'load');
   fireEvent(screen.getByRole('switch'), 'valueChange', true);
   fireEvent.press(screen.getByRole('button', { name: 'Add photo' }));
-  expect(await screen.findByText('Completed')).toBeVisible();
+  await waitFor(() =>
+    expect(router.replace).toHaveBeenCalledWith({
+      pathname: '/post',
+      params: { submissionId: makeSubmission().id },
+    }),
+  );
+  expect(screen.queryByText('Completed')).toBeNull();
   expect(mockFixture.gateway.upload).toHaveBeenCalledWith(expect.anything(), preparedPhoto.bytes);
   expect(mockFixture.gateway.finalize).toHaveBeenCalledWith(makeSubmission().id, 'public');
   expect(mockFixture.gateway.upload).toHaveBeenCalledTimes(1);
@@ -294,7 +377,8 @@ it('cancelling reselection keeps the reviewed draft and visibility unchanged', a
   render(<PhotoContent userId={photoUser} assignmentId={photoAssignment} token="test-token" />);
   await screen.findByLabelText('Your challenge photo');
   fireEvent(screen.getByRole('switch'), 'valueChange', true);
-  fireEvent.press(await screen.findByRole('button', { name: 'Choose another photo' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Photo options' }));
+  fireEvent.press(screen.getByRole('button', { name: 'Choose from library' }));
   await waitFor(() => expect(screen.queryByLabelText('Preparing library photo')).toBeNull());
   expect(screen.getByLabelText('Your challenge photo').props.source.uri).toBe(preparedPhoto.uri);
   expect(screen.getByRole('switch').props.value).toBe(true);
@@ -343,8 +427,13 @@ it.each([
     fireEvent(preview, 'load');
     if (visibility === 'public') fireEvent(screen.getByRole('switch'), 'valueChange', true);
     fireEvent.press(screen.getByRole('button', { name: 'Add photo' }));
-    expect(await screen.findByText('Added to Vocabulary')).toBeVisible();
-    expect(await screen.findByText('+10 XP')).toBeVisible();
+    await waitFor(() =>
+      expect(router.replace).toHaveBeenCalledWith({
+        pathname: '/post',
+        params: { submissionId: makeSubmission().id },
+      }),
+    );
+    expect(mockReceipt).not.toHaveBeenCalled();
     expect(screen.queryByText('Completed')).toBeNull();
     expect(screen.queryByText(/full challenge bonus|streak milestone|word completed/)).toBeNull();
     expect(mockGateway).toHaveBeenCalledWith(

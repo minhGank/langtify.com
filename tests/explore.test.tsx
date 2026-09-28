@@ -14,6 +14,8 @@ import { serverScope } from '@/lib/server-cache';
 import type { ExploreWord } from '@/services/explore';
 import { makeAccount, makeSession } from './fixtures';
 
+const mockAssignment = jest.fn();
+const mockHistory = jest.fn();
 const mockWords = jest.fn(),
   mockConcept = jest.fn(),
   mockPeople = jest.fn(),
@@ -23,11 +25,13 @@ const mockLoad = jest.fn(),
   mockRate = jest.fn();
 let mockSession = makeSession(),
   mockAccount = makeAccount();
-let mockParams: { conceptId?: string | string[] } = {};
+let mockParams: { conceptId?: string | string[]; assignmentId?: string } = {};
 const mockPixels: Record<string, string> = {};
 jest.mock('@/features/auth/auth-provider', () => ({
   useAuth: () => ({ status: 'ready', session: mockSession, account: mockAccount }),
 }));
+jest.mock('@/services/submissions', () => ({ photoGateway: () => ({ load: mockAssignment }) }));
+jest.mock('@/services/vocabulary', () => ({ vocabularyGateway: () => ({ load: mockHistory }) }));
 jest.mock('@/services/explore', () => ({
   exploreGateway: () => ({
     words: mockWords,
@@ -229,8 +233,8 @@ it('patches loaded People relationship state after a confirmed follow without re
   await screen.findByText('Not following');
   act(() =>
     followChanged(identity(), {
-      profile: { ...person(), isFollowing: true, followerCount: 2, followingCount: 0 },
-      viewerProfile: { ...person(2), isSelf: true, followerCount: 0, followingCount: 1 },
+      profile: { ...person(), isFollowing: true, level: 1, followerCount: 2, followingCount: 0 },
+      viewerProfile: { ...person(2), isSelf: true, level: 1, followerCount: 0, followingCount: 1 },
       followedAt: '2026-09-22T10:00:00Z',
     }),
   );
@@ -283,8 +287,8 @@ it('keeps other-account People cache untouched by confirmed follow receipts', ()
   const other = searchCache.entry('other:session:people:lea', ['user-search']);
   other.set({ items: [person()], hasMore: false });
   followChanged(identity(), {
-    profile: { ...person(), isFollowing: false, followerCount: 0, followingCount: 0 },
-    viewerProfile: { ...person(2), isSelf: true, followerCount: 0, followingCount: 0 },
+    profile: { ...person(), isFollowing: false, level: 1, followerCount: 0, followingCount: 0 },
+    viewerProfile: { ...person(2), isSelf: true, level: 1, followerCount: 0, followingCount: 0 },
     followedAt: null,
   });
   expect(own.getSnapshot().data?.items[0].isFollowing).toBe(false);
@@ -420,3 +424,75 @@ it.each(['words', 'people'] as const)(
     expect(scroll).not.toHaveBeenCalled();
   },
 );
+
+it('uses the canonical word page with authoritative Today snapshots and private history', async () => {
+  mockParams = { conceptId: id(1), assignmentId: id(20) };
+  mockAssignment.mockResolvedValue({
+    conceptId: id(1),
+    targetTerm: 'le chien historique',
+    referenceTerm: 'original translation',
+    cefrLevel: 'B2',
+    targetLanguageId: 'en',
+  });
+  mockHistory.mockResolvedValue({ concept: { captureCount: 2 } });
+  render(<ConceptScreen />);
+  expect(await screen.findByText('Le chien historique')).toBeVisible();
+  expect(screen.getByText('original translation')).toBeVisible();
+  expect(screen.getByText('English · B2')).toBeVisible();
+  expect(mockConcept).not.toHaveBeenCalled();
+  fireEvent.press(await screen.findByRole('button', { name: 'Your photos · 2' }));
+  expect(router.push).toHaveBeenCalledWith({
+    pathname: '/vocabulary-concept',
+    params: { conceptId: id(1) },
+  });
+  expect(screen.getByText('In photos · French')).toBeVisible();
+});
+it('does not trust a Today route to substitute a different concept', async () => {
+  mockParams = { conceptId: id(1), assignmentId: id(20) };
+  mockAssignment.mockResolvedValue({ conceptId: id(2), targetTerm: 'private context' });
+  render(<ConceptScreen />);
+  expect(await screen.findByText('We couldn’t load this word. Try again.')).toBeVisible();
+  expect(screen.queryByText('private context')).toBeNull();
+});
+
+it.each([false, true])(
+  'uses concept capture existence=%s without an extra history read',
+  async (hasCaptures) => {
+    mockConcept.mockResolvedValue({ ...word(), hasCaptures });
+    render(<ConceptScreen />);
+    await screen.findByText('Le chien');
+    await act(async () => {});
+    expect(!!screen.queryByRole('button', { name: 'Your photos' })).toBe(hasCaptures);
+    expect(mockHistory).not.toHaveBeenCalled();
+    expect(screen.queryByText('Add photo')).toBeNull();
+    if (hasCaptures) {
+      fireEvent.press(screen.getByRole('button', { name: 'Your photos' }));
+      expect(router.push).toHaveBeenCalledWith({
+        pathname: '/vocabulary-concept',
+        params: { conceptId: id(1) },
+      });
+    }
+  },
+);
+it('hides empty Today history and never invents arbitrary capture eligibility', async () => {
+  mockParams = { conceptId: id(1), assignmentId: id(20) };
+  mockAssignment.mockResolvedValue({ ...word(), targetLanguageId: 'fr' });
+  mockHistory.mockResolvedValue({ concept: null });
+  render(<ConceptScreen />);
+  await screen.findByText('Le chien');
+  await act(async () => {});
+  expect(screen.queryByText(/Your photos/)).toBeNull();
+  expect(screen.queryByText('Add photo')).toBeNull();
+});
+it('does not carry concept capture existence into a different account', async () => {
+  mockConcept
+    .mockResolvedValueOnce({ ...word(), hasCaptures: true })
+    .mockResolvedValue({ ...word(), hasCaptures: false });
+  const view = render(<ConceptScreen />);
+  await screen.findByText('Your photos');
+  mockSession = makeSession('second-account');
+  view.rerender(<ConceptScreen />);
+  expect(screen.queryByText('Your photos')).toBeNull();
+  await act(async () => {});
+  expect(screen.queryByText('Your photos')).toBeNull();
+});

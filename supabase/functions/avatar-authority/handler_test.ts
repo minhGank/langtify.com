@@ -200,3 +200,47 @@ Deno.test(
     assert(retry.status === 200, 'Committed retry returns current result');
   },
 );
+
+Deno.test(
+  'blocked recognition uses a separate admitted batch, with fixed lifetime and no path/actor override',
+  async () => {
+    for (const action of ['previews', 'blocked-previews']) {
+      let signed = false;
+      const response = await handleAvatar(
+        request({ action, avatarIds: [id], viewer: id, ttl: 900, path: 'other.jpg' }),
+        api({
+          targets: (user, ids, blocked) => {
+            assert(
+              user === viewer && ids.length === 1 && ids[0] === id,
+              'Caller cannot choose actor or paths',
+            );
+            assert(
+              blocked === (action === 'blocked-previews'),
+              'Recognition must not widen normal avatar access',
+            );
+            return Promise.resolve(blocked ? [{ id, storage_path: `${id}.jpg` }] : []);
+          },
+          sign: (paths) => {
+            signed = true;
+            assert(
+              paths.length === 1 && paths[0] === `${id}.jpg`,
+              'Only admitted path can be signed',
+            );
+            return api().sign(paths);
+          },
+        }),
+      );
+      assert(
+        response.status === 200 && signed === (action === 'blocked-previews'),
+        'Separate eligibility enforced',
+      );
+      await response.body?.cancel();
+    }
+    const denied = await handleAvatar(
+      request({ action: 'blocked-previews', avatarIds: [id] }),
+      api({ authenticate: () => Promise.resolve(null) }),
+    );
+    assert(denied.status === 401, 'Recognition still requires verified Auth');
+    await denied.body?.cancel();
+  },
+);

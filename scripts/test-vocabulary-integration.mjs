@@ -214,6 +214,86 @@ try {
     requested_visibility: 'public',
   });
   assert.equal((await rpc(a.client, 'get_my_vocabulary')).items[0].visibility, 'public');
+  const publicHistory = await rpc(a.client, 'get_my_vocabulary', {
+    requested_visibility: 'public',
+  });
+  assert.deepEqual(
+    publicHistory.items.map((r) => r.id),
+    [repeated.id],
+  );
+  assert.equal(publicHistory.items[0].capture_count, 1);
+  const privateHistory = await rpc(a.client, 'get_my_vocabulary', {
+    requested_visibility: 'private',
+  });
+  assert.equal(privateHistory.total_concepts, 2);
+  assert(privateHistory.items.every((r) => r.visibility === 'private'));
+  assert(
+    privateHistory.items.some((r) => r.id === first.id),
+    'Private captures behind a newer public capture must not disappear',
+  );
+  const privateDetail = await rpc(a.client, 'get_my_vocabulary', {
+    requested_concept: first.concept_id,
+    requested_visibility: 'private',
+  });
+  assert.deepEqual(
+    privateDetail.items.map((r) => r.id),
+    [first.id],
+  );
+  assert.equal(privateDetail.concept.id, first.id);
+  const privateFirst = await rpc(a.client, 'get_my_vocabulary', {
+    requested_visibility: 'private',
+    page_size: 1,
+  });
+  assert.equal(privateFirst.has_more, true);
+  const privateNext = await rpc(a.client, 'get_my_vocabulary', {
+    requested_visibility: 'private',
+    page_size: 1,
+    before_time: privateFirst.items[0].submitted_at,
+    before_id: privateFirst.items[0].id,
+  });
+  assert.equal(privateNext.has_more, false);
+  assert.deepEqual(
+    [...privateFirst.items, ...privateNext.items].map((r) => r.id),
+    privateHistory.items.map((r) => r.id),
+  );
+  for (const requested_visibility of ['public', 'private']) {
+    const other = await rpc(b.client, 'get_my_vocabulary', {
+      requested_visibility,
+      requested_concept: first.concept_id,
+    });
+    assert(other.items.every((r) => r.id === foreignPhoto.id));
+    assert((await api.client().rpc('get_my_vocabulary', { requested_visibility })).error);
+  }
+  assert((await a.client.rpc('get_my_vocabulary', { requested_visibility: 'all' })).error);
+  const ownProfile = (await rpc(a.client, 'get_public_profile')).profile;
+  const publicProfile = await rpc(b.client, 'get_public_profile_submissions', {
+    profile_id: ownProfile.id,
+  });
+  assert.deepEqual(
+    publicProfile.items.map((r) => r.id),
+    [repeated.id],
+  );
+  await rpc(b.client, 'block_public_profile', { profile_id: ownProfile.id });
+  assert(
+    (await b.client.rpc('get_public_profile_submissions', { profile_id: ownProfile.id })).error,
+  );
+  assert.equal(
+    (await rpc(a.client, 'get_my_vocabulary', { requested_visibility: 'private' })).total_concepts,
+    2,
+  );
+  const blocks = await rpc(b.client, 'get_blocked_users');
+  await rpc(b.client, 'unblock_user', { block_id: blocks.items[0].id });
+  await execute(`update private.safety_accounts set restricted=true where user_id='${a.id}';`);
+  assert.equal(
+    (await rpc(a.client, 'get_my_vocabulary', { requested_visibility: 'private' })).total_concepts,
+    2,
+  );
+  assert(!(await rpc(b.client, 'get_discover_feed')).items.some((r) => r.id === repeated.id));
+  await execute(`update private.safety_accounts set restricted=false where user_id='${a.id}';`);
+  console.log(
+    'PASS: owner All/Public/Private grouping, older matching captures, scoped counts/keysets, other-user RLS and unchanged public-profile/block/moderation authority',
+  );
+
   assert.deepEqual(
     (await rpc(b.client, 'get_my_vocabulary')).items.map((row) => row.id),
     [foreignPhoto.id],
@@ -247,6 +327,14 @@ try {
   );
 
   await erase(a.client, repeated);
+  assert.equal(
+    (await rpc(a.client, 'get_my_vocabulary', { requested_visibility: 'public' })).total_concepts,
+    0,
+  );
+  assert.equal(
+    (await rpc(a.client, 'get_my_vocabulary', { requested_visibility: 'private' })).total_concepts,
+    2,
+  );
   history = await rpc(a.client, 'get_my_vocabulary');
   const surviving = history.items.find((r) => r.concept_id === first.concept_id);
   assert.equal(surviving.id, first.id);

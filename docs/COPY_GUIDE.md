@@ -40,6 +40,13 @@ rating tap tutorials, and descriptions of what follower/following lists contain.
 Retain guidance when it explains privacy, a reward consequence, a recovery action,
 permission value or an unfamiliar choice. Loading placeholders do not need paragraphs.
 
+Optional preparation facts live in `src/data/language-facts.ts`, with stable IDs and
+editorial source links. Keep them short, verifiable and culturally respectful; avoid
+language difficulty rankings, stereotypes, superlatives and decorative emoji. Show
+one secondary fact only after a longer account/initial-word wait, never rotate it or
+delay completion. Sources belong in the catalog/documentation, not a forced lesson
+or link list in the loading interface. See `QA26_27_ONBOARDING_LOADING.md`.
+
 ## Errors and trust
 
 Explain the problem and recovery: “We couldn’t load this photo. Try again.”

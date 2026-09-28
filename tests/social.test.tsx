@@ -64,6 +64,7 @@ const profile = {
   isFollowing: false,
   followerCount: 2,
   followingCount: 1,
+  level: 1,
   avatarId: null,
 };
 const comment = {
@@ -93,6 +94,7 @@ beforeEach(() => {
       id: '79000000-0000-4000-8000-000000000002',
       isSelf: true,
       followingCount: 2,
+      level: 1,
     },
     followedAt: '2026-09-22T12:00:00Z',
   });
@@ -220,7 +222,7 @@ it('clears public caches and leaves the post after comment eligibility is denied
   mockGateway.createComment.mockRejectedValueOnce(new SafetyUnavailable('Post unavailable.'));
   mockGateway.comments.mockRejectedValue(new SafetyUnavailable('Post unavailable.'));
   fireEvent.changeText(screen.getByLabelText('Add a comment'), 'Comment');
-  fireEvent.press(screen.getByText('Post comment'));
+  fireEvent.press(screen.getByRole('button', { name: 'Send comment' }));
   await screen.findByText('Post unavailable.');
   expect(unavailable).toHaveBeenCalledTimes(1);
   expect(related.getSnapshot().data).toBeNull();
@@ -259,8 +261,8 @@ it('retries uncertain comment creation using the same durable request ID and pre
   );
   await screen.findByText('A clear example!');
   fireEvent.changeText(screen.getByLabelText('Add a comment'), 'Thoughtful comment');
-  fireEvent.press(screen.getByText('Post comment'));
-  fireEvent.press(await screen.findByText('Retry comment'));
+  fireEvent.press(screen.getByRole('button', { name: 'Send comment' }));
+  fireEvent.press(await screen.findByRole('button', { name: 'Retry comment' }));
   await waitFor(() => expect(mockGateway.createComment).toHaveBeenCalledTimes(2));
   expect(mockGateway.createComment.mock.calls[0].slice(0, 3)).toEqual(
     mockGateway.createComment.mock.calls[1].slice(0, 3),
@@ -440,7 +442,7 @@ it('keeps comments visible while a successful new comment reconciles without a r
     }),
   );
   fireEvent.changeText(screen.getByLabelText('Add a comment'), 'Another clear example');
-  fireEvent.press(screen.getByText('Post comment'));
+  fireEvent.press(screen.getByRole('button', { name: 'Send comment' }));
   await waitFor(() => expect(mockGateway.comments).toHaveBeenCalledTimes(2));
   expect(screen.getByText('A clear example!')).toBeVisible();
   await act(async () =>
@@ -473,7 +475,7 @@ it('does not acknowledge a comment response after its screen is no longer active
   );
   await screen.findByText('A clear example!');
   fireEvent.changeText(screen.getByLabelText('Add a comment'), 'A comment');
-  fireEvent.press(screen.getByText('Post comment'));
+  fireEvent.press(screen.getByRole('button', { name: 'Send comment' }));
   await waitFor(() => expect(mockGateway.createComment).toHaveBeenCalledTimes(1));
   view.unmount();
   await act(async () => finish());
@@ -514,4 +516,35 @@ it('removes a confirmed deletion locally while retaining the rest of the loaded 
   expect(feedback.confirm).toHaveBeenCalledTimes(1);
   await act(async () => finish({ items: [surviving], hasMore: false }));
   expect(screen.queryByText('A clear example!')).toBeNull();
+});
+
+it.each([1, 7, 10])(
+  'shows authoritative Level %s alongside public counts without private progression',
+  async (level) => {
+    mockGateway.profile.mockResolvedValue({ ...profile, level });
+    render(<PublicProfilePanel identity={identity} target={{ profileId: id }} close={jest.fn()} />);
+    await screen.findByLabelText(`Level ${level}`);
+    expect(screen.getByLabelText('2 followers')).toBeVisible();
+    expect(screen.getByLabelText('1 following')).toBeVisible();
+    expect(screen.queryByText(/XP|streak/i)).toBeNull();
+    expect(mockGateway.profile).toHaveBeenCalledTimes(1);
+  },
+);
+it('validates public level and strips any accidental private progression fields', () => {
+  const row = {
+    id,
+    username: 'learner',
+    is_self: false,
+    is_following: false,
+    follower_count: 2,
+    following_count: 1,
+    avatar_id: null,
+    level: 1,
+    total_xp: 100,
+    streak: 7,
+    ledger: ['private'],
+  };
+  expect(parsePublicProfile(row)).toEqual({ ...profile, level: 1 });
+  for (const level of [undefined, 0, -1, 1.5, '1'])
+    expect(() => parsePublicProfile({ ...row, level })).toThrow();
 });

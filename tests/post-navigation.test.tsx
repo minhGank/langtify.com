@@ -17,6 +17,7 @@ const item: FeedItem = {
   targetTerm: 'le chien',
   referenceTerm: 'dog',
   cefrLevel: 'A1',
+  avatarId: null,
   username: 'learner',
   submittedAt: '2026-09-13T12:00:00Z',
   canRate: true,
@@ -37,6 +38,10 @@ jest.mock('@/features/auth/auth-provider', () => ({
     account: mockAccount,
     reload: jest.fn(),
   }),
+}));
+jest.mock('@/features/discover/owned-post-access', () => ({
+  ...jest.requireActual('@/features/discover/owned-post-access'),
+  loadOwnedPost: async () => ({ assignmentId: null }),
 }));
 jest.mock('@/features/inbox/notification-bell', () => ({ NotificationBell: () => null }));
 jest.mock('@/services/discover', () => ({
@@ -86,7 +91,7 @@ it('pushes native detail and returns to the mounted feed without another read or
   await screen.findByText('Le chien');
   const feed = screen.UNSAFE_getByType(FlatList);
   fireEvent.press(screen.getByLabelText('Open photo: Le chien'));
-  expect(await screen.findByText('How well does this photo represent “Le chien”?')).toBeVisible();
+  expect(await screen.findByLabelText('Rate photo: Le chien')).toBeVisible();
   expect(app.getPathname()).toBe('/post');
   expect(app.getSearchParams()).toEqual({ submissionId: item.id });
   expect(mockLoad).toHaveBeenCalledTimes(1);
@@ -113,12 +118,15 @@ it('shares authoritative votes between quick rating, native detail and the prese
   fireEvent.press(screen.getByLabelText('4 — Clear match for Le chien'));
   await screen.findByLabelText('Your rating: 4 — Clear match. Edit rating for Le chien');
   fireEvent.press(screen.getByLabelText('Open photo: Le chien'));
+  fireEvent.press(
+    await screen.findByLabelText('Your rating: 4 — Clear match. Edit rating for Le chien'),
+  );
   expect(await screen.findByLabelText('4 — Clear match for Le chien')).toHaveProp(
     'accessibilityState',
     expect.objectContaining({ checked: true }),
   );
   fireEvent.press(screen.getByLabelText('5 — Perfect match for Le chien'));
-  await screen.findByText('Your rating: Perfect match');
+  await screen.findByLabelText('Your rating: 5 — Perfect match. Edit rating for Le chien');
   act(() => router.back());
   expect(app.getPathname()).toBe('/discover');
   expect(
@@ -148,7 +156,7 @@ it('rejects malformed direct IDs without fetching or accepting route injection',
 it('keeps owner details non-rateable and removes a displayed post after privacy invalidation', async () => {
   mockItem = { ...item, canRate: false };
   renderRouter(routes, { initialUrl: `/post?submissionId=${item.id}` });
-  await screen.findByText('You can’t rate your own photo.');
+  await screen.findByText('Your photo');
   expect(screen.queryByLabelText('5 — Perfect match for Le chien')).toBeNull();
   mockLoad.mockResolvedValue({ items: [], hasMore: false });
   mockPreviews.mockResolvedValue({ items: [], photos: {} });
@@ -180,6 +188,7 @@ it('reconciles a detail rating interrupted by back navigation without replaying 
   );
   renderRouter(routes, { initialUrl: '/discover' });
   fireEvent.press(await screen.findByLabelText('Open photo: Le chien'));
+  fireEvent.press(await screen.findByLabelText('Rate photo: Le chien'));
   fireEvent.press(await screen.findByLabelText('5 — Perfect match for Le chien'));
   await waitFor(() => expect(mockRate).toHaveBeenCalledTimes(1));
   mockItem = { ...item, viewerRating: 5, averageRating: 5, ratingCount: 1 };
@@ -203,4 +212,50 @@ it('does not turn an invalidated source into fresh detail metadata while source 
   await screen.findByText('Photo unavailable');
   expect(mockLoad).toHaveBeenCalledTimes(3);
   expect(screen.queryByText('Le chien')).toBeNull();
+});
+
+it('keeps native navigation and a post skeleton while loading; retry appears only after a genuine failure', async () => {
+  let reject = (_: Error) => {};
+  mockLoad.mockReturnValueOnce(
+    new Promise((_, fail) => {
+      reject = fail;
+    }),
+  );
+  renderRouter(routes, { initialUrl: `/post?submissionId=${item.id}` });
+  await screen.findByLabelText('Loading photo');
+  expect(screen.getByLabelText('Back to Discover')).toBeVisible();
+  expect(screen.queryByText('Try again')).toBeNull();
+  expect(screen.queryByText('Photo unavailable')).toBeNull();
+  await waitFor(() => expect(mockLoad).toHaveBeenCalledTimes(1));
+  await act(async () => reject(new Error('Offline')));
+  expect(await screen.findByText('Try again')).toBeVisible();
+  fireEvent.press(screen.getByText('Try again'));
+  await screen.findByText('Le chien');
+  expect(mockLoad).toHaveBeenCalledTimes(2);
+});
+it('keeps cached pixels and context during a failed post refresh with a small recovery action', async () => {
+  renderRouter(routes, { initialUrl: `/post?submissionId=${item.id}` });
+  const image = await screen.findByLabelText('Photo of Le chien');
+  fireEvent(image, 'load');
+  let reject = (_: Error) => {};
+  mockLoad.mockReturnValueOnce(
+    new Promise((_, fail) => {
+      reject = fail;
+    }),
+  );
+  act(() => invalidateServerData(['discover']));
+  await screen.findByText('Refreshing photo…');
+  expect(screen.getByLabelText('Photo of Le chien')).toHaveProp('source', {
+    uri: mockPhotos()[item.id],
+    cache: 'reload',
+  });
+  expect(screen.queryByText('Try again')).toBeNull();
+  await act(async () => reject(new Error('Offline')));
+  expect(await screen.findByText('Refresh photo')).toBeVisible();
+  expect(screen.getByLabelText('Photo of Le chien')).toHaveProp('source', {
+    uri: mockPhotos()[item.id],
+    cache: 'reload',
+  });
+  expect(screen.getByText('Le chien')).toBeVisible();
+  expect(screen.queryByText('Try again')).toBeNull();
 });

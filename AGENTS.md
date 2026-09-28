@@ -41,6 +41,47 @@ obscured responses, automatic identity linking and backend password policy. Neve
 probe account existence or print raw provider errors. Hosted email configuration is
 read-only in this scope; see `docs/AUTH_COPY_AUDIT.md` and `docs/COPY_GUIDE.md`.
 
+QA #14–17 authorizes a Today-focused progress panel, Today links into the canonical
+concept route, a single-primary-action photo preview and capture → canonical post
+navigation. Use existing owner-only photo authority for private posts; public
+interaction still requires Discover eligibility. Keep one-shot session-scoped
+success feedback, silent completed-upload recovery, and all backend rewards intact.
+See `docs/QA14_17_TODAY_PHOTO_FLOW.md`; no Phase 11, commit, push or deployment.
+
+QA #18, #20 and #21 authorize post/author presentation, compact comments and rating,
+and restrained semantic accent treatments only. Preserve the canonical post route,
+existing eligibility, rating/comment mutation authority, caching and success feedback.
+The user subsequently approved the minimal QA #20 Discover avatar read extension:
+nullable current-avatar IDs in the existing feed/post/signing projections, using
+the private avatar bucket and existing controlled batch access. No raw profile
+reads, per-card requests or other backend behavior changes are authorized. See
+`docs/QA20_DISCOVER_AVATARS.md` and `docs/QA18_20_21_POST_POLISH.md`.
+
+QA #19 and #22 authorize removing the owner's Profile public-photo grid, placing
+server-owned Level beside Followers/Following, and filtering existing owner
+Vocabulary/capture history by All/Public/Private. Extend only the existing
+security-invoker history RPC as needed; public profiles remain eligible-public-only.
+Keep progression, Storage signing, mutation authority and scoped caches unchanged.
+See `docs/QA19_22_PROFILE_VISIBILITY.md`; no Phase 11, commit, push or deployment.
+
+QA #23/#24 authorizes shared session-scoped avatar reconciliation, current-avatar
+references in bounded comment/follower-inbox reads, stable media/post loading and
+consistent overflow triggers. Preserve controlled signing, privacy, safety and
+cache boundaries; no global refresh/polling. See `docs/QA23_24_AVATARS_MEDIA.md`.
+
+The explicit QA #25 request authorizes auth presentation and supported signup email
+code verification. Keep link mode until the hosted Confirm signup template contains
+codes and EXPO_PUBLIC_SIGNUP_CODE_LENGTH matches its verified length. Preserve
+Google PKCE, account-enumeration protections and guarded session admission. No
+hosted Auth configuration change is authorized; see docs/QA25_AUTH_EMAIL_CODES.md.
+
+QA #26/#27 authorizes onboarding presentation and curated language facts during
+selected longer preparation waits only. Preserve the same five fields, validation,
+draft/session guards and single backend save. Use the existing motion system and
+central sourced editorial facts, selected once per loading session. Never delay real
+completion to show a fact or add facts to ordinary mutations/page fetches. See
+`docs/QA26_27_ONBOARDING_LOADING.md`; physical iPhone acceptance remains pending.
+
 ## Engineering
 
 - Use npm and keep `package-lock.json` in sync. Use `npm ci` on existing checkouts.
@@ -62,6 +103,12 @@ read-only in this scope; see `docs/AUTH_COPY_AUDIT.md` and `docs/COPY_GUIDE.md`.
   attestations, commit-time object guards and function-only fixed-lifetime signing. Never put cleanup credentials in public env.
 - Derive challenge identity/date/configuration and replacements entirely in backend RPCs.
 - Preserve concept-level assignment history and immutable challenge snapshots.
+- Daily generation and replacement must exclude the owner's ever-completed semantic
+  concepts using `private.completed_concepts`. Verified daily and historical captures
+  count permanently despite photo deletion/XP reversal; pending uploads do not.
+  Preserve old assignments/reuploads, exact CEFR, recency for uncompleted concepts,
+  owner/revision serialization and atomic insufficient-vocabulary failure. Never
+  recycle completed concepts to conceal pool exhaustion. See decision 051.
 - Supabase/PostgreSQL is authoritative. Use RLS, constraints and atomic writes for
   onboarding; never trust a client completion flag or expose service-role keys.
 - Keep migrations, database types, seed and database tests consistent.
@@ -69,7 +116,7 @@ read-only in this scope; see `docs/AUTH_COPY_AUDIT.md` and `docs/COPY_GUIDE.md`.
   on finished deletion. Never compute lifetime XP from positive ledger entries only.
 - One valid word qualifies a server-derived local date. Milestones 3/7/14/30/60/100
   award 10/25/40/75/125/200 once per occurrence; preserve original windows and no
-  retrospective awards caused by deletion. Level threshold is 25 × L × (L + 3).
+  retrospective awards caused by deletion. QA #32 starts at Level 1; threshold(L) = 10 × (L - 1) × (L + 2).
 - Keep durable XP source keys independent of session DateStyle/TimeZone. Check
   level thresholds with exact arithmetic after estimating a level. Never rewrite
   ambiguous existing ledger history to make a migration pass.
@@ -220,3 +267,19 @@ stack with normal edge-back navigation; never seed fresh post state from an
 invalidated source. Capitalization is presentation only. Unchanged normalized
 username Save stays disabled. See `docs/QA3_SEARCH_NAVIGATION.md` for verification,
 rollout and required physical acceptance.
+
+QA #28–31 covers conditional owned concept-history links, Level-only public
+progression, recognition-only blocked profiles with controlled batch avatars, and
+server-authoritative inbox opening receipts. Preserve normal mutual block denial;
+recognition requires ownership of an outgoing block and must never admit public
+posts/counts or private profile data. Inbox retries reuse their original admission
+ID and cannot clear later events. That pass preserves level rules; the separately
+approved QA #32 below changes only the level curve, never remote-push types. The user explicitly approved the persistent local QA #28–31
+migration and verification on 2026-09-28. See `docs/QA28_31_PROFILES_INBOX.md` for
+verification results and rollout order; no Phase 11, commit, push or deployment.
+
+QA #32 explicitly authorizes only the total-XP-to-Level mapping and within-level
+progress presentation. Use the shared private.level_progress helper; never rewrite
+XP/award/milestone history or trigger reward feedback from migration/passive reads.
+Preserve all existing rewards, reversal rules, privacy and session-scoped caches.
+See `docs/QA32_LEVEL_PROGRESSION.md`; no Phase 11, commit, push or deployment.

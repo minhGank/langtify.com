@@ -1,17 +1,20 @@
-import { useMemo } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { nativeBackFallback } from '@/components/ui/native-back';
 import { useAuth } from '@/features/auth/auth-provider';
-import { useAppTheme } from '@/hooks/use-app-theme';
 import { serverScope } from '@/lib/server-cache';
 import { feedGateway, type FeedIdentity } from '@/services/discover';
 import { postCacheKey } from './open-post';
 import { useDiscover } from './use-discover';
 import { PostDetail } from './post-detail';
+import { useServerQuery } from '@/hooks/use-server-query';
+import { loadOwnedPost, ownedPostEntry } from './owned-post-access';
+import { PostLoading, PostRefreshState } from './post-loading';
+import { OwnerPost } from './owner-post';
 
 export function PostScreen() {
   const { status, session, account } = useAuth();
@@ -33,11 +36,46 @@ export function PostScreen() {
     <>
       <Stack.Screen options={{ headerLeft: nativeBackFallback() }} />
       {id ? (
-        <PostContent key={postCacheKey(identity, id)} {...identity} id={id} language={language} />
+        <PostAccess key={postCacheKey(identity, id)} {...identity} id={id} language={language} />
       ) : (
         <UnavailablePost />
       )}
     </>
+  );
+}
+const discardOwnerError = () => true;
+function PostAccess({
+  id,
+  language,
+  userId,
+  token,
+  targetLanguageId,
+}: FeedIdentity & { id: string; language: string }) {
+  const identity = useMemo(
+    () => ({ userId, token, targetLanguageId }),
+    [userId, token, targetLanguageId],
+  );
+  const entry = useMemo(() => ownedPostEntry(identity, id), [identity, id]);
+  const load = useCallback(
+    (signal: AbortSignal) => loadOwnedPost(identity, id, signal),
+    [identity, id],
+  );
+  const query = useServerQuery(entry, load, {
+    staleTime: Infinity,
+    discardOnError: discardOwnerError,
+  });
+  if (!query.data && !query.error) return <PostLoading />;
+  if (!query.data)
+    return (
+      <View style={styles.message}>
+        <AppText>We couldn’t load this photo. Try again.</AppText>
+        <Button label="Try again" onPress={() => void query.refresh()} />
+      </View>
+    );
+  return query.data.assignmentId ? (
+    <OwnerPost identity={identity} id={id} assignmentId={query.data.assignmentId} />
+  ) : (
+    <PostContent {...identity} id={id} language={language} />
   );
 }
 function UnavailablePost() {
@@ -54,7 +92,6 @@ function PostContent({
   token,
   targetLanguageId,
 }: FeedIdentity & { id: string; language: string }) {
-  const { colors } = useAppTheme();
   const identity = useMemo(
     () => ({ userId, token, targetLanguageId }),
     [userId, token, targetLanguageId],
@@ -68,14 +105,11 @@ function PostContent({
   );
   const item = state.items.find((row) => row.id === id);
   const close = () => (router.canGoBack() ? router.back() : router.replace('/discover'));
+  if (!item && state.loading) return <PostLoading />;
   if (!item)
     return (
       <SafeAreaView edges={['left', 'right', 'bottom']} style={styles.message}>
-        {state.loading ? (
-          <ActivityIndicator color={colors.brandPrimary} accessibilityLabel="Loading photo" />
-        ) : (
-          <UnavailablePost />
-        )}
+        <UnavailablePost />
         {state.error && (
           <>
             <AppText accessibilityRole="alert">We couldn’t load this photo. Try again.</AppText>
@@ -90,6 +124,16 @@ function PostContent({
       language={language}
       uri={state.photos[id]}
       photoRevision={state.photoRevision}
+      photoLoading={state.loading || state.refreshing}
+      status={
+        <PostRefreshState
+          pending={state.refreshing}
+          error={
+            state.error ? 'We couldn’t refresh this photo. Your saved view is still here.' : null
+          }
+          refresh={() => void state.refresh()}
+        />
+      }
       userId={identity.userId}
       token={identity.token}
       reload={() => void state.renew()}

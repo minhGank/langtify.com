@@ -68,12 +68,24 @@ update public.vocabulary_terms set term='Catalog changed',is_active=false where 
 select isnt(public.get_my_vocabulary()->'items'->0->>'target_term','Catalog changed','Historical text is immutable');
 select public.set_submission_visibility((select id from photos where n=2),'public');
 select is(public.get_my_vocabulary()->'items'->0->>'visibility','public','Visibility refresh reflects existing authority');
+-- QA #19: filtering captures precedes concept grouping/latest selection.
+select is(public.get_my_vocabulary(requested_visibility=>'private')->'items'->0->>'id',(select id::text from photos where n=1),'Private filter finds older private capture behind newest public capture');
+select is(public.get_my_vocabulary(requested_visibility=>'private')->'items'->0->>'capture_count','1','Filtered capture count excludes public photos');
+select is(public.get_my_vocabulary(requested_visibility=>'public')->'items'->0->>'id',(select id::text from photos where n=2),'Public filter retains newest public capture');
+select is(public.get_my_vocabulary(requested_visibility=>null)->'items'->0->>'capture_count','2','All includes both visibilities');
+select is(public.get_my_vocabulary(requested_concept=>(select concept_id from public.submissions where id=(select id from photos where n=1)),requested_visibility=>'private')->'concept'->>'id',(select id::text from photos where n=1),'Detail summary respects selected visibility');
+select is(public.get_my_vocabulary(requested_visibility=>'private',requested_level=>'C2')->>'total_concepts','1','Visibility count remains independent of search/CEFR');
+select throws_ok($$select public.get_my_vocabulary(requested_visibility=>'all')$$,'22023','invalid_history_query','Only null/public/private accepted by backend');
+select throws_ok($$select public.get_my_vocabulary(requested_visibility=>'PRIVATE')$$,'22023','invalid_history_query','Unknown visibility values rejected');
+
 grant select on photos,first_page to authenticated;
 set local role authenticated;
 select is(public.get_my_vocabulary()->>'total_concepts','1','Authenticated invoker reads own history under RLS');
 select throws_ok($$update public.submissions set target_term='fake'$$,'42501',null,'No direct mutation permission');
 select set_config('request.jwt.claim.sub','66000000-0000-4000-8000-000000000002',true);
 select is(public.get_my_vocabulary()->>'total_concepts','0','Other account cannot read even public captures');
+select is(public.get_my_vocabulary(requested_visibility=>'private')->>'total_concepts','0','Private filter cannot read another account');
+select is(public.get_my_vocabulary(requested_visibility=>'public')->>'total_concepts','0','Public filter remains owner-only');
 select is((select count(*) from public.submissions),0::bigint,'Source RLS prevents cross-user reads');
 select is(public.get_my_vocabulary(requested_concept=>(select payload->'concept'->>'concept_id' from first_page)::uuid)->>'total_concepts','0','Known concept ID does not grant another owner history');
 reset role;
@@ -81,11 +93,13 @@ select set_config('request.jwt.claim.sub','66000000-0000-4000-8000-000000000001'
 select public.begin_submission_deletion((select id from photos where n=2));
 select is(public.get_my_vocabulary()->'items'->0->>'id',(select id::text from photos where n=1),'Deletion intent hides unavailable latest image and falls back to surviving photo');
 select is(public.get_my_vocabulary()->'items'->0->>'capture_count','1','Another surviving capture retains concept');
+select is(public.get_my_vocabulary(requested_visibility=>'public')->>'total_concepts','0','Deleting last public capture removes filtered concept');
+select is(public.get_my_vocabulary(requested_visibility=>'private')->>'total_concepts','1','Other visibility retains surviving capture');
 select public.begin_submission_deletion((select id from photos where n=1));
 select is(public.get_my_vocabulary()->>'total_concepts','0','Last removal removes concept');
 set local role anon;
 select throws_ok($$select public.get_my_vocabulary()$$,'42501',null,'Anonymous history denied');
 reset role;
-select ok(not (select prosecdef from pg_proc where oid='public.get_my_vocabulary(uuid,text,text,timestamptz,uuid,integer)'::regprocedure),'RPC is security invoker');
+select ok(not (select prosecdef from pg_proc where oid='public.get_my_vocabulary(uuid,text,text,timestamptz,uuid,integer,text)'::regprocedure),'RPC is security invoker');
 select * from finish();
 rollback;

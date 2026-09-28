@@ -15,7 +15,7 @@ jest.mock('@/features/inbox/notification-bell', () => ({ NotificationBell: () =>
 
 let mockSession = makeSession();
 let mockStatus = 'ready';
-let mockParams: { conceptId?: string } = {};
+let mockParams: { conceptId?: string; visibility?: string } = {};
 const mockGatewayArgs = jest.fn();
 const mockBack = jest.fn(),
   mockReplace = jest.fn();
@@ -89,7 +89,7 @@ it.each(['email', 'google'])(
     fireEvent.press(screen.getByRole('button', { name: /^View photos: Le chien\./ }));
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/vocabulary-concept',
-      params: { conceptId: 'concept' },
+      params: { conceptId: 'concept', visibility: 'all' },
     });
     expect(mockPreviews).toHaveBeenCalledWith(['photo'], expect.any(AbortSignal));
   },
@@ -266,7 +266,7 @@ it('submits target/reference search and CEFR filters to the same server query', 
     expect(mockGatewayArgs).toHaveBeenLastCalledWith(
       mockSession.user.id,
       mockSession.access_token,
-      { conceptId: undefined, search: 'DOG', level: '' },
+      { conceptId: undefined, search: 'DOG', level: '', visibility: 'all' },
     ),
   );
   fireEvent.press(screen.getByLabelText('Filter vocabulary'));
@@ -275,7 +275,7 @@ it('submits target/reference search and CEFR filters to the same server query', 
     expect(mockGatewayArgs).toHaveBeenLastCalledWith(
       mockSession.user.id,
       mockSession.access_token,
-      { conceptId: undefined, search: 'DOG', level: 'A1' },
+      { conceptId: undefined, search: 'DOG', level: 'A1', visibility: 'all' },
     ),
   );
 });
@@ -388,6 +388,7 @@ it('normalizes an uppercase concept deep link and provides a safe direct-entry r
     conceptId: mockParams.conceptId?.toLowerCase(),
     search: '',
     level: '',
+    visibility: 'all',
   });
   fireEvent.press(screen.getByRole('button', { name: 'Back to My Vocabulary' }));
   expect(mockReplace).toHaveBeenCalledWith('/vocabulary');
@@ -425,4 +426,147 @@ it('rejects an old query refresh callback after a token or filter gateway change
   });
   expect(mockLoad).toHaveBeenCalledTimes(calls);
   expect(result.current.data?.items).toEqual([]);
+});
+
+it('filters on the server, retains each filter cache and carries visibility into concept navigation', async () => {
+  render(<VocabularyScreen />);
+  await screen.findByText('Le chien');
+  const publicCapture: Capture = {
+    ...capture,
+    id: 'public-photo',
+    targetTerm: 'le chat',
+    visibility: 'public',
+  };
+  mockLoad.mockResolvedValue({ ...page, items: [publicCapture], concept: publicCapture });
+  fireEvent.press(screen.getByRole('radio', { name: 'Public' }));
+  await screen.findByText('Le chat');
+  expect(screen.queryByText('Le chien')).toBeNull();
+  expect(mockGatewayArgs).toHaveBeenLastCalledWith(
+    mockSession.user.id,
+    mockSession.access_token,
+    expect.objectContaining({ visibility: 'public' }),
+  );
+  expect(screen.getByRole('radio', { name: 'Public' })).toHaveProp('accessibilityState', {
+    checked: true,
+  });
+  fireEvent.press(screen.getByRole('button', { name: /^View photos: Le chat/ }));
+  expect(mockPush).toHaveBeenLastCalledWith({
+    pathname: '/vocabulary-concept',
+    params: { conceptId: capture.conceptId, visibility: 'public' },
+  });
+  fireEvent.press(screen.getByRole('radio', { name: 'All' }));
+  await screen.findByText('Le chien');
+  expect(mockLoad).toHaveBeenCalledTimes(2);
+});
+it('shows a filtered empty state and never suggests the owner has no collection', async () => {
+  render(<VocabularyScreen />);
+  await screen.findByText('Le chien');
+  mockLoad.mockResolvedValue({ items: [], concept: null, totalConcepts: 0, hasMore: false });
+  fireEvent.press(screen.getByRole('radio', { name: 'Private' }));
+  await screen.findByText('No private photos yet');
+  expect(screen.queryByText('Go to Today')).toBeNull();
+  expect(screen.getByRole('radio', { name: 'All' })).toBeVisible();
+});
+it('partitions cursors by visibility, cancels old-filter responses and restores a cached page', async () => {
+  mockLoad.mockResolvedValueOnce({ ...page, hasMore: true });
+  render(<VocabularyScreen />);
+  await screen.findByText('Le chien');
+  mockLoad.mockResolvedValueOnce({
+    ...page,
+    items: [{ ...capture, id: 'older', targetTerm: 'older word' }],
+  });
+  fireEvent.press(screen.getByText('More words'));
+  await screen.findByText('Older word');
+  let finish = (_: VocabularyPage) => {};
+  mockLoad.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  fireEvent.press(screen.getByRole('radio', { name: 'Public' }));
+  await waitFor(() => expect(mockLoad).toHaveBeenCalledTimes(3));
+  expect(mockLoad).toHaveBeenLastCalledWith(null, expect.any(AbortSignal));
+  expect(screen.queryByText('Older word')).toBeNull();
+  const signal: AbortSignal = mockLoad.mock.calls[2][1];
+  fireEvent.press(screen.getByRole('radio', { name: 'All' }));
+  await screen.findByText('Older word');
+  expect(screen.getByText('Back to latest')).toBeVisible();
+  await act(async () => finish({ ...page, items: [{ ...capture, targetTerm: 'stale public' }] }));
+  expect(signal.aborted).toBe(true);
+  expect(screen.queryByText('Stale public')).toBeNull();
+  expect(mockLoad).toHaveBeenCalledTimes(3);
+});
+it('uses an explicit private concept filter and safely defaults unknown route visibility to All', async () => {
+  mockParams = { conceptId: '66000000-0000-4000-8000-000000000010', visibility: 'private' };
+  const view = render(<VocabularyScreen detail />);
+  await screen.findByText('3 photos');
+  expect(screen.getByRole('radio', { name: 'Private' })).toHaveProp('accessibilityState', {
+    checked: true,
+  });
+  expect(mockGatewayArgs).toHaveBeenLastCalledWith(
+    mockSession.user.id,
+    mockSession.access_token,
+    expect.objectContaining({ visibility: 'private' }),
+  );
+  mockParams = { ...mockParams, visibility: 'public' };
+  const publicCapture: Capture = { ...capture, visibility: 'public' };
+  mockLoad.mockResolvedValue({ ...page, items: [publicCapture], concept: publicCapture });
+  view.rerender(<VocabularyScreen detail />);
+  expect(screen.getByRole('radio', { name: 'Public' })).toHaveProp('accessibilityState', {
+    checked: true,
+  });
+  await screen.findByText('3 photos');
+  mockParams = { ...mockParams, visibility: 'https://evil.test' };
+  view.rerender(<VocabularyScreen detail />);
+  expect(screen.getByRole('radio', { name: 'All' })).toHaveProp('accessibilityState', {
+    checked: true,
+  });
+  await screen.findByText('3 photos');
+});
+it('drops private filter data and pending results on account switch', async () => {
+  mockParams = { visibility: 'private' };
+  let finish = (_: VocabularyPage) => {};
+  mockLoad.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  const view = render(<VocabularyScreen />);
+  await waitFor(() => expect(mockLoad).toHaveBeenCalledTimes(1));
+  const signal: AbortSignal = mockLoad.mock.calls[0][1];
+  mockSession = makeSession('other-owner');
+  mockLoad.mockResolvedValue({ ...page, items: [], concept: null, totalConcepts: 0 });
+  view.rerender(<VocabularyScreen />);
+  await screen.findByText('No private photos yet');
+  await act(async () => finish(page));
+  expect(signal.aborted).toBe(true);
+  expect(screen.queryByText('Le chien')).toBeNull();
+});
+
+it('reserves photo geometry and shows a quiet placeholder until signing and image decoding finish, never premature retry', async () => {
+  let finish = (_: Record<string, string>) => {};
+  mockPreviews.mockReturnValueOnce(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  render(<VocabularyScreen />);
+  await screen.findByText('Le chien');
+  expect(screen.getByLabelText('Loading photo of Le chien')).toHaveProp('accessibilityState', {
+    busy: true,
+  });
+  expect(screen.queryByText('Photo unavailable')).toBeNull();
+  expect(screen.queryByText('Reload photo')).toBeNull();
+  await act(async () => finish({ [capture.id]: 'data:image/jpeg;base64,/9j/2Q==' }));
+  const image = screen.getByLabelText('Your photo of Le chien');
+  let frame = image.parent;
+  while (frame && typeof frame.type !== 'string') frame = frame.parent;
+  expect(frame).toHaveStyle({ aspectRatio: 1, width: '100%' });
+  fireEvent(image, 'load');
+  expect(screen.queryByLabelText('Loading photo of Le chien')).toBeNull();
+  expect(frame).toHaveStyle({ aspectRatio: 1, width: '100%' });
+  fireEvent(image, 'error');
+  expect(screen.getByText('Reload photo')).toBeVisible();
+  expect(mockLoad).toHaveBeenCalledTimes(1);
+  expect(mockPreviews).toHaveBeenCalledTimes(1);
 });

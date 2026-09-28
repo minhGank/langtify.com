@@ -19,10 +19,15 @@ import { FeedSettingsChanged } from '@/services/discover';
 import { exploreGateway, type ExploreIdentity, type ExploreWord } from '@/services/explore';
 import { displayTerm } from '@/utils/display-term';
 import { conceptCache } from './cache';
+import { ConceptHistory } from './concept-history';
+import { photoGateway } from '@/services/submissions';
 
 export function ConceptScreen() {
   const { session, account, status } = useAuth();
-  const { conceptId } = useLocalSearchParams<{ conceptId?: string | string[] }>();
+  const { conceptId, assignmentId } = useLocalSearchParams<{
+    conceptId?: string | string[];
+    assignmentId?: string | string[];
+  }>();
   const identity = useMemo(
     () =>
       session && account?.learning
@@ -47,6 +52,12 @@ export function ConceptScreen() {
           key={`${serverScope(identity.userId, identity.token)}:${identity.targetLanguageId}:${identity.referenceLanguageId}:${conceptId}`}
           identity={identity}
           conceptId={conceptId.toLowerCase()}
+          assignmentId={
+            typeof assignmentId === 'string' &&
+            /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(assignmentId)
+              ? assignmentId.toLowerCase()
+              : undefined
+          }
           language={language}
         />
       ) : (
@@ -71,24 +82,41 @@ function ConceptContent({
   identity,
   conceptId,
   language,
+  assignmentId,
 }: {
   identity: ExploreIdentity;
   conceptId: string;
   language: string;
+  assignmentId?: string;
 }) {
   const { colors } = useAppTheme();
   const gateway = useMemo(() => exploreGateway(identity), [identity]);
   const entry = useMemo(
     () =>
       conceptCache.entry(
-        `${serverScope(identity.userId, identity.token)}:concept:${identity.targetLanguageId}:${identity.referenceLanguageId}:${conceptId}`,
-        ['explore', 'user-search'],
+        `${serverScope(identity.userId, identity.token)}:concept:${identity.targetLanguageId}:${identity.referenceLanguageId}:${conceptId}:${assignmentId ?? 'catalog'}`,
+        ['explore', 'user-search', 'vocabulary'],
       ),
-    [identity, conceptId],
+    [identity, conceptId, assignmentId],
   );
   const load = useCallback(
-    async (signal: AbortSignal) => ({ item: await gateway.concept(conceptId, signal) }),
-    [gateway, conceptId],
+    async (signal: AbortSignal) => {
+      if (!assignmentId) return { item: await gateway.concept(conceptId, signal) };
+      const assignment = await photoGateway(identity.userId, assignmentId, identity.token).load(
+        signal,
+      );
+      if (assignment.conceptId !== conceptId) throw new Error('Word context changed.');
+      return {
+        item: {
+          conceptId,
+          targetTerm: assignment.targetTerm,
+          referenceTerm: assignment.referenceTerm,
+          cefrLevel: assignment.cefrLevel,
+        },
+        targetLanguageId: assignment.targetLanguageId,
+      };
+    },
+    [gateway, conceptId, assignmentId, identity],
   );
   const discardOnError = useCallback(
     (cause: unknown) => {
@@ -115,18 +143,31 @@ function ConceptContent({
         )}
       </View>
     );
-  return <ConceptExamples identity={identity} item={query.data.item} language={language} />;
+  return (
+    <ConceptExamples
+      identity={identity}
+      item={query.data.item}
+      language={language}
+      snapshotLanguageId={query.data.targetLanguageId}
+    />
+  );
 }
 function ConceptExamples({
   identity,
   item,
   language,
+  snapshotLanguageId,
 }: {
   identity: ExploreIdentity;
   item: ExploreWord;
   language: string;
+  snapshotLanguageId?: string;
 }) {
   const { colors } = useAppTheme();
+  const { account } = useAuth();
+  const wordLanguage = snapshotLanguageId
+    ? (account?.languages.find((row) => row.id === snapshotLanguageId)?.name ?? language)
+    : language;
   const gateway = useMemo(
     () => exploreGateway(identity).examples(item.conceptId),
     [identity, item.conceptId],
@@ -149,12 +190,12 @@ function ConceptExamples({
       ListHeaderComponent={
         <View style={styles.heading}>
           <AppText variant="caption">
-            {language} · {item.cefrLevel}
+            {wordLanguage} · {item.cefrLevel}
           </AppText>
           <AppText variant="title">{displayTerm(item.targetTerm)}</AppText>
           <AppText variant="subtitle">{item.referenceTerm}</AppText>
           <AppText variant="heading" style={styles.examplesTitle}>
-            In photos
+            In photos{wordLanguage !== language ? ` · ${language}` : ''}
           </AppText>
         </View>
       }
@@ -195,6 +236,11 @@ function ConceptExamples({
       }
       ListFooterComponent={
         <View style={styles.footer}>
+          <ConceptHistory
+            identity={identity}
+            conceptId={item.conceptId}
+            hasCaptures={item.hasCaptures}
+          />
           {state.error && (
             <Button label="Try again" variant="secondary" onPress={() => void state.refresh()} />
           )}

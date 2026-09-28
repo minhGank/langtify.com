@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { MediaPlaceholder } from '@/components/ui/media-placeholder';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { useAppTheme } from '@/hooks/use-app-theme';
@@ -13,12 +14,14 @@ export function FeedPhoto({
   reload,
   detail = false,
   open,
+  pending = false,
 }: {
   uri?: string;
   word: string;
   reload: () => void;
   detail?: boolean;
   open?: () => void;
+  pending?: boolean;
 }) {
   const { colors } = useAppTheme();
   const [loaded, setLoaded] = useState(false),
@@ -45,12 +48,10 @@ export function FeedPhoto({
               onError={() => setFailed(true)}
             />
           </Pressable>
-          {!loaded && (
-            <View pointerEvents="none" style={styles.center}>
-              <ActivityIndicator color={colors.brandPrimary} accessibilityLabel="Loading photo" />
-            </View>
-          )}
+          {!loaded && <MediaPlaceholder />}
         </>
+      ) : pending ? (
+        <MediaPlaceholder />
       ) : (
         <View style={styles.center}>
           <Ionicons name="image-outline" size={30} color={colors.textSecondary} />

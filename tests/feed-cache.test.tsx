@@ -29,6 +29,7 @@ const item: FeedItem = {
   targetTerm: 'le chien',
   referenceTerm: 'dog',
   cefrLevel: 'A1',
+  avatarId: null,
   username: 'friend',
   submittedAt: '2026-09-20T12:00:00.123456Z',
   averageRating: null,

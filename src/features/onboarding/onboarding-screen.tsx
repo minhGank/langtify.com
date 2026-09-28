@@ -9,6 +9,7 @@ import { MotionView } from '@/components/ui/motion-view';
 import { Screen } from '@/components/ui/screen';
 import { useAuth } from '@/features/auth/auth-provider';
 import { friendlyError } from '@/features/auth/errors';
+import { Sheet } from '@/components/ui/sheet';
 import { SignOutButton } from '@/features/auth/sign-out-button';
 import {
   detectTimezone,
@@ -54,6 +55,7 @@ function OnboardingForm() {
   const [errors, setErrors] = useState<OnboardingErrors>({});
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const submitting = useRef(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -112,6 +114,7 @@ function OnboardingForm() {
       changeStep(invalidStep);
       return;
     }
+    Keyboard.dismiss();
     submitting.current = true;
     setBusy(true);
     try {
@@ -141,52 +144,84 @@ function OnboardingForm() {
   }
   const options = languages.map((language) => ({
     value: language.id,
-    label: `${language.name} (${language.native_name})`,
+    label: language.name,
+    detail: language.native_name !== language.name ? language.native_name : undefined,
   }));
   return (
-    <Screen scrollResetKey={stepIndex}>
-      <View style={styles.brand}>
-        <BrandLogo />
-      </View>
-      <View style={styles.progressHeader}>
-        {stepIndex > 0 ? (
-          <IconButton
-            name="arrow-back"
-            label="Previous setup step"
-            onPress={() => changeStep(stepIndex - 1)}
-            disabled={busy}
-          />
-        ) : (
-          <View style={styles.backSpace} />
-        )}
-        <View
-          accessible
-          accessibilityRole="progressbar"
-          accessibilityLabel="Setup progress"
-          accessibilityValue={{
-            min: 1,
-            max: onboardingSteps.length,
-            now: stepIndex + 1,
-            text: `Step ${stepIndex + 1} of ${onboardingSteps.length}`,
-          }}
-          style={styles.progress}
-        >
-          <AppText variant="caption">
-            Step {stepIndex + 1} of {onboardingSteps.length}
-          </AppText>
-          <View style={styles.track}>
-            {onboardingSteps.map((step, index) => (
-              <View
-                key={step.field}
-                style={[
-                  styles.segment,
-                  { backgroundColor: index <= stepIndex ? colors.brandPrimary : colors.border },
-                ]}
+    <Screen
+      scrollResetKey={stepIndex}
+      header={
+        <View style={styles.header}>
+          <View style={styles.progressHeader}>
+            {stepIndex > 0 ? (
+              <IconButton
+                name="arrow-back"
+                label="Previous setup step"
+                onPress={() => changeStep(stepIndex - 1)}
+                disabled={busy}
               />
-            ))}
+            ) : (
+              <View style={styles.backSpace} />
+            )}
+            <View style={styles.brand}>
+              {stepIndex === 0 ? (
+                <BrandLogo compact />
+              ) : (
+                <AppText variant="label" style={{ color: colors.textSecondary }}>
+                  Your setup
+                </AppText>
+              )}
+            </View>
+            <IconButton
+              name="ellipsis-horizontal"
+              label="Setup options"
+              disabled={busy}
+              onPress={() => {
+                Keyboard.dismiss();
+                setOptionsOpen(true);
+              }}
+            />
+          </View>
+          <View
+            accessible
+            accessibilityRole="progressbar"
+            accessibilityLabel="Setup progress"
+            accessibilityValue={{
+              min: 1,
+              max: onboardingSteps.length,
+              now: stepIndex + 1,
+              text: `Step ${stepIndex + 1} of ${onboardingSteps.length}`,
+            }}
+            style={styles.progress}
+          >
+            <View style={styles.track}>
+              {onboardingSteps.map((step, index) => (
+                <View
+                  key={step.field}
+                  style={[
+                    styles.segment,
+                    { backgroundColor: index <= stepIndex ? colors.brandPrimary : colors.border },
+                  ]}
+                />
+              ))}
+            </View>
+            <AppText variant="caption" style={{ textAlign: 'right' }}>
+              Step {stepIndex + 1} of {onboardingSteps.length}
+            </AppText>
           </View>
         </View>
-      </View>
+      }
+      footer={
+        <View style={styles.actions}>
+          <Button
+            label={lastStep ? 'Finish setup' : 'Continue'}
+            loading={busy}
+            disabled={languages.length < 2}
+            onPress={lastStep ? () => void submit() : next}
+          />
+        </View>
+      }
+    >
       <MotionView trigger={stepIndex} kind="step" direction={direction} style={styles.step}>
         <View
           key={currentStep.field}
@@ -226,26 +261,21 @@ function OnboardingForm() {
           )}
         </View>
       </MotionView>
-      <View style={styles.actions}>
-        <Button
-          label={lastStep ? 'Finish setup' : 'Continue'}
-          loading={busy}
-          disabled={languages.length < 2}
-          onPress={lastStep ? () => void submit() : next}
-        />
-        {!busy && <SignOutButton />}
-      </View>
+      <Sheet title="Setup options" visible={optionsOpen} onClose={() => setOptionsOpen(false)}>
+        <SignOutButton />
+      </Sheet>
     </Screen>
   );
 }
 const styles = StyleSheet.create({
-  brand: { alignItems: 'center', paddingTop: 8 },
-  intro: { gap: 12 },
-  progressHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  header: { gap: 12, width: '100%', maxWidth: 480, alignSelf: 'center' },
+  brand: { flex: 1, alignItems: 'center' },
+  intro: { gap: 12, paddingTop: 12, paddingBottom: 4 },
+  progressHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   backSpace: { width: 48, height: 48 },
-  progress: { flex: 1, gap: 8 },
+  progress: { gap: 8 },
   track: { flexDirection: 'row', gap: 6 },
-  segment: { flex: 1, height: 4, borderRadius: 2 },
-  step: { gap: 28, flexGrow: 1 },
-  actions: { gap: 8 },
+  segment: { flex: 1, height: 3, borderRadius: 2 },
+  step: { gap: 28, width: '100%', maxWidth: 480, alignSelf: 'center' },
+  actions: { width: '100%', maxWidth: 480, alignSelf: 'center' },
 });

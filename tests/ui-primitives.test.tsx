@@ -128,9 +128,9 @@ it.each(['light', 'dark'] as const)(
       expect(screen.getByText('Save profile')).toHaveStyle({ color: colors.textOnPrimary });
       expect(screen.getByRole('button', { name: 'Unavailable action' })).toBeDisabled();
       expect(screen.getByText('Unavailable action')).toHaveStyle({ color: colors.textSecondary });
-      expect(screen.getByText('+10 XP')).toHaveStyle({ color: colors.textOnAccent });
+      expect(screen.getByText('+10 XP')).toHaveStyle({ color: colors.textPrimary });
       expect(screen.getByText('+10 XP')).toHaveProp('accessibilityLiveRegion', 'polite');
-      expect(screen.getByText('7 day streak')).toHaveStyle({ color: colors.textOnAccent });
+      expect(screen.getByText('7 day streak')).toHaveStyle({ color: colors.textPrimary });
       fireEvent.press(screen.getByRole('button', { name: 'Save profile' }));
       fireEvent.press(screen.getByRole('button', { name: 'Unavailable action' }));
       expect(onPress).toHaveBeenCalledTimes(1);

@@ -25,7 +25,16 @@ export type VocabularyPage = {
   concept: Capture | null;
   hasMore: boolean;
 };
-export type VocabularyQuery = { conceptId?: string; search: string; level: string };
+export type VisibilityFilter = 'all' | 'public' | 'private';
+export function isVisibilityFilter(value: unknown): value is VisibilityFilter {
+  return value === 'all' || value === 'public' || value === 'private';
+}
+export type VocabularyQuery = {
+  conceptId?: string;
+  search: string;
+  level: string;
+  visibility?: VisibilityFilter;
+};
 export type VocabularyGateway = {
   cachedPreviews?: (ids: string[]) => Record<string, string>;
   load: (cursor: HistoryCursor | null, signal?: AbortSignal) => Promise<VocabularyPage>;
@@ -71,6 +80,7 @@ export function parseVocabularyPage(
   value: unknown,
   userId: string,
   conceptId?: string,
+  visibility: VisibilityFilter = 'all',
 ): VocabularyPage {
   const row = record(value);
   if (row.user_id !== userId) throw new Error('Vocabulary account changed.');
@@ -78,6 +88,12 @@ export function parseVocabularyPage(
     throw new Error('Invalid vocabulary response.');
   const items = row.items.map(capture);
   const concept = row.concept === null ? null : capture(row.concept);
+  if (
+    visibility !== 'all' &&
+    (items.some((item) => item.visibility !== visibility) ||
+      (concept && concept.visibility !== visibility))
+  )
+    throw new Error('Vocabulary visibility changed.');
   if (
     new Set(items.map((item) => item.id)).size !== items.length ||
     (conceptId &&
@@ -136,6 +152,8 @@ export function vocabularyGateway(
         requested_concept: query.conceptId,
         search_text: query.search,
         requested_level: query.level || undefined,
+        requested_visibility:
+          query.visibility && query.visibility !== 'all' ? query.visibility : undefined,
         before_time: cursor?.time,
         before_id: cursor?.id,
         page_size: 12,
@@ -143,7 +161,7 @@ export function vocabularyGateway(
       if (signal) request.abortSignal(signal);
       const { data, error } = await request;
       if (error) throw error;
-      return parseVocabularyPage(data, userId, query.conceptId);
+      return parseVocabularyPage(data, userId, query.conceptId, query.visibility);
     },
     async previews(ids, signal) {
       if (!ids.length) return {};

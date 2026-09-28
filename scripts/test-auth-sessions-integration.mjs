@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { testEmailCodes } from './test-email-codes-integration.mjs';
 import { localApi } from './lib/local-api.mjs';
 import { authSessionId } from '../src/lib/auth-session-storage.ts';
 import { validateSignupPassword } from '../src/features/auth/password-policy.ts';
@@ -60,6 +61,7 @@ try {
   console.log(
     'PASS: actual Auth policy matches signup guidance at the 6/72 UTF-8 byte boundaries without invented character classes',
   );
+  await testEmailCodes(api);
 } finally {
   if (userId) assert.ifError((await api.admin.auth.admin.deleteUser(userId)).error);
   await Promise.all([first.auth.dispose(), second.auth.dispose(), api.admin.auth.dispose()]);

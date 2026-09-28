@@ -49,7 +49,11 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
   const activeRead = useRef<ReadMode | null>(null);
   const activeRating = useRef<string | null>(null);
   const [data, setData] = useState<Window>(() => entry.getSnapshot().data ?? empty()),
-    [photos, setPhotos] = useState<Record<string, string>>({});
+    [photos, setPhotos] = useState<Record<string, string>>(() => {
+      const ids = entry.getSnapshot().data?.items.map((item) => item.id) ?? [];
+      return ids.length ? (gateway.cachedPreviews?.(ids) ?? {}) : {};
+    });
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true),
     [error, setError] = useState<string | null>(null);
   const [displayActive, setDisplayActive] = useState(false);
@@ -92,6 +96,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
       abort.current = controller;
       pending.current = true;
       activeRead.current = mode;
+      setRefreshing(true);
       setLoading(mode !== 'renew');
       setError(null);
       setSettingsChanged(false);
@@ -169,7 +174,12 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
               );
             clear();
             entry.clear();
-          } else clearPhotos();
+          } else {
+            const cached =
+              gateway.cachedPreviews?.(current.current.items.map((item) => item.id)) ?? {};
+            renderedPhotos.current = cached;
+            setPhotos(cached);
+          }
           setSettingsChanged(cause instanceof FeedSettingsChanged);
           setError(
             cause instanceof FeedSettingsChanged
@@ -183,6 +193,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
           activeRead.current = null;
           abort.current = null;
           setLoading(false);
+          setRefreshing(false);
         }
       }
     },
@@ -309,6 +320,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
         queuedRead.current = null;
         setRatingAction(null);
         setLoading(false);
+        setRefreshing(false);
         if (uncertainRating) {
           // Cancellation is not proof that the server rejected the vote. Keep
           // the intent consumed and require an authoritative read next time.
@@ -351,6 +363,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
             renderedPhotos.current = cached;
             setPhotos(cached);
             setLoading(false);
+            setRefreshing(false);
           }
         }
       };
@@ -368,6 +381,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
             pending.current = false;
             activeRead.current = null;
             setLoading(false);
+            setRefreshing(false);
             current.current = snapshot.data;
             setData(snapshot.data);
             const visibleIds = new Set(snapshot.data.items.map((item) => item.id));
@@ -393,6 +407,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
         queuedRead.current = null;
         setRatingAction(null);
         setLoading(false);
+        setRefreshing(false);
         if (!snapshot.data) clear();
         if (shouldRefresh && focused && visible.current) void refresh();
       });
@@ -418,6 +433,7 @@ export function useDiscover(gateway: FeedGateway, cacheKey?: string, scope?: str
     photos: displayActive ? photos : {},
     photoRevision,
     loading,
+    refreshing,
     error,
     settingsChanged,
     refresh,

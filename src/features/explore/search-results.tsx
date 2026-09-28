@@ -23,16 +23,11 @@ export function SearchEmpty({
         <LoadingPlaceholder label="Searching" />
       ) : (
         <>
-          <View
-            style={[
-              styles.discoveryIcon,
-              { backgroundColor: error ? colors.surfaceMuted : colors.accentEnergy },
-            ]}
-          >
+          <View style={[styles.discoveryIcon, { backgroundColor: colors.surfaceMuted }]}>
             <Ionicons
               name="search-outline"
               size={28}
-              color={error ? colors.textSecondary : colors.textOnAccent}
+              color={colors.textSecondary}
               accessible={false}
             />
           </View>

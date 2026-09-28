@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { localApi } from './lib/local-api.mjs';
 import { execute, query } from './lib/local-db.mjs';
 import { cleanupAvatars } from './cleanup-avatars.mjs';
+import { cleanupSubmissions } from './cleanup-submissions.mjs';
 import { stripJpegMetadata } from '../src/features/photos/jpeg.ts';
 
 const api = localApi(),
@@ -140,12 +141,137 @@ try {
   );
 
   const publicId = (await rpc(a.client, 'get_public_profile')).profile.id;
+  const viewerPublicId = (await rpc(b.client, 'get_public_profile')).profile.id;
+  const challenge = await rpc(b.client, 'get_or_create_today_challenge');
+  const post = await rpc(b.client, 'reserve_submission', { assignment_id: challenge.words[0].id });
+  assert.ifError(
+    (
+      await b.client.storage
+        .from('challenge-submissions')
+        .upload(post.storage_path, jpeg, { contentType: 'image/jpeg' })
+    ).error,
+  );
+  assert.ifError(
+    (
+      await b.client.functions.invoke('photo-authority', {
+        body: { action: 'finalize', submissionId: post.id, visibility: 'public' },
+      })
+    ).error,
+  );
+  await rpc(a.client, 'create_submission_comment', {
+    submission_id: post.id,
+    body: 'Avatar projection fixture',
+    request_id: randomUUID(),
+  });
+  await rpc(a.client, 'set_follow', { profile_id: viewerPublicId, following: true });
+  const readAuthor = async (expected) => {
+    const comments = await rpc(b.client, 'get_submission_comments', { submission_id: post.id });
+    const comment = comments.items.find((row) => row.profile_id === publicId);
+    assert.equal(comment.avatar_id, expected);
+    assert.deepEqual(Object.keys(comment).sort(), [
+      'avatar_id',
+      'body',
+      'created_at',
+      'id',
+      'is_own',
+      'profile_id',
+      'username',
+    ]);
+    const inbox = await rpc(b.client, 'get_notification_inbox');
+    const follower = inbox.items.find(
+      (row) => row.kind === 'NEW_FOLLOWER' && row.profile_id === publicId,
+    );
+    assert.equal(follower.avatar_id, expected);
+    for (const row of inbox.items.filter((row) => row.kind !== 'NEW_FOLLOWER'))
+      assert.equal(row.avatar_id, null, 'Anonymous rating/daily events never expose an avatar');
+    assert(
+      !JSON.stringify([comments, inbox]).includes(a.id),
+      'No Auth owner ID in comment/inbox projections',
+    );
+  };
+  await readAuthor(first.id);
+
   await rpc(b.client, 'block_public_profile', { profile_id: publicId });
   assert.deepEqual(await previews(b.client, [first.id]), []);
+  assert.equal(
+    (await rpc(b.client, 'get_submission_comments', { submission_id: post.id })).items.length,
+    0,
+  );
+  assert(
+    !(await rpc(b.client, 'get_notification_inbox')).items.some(
+      (row) => row.profile_id === publicId,
+    ),
+  );
   const blocks = await rpc(b.client, 'get_blocked_users');
+  assert.equal(blocks.items[0].avatar_id, first.id);
+  const recognized = await rpc(b.client, 'get_blocked_profile', { block_id: blocks.items[0].id });
+  assert.deepEqual(Object.keys(recognized.profile).sort(), ['avatar_id', 'id', 'username']);
+  assert.equal(recognized.profile.avatar_id, first.id);
+  assert((await b.client.rpc('get_public_profile', { profile_id: publicId })).error);
+  assert((await a.client.rpc('get_blocked_profile', { block_id: blocks.items[0].id })).error);
+  const blockedPreviews = async (client, ids) => {
+    const response = await client.functions.invoke('avatar-authority', {
+      body: {
+        action: 'blocked-previews',
+        avatarIds: ids,
+        viewer: a.id,
+        ttl: 9999,
+        path: 'arbitrary.jpg',
+      },
+    });
+    assert.ifError(response.error);
+    return response.data.items;
+  };
+  const recognitionPhoto = (await blockedPreviews(b.client, [first.id]))[0];
+  assert.equal(recognitionPhoto.id, first.id);
+  const recognitionUrl = new URL(recognitionPhoto.signed_path, api.url);
+  const recognitionClaims = JSON.parse(
+    Buffer.from(recognitionUrl.searchParams.get('token').split('.')[1], 'base64url').toString(),
+  );
+  assert.equal(recognitionClaims.exp - recognitionClaims.iat, 60);
+  assert.equal((await fetch(recognitionUrl)).status, 200);
+  assert.deepEqual(
+    await blockedPreviews(a.client, [first.id]),
+    [],
+    'No outgoing block capability, even for own avatar',
+  );
+  assert(
+    (await b.client.rpc('get_blocked_avatar_targets', { viewer: a.id, avatar_ids: [first.id] }))
+      .error,
+  );
+  assert.equal(
+    (await rpc(b.client, 'get_blocked_users')).items.length,
+    1,
+    'Viewing never unblocks',
+  );
+  await execute(`update private.safety_accounts set restricted=true where user_id='${a.id}';`);
+  assert.deepEqual(await blockedPreviews(b.client, [first.id]), []);
+  assert.equal(
+    (await rpc(b.client, 'get_blocked_profile', { block_id: blocks.items[0].id })).profile
+      .avatar_id,
+    null,
+  );
+  await execute(`update private.safety_accounts set restricted=false where user_id='${a.id}';`);
   await rpc(b.client, 'unblock_user', { block_id: blocks.items[0].id });
+  assert.deepEqual(
+    await blockedPreviews(b.client, [first.id]),
+    [],
+    'Unblock retires recognition signing capability',
+  );
+  console.log(
+    'PASS: recognition-only blocked avatars preserve mutual public denial, service-only targets and 60-second access',
+  );
   await execute(`update private.safety_accounts set restricted=true where user_id='${a.id}';`);
   assert.deepEqual(await previews(b.client, [first.id]), []);
+  assert.equal(
+    (await rpc(b.client, 'get_submission_comments', { submission_id: post.id })).items.length,
+    0,
+  );
+  assert(
+    !(await rpc(b.client, 'get_notification_inbox')).items.some(
+      (row) => row.profile_id === publicId,
+    ),
+  );
   assert.equal((await previews(a.client, [first.id])).length, 1);
   await execute(`update private.safety_accounts set restricted=false where user_id='${a.id}';`);
   const second = await reserve(a.client);
@@ -205,6 +331,7 @@ try {
   );
   assert.ifError((await upload(a.client, third)).error);
   assert.ifError((await finalize(a.client, third.id)).error);
+  await readAuthor(third.id);
   assert.deepEqual(await previews(b.client, [first.id, second.id]), []);
   assert.equal(
     (await rpc(a.client, 'remove_profile_avatar', { expected_avatar_id: first.id })).avatar_id,
@@ -217,7 +344,11 @@ try {
     null,
   );
   await cleanupAvatars(api.admin);
+  await readAuthor(null);
   assert.deepEqual(await previews(a.client, [third.id]), []);
+  console.log(
+    'PASS: comments/inbox project current avatar after replacement/removal, exclude blocked/restricted authors and expose no private identity',
+  );
   assert((await upload(a.client, third)).error, 'Retired paths reject late uploads');
   console.log(
     'PASS: blocked/restricted signing denial, replacement fencing, stale-remove protection and overlapping cleanup',
@@ -278,4 +409,5 @@ try {
 } finally {
   for (const id of users) assert.ifError((await api.admin.auth.admin.deleteUser(id)).error);
   await cleanupAvatars(api.admin);
+  await cleanupSubmissions(api.admin);
 }

@@ -68,6 +68,7 @@ const profile = {
   isFollowing: false,
   followerCount: 4,
   followingCount: 3,
+  level: 1,
 };
 const viewer = { ...profile, id: id(2), username: 'myself', isSelf: true };
 const row = (n: number): Connection => ({
@@ -265,6 +266,7 @@ it('rejects cross-account/profile envelopes, duplicate and oversized pages and s
     is_following: false,
     follower_count: 4,
     following_count: 3,
+    level: 1,
     avatar_id: null,
   };
   const data = { viewer_id: identity().userId, profile: publicProfile, items: [], has_more: false };

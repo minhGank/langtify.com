@@ -16,7 +16,7 @@ it('loads authoritative data and retries a controlled empty pool', async () => {
     await result.current.refresh();
   });
   expect(result.current.challenge).toBeNull();
-  expect(result.current.error).toContain('enough words for these languages and level');
+  expect(result.current.error).toContain('enough new words are available');
   await act(async () => {
     await result.current.refresh();
   });

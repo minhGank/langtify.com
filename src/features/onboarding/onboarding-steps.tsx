@@ -1,4 +1,4 @@
-import { ChoiceField } from '@/components/ui/choice-field';
+import { SetupChoices, type SetupOption } from './setup-choices';
 import { FormField } from '@/components/ui/form-field';
 import { TimezoneField } from './timezone-field';
 import {
@@ -12,27 +12,27 @@ export const onboardingSteps = [
   {
     field: 'referenceLanguageId',
     title: 'Make it yours',
-    description: 'First, choose the language you use for translations.',
+    description: 'Which language do you know best? We’ll use it for translations.',
   },
   {
     field: 'targetLanguageId',
     title: 'What will you explore?',
-    description: 'Choose the language you want to learn, one photo at a time.',
+    description: 'Pick the language you want to learn.',
   },
   {
     field: 'cefrLevel',
     title: 'Find your starting point',
-    description: 'Choose the level that feels closest to where you are today.',
+    description: 'Choose what feels closest. You can change it later.',
   },
   {
     field: 'username',
-    title: 'What should we call you?',
-    description: 'Choose a username other learners can find.',
+    title: 'Choose your username',
+    description: 'How other learners will find you.',
   },
   {
     field: 'timezone',
     title: 'Your day, your rhythm',
-    description: 'Confirm your timezone so daily words and streaks follow your day.',
+    description: 'Your timezone keeps daily words and streaks on your schedule.',
   },
 ] as const;
 
@@ -48,7 +48,7 @@ export function OnboardingStep({
   field: keyof OnboardingInput;
   input: OnboardingInput;
   errors: OnboardingErrors;
-  options: readonly { value: string; label: string }[];
+  options: readonly SetupOption[];
   busy: boolean;
   onChange: (field: keyof OnboardingInput, value: string) => void;
   onNext: () => void;
@@ -57,9 +57,8 @@ export function OnboardingStep({
     case 'referenceLanguageId':
     case 'targetLanguageId':
       return (
-        <ChoiceField
+        <SetupChoices
           label={field === 'referenceLanguageId' ? 'Translation language' : 'Learning language'}
-          required
           value={input[field]}
           options={options}
           disabled={busy}
@@ -69,14 +68,15 @@ export function OnboardingStep({
       );
     case 'cefrLevel':
       return (
-        <ChoiceField
+        <SetupChoices
           label="Your current level"
-          required
           value={input.cefrLevel}
           disabled={busy}
           options={cefrOptions.map((option) => ({
             value: option.value,
-            label: `${option.value} — ${option.label}`,
+            label: option.label,
+            badge: option.value,
+            detail: levelDescriptions[option.value],
           }))}
           onChange={(value) => onChange('cefrLevel', value)}
           error={errors.cefrLevel}
@@ -86,7 +86,7 @@ export function OnboardingStep({
       return (
         <FormField
           label="Username"
-          required
+          style={{ fontSize: 22, minHeight: 64 }}
           value={input.username}
           onChangeText={(value) => onChange('username', value)}
           onBlur={() => onChange('username', normalizeUsername(input.username))}
@@ -105,6 +105,7 @@ export function OnboardingStep({
     case 'timezone':
       return (
         <TimezoneField
+          presentation="setup"
           value={input.timezone}
           onChange={(value) => onChange('timezone', value)}
           disabled={busy}
@@ -113,3 +114,12 @@ export function OnboardingStep({
       );
   }
 }
+
+const levelDescriptions = {
+  A1: 'Familiar words and simple phrases',
+  A2: 'Everyday situations and short conversations',
+  B1: 'Familiar topics and personal experiences',
+  B2: 'Detailed ideas and a wider range of topics',
+  C1: 'Complex topics and flexible expression',
+  C2: 'Subtle meanings and precise expression',
+} as const;

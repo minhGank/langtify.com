@@ -42,7 +42,30 @@ The root route's custom error boundary offers retry without rendering thrown
 messages, stacks or route parameters and does not depend on authenticated state.
 See [AUTH_COPY_AUDIT.md](AUTH_COPY_AUDIT.md) for hosted verification limitations.
 
+QA #25 adds explicitly gated signup code entry and reuses guarded session admission
+for an isolated, nonpersistent verification candidate. Link mode remains default
+until the matching hosted email template is configured. No code/token/email enters
+routes or durable pending markers. See [QA25_AUTH_EMAIL_CODES.md](QA25_AUTH_EMAIL_CODES.md).
+
 ## Motion and native feedback
+
+QA #14–17 reuses `/explore-concept` for Today. An optional owned assignment ID loads
+immutable word/translation/CEFR context through `get_assignment_photo`, cross-checked
+against the requested concept. Public examples keep the saved-target projection;
+private history links to the existing Vocabulary detail. The snapshot's language
+and the public-example language remain explicit if settings changed during the day.
+
+`/post` now resolves immutable owner/assignment linkage with one session-pinned,
+owner-RLS query, otherwise using the existing public projection. Both paths render
+`PostDetail`. Owner lifecycle/signing stays in `photoGateway`/`useAssignmentPhoto`;
+public rating summaries, comments and sharing are shown only after Discover
+eligibility, even if an owner's saved visibility is public. No RLS or backend
+progression changes are needed. A confirmed finalize seeds its authoritative row
+and exact uploaded JPEG pixels in bounded session memory, then replaces `/photo`
+with `/post`. Recovery can navigate without creating a success marker. Only a
+fresh explicit acknowledgement enables a four-second server-receipt notice; no
+receipt, photo URI or reward flag enters Router parameters. See
+[QA14_17_TODAY_PHOTO_FLOW.md](QA14_17_TODAY_PHOTO_FLOW.md).
 
 `src/lib/motion.ts` centralizes restrained timing/spring values. `MotionView` and
 `usePressMotion` use React Native Animated's native driver for opacity/transform,
@@ -59,6 +82,18 @@ completion marker, never cached/restored completion or a client XP calculation.
 The existing authoritative receipt supplies reward tiers. Onboarding progressively
 discloses the same five fields and retains one serialized, backend-gated final save.
 See [MOTION_POLISH.md](MOTION_POLISH.md) for triggers, native rebuild and acceptance.
+
+QA #26/#27 gives onboarding a fixed progress header and keyboard-aware footer
+around scrolling, scalable single-step content. `SetupChoices` presents existing
+language/CEFR values; `TimezoneField` has an optional setup presentation with the
+same selector. No new fields, routes, validation rules or save requests are added.
+`PreparationState` is mounted only for account restoration and uncached initial
+challenge preparation. It selects one sourced fact from `src/data/language-facts.ts`
+per mount, reserves its natural text height, and reveals it after 1.5 seconds.
+On web the random text enters the tree only after hydration, avoiding an SSR mismatch.
+Its timer never starts or delays data work. Unmounting removes the timer; no fact
+rotation, remote content, polling or persistence is introduced. See
+[QA26_27_ONBOARDING_LOADING.md](QA26_27_ONBOARDING_LOADING.md).
 
 ## Phase 10 boundaries
 
@@ -140,8 +175,20 @@ All elevated helpers stay private with revoked client execution and empty search
 
 Shared concept/term tables provide linked language equivalents and independent
 CEFR levels. Candidate selection uses exact eligibility, excludes all concepts in
-the current challenge's history, and orders by unseen/oldest assignment, with random
-ties. Selection holds catalog row locks until commit to avoid assigning terms that
+the current challenge's history and the owner's durable `private.completed_concepts`
+index, and orders remaining concepts by unseen/oldest assignment, with random ties.
+The private `(user_id, concept_id)` primary key avoids scanning photo/XP history for
+each candidate. A successful pending-to-completed photo transition records the first
+verified source in the same transaction, for both daily and historical captures.
+This compact fact survives revocation and trusted photo/challenge hard deletion;
+only account erasure removes it. It has no client read/write grant or public RPC.
+
+Selection shares the existing owner lock with finalization and advances the existing
+progress-account revision before reading candidates. At normal isolation it sees a
+preceding finalization; stronger-isolation writers with an old snapshot abort with a
+serialization failure. A challenge already selected before a later completion keeps
+its immutable assignments. No reward is written or progression rule changed by this
+revision fence. Selection holds catalog row locks until commit to avoid assigning terms that
 are concurrently deactivated. Transactions roll back partial creation/replacement. Composite foreign keys protect
 used term meaning/language identities, including concurrent catalog edits at stronger
 isolation levels. Individual assignment deletion is blocked while its challenge remains.
@@ -335,6 +382,26 @@ wall clock cannot admit an expired capability. Explicit retry can create a fresh
 Batch signing matches and deduplicates UUIDs case-insensitively, as PostgreSQL does.
 No database schema, RLS, server TTL, grouping or filter rules changed. See
 `PHASE6_AUDIT.md` for reproductions, tests and remaining live-pagination limits.
+
+### QA #19/#22 owner profile and visibility
+
+Profile shares one existing progress read between the Level summary and the
+expandable progress details. It no longer mounts a public-feed grid. My photos
+navigates to the existing Vocabulary tab; learning settings stay on their existing
+route. Other users' public-profile components and public projections are unchanged.
+
+The optional `requested_visibility` argument to `get_my_vocabulary` filters captures
+before grouping/counts/latest selection. The RPC remains a security invoker with
+Auth-derived ownership and existing source RLS. It reuses the existing owner-history
+index, 12-item client pages (24 maximum), immutable snapshots and owner-only batch
+photo signing. No new table, index, Edge Function, policy or write path is introduced.
+
+Visibility joins account/session, concept, search and CEFR in the memory-only cache
+key. Each filter retains its own cursor and cached page. Rendered data/pixels are
+masked immediately when the query changes, before effect-driven loading; obsolete
+requests remain cancelled/ignored. Navigation reuses cached data, mutations retain
+existing invalidation, and no elapsed-time refresh is added. See
+[QA19_22_PROFILE_VISIBILITY.md](QA19_22_PROFILE_VISIBILITY.md).
 
 ## Controlled public reads — Phase 7
 
@@ -550,9 +617,87 @@ Edge Function or Storage access is added. See [PAST_WORDS.md](PAST_WORDS.md).
 
 ## Semantic color system
 
+QA #18/#20/#21 shares `QuickRating` between feed and canonical detail. `Comments`
+still owns its existing request IDs, pagination and reconciliation, exposing thread
+and composer slots so `PostLayout` can keep the composer outside the scrolling
+conversation with a single keyboard-avoidance container. One-shot post feedback
+stays outside the eligibility-dependent conversation layout to survive initial
+public-activity loading without replay. `PostAuthor` uses the username plus the
+approved nullable current-avatar reference. Discover deduplicates references across
+its bounded window and reuses `useConnectionAvatars` for batch signing and downloaded
+pixels; canonical public post detail uses the same cache. Missing/failed avatars
+keep initials. There are no per-row profile/signing reads. Avatar resolution occurs
+after SQL pagination and the existing photo-signing revalidation forwards the
+reference. See [QA20_DISCOVER_AVATARS.md](QA20_DISCOVER_AVATARS.md).
+Sharing stays within existing owner/safety menus and retains the safe text payload.
+See [QA18_20_21_POST_POLISH.md](QA18_20_21_POST_POLISH.md).
+
 `src/lib/theme.ts` owns the light/dark semantic palette consumed by `useAppTheme`.
 Brand actions are separate from reward, streak and completion. Shared controls
 use readable pressed/disabled states; `AccentBadge` pairs bright energy/reward
 fills with accessible ink. Static native splash backgrounds are kept in sync by
 a regression test. No data/cache/backend authority changes. See
 [COLOR_SYSTEM.md](COLOR_SYSTEM.md); physical iPhone review remains pending.
+
+## QA #23/#24 avatar identity and media state
+
+All avatar surfaces share `useAvatarRows` and the existing bounded avatar pixel cache.
+A session-scoped `ownAvatarEntry` holds the authoritative current self-avatar receipt;
+cached feed/profile/comment hints cannot replace it. Mutation reconciliation removes
+old pixels, publishes the new pointer (including null for removal) and invalidates
+only matching avatar-access batches. List metadata/cursors remain intact. Self-avatar
+reads coalesce through the same entry; other author references are signed in batches.
+
+Vocabulary and post use static stable photo placeholders until native Image loading
+completes. Initial loading has no retry action; refresh preserves usable downloaded
+pixels and context. Owner transport/server failures may retain completed cached
+content; identity/Auth/lifecycle errors cannot. See `QA23_24_AVATARS_MEDIA.md`.
+
+## QA #28–31 projections and inbox admission
+
+`get_explore_concept` supplies owned completed-capture existence in the same read;
+Today's immutable assignment path retains its existing bounded cached history read.
+Public-profile projection returns only `level`, computed by the existing signed
+ledger/level helper. It does not call the owner-progress RPC or expose its fields.
+
+Blocked recognition is a separate purpose from public profile admission. Rows carry
+only owner-visible block ID, username and nullable current avatar ID. The existing
+`avatar-authority` function accepts `blocked-previews`, authenticates the real viewer,
+and uses a service-only lookup requiring an outgoing block plus active/unrestricted
+avatar owners. Ordinary signing still denies blocks. Batches are at most 24 IDs;
+recognition pixels have a separate bounded session cache namespace and the existing
+60-second signed capabilities/55-second download admission remain.
+
+The inbox route generates one idempotency UUID per mount. `open_notification_inbox`
+records a private durable server cutoff, updates existing eligible unread rows in
+one transaction, and returns the authoritative summary plus at most 60 displayed
+row states. A repeated UUID does no read-state write. Captured database-snapshot
+membership excludes initially uncommitted events even when their timestamps precede
+the cutoff. A server admission is the time boundary; no device timestamp is accepted.
+Opening an already mounted route after a child post, token refresh, pagination or
+foreground does not create another opening. Fresh route entry does.
+
+Client reconciliation cancels obsolete badge reads, checks cache revisions and
+account/session scope, retains loaded history and an independent keyset cursor,
+and never assumes unread count zero. Explicit refresh fetches history without a
+new cutoff. Unblock affects only scoped social eligibility and blocked-list caches,
+including uncertain-response recovery; private progress/history are preserved.
+See `QA28_31_PROFILES_INBOX.md` for local verification results and rollout order.
+Hosted rollout and physical iPhone acceptance are separate, unperformed steps.
+
+### QA #32 shared level curve
+
+`private.level_progress(bigint)` is the sole total-XP-to-level formula. Both
+`get_my_progress` and `private.public_profile_level` read it; no stored level or
+client formula exists. Migration `20260928000000_qa32_level_progression.sql` replaces
+only that read helper. Existing XP, milestones and lifecycle transactions are untouched.
+Clients validate safe integers and consistent returned progress, then render
+`xpIntoLevel / xpForNextLevel XP to Level (L + 1)`. Public responses expose Level only.
+
+Progress, profile and relationship caches remain bounded, session-only and cleared
+on account changes/app restart. Finalize/deletion invalidates the originating
+session's owned public-profile/connection summaries (and unknown pending subjects),
+so late reads cannot retain a stale Level; other loaded users remain cached. No
+elapsed-time polling is added. Deploy the migration before updated client JS and
+relaunch for acceptance. Passive level/XP read animation is removed; only existing
+confirmed-finalize feedback may animate. See `QA32_LEVEL_PROGRESSION.md`.

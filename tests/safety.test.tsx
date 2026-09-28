@@ -8,7 +8,7 @@ import { useSafetyTask } from '@/features/safety/use-safety-task';
 import { SafetyUnavailable, type ModerationCase } from '@/features/safety/model';
 import type { FeedItem } from '@/services/discover';
 import { makeAccount, makeSession } from './fixtures';
-import { createServerCache } from '@/lib/server-cache';
+import { createServerCache, serverScope } from '@/lib/server-cache';
 let mockSession = makeSession(),
   mockStatus = 'ready';
 const mockAccount = makeAccount();
@@ -30,7 +30,7 @@ jest.mock('@/features/auth/auth-provider', () => ({
 }));
 jest.mock('expo-crypto', () => ({ randomUUID: () => '79000000-0000-4000-8000-000000000099' }));
 jest.mock('expo-router', () => ({
-  router: { replace: jest.fn(), push: jest.fn() },
+  router: { replace: jest.fn(), push: jest.fn(), back: jest.fn(), canGoBack: () => true },
   useFocusEffect: (callback: () => () => void) => {
     const React = jest.requireActual<typeof ReactTypes>('react');
     React.useEffect(callback, [callback]);
@@ -42,6 +42,7 @@ const item: FeedItem = {
   id,
   targetTerm: 'le chien',
   referenceTerm: 'dog',
+  avatarId: null,
   username: 'learner',
   cefrLevel: 'A1',
   submittedAt: '2026-09-14T12:00:00Z',
@@ -181,33 +182,45 @@ it('closes a backgrounded safety dialog and discards its late block result', asy
   await act(async () => finish());
   expect(blocked).not.toHaveBeenCalled();
 });
-it('unblocks only after confirmation, then reloads authoritative rows', async () => {
+it('unblocks explicitly, removes the row and gives feedback without another list request', async () => {
   render(<BlockedUsersScreen />);
-  fireEvent.press(await screen.findByText('Unblock @learner'));
+  await screen.findByText('@learner');
   expect(mockGateway.unblock).not.toHaveBeenCalled();
-  mockGateway.blocks.mockResolvedValue({ items: [], hasMore: false });
-  fireEvent.press(screen.getByText('Confirm unblock'));
-  expect(await screen.findByText('No blocked people here.')).toBeVisible();
+  fireEvent.press(screen.getByLabelText('Unblock @learner'));
+  expect(await screen.findByText('No blocked accounts')).toBeVisible();
+  expect(screen.getByText('@learner unblocked')).toBeVisible();
   expect(mockGateway.unblock).toHaveBeenCalledWith(id, expect.any(AbortSignal));
+  expect(mockGateway.blocks).toHaveBeenCalledTimes(1);
+  expect(screen.queryByText('Confirm unblock')).toBeNull();
 });
-it('invalidates public relationship caches after unblock even if the list reload fails', async () => {
-  const entry = createServerCache<string>().entry('public-profile', ['public-profile']);
+it('invalidates only this account’s public relationship caches after confirmed unblock', async () => {
+  const cache = createServerCache<string>();
+  const scope = serverScope(mockSession.user.id, mockSession.access_token);
+  const entry = cache.entry(`${scope}:profile`, ['public-profile']);
+  const other = cache.entry('other-account:profile', ['public-profile']);
+  const privateHistory = cache.entry(`${scope}:vocabulary`, ['vocabulary']);
   entry.set('old relationship counts');
+  other.set('other counts');
+  privateHistory.set('private history');
   render(<BlockedUsersScreen />);
-  fireEvent.press(await screen.findByText('Unblock @learner'));
-  mockGateway.blocks.mockRejectedValueOnce(new Error('offline after commit'));
-  fireEvent.press(screen.getByText('Confirm unblock'));
-  await screen.findByText(/couldn’t confirm the change/);
-  expect(entry.getSnapshot().data).toBeNull();
+  fireEvent.press(await screen.findByLabelText('Unblock @learner'));
+  await screen.findByText('No blocked accounts');
+  expect(entry.getSnapshot().updatedAt).toBe(Number.NEGATIVE_INFINITY);
+  expect(other.getSnapshot().data).toBe('other counts');
+  expect(Number.isFinite(other.getSnapshot().updatedAt)).toBe(true);
+  expect(Number.isFinite(privateHistory.getSnapshot().updatedAt)).toBe(true);
 });
-it('replaces blocked pages instead of accumulating an unbounded list', async () => {
+it('appends bounded blocked pages without losing identity or the server cursor', async () => {
   mockGateway.blocks
-    .mockResolvedValueOnce({ items: [{ id, username: 'learner' }], hasMore: true })
-    .mockResolvedValue({ items: [{ id: 'next', username: 'other' }], hasMore: false });
+    .mockResolvedValueOnce({ items: [{ id, username: 'learner', avatarId: null }], hasMore: true })
+    .mockResolvedValue({
+      items: [{ id: 'next', username: 'other', avatarId: null }],
+      hasMore: false,
+    });
   render(<BlockedUsersScreen />);
-  fireEvent.press(await screen.findByText('Next page'));
-  expect(await screen.findByText('Unblock @other')).toBeVisible();
-  expect(screen.queryByText('Unblock @learner')).toBeNull();
+  fireEvent.press(await screen.findByText('More accounts'));
+  expect(await screen.findByLabelText('Unblock @other')).toBeVisible();
+  expect(screen.getByText('@learner')).toBeVisible();
   expect(mockGateway.blocks).toHaveBeenLastCalledWith(id, expect.any(AbortSignal));
 });
 async function openCase() {
@@ -367,7 +380,7 @@ it('never starts safety work from a background-mounted screen', async () => {
 it('ignores retained foreground callbacks after the safety screen unmounts', async () => {
   const listeners = jest.spyOn(AppState, 'addEventListener');
   const { unmount } = render(<BlockedUsersScreen />);
-  await screen.findByText('Unblock @learner');
+  await screen.findByLabelText('Unblock @learner');
   const obsolete = listeners.mock.calls.at(-1)?.[1];
   unmount();
   const calls = mockGateway.blocks.mock.calls.length;

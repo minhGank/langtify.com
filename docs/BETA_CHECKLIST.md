@@ -1,5 +1,9 @@
 # Langtify beta acceptance — Phase 10
 
+QA #25 signup codes require the manual Confirm signup template rollout and a
+fresh-email iPhone acceptance test before enabling the public digit-count setting.
+See [QA25_AUTH_EMAIL_CODES.md](QA25_AUTH_EMAIL_CODES.md). This does not open Phase 11.
+
 The approved delivery contract is at most one provider send attempt per user/type/
 local date, accepting missed notifications and no device-delivery guarantee. The
 sender is implemented and locally tested; **hosted/provider/device acceptance is
@@ -40,6 +44,8 @@ accessibility quality.
 - [ ] Verify reviewed Dev reference, backup, migration order and development seed coverage.
 - [ ] Deploy matching photo authority; reject ordinary/cross-user and arbitrary-path requests.
 - [ ] Configure email confirmation and real Google redirect/client credentials.
+- [x] Custom SMTP enabled in hosted Dev using Resend, sender Langtify <no-reply@langtify.com> — user-confirmed 2026-09-26; no delivery test claimed.
+- [ ] Fresh tester signup: receive the verification email, check sender/spam handling, follow confirmation and sign in; verify resend on a physical device. See [auth/copy audit](AUTH_COPY_AUDIT.md).
 - [ ] Same verified Google/password identity follows Supabase linking; one profile, required onboarding.
 - [ ] Apply RLS/Storage regressions using Dev test accounts without running local-only fixture scripts against hosted data.
 - [ ] Scheduler: wrong/missing job or provider credentials fail closed; valid requests return safe counts only.

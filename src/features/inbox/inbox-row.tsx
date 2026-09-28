@@ -2,8 +2,8 @@ import { displayTerm } from '@/utils/display-term';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { Avatar } from '@/components/ui/avatar';
 import { AppText } from '@/components/ui/app-text';
-import { MotionView } from '@/components/ui/motion-view';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import type { InboxNotification } from '@/services/inbox';
 
@@ -39,14 +39,14 @@ function context(item: InboxNotification) {
 }
 export function InboxRow({
   item,
+  avatarUri,
   disabled,
   open,
-  toggleRead,
 }: {
   item: InboxNotification;
+  avatarUri?: string;
   disabled: boolean;
   open: () => void;
-  toggleRead: () => void;
 }) {
   const { colors } = useAppTheme();
   const label = notificationLabel(item);
@@ -62,7 +62,7 @@ export function InboxRow({
       style={[
         styles.card,
         {
-          backgroundColor: colors.surface,
+          backgroundColor: item.read ? undefined : colors.surface,
           borderColor: colors.border,
         },
       ]}
@@ -79,12 +79,16 @@ export function InboxRow({
           { backgroundColor: pressed ? colors.surfaceMuted : undefined },
         ]}
       >
-        <View style={[styles.icon, { backgroundColor: colors.surfaceMuted }]}>
-          <Ionicons name={icon(item)} size={23} color={colors.textSecondary} accessible={false} />
-        </View>
+        {item.kind === 'NEW_FOLLOWER' ? (
+          <Avatar username={item.username} uri={avatarUri} size={44} />
+        ) : (
+          <View style={[styles.icon, { backgroundColor: colors.surfaceMuted }]}>
+            <Ionicons name={icon(item)} size={23} color={colors.textSecondary} accessible={false} />
+          </View>
+        )}
         <View style={styles.body}>
           <AppText style={{ fontWeight: item.read ? '500' : '700' }}>{label}</AppText>
-          <AppText variant="caption">{context(item)}</AppText>
+          <AppText variant="caption">{date}</AppText>
         </View>
         {!item.read && (
           <View
@@ -99,37 +103,14 @@ export function InboxRow({
           accessible={false}
         />
       </Pressable>
-      <View style={styles.footer}>
-        <AppText variant="caption" style={styles.timestamp}>
-          {date}
-        </AppText>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Mark as ${item.read ? 'unread' : 'read'}: ${label}`}
-          accessibilityState={{ disabled }}
-          disabled={disabled}
-          onPress={toggleRead}
-          style={({ pressed }) => [
-            styles.readButton,
-            { backgroundColor: pressed ? colors.surfaceMuted : undefined },
-          ]}
-        >
-          <MotionView trigger={item.read ? 'read' : 'unread'} kind="change">
-            <AppText variant="caption" style={{ color: colors.brandText, fontWeight: '600' }}>
-              Mark {item.read ? 'unread' : 'read'}
-            </AppText>
-          </MotionView>
-        </Pressable>
-      </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
-  card: { borderRadius: 20, borderWidth: StyleSheet.hairlineWidth, marginBottom: 12 },
+  card: { borderBottomWidth: StyleSheet.hairlineWidth },
   main: {
-    paddingHorizontal: 16,
-    paddingTop: 18,
-    paddingBottom: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 20,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
@@ -137,16 +118,4 @@ const styles = StyleSheet.create({
   icon: { width: 44, height: 44, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   body: { flex: 1, gap: 5 },
   dot: { width: 7, height: 7, borderRadius: 4 },
-  footer: {
-    marginLeft: 72,
-    paddingRight: 16,
-    paddingBottom: 8,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 8,
-  },
-  timestamp: { flexShrink: 1, fontSize: 11 },
-  readButton: { minHeight: 44, justifyContent: 'center' },
 });

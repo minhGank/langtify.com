@@ -28,7 +28,7 @@ import {
   type ConnectionsWindow,
 } from './cache';
 import { followWithRecovery } from './follow-operation';
-import { useConnectionAvatars } from './connections-avatars';
+import { useAvatarRows } from './connections-avatars';
 
 export function ConnectionsScreen() {
   const { session, status } = useAuth();
@@ -137,10 +137,7 @@ export function ConnectionsContent({
     undefined,
     () => discardPublicData(identity),
   );
-  const avatars = useConnectionAvatars(
-    identity,
-    query.data?.items.flatMap((item) => (item.avatarId ? [item.avatarId] : [])) ?? [],
-  );
+  const avatars = useAvatarRows(identity, query.data?.items ?? []);
   const title = kind === 'followers' ? 'Followers' : 'Following';
   const more = () => {
     const previous = entry.getSnapshot();
@@ -207,11 +204,7 @@ export function ConnectionsContent({
                 { backgroundColor: pressed ? colors.surfaceMuted : undefined },
               ]}
             >
-              <Avatar
-                username={item.username}
-                uri={item.avatarId ? avatars.photos[item.avatarId] : null}
-                size={48}
-              />
+              <Avatar username={item.username} uri={avatars.uri(item)} size={48} />
               <View style={styles.name}>
                 <AppText variant="label">@{item.username}</AppText>
                 {item.isSelf && <AppText variant="caption">You</AppText>}

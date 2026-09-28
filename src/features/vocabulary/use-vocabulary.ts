@@ -18,7 +18,10 @@ export function useVocabulary(gateway: VocabularyGateway, cacheKey?: string) {
   const [data, setData] = useState<VocabularyPage | null>(
     () => entry.getSnapshot().data?.page ?? null,
   );
-  const [photos, setPhotos] = useState<Record<string, string | null>>({});
+  const [photos, setPhotos] = useState<Record<string, string | null>>(() => {
+    const ids = entry.getSnapshot().data?.page.items.map((item) => item.id) ?? [];
+    return ids.length ? (gateway.cachedPreviews?.(ids) ?? {}) : {};
+  });
   const [loading, setLoading] = useState(true),
     [error, setError] = useState(false);
   const [photoError, setPhotoError] = useState(false);
@@ -34,6 +37,7 @@ export function useVocabulary(gateway: VocabularyGateway, cacheKey?: string) {
   const pending = useRef(false);
   const renderedPhotos = useRef<Record<string, string | null>>({});
   const ownedEntry = useRef(entry);
+  const [displayedEntry, setDisplayedEntry] = useState(entry);
   const clearPhotos = useCallback(() => {
     renderedPhotos.current = {};
     setPhotos({});
@@ -72,6 +76,9 @@ export function useVocabulary(gateway: VocabularyGateway, cacheKey?: string) {
           entry.set({ page, cursor: next });
         }
         if (!photosOnly) setPhotoError(false);
+        const cached = gateway.cachedPreviews?.(page.items.map((item) => item.id)) ?? {};
+        renderedPhotos.current = cached;
+        setPhotos(cached);
         const started = performance.now();
         try {
           const signed = await gateway.previews(
@@ -148,6 +155,7 @@ export function useVocabulary(gateway: VocabularyGateway, cacheKey?: string) {
         const saved = entry.getSnapshot();
         if (ownedEntry.current !== entry) {
           ownedEntry.current = entry;
+          setDisplayedEntry(entry);
           clearPhotos();
         }
         current.current = saved.data?.page ?? null;
@@ -197,16 +205,17 @@ export function useVocabulary(gateway: VocabularyGateway, cacheKey?: string) {
       };
     }, [read, refresh, clearPhotos, gateway, entry]),
   );
+  const ownsQuery = displayedEntry === entry;
   return {
-    data,
-    photos: displayActive ? photos : {},
+    data: ownsQuery ? data : null,
+    photos: ownsQuery && displayActive ? photos : {},
     photoRevision,
-    loading,
-    error,
-    photoError,
+    loading: !ownsQuery || loading,
+    error: ownsQuery && error,
+    photoError: ownsQuery && photoError,
     refresh,
     first,
     next,
-    hasPrevious,
+    hasPrevious: ownsQuery && hasPrevious,
   };
 }

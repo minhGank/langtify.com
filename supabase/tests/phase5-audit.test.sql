@@ -2,6 +2,15 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path=public,extensions;
 select no_plan();
+-- Test-only capacity for long streak histories. Production seed stays at 36;
+-- valid completed concepts are intentionally never recycled by the selector.
+create temporary table completion_pool as select gen_random_uuid() id from generate_series(1,16);
+insert into public.vocabulary_concepts(id,concept_key,category,is_photographable)
+ select id,'XP_FIXTURE_'||upper(replace(id::text,'-','')),'test',true from completion_pool;
+insert into public.vocabulary_terms(concept_id,language_id,term,cefr_level,part_of_speech)
+ select id,l,'Fixture '||id::text,'A2','noun' from completion_pool
+ cross join unnest(array['00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002']::uuid[]) l;
+
 -- Test-only server clock replacement, rolled back with every fixture.
 create temporary table progress_clock(instant timestamptz);
 insert into progress_clock values('2026-01-01 12:00:00+00');
@@ -87,9 +96,9 @@ select is((select sum(amount) from public.xp_events where user_id=auth.uid() and
 select is((select source_key from private.xp_awards where user_id=auth.uid() and event_type='STREAK_MILESTONE'),'milestone:3:2011-12-30','Canonical key retains persisted completion date');
 set local timezone='UTC';
 -- Exact boundaries, including numeric-sqrt rounding cases within bigint input.
-select is((private.level_progress((25::numeric*l*(l+3)+dx)::bigint)->>'level')::integer,
+select is((private.level_progress((10::numeric*(l-1)*(l+2)+dx)::bigint)->>'level')::integer,
  l-case when dx=-1 then 1 else 0 end,'Exact level near threshold '||l||' offset '||dx)
- from unnest(array[1,2,3,4,5,10,100,1000,1000000,10000000,100000000,600000000]) l cross join unnest(array[-1,0,1]) dx;
+ from unnest(array[2,3,4,5,10,100,1000,1000000,10000000,100000000,600000000]) l cross join unnest(array[-1,0,1]) dx;
 select ok((private.level_progress(9223372036854775807)->>'level_start_xp')::numeric<=9223372036854775807::numeric
  and (private.level_progress(9223372036854775807)->>'next_level_xp')::numeric>9223372036854775807::numeric,'Maximum bigint lies inside its exact level interval');
 select throws_ok($$select private.level_progress(-1)$$,'P0001','invalid_xp_total','Negative XP input rejected');

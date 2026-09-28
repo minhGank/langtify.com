@@ -16,6 +16,7 @@ import {
   parseInboxTarget,
   type InboxNotification,
   type InboxPage,
+  type InboxOpenReceipt,
 } from '@/services/inbox';
 import { makeSession } from './fixtures';
 import { feedback } from '@/lib/haptics';
@@ -24,6 +25,7 @@ jest.mock('@/lib/haptics', () => ({
 }));
 
 const mockGateway = {
+  openInbox: jest.fn(),
   summary: jest.fn(),
   page: jest.fn(),
   read: jest.fn(),
@@ -32,6 +34,10 @@ const mockGateway = {
 };
 let mockSession = makeSession();
 let mockStatus = 'ready';
+let mockOpeningSequence = 0;
+jest.mock('expo-crypto', () => ({
+  randomUUID: () => `88000000-0000-4000-9000-${String(++mockOpeningSequence).padStart(12, '0')}`,
+}));
 const listeners = new Set<(state: AppStateStatus) => void>();
 jest.mock('@/services/inbox', () => ({
   ...jest.requireActual('@/services/inbox'),
@@ -95,6 +101,7 @@ beforeEach(() => {
   for (const fn of Object.values(mockGateway)) fn.mockReset();
   mockSession = makeSession();
   mockStatus = 'ready';
+  mockOpeningSequence = 0;
   listeners.clear();
   Object.defineProperty(AppState, 'currentState', {
     configurable: true,
@@ -105,6 +112,12 @@ beforeEach(() => {
     listeners.add(listener);
     return { remove: () => listeners.delete(listener) };
   });
+  mockGateway.openInbox.mockImplementation(async (_request: string, ids: string[]) => ({
+    openedAt: time,
+    unreadCount: 0,
+    readCursor: page.readCursor,
+    readStates: ids.map((id) => ({ id, read: true })),
+  }));
   mockGateway.summary.mockResolvedValue({ unreadCount: 3, readCursor: page.readCursor });
   mockGateway.page.mockResolvedValue(page);
   mockGateway.read.mockResolvedValue({ unreadCount: 2 });
@@ -122,7 +135,8 @@ it('shows follower, anonymous rating and daily-word notifications without push p
   await screen.findByText('@learner started following you');
   expect(screen.getByText('Someone rated your photo for “Le chien”')).toBeVisible();
   expect(screen.getByText('Today’s words are ready')).toBeVisible();
-  expect(screen.getByText('3 unread')).toBeVisible();
+  expect(screen.queryByText('Mark all read')).toBeNull();
+  expect(screen.queryByLabelText(/^Mark as/)).toBeNull();
   expect(mockGateway.page).toHaveBeenCalledWith(null, expect.any(AbortSignal));
 });
 
@@ -134,12 +148,12 @@ it.each([
   ],
   [
     rating,
-    { kind: 'NEW_RATING', assignmentId: id(12) },
-    { pathname: '/photo', params: { assignmentId: id(12) } },
+    { kind: 'NEW_RATING', submissionId: id(14) },
+    { pathname: '/post', params: { submissionId: id(14) } },
   ],
   [daily, { kind: 'DAILY_WORDS_READY', challengeId: id(13) }, '/'],
 ])(
-  'resolves live eligibility and marks read before opening fixed destination for $kind',
+  'resolves live eligibility without a per-row read write before opening fixed destination for $kind',
   async (item, target, destination) => {
     mockGateway.page.mockResolvedValue({ ...page, items: [item] });
     mockGateway.resolve.mockResolvedValue(target);
@@ -148,51 +162,81 @@ it.each([
     fireEvent.press(button);
     await waitFor(() => expect(router.push).toHaveBeenCalledWith(destination));
     expect(mockGateway.resolve).toHaveBeenCalledWith(item.id, expect.any(AbortSignal));
-    expect(mockGateway.read).toHaveBeenCalledWith(item.id, true, expect.any(AbortSignal));
-    expect(mockGateway.resolve.mock.invocationCallOrder[0]).toBeLessThan(
-      mockGateway.read.mock.invocationCallOrder[0],
-    );
+    expect(mockGateway.read).not.toHaveBeenCalled();
     expect(feedback.confirm).not.toHaveBeenCalled();
     expect(feedback.selection).not.toHaveBeenCalled();
     expect(feedback.success).not.toHaveBeenCalled();
   },
 );
 
-it('patches unread badge and row state from authoritative receipts without refetching the list', async () => {
+it('clears the badge and cached row state only from the server opening receipt without refetching history', async () => {
+  const entries = inboxEntries(serverScope(identity.userId, identity.token));
+  entries.list.set({ ...page, olderWindow: false });
+  entries.summary.set({ unreadCount: 3, readCursor: page.readCursor });
+  const pending = deferred<InboxOpenReceipt>();
+  mockGateway.openInbox.mockReturnValueOnce(pending.promise);
   render(
     <>
       <NotificationBell />
       <InboxContent identity={identity} />
     </>,
   );
+  await waitFor(() => expect(mockGateway.openInbox).toHaveBeenCalledTimes(1));
+  expect(screen.getByLabelText('Notifications, 3 unread')).toBeVisible();
+  expect(screen.getByText('@learner started following you')).toBeVisible();
+  await act(async () =>
+    pending.resolve({
+      openedAt: time,
+      unreadCount: 0,
+      readCursor: page.readCursor,
+      readStates: page.items.map((item) => ({ id: item.id, read: true })),
+    }),
+  );
+  expect(screen.getByLabelText('Notifications')).toBeVisible();
+  expect(screen.queryByLabelText(/^Unread:/)).toBeNull();
+  expect(mockGateway.page).not.toHaveBeenCalled();
+});
+
+it('preserves a post-cutoff unread count and does not open again on refresh or foreground', async () => {
+  mockGateway.openInbox.mockResolvedValue({
+    openedAt: time,
+    unreadCount: 1,
+    readCursor: page.readCursor,
+    readStates: [],
+  });
+  mockGateway.page.mockResolvedValue({
+    ...page,
+    items: [{ ...follower, read: true }, rating],
+    unreadCount: 1,
+  });
+  render(
+    <>
+      <NotificationBell />
+      <InboxContent identity={identity} />
+    </>,
+  );
+  await screen.findByLabelText('Notifications, 1 unread');
   await screen.findByText('@learner started following you');
-  fireEvent.press(screen.getByLabelText('Mark as read: @learner started following you'));
-  await screen.findByLabelText('Notifications, 2 unread');
-  expect(screen.getByLabelText('Mark as unread: @learner started following you')).toBeVisible();
-  mockGateway.read.mockResolvedValueOnce({ unreadCount: 3 });
-  fireEvent.press(screen.getByLabelText('Mark as unread: @learner started following you'));
-  await screen.findByLabelText('Notifications, 3 unread');
-  expect(mockGateway.page).toHaveBeenCalledTimes(1);
-});
-
-it('marks all read through the exact server cursor, retaining microseconds', async () => {
-  render(<InboxContent identity={identity} />);
-  fireEvent.press(await screen.findByText('Mark all read'));
-  await waitFor(() => expect(screen.queryByLabelText(/^Unread:/)).toBeNull());
-  expect(mockGateway.readAll).toHaveBeenCalledWith(page.readCursor, expect.any(AbortSignal));
+  fireEvent(screen.UNSAFE_getByType(FlatList), 'refresh');
+  await act(async () => {});
+  await act(async () => change('background'));
+  await act(async () => change('active'));
+  expect(mockGateway.openInbox).toHaveBeenCalledTimes(1);
+  expect(screen.getByLabelText('Notifications, 1 unread')).toBeVisible();
   expect(screen.queryByText('Mark all read')).toBeNull();
-  expect(screen.getAllByText('Mark unread')).toHaveLength(3);
+  expect(screen.queryByLabelText(/^Mark as/)).toBeNull();
 });
 
-it('deduplicates repeated taps while a mutation is pending', async () => {
-  const pending = deferred<{ unreadCount: number }>();
-  mockGateway.read.mockReturnValue(pending.promise);
+it('deduplicates target taps while live authorization is pending', async () => {
+  const pending = deferred<{ kind: 'NEW_FOLLOWER'; profileId: string }>();
+  mockGateway.resolve.mockReturnValue(pending.promise);
   render(<InboxContent identity={identity} />);
-  const button = await screen.findByLabelText('Mark as read: @learner started following you');
+  const button = await screen.findByLabelText('Unread: @learner started following you');
   fireEvent.press(button);
   fireEvent.press(button);
-  expect(mockGateway.read).toHaveBeenCalledTimes(1);
-  await act(async () => pending.resolve({ unreadCount: 2 }));
+  expect(mockGateway.resolve).toHaveBeenCalledTimes(1);
+  await act(async () => pending.resolve({ kind: 'NEW_FOLLOWER', profileId: follower.profileId }));
+  expect(router.push).toHaveBeenCalledTimes(1);
 });
 
 it('does not navigate or retain eligibility after blocked/moderated notification denial', async () => {
@@ -355,6 +399,7 @@ it('rejects malformed counts, targets and duplicate pages and drops unneeded pri
     created_at: time,
     read_at: null,
     assignment_id: id(12),
+    submission_id: id(14),
     target_term: 'le chien',
     username: 'secret_rater',
     token: 'not retained',
@@ -363,62 +408,62 @@ it('rejects malformed counts, targets and duplicate pages and drops unneeded pri
   const parsed = parseInboxNotification(row);
   expect(parsed).toEqual({ ...rating, id: id(1) });
   expect(inboxDestination(parseInboxTarget({ ...row, kind: 'NEW_RATING' }))).toEqual({
-    pathname: '/photo',
-    params: { assignmentId: id(12) },
+    pathname: '/post',
+    params: { submissionId: id(14) },
   });
   expect(() =>
     parseInboxPage({ unread_count: 1, read_cursor: null, has_more: false, items: [row, row] }),
   ).toThrow();
 });
 
-it('reconciles an uncertain read write without automatically replaying it', async () => {
-  mockGateway.read.mockRejectedValueOnce(new Error('Lost response after commit'));
-  mockGateway.page.mockResolvedValueOnce(page).mockResolvedValue({
-    ...page,
-    unreadCount: 2,
-    items: [{ ...follower, read: true }, rating, daily],
-  });
+it('retries an uncertain inbox opening with the same durable ID instead of clearing newer events', async () => {
+  mockGateway.openInbox.mockRejectedValueOnce(new Error('Lost response after commit'));
   render(<InboxContent identity={identity} />);
-  fireEvent.press(await screen.findByLabelText('Mark as read: @learner started following you'));
-  await screen.findByLabelText('Mark as unread: @learner started following you');
-  expect(mockGateway.read).toHaveBeenCalledTimes(1);
-  expect(mockGateway.page).toHaveBeenCalledTimes(2);
+  fireEvent.press(await screen.findByText('Refresh notifications'));
+  await screen.findByText('@learner started following you');
+  expect(mockGateway.openInbox).toHaveBeenCalledTimes(2);
+  expect(mockGateway.openInbox.mock.calls[0][0]).toBe(mockGateway.openInbox.mock.calls[1][0]);
+  expect(mockGateway.readAll).not.toHaveBeenCalled();
 });
 
-it('revalidates read state after interrupted writes and rejects their late navigation', async () => {
-  const pending = deferred<{ unreadCount: number }>();
-  mockGateway.read.mockReturnValueOnce(pending.promise);
-  const first = render(<InboxContent identity={identity} />);
-  fireEvent.press(await screen.findByLabelText('Unread: @learner started following you'));
-  await waitFor(() => expect(mockGateway.read).toHaveBeenCalledTimes(1));
-  const origin = inboxEntries(serverScope(identity.userId, identity.token));
-  first.unmount();
-  expect(origin.list.getSnapshot().updatedAt).toBe(-Infinity);
-  expect(origin.summary.getSnapshot().updatedAt).toBe(-Infinity);
-  mockGateway.page.mockResolvedValue({
-    ...page,
-    unreadCount: 2,
-    items: [{ ...follower, read: true }, rating, daily],
-  });
-  await act(async () => pending.resolve({ unreadCount: 2 }));
-  render(<InboxContent identity={identity} />);
-  await screen.findByLabelText('Mark as unread: @learner started following you');
-  expect(mockGateway.page).toHaveBeenCalledTimes(2);
-  expect(mockGateway.read).toHaveBeenCalledTimes(1);
-  expect(router.push).not.toHaveBeenCalled();
+it('drops an old-account opening receipt and retries only within the matching account', async () => {
+  const pending = deferred<InboxOpenReceipt>();
+  mockGateway.openInbox.mockReturnValueOnce(pending.promise);
+  const view = render(<InboxScreen />);
+  await waitFor(() => expect(mockGateway.openInbox).toHaveBeenCalledTimes(1));
+  const signal: AbortSignal = mockGateway.openInbox.mock.calls[0][2];
+  const original = inboxEntries(serverScope(identity.userId, identity.token));
+  mockSession = makeSession(id(99));
+  mockGateway.page.mockResolvedValue({ ...page, items: [], unreadCount: 0, readCursor: null });
+  act(() => setServerScope(serverScope(mockSession.user.id, mockSession.access_token)));
+  view.rerender(<InboxScreen />);
+  await act(async () =>
+    pending.resolve({
+      openedAt: time,
+      unreadCount: 99,
+      readCursor: page.readCursor,
+      readStates: [],
+    }),
+  );
+  await screen.findByText('All caught up');
+  expect(signal.aborted).toBe(true);
+  expect(original.summary.getSnapshot().data).toBeNull();
+  expect(
+    inboxEntries(serverScope(mockSession.user.id, mockSession.access_token)).summary.getSnapshot()
+      .data?.unreadCount,
+  ).toBe(0);
 });
 
-it('reconciles when a mutation transport stalls past its deadline without holding controls or replaying', async () => {
+it('bounds stalled target resolution without navigating or replaying it', async () => {
   jest.useFakeTimers();
-  mockGateway.read.mockReturnValue(new Promise(() => {}));
+  mockGateway.resolve.mockReturnValue(new Promise(() => {}));
   const { result } = renderHook(() => useInbox(identity, mockGateway));
   await act(async () => {});
-  act(() => result.current.read(follower));
+  act(() => result.current.open(follower, jest.fn()));
   expect(result.current.busy).toBe(true);
   await act(async () => jest.advanceTimersByTime(20001));
   expect(result.current.busy).toBe(false);
-  expect(mockGateway.page).toHaveBeenCalledTimes(2);
-  expect(mockGateway.read).toHaveBeenCalledTimes(1);
+  expect(mockGateway.resolve).toHaveBeenCalledTimes(1);
   expect(result.current.taskError).toMatch(/couldn’t confirm/);
 });
 
@@ -431,6 +476,7 @@ it('returns an older inbox window to the top only after an explicit successful l
   const first = render(<InboxContent identity={identity} />);
   expect(scroll).not.toHaveBeenCalled();
   expect(mockGateway.page).not.toHaveBeenCalled();
+  await act(async () => {});
   fireEvent.press(screen.getByText('Back to latest notifications'));
   expect(scroll).not.toHaveBeenCalled();
   await act(async () => pending.resolve(page));
@@ -452,8 +498,74 @@ it('keeps the current inbox position and older page when latest refresh fails', 
   });
   mockGateway.page.mockRejectedValueOnce(new Error('Offline'));
   render(<InboxContent identity={identity} />);
+  await act(async () => {});
   fireEvent.press(screen.getByText('Back to latest notifications'));
   await screen.findByText('We couldn’t load your notifications. Pull down to try again.');
   expect(screen.getByText('Back to latest notifications')).toBeVisible();
   expect(scroll).not.toHaveBeenCalled();
+});
+
+it('does not manufacture a new opening on token refresh within the same Auth session', async () => {
+  const token = (suffix: string) =>
+    `fixture.${btoa(JSON.stringify({ session_id: id(70) }))}.${suffix}`;
+  mockSession = { ...makeSession(), access_token: token('first') };
+  const view = render(<InboxScreen />);
+  await screen.findByText('@learner started following you');
+  mockSession = { ...mockSession, access_token: token('refreshed') };
+  view.rerender(<InboxScreen />);
+  await act(async () => {});
+  expect(mockGateway.openInbox).toHaveBeenCalledTimes(1);
+  expect(mockGateway.page).toHaveBeenCalledTimes(1);
+});
+it('retires an in-flight old badge response when inbox opening reconciles the count', async () => {
+  const old = deferred<{ unreadCount: number; readCursor: typeof page.readCursor }>();
+  mockGateway.summary.mockReturnValueOnce(old.promise);
+  mockGateway.page.mockResolvedValue({ ...page, unreadCount: 0 });
+  const bell = render(<NotificationBell />);
+  await waitFor(() => expect(mockGateway.summary).toHaveBeenCalledTimes(1));
+  const signal: AbortSignal = mockGateway.summary.mock.calls[0][0];
+  render(<InboxContent identity={identity} />);
+  await screen.findByText('@learner started following you');
+  await act(async () => old.resolve({ unreadCount: 99, readCursor: page.readCursor }));
+  expect(signal.aborted).toBe(true);
+  expect(
+    inboxEntries(serverScope(identity.userId, identity.token)).summary.getSnapshot().data
+      ?.unreadCount,
+  ).toBe(0);
+  bell.unmount();
+});
+it('keeps a paging cursor when opening revalidation removes a previously cached window', async () => {
+  inboxEntries(serverScope(identity.userId, identity.token)).list.set({
+    ...page,
+    hasMore: true,
+    olderWindow: true,
+    cursor: { time, id: daily.id },
+  });
+  mockGateway.openInbox.mockResolvedValue({
+    openedAt: time,
+    unreadCount: 0,
+    readCursor: null,
+    readStates: [],
+  });
+  render(<InboxContent identity={identity} />);
+  await act(async () => {});
+  expect(screen.queryByText('@learner started following you')).toBeNull();
+  expect(mockGateway.page).not.toHaveBeenCalled();
+  fireEvent.press(screen.getByText('Earlier notifications'));
+  await waitFor(() =>
+    expect(mockGateway.page).toHaveBeenCalledWith({ time, id: daily.id }, expect.any(AbortSignal)),
+  );
+});
+
+it('admits a new explicit inbox visit with a new key while preserving cached history', async () => {
+  const first = render(<InboxContent identity={identity} />);
+  await screen.findByText('@learner started following you');
+  const firstKey: unknown = mockGateway.openInbox.mock.calls[0][0];
+  expect(firstKey).toEqual(expect.any(String));
+  first.unmount();
+  render(<InboxContent identity={identity} />);
+  await act(async () => {});
+  expect(mockGateway.openInbox).toHaveBeenCalledTimes(2);
+  expect(mockGateway.openInbox.mock.calls[1][0]).not.toBe(firstKey);
+  expect(mockGateway.page).toHaveBeenCalledTimes(1);
 });

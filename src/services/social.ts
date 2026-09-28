@@ -24,6 +24,7 @@ export type PublicProfile = {
   followerCount: number;
   followingCount: number;
   avatarId: string | null;
+  level: number;
 };
 export type FollowReceipt = {
   profile: PublicProfile | null;
@@ -35,6 +36,7 @@ export type UserResult = Pick<
   'id' | 'username' | 'avatarId' | 'isSelf' | 'isFollowing'
 >;
 export type Comment = {
+  avatarId?: string | null;
   id: string;
   body: string;
   username: string;
@@ -52,6 +54,8 @@ function count(value: unknown) {
 }
 export function parsePublicProfile(value: unknown): PublicProfile {
   const row = record(value);
+  const level = count(row.level);
+  if (level < 1) throw new Error('Invalid public level.');
   return {
     id: identifier(row.id),
     username: text(row.username),
@@ -60,6 +64,7 @@ export function parsePublicProfile(value: unknown): PublicProfile {
     followerCount: count(row.follower_count),
     followingCount: count(row.following_count),
     avatarId: row.avatar_id == null ? null : identifier(row.avatar_id),
+    level,
   };
 }
 export function parseComment(value: unknown): Comment {
@@ -71,6 +76,7 @@ export function parseComment(value: unknown): Comment {
     body,
     username: text(row.username),
     profileId: identifier(row.profile_id),
+    avatarId: row.avatar_id == null ? null : identifier(row.avatar_id),
     createdAt: timestamp(row.created_at),
     isOwn: flag(row.is_own),
   };

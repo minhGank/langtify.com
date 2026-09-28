@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import * as Crypto from 'expo-crypto';
 import { AppText } from '@/components/ui/app-text';
@@ -8,6 +8,9 @@ import { IconButton } from '@/components/ui/icon-button';
 import { ChoiceField } from '@/components/ui/choice-field';
 import { Sheet } from '@/components/ui/sheet';
 import { MotionView } from '@/components/ui/motion-view';
+import { Avatar } from '@/components/ui/avatar';
+import { useAvatarRows } from './connections-avatars';
+import { CommentComposer } from './comment-composer';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useServerQuery } from '@/hooks/use-server-query';
 import { invalidateServerData, serverScope } from '@/lib/server-cache';
@@ -28,11 +31,13 @@ export function Comments({
   submissionId,
   openProfile,
   unavailable,
+  render,
 }: {
   identity: SafetyIdentity;
   submissionId: string;
   openProfile: (profileId: string) => void;
   unavailable: () => void;
+  render?: (thread: ReactNode, composer: ReactNode) => ReactNode;
 }) {
   const { colors } = useAppTheme();
   const [body, setBody] = useState('');
@@ -63,6 +68,10 @@ export function Comments({
     [identity, entry],
   );
   const query = useServerQuery(entry, load, { staleTime: 30000, discardOnError });
+  const avatars = useAvatarRows(
+    identity,
+    (query.data?.items ?? []).map((item) => ({ avatarId: item.avatarId, isSelf: item.isOwn })),
+  );
   const task = useSafetyTask(
     () => {
       setSelected(null);
@@ -119,43 +128,19 @@ export function Comments({
       },
     );
   };
-  return (
+  const thread = (
     <View style={[styles.content, { borderTopColor: colors.border }]}>
       <View style={styles.row}>
         <View style={{ flex: 1 }}>
           <AppText variant="heading">Comments</AppText>
         </View>
       </View>
-      <FormField
-        label="Add a comment"
-        value={body}
-        onChangeText={(value) => {
-          setBody(value);
-          setNotice(null);
-        }}
-        multiline
-        maxLength={500}
-        editable={!task.busy}
-        placeholder="Join the conversation"
-        hint={`${[...body].length} / 500`}
-      />
-      <Button
-        label={task.error && attemptedBody === body.trim() ? 'Retry comment' : 'Post comment'}
-        loading={task.busy}
-        disabled={!body.trim()}
-        onPress={send}
-      />
       {notice && (
         <MotionView trigger={notice.revision} kind="change" animateOnMount>
           <AppText variant="caption" accessibilityLiveRegion="polite">
             {notice.text}
           </AppText>
         </MotionView>
-      )}
-      {task.error && (
-        <AppText accessibilityRole="alert" style={{ color: colors.error }}>
-          {task.error}
-        </AppText>
       )}
       {query.loading && !query.data && (
         <ActivityIndicator accessibilityLabel="Loading comments" color={colors.brandPrimary} />
@@ -178,13 +163,22 @@ export function Comments({
               onPress={() => openProfile(comment.profileId)}
               style={styles.author}
             >
-              <AppText variant="label">@{comment.username}</AppText>
-              <AppText variant="caption">
-                {new Date(comment.createdAt).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </AppText>
+              <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                <Avatar
+                  username={comment.username}
+                  uri={avatars.uri({ avatarId: comment.avatarId, isSelf: comment.isOwn })}
+                  size={28}
+                />
+              </View>
+              <View style={styles.commentIdentity}>
+                <AppText variant="label">@{comment.username}</AppText>
+                <AppText variant="caption">
+                  {new Date(comment.createdAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </AppText>
+              </View>
             </Pressable>
             <IconButton
               name="ellipsis-horizontal"
@@ -192,7 +186,7 @@ export function Comments({
               onPress={() => setSelected(comment)}
             />
           </View>
-          <AppText>{comment.body}</AppText>
+          <AppText style={styles.commentBody}>{comment.body}</AppText>
         </View>
       ))}
       {query.data?.hasMore && (
@@ -231,6 +225,27 @@ export function Comments({
           }}
         />
       )}
+    </View>
+  );
+  const composer = (
+    <CommentComposer
+      value={body}
+      change={(value) => {
+        setBody(value);
+        setNotice(null);
+      }}
+      send={send}
+      busy={task.busy}
+      retry={Boolean(task.error && attemptedBody === body.trim())}
+      error={task.error}
+    />
+  );
+  return render ? (
+    render(thread, composer)
+  ) : (
+    <View style={styles.standalone}>
+      {thread}
+      {composer}
     </View>
   );
 }
@@ -349,8 +364,11 @@ function CommentActions({
   );
 }
 const styles = StyleSheet.create({
-  content: { gap: 16, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 24 },
+  standalone: { gap: 20 },
+  content: { gap: 20, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 24 },
+  commentIdentity: { flex: 1, gap: 2 },
+  commentBody: { paddingLeft: 38 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  comment: { borderBottomWidth: StyleSheet.hairlineWidth, paddingBottom: 16, gap: 4 },
-  author: { minHeight: 44, flex: 1, justifyContent: 'center', gap: 2 },
+  comment: { gap: 4 },
+  author: { minHeight: 44, flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
 });

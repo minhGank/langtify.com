@@ -961,6 +961,15 @@ export type Database = {
         };
       };
       get_assignment_photo: { Args: { assignment_id: string }; Returns: Json };
+      get_blocked_profile: { Args: { block_id: string }; Returns: Json };
+      get_blocked_avatar_targets: {
+        Args: { viewer: string; avatar_ids: string[] };
+        Returns: { id: string; storage_path: string }[];
+      };
+      open_notification_inbox: {
+        Args: { request_id: string; displayed_ids?: string[] };
+        Returns: Json;
+      };
       get_my_past_words: {
         Args: {
           search_text?: string;
@@ -1009,6 +1018,7 @@ export type Database = {
           viewer: string;
         };
         Returns: {
+          avatar_id: string | null;
           average_rating: number;
           can_rate: boolean;
           cefr_level: string;
@@ -1046,6 +1056,7 @@ export type Database = {
           page_size?: number;
           requested_concept?: string;
           requested_level?: string;
+          requested_visibility?: string;
           search_text?: string;
         };
         Returns: Json;

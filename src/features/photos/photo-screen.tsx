@@ -1,8 +1,16 @@
 import { displayTerm } from '@/utils/display-term';
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, AppState, Linking, Platform, StyleSheet, View } from 'react-native';
-import { SubmissionXpFeedback } from '@/features/progress/submission-xp-feedback';
+import {
+  ActivityIndicator,
+  AppState,
+  BackHandler,
+  Linking,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
+import { openCompletedPost } from '@/features/discover/owned-post-access';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
@@ -12,6 +20,7 @@ import { useAuth } from '@/features/auth/auth-provider';
 import { photoGateway, type CaptureKind } from '@/services/submissions';
 import { CameraCapture } from './camera-capture';
 import { PhotoPreview } from './photo-preview';
+import { VisibilityChoice } from './visibility-choice';
 import { loadDraft, preparePhoto, removeDraft } from './photo-files';
 import { useAssignmentPhoto } from './use-assignment-photo';
 import { useLibraryPhoto } from './use-library-photo';
@@ -79,9 +88,26 @@ export function PhotoContent({
   const [camera, setCamera] = useState(startCamera),
     [active, setActive] = useState(AppState.currentState === 'active'),
     [focused, setFocused] = useState(false);
+  const [readyPreview, setReadyPreview] = useState<string | null>(null);
+  const [retaking, setRetaking] = useState(false);
   const state = useAssignmentPhoto(gateway, drafts, focused && active);
   const alive = useRef(true),
     captureGeneration = useRef(0);
+  const closeCamera = useCallback(() => {
+    captureGeneration.current++;
+    setCamera(false);
+    setRetaking(false);
+  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      if (!retaking || !camera) return;
+      const back = BackHandler.addEventListener('hardwareBackPress', () => {
+        closeCamera();
+        return true;
+      });
+      return () => back.remove();
+    }, [retaking, camera, closeCamera]),
+  );
   useEffect(() => {
     alive.current = true;
     return () => {
@@ -109,8 +135,39 @@ export function PhotoContent({
   const submission = state.data?.submission;
   const completed = submission?.status === 'completed',
     deleting = submission?.status === 'deleting';
+  const opened = useRef<string | null>(null);
+  useEffect(() => {
+    if (
+      !focused ||
+      !active ||
+      !completed ||
+      !submission ||
+      !state.data ||
+      opened.current === submission.id
+    )
+      return;
+    opened.current = submission.id;
+    openCompletedPost(
+      { userId, token },
+      state.data,
+      state.acknowledgedCompletionId === submission.id,
+    );
+  }, [
+    focused,
+    active,
+    completed,
+    submission,
+    state.data,
+    state.acknowledgedCompletionId,
+    userId,
+    token,
+  ]);
   const canCapture =
-    !!state.data?.canCapture && !completed && !deleting && !state.remoteUri && !state.photo;
+    !!state.data?.canCapture &&
+    !completed &&
+    !deleting &&
+    !state.remoteUri &&
+    (!state.photo || retaking);
   const library = useLibraryPhoto({
     gateway,
     userId,
@@ -121,16 +178,51 @@ export function PhotoContent({
     onPrepared: (prepared) => {
       state.acceptPhoto(prepared);
       setCamera(false);
+      setRetaking(false);
     },
   });
   const chooseLibrary = library.available && !state.busy ? () => void library.choose() : undefined;
+  if (completed)
+    return (
+      <Screen>
+        <ActivityIndicator accessibilityLabel="Opening photo" color={colors.brandPrimary} />
+      </Screen>
+    );
   return (
-    <Screen>
+    <Screen
+      footer={
+        (state.remoteUri || state.photo) && !deleting && !(camera && canCapture) ? (
+          <>
+            <VisibilityChoice
+              value={state.isPublic}
+              disabled={state.busy || library.busy}
+              onChange={state.setPublic}
+            />
+            <Button
+              label="Add photo"
+              loading={state.busy}
+              disabled={
+                readyPreview !== (state.remoteUri ?? state.photo?.uri) ||
+                library.busy ||
+                !state.data?.canCapture
+              }
+              onPress={() => void state.submit()}
+            />
+          </>
+        ) : undefined
+      }
+    >
       <View style={styles.header}>
         <IconButton
           name="chevron-back"
           label="Back"
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+          onPress={() =>
+            retaking && camera
+              ? closeCamera()
+              : router.canGoBack()
+                ? router.back()
+                : router.replace('/')
+          }
         />
         <AppText variant="label">
           {completed
@@ -155,7 +247,7 @@ export function PhotoContent({
                 <AppText variant="caption">{displayTerm(state.data.referenceTerm)}</AppText>
               </View>
               <CameraCapture
-                onCancel={() => setCamera(false)}
+                onCancel={closeCamera}
                 onChooseLibrary={chooseLibrary}
                 onCapture={async (captured) => {
                   const capture = ++captureGeneration.current;
@@ -167,6 +259,7 @@ export function PhotoContent({
                   }
                   state.acceptPhoto(prepared);
                   setCamera(false);
+                  setRetaking(false);
                 }}
               />
             </>
@@ -175,11 +268,12 @@ export function PhotoContent({
               {camera && !active ? <AppText>Return to the app to use the camera.</AppText> : null}
               <PhotoPreview
                 state={state}
+                onPreviewReady={setReadyPreview}
                 onChooseLibrary={chooseLibrary}
                 choosing={library.busy}
                 onTakePhoto={() => setCamera(true)}
                 onRetake={() => {
-                  state.retake();
+                  setRetaking(true);
                   setCamera(true);
                 }}
               />
@@ -216,16 +310,6 @@ export function PhotoContent({
             />
           )}
         </View>
-      )}
-      {completed && submission && (
-        <SubmissionXpFeedback
-          key={`${userId}:${submission.id}`}
-          userId={userId}
-          accessToken={token}
-          submissionId={submission.id}
-          historical={submission.capture_kind === 'historical'}
-          celebrate={state.acknowledgedCompletionId === submission.id && focused && active}
-        />
       )}
       {state.error ? (
         <View style={styles.error}>

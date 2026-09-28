@@ -210,7 +210,8 @@ try {
   );
   let blocks = await rpc(b.client, 'get_blocked_users');
   assert.equal(blocks.items.length, 1);
-  assert.deepEqual(Object.keys(blocks.items[0]).sort(), ['id', 'username']);
+  assert.deepEqual(Object.keys(blocks.items[0]).sort(), ['avatar_id', 'id', 'username']);
+  assert.equal(blocks.items[0].avatar_id, null, 'No avatar reference without an uploaded avatar');
   assert(!(await feed(a.client)).items.some((r) => r.id === bp.id));
   assert(!(await feed(b.client)).items.some((r) => r.id === ap.id));
   assert.equal((await signs(b.client, [ap.id])).items.length, 0);

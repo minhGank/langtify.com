@@ -68,6 +68,7 @@ it('pins the JWT for one RPC and one batch invocation, preserving microsecond cu
     requested_concept: undefined,
     search_text: 'dog',
     requested_level: 'A1',
+    requested_visibility: undefined,
     before_time: item.submitted_at,
     before_id: 'previous',
     page_size: 12,
@@ -87,4 +88,27 @@ it('pins the JWT for one RPC and one batch invocation, preserving microsecond cu
   });
   await gateway.previews([], signal);
   expect(mockInvoke).toHaveBeenCalledTimes(1);
+});
+
+it('sends an owner visibility filter and rejects a mismatched server page instead of displaying it', async () => {
+  const privateGateway = vocabularyGateway('owner', 'token', {
+    search: '',
+    level: '',
+    visibility: 'private',
+  });
+  await privateGateway.load(null);
+  expect(mockRpc).toHaveBeenLastCalledWith(
+    'get_my_vocabulary',
+    expect.objectContaining({ requested_visibility: 'private' }),
+  );
+  const publicGateway = vocabularyGateway('owner', 'token', {
+    search: '',
+    level: '',
+    visibility: 'public',
+  });
+  await expect(publicGateway.load(null)).rejects.toThrow('Vocabulary visibility changed.');
+  expect(mockRpc).toHaveBeenLastCalledWith(
+    'get_my_vocabulary',
+    expect.objectContaining({ requested_visibility: 'public' }),
+  );
 });

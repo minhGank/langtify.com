@@ -9,16 +9,18 @@ export function useServerQuery<T>(
   {
     staleTime,
     discardOnError,
-  }: { staleTime: number; discardOnError?: (cause: unknown) => boolean },
+    enabled = true,
+  }: { staleTime: number; discardOnError?: (cause: unknown) => boolean; enabled?: boolean },
 ) {
   const snapshot = useSyncExternalStore(entry.subscribe, entry.getSnapshot, entry.getSnapshot);
   const active = useRef<ServerEntry<T> | null>(null);
   const refresh = useCallback(async () => {
-    if (active.current === entry)
+    if (enabled && active.current === entry)
       await entry.read(load, { staleTime, force: true, discardOnError });
-  }, [entry, load, staleTime, discardOnError]);
+  }, [entry, load, staleTime, discardOnError, enabled]);
   useFocusEffect(
     useCallback(() => {
+      if (!enabled) return;
       let focused = true;
       let release: (() => void) | null = null;
       let invalidation = entry.getSnapshot().invalidation;
@@ -54,7 +56,7 @@ export function useServerQuery<T>(
         listener.remove();
         release?.();
       };
-    }, [entry, load, staleTime, discardOnError]),
+    }, [entry, load, staleTime, discardOnError, enabled]),
   );
   return { ...snapshot, refresh };
 }

@@ -76,6 +76,8 @@ it('keeps the previous word visible during replacement and transitions only the 
     expect(timing).not.toHaveBeenCalled();
     fireEvent.press(screen.getAllByRole('button', { name: 'Replace' })[0]);
     expect(screen.getByText('La fenêtre')).toBeVisible();
+    expect(screen.queryByLabelText('Loading challenge')).toBeNull();
+    expect(screen.queryByText('While you wait', { includeHiddenElements: true })).toBeNull();
     expect(screen.getByRole('button', { name: 'Take photo · review' })).toBeDisabled();
     const replacement = makeChallenge();
     replacement.words[0] = {
@@ -98,7 +100,7 @@ it('keeps the previous word visible during replacement and transitions only the 
 it('shows controlled failure and a working retry', async () => {
   mockLoad.mockRejectedValueOnce({ message: 'insufficient_vocabulary' });
   render(<TodayScreen />);
-  expect(await screen.findByText(/enough words for these languages and level/)).toBeVisible();
+  expect(await screen.findByText(/enough new words are available/)).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Reload words' }));
   expect(await screen.findByText('La fenêtre')).toBeVisible();
 });
@@ -141,8 +143,8 @@ it('shows completed cards with View Photo and no replacement action', async () =
   ).not.toContain('Replace the review word: la fenêtre');
   fireEvent.press(screen.getByRole('button', { name: 'View photo · review' }));
   expect(mockPush).toHaveBeenCalledWith({
-    pathname: '/photo',
-    params: { assignmentId: 'assignment-review' },
+    pathname: '/post',
+    params: { submissionId: 'submission' },
   });
 });
 it('offers recovery instead of replacement while an upload is pending', async () => {
@@ -172,8 +174,8 @@ it('shows Captured without daily completion when timezone travel brings a histor
   expect(screen.getAllByRole('button', { name: 'Replace' })).toHaveLength(2);
   fireEvent.press(screen.getByRole('button', { name: 'View photo · review' }));
   expect(mockPush).toHaveBeenCalledWith({
-    pathname: '/photo',
-    params: { assignmentId: 'assignment-review' },
+    pathname: '/post',
+    params: { submissionId: 'historical-photo' },
   });
 });
 
@@ -206,4 +208,17 @@ it('keeps server-authoritative challenges usable when device timezone data is ol
   render(<TodayScreen />);
   expect(await screen.findByText('La fenêtre')).toBeVisible();
   expect(mockLoad).toHaveBeenCalledTimes(1);
+});
+
+it('opens every assigned word in the canonical concept route with owned snapshot context', async () => {
+  render(<TodayScreen />);
+  for (const word of makeChallenge().words) {
+    const label = word.targetTerm[0].toUpperCase() + word.targetTerm.slice(1);
+    fireEvent.press(await screen.findByRole('button', { name: `Explore ${label}` }));
+    expect(mockPush).toHaveBeenLastCalledWith({
+      pathname: '/explore-concept',
+      params: { conceptId: word.conceptId, assignmentId: word.id },
+    });
+  }
+  expect(screen.queryByText(/^Level /)).toBeNull();
 });

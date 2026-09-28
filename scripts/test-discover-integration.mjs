@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { localApi } from './lib/local-api.mjs';
 import { execute } from './lib/local-db.mjs';
+import { cleanupAvatars } from './cleanup-avatars.mjs';
 import { cleanupSubmissions } from './cleanup-submissions.mjs';
 import { stripJpegMetadata } from '../src/features/photos/jpeg.ts';
 
@@ -90,6 +91,7 @@ function publicFields(row, signed = false) {
       'reference_term',
       'cefr_level',
       'username',
+      'avatar_id',
       'submitted_at',
       'average_rating',
       'rating_count',
@@ -145,6 +147,86 @@ try {
     [first.id],
   );
   publicFields(batch.items[0], true);
+  assert.equal(batch.items[0].avatar_id, null);
+  const avatar = async () => {
+    const { avatar: reserved } = await rpc(a.client, 'reserve_profile_avatar', {
+      request_id: randomUUID(),
+    });
+    assert.ifError(
+      (
+        await a.client.storage
+          .from('profile-avatars')
+          .upload(reserved.storage_path, jpeg, { contentType: 'image/jpeg' })
+      ).error,
+    );
+    const result = await a.client.functions.invoke('avatar-authority', {
+      body: { action: 'finalize', avatarId: reserved.id },
+    });
+    assert.ifError(result.error);
+    return reserved;
+  };
+  const avatarSigns = async (ids) => {
+    const result = await b.client.functions.invoke('avatar-authority', {
+      body: { action: 'previews', avatarIds: ids },
+    });
+    assert.ifError(result.error);
+    return result.data.items;
+  };
+  const original = await avatar();
+  const avatarPage = await feed(b.client, { page_size: 1 });
+  assert.equal(avatarPage.items[0].avatar_id, original.id);
+  publicFields(avatarPage.items[0]);
+  assert.equal(
+    (await rpc(b.client, 'get_discover_submission', { submission_id: first.id })).items[0]
+      .avatar_id,
+    original.id,
+  );
+  assert.equal((await signs(b.client, [first.id])).items[0].avatar_id, original.id);
+  const avatarSigned = (await avatarSigns([original.id]))[0];
+  assert.equal(avatarSigned.id, original.id);
+  assert.equal((await fetch(api.url + avatarSigned.signed_path)).status, 200);
+  const avatarClaims = JSON.parse(
+    Buffer.from(
+      new URL(api.url + avatarSigned.signed_path).searchParams.get('token').split('.')[1],
+      'base64url',
+    ).toString(),
+  );
+  assert.equal(avatarClaims.exp - avatarClaims.iat, 60);
+  assert((await b.client.storage.from('profile-avatars').download(original.storage_path)).error);
+  assert(
+    (await b.client.storage.from('profile-avatars').createSignedUrl(original.storage_path, 3600))
+      .error,
+  );
+  const replacement = await avatar();
+  assert.equal(
+    (await feed(b.client)).items.find((r) => r.id === first.id).avatar_id,
+    replacement.id,
+  );
+  assert.equal((await signs(b.client, [first.id])).items[0].avatar_id, replacement.id);
+  assert.deepEqual(
+    (await avatarSigns([original.id, replacement.id])).map((r) => r.id),
+    [replacement.id],
+  );
+  // Replacing an avatar never changes the feed keyset or the photo's ordering.
+  const replacedPage = await feed(b.client, { page_size: 1 });
+  assert.deepEqual({ ...replacedPage.items[0], avatar_id: original.id }, avatarPage.items[0]);
+  const publicId = (await rpc(a.client, 'get_public_profile')).profile.id;
+  await rpc(b.client, 'block_public_profile', { profile_id: publicId });
+  assert(!(await feed(b.client)).items.some((r) => r.id === first.id));
+  assert.deepEqual((await signs(b.client, [first.id])).items, []);
+  assert.deepEqual(await avatarSigns([replacement.id]), []);
+  const blocks = await rpc(b.client, 'get_blocked_users');
+  await rpc(b.client, 'unblock_user', { block_id: blocks.items[0].id });
+  await execute(`update private.safety_accounts set restricted=true where user_id='${a.id}';`);
+  assert(!(await feed(b.client)).items.some((r) => r.id === first.id));
+  assert.deepEqual(await avatarSigns([replacement.id]), []);
+  await execute(`update private.safety_accounts set restricted=false where user_id='${a.id}';`);
+  await rpc(a.client, 'remove_profile_avatar', { expected_avatar_id: replacement.id });
+  assert.equal((await signs(b.client, [first.id])).items[0].avatar_id, null);
+  assert.deepEqual(await avatarSigns([replacement.id]), []);
+  console.log(
+    'PASS: current author avatar projection, real private-bucket batch signing, 60-second TTL, replacement/removal and block/restriction denial without changing feed cursors',
+  );
   const path = batch.items[0].signed_path;
   assert.equal((await fetch(api.url + path)).status, 200);
   const claims = JSON.parse(
@@ -335,4 +417,5 @@ try {
 } finally {
   for (const id of users) await execute(`delete from auth.users where id='${id}';`);
   await cleanupSubmissions(api.admin);
+  await cleanupAvatars(api.admin);
 }

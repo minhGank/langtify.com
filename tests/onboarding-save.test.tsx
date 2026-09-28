@@ -1,9 +1,10 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import { BackHandler, Keyboard } from 'react-native';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react-native';
+import { Appearance, BackHandler, Keyboard, KeyboardAvoidingView, ScrollView } from 'react-native';
 
 import { OnboardingScreen } from '@/features/onboarding/onboarding-screen';
 import { completeOnboarding } from '@/services/account';
 import { feedback } from '@/lib/haptics';
+import { palette } from '@/lib/theme';
 import { makeAccount, makeSession } from './fixtures';
 
 const mockReload = jest.fn();
@@ -115,10 +116,10 @@ it('guides one decision at a time, validates levels and preserves choices on bac
   expect(screen.queryByLabelText('Username')).toBeNull();
   continueSetup();
   expect(screen.getByLabelText('Learning language')).toBeVisible();
-  fireEvent.press(screen.getByRole('radio', { name: 'English (English)' }));
+  fireEvent.press(screen.getByRole('radio', { name: 'English' }));
   continueSetup();
   expect(screen.getByText('Choose two different languages.')).toBeVisible();
-  fireEvent.press(screen.getByRole('radio', { name: 'French (Français)' }));
+  fireEvent.press(screen.getByRole('radio', { name: 'French' }));
   continueSetup(2);
   expect(screen.getByText('Choose your current level.')).toBeVisible();
   fireEvent.press(screen.getByRole('radio', { name: 'A1 — Beginner' }));
@@ -233,7 +234,7 @@ it('shows language recovery without advancing when the active catalog is unavail
 
 it('keeps navigation and typing quiet, using selection feedback only when a choice changes', () => {
   render(<OnboardingScreen />);
-  fireEvent.press(screen.getByRole('radio', { name: 'English (English)' }));
+  fireEvent.press(screen.getByRole('radio', { name: 'English' }));
   continueSetup(3);
   fireEvent.changeText(screen.getByLabelText('Username'), 'draft_name');
   fireEvent.press(screen.getByRole('button', { name: 'Previous setup step' }));
@@ -246,3 +247,95 @@ it('keeps navigation and typing quiet, using selection feedback only when a choi
   fireEvent.press(screen.getByRole('radio', { name: 'A1 — Beginner' }));
   expect(feedback.selection).toHaveBeenCalledTimes(1);
 });
+
+it('keeps progress and Continue outside the scrolling choices and inside keyboard avoidance', () => {
+  const app = render(<OnboardingScreen />);
+  const content = within(app.UNSAFE_getByType(ScrollView));
+  expect(content.getByLabelText('Translation language')).toBeVisible();
+  expect(content.getByRole('radio', { name: 'English' })).toBeVisible();
+  expect(content.queryByRole('progressbar')).toBeNull();
+  expect(content.queryByRole('button', { name: 'Continue' })).toBeNull();
+  const keyboard = within(app.UNSAFE_getByType(KeyboardAvoidingView));
+  expect(keyboard.getByRole('button', { name: 'Continue' })).toBeVisible();
+  expect(keyboard.getByRole('progressbar', { name: 'Setup progress' })).toBeVisible();
+  expect(screen.getByRole('image', { name: 'Langtify' })).toBeVisible();
+  continueSetup();
+  expect(screen.queryByRole('image', { name: 'Langtify' })).toBeNull();
+  expect(screen.getByText('Your setup')).toBeVisible();
+});
+
+it('shows native language names and descriptive level choices without auto-advancing', () => {
+  render(<OnboardingScreen />);
+  const french = screen.getByRole('radio', { name: 'French' });
+  expect(within(french).getByText('Français')).toBeVisible();
+  fireEvent.press(french);
+  expect(french).toBeChecked();
+  expect(screen.getByRole('progressbar')).toHaveAccessibilityValue({ now: 1 });
+  fireEvent.press(screen.getByRole('radio', { name: 'English' }));
+  continueSetup(2);
+  const beginner = screen.getByRole('radio', { name: 'A1 — Beginner' });
+  expect(beginner.props.accessibilityHint).toBe('Familiar words and simple phrases');
+  fireEvent.press(beginner);
+  expect(beginner).toBeChecked();
+  expect(screen.getByRole('progressbar')).toHaveAccessibilityValue({ now: 3 });
+  const detail = within(beginner).getByText('Familiar words and simple phrases');
+  expect(detail.props.numberOfLines).toBeUndefined();
+  expect(detail.props.allowFontScaling).not.toBe(false);
+});
+
+it('keeps Sign out available behind setup options without losing the current draft', () => {
+  const dismiss = jest.spyOn(Keyboard, 'dismiss');
+  render(<OnboardingScreen />);
+  continueSetup(3);
+  fireEvent.changeText(screen.getByLabelText('Username'), 'my_draft');
+  expect(screen.queryByRole('button', { name: 'Sign out' })).toBeNull();
+  dismiss.mockClear();
+  fireEvent.press(screen.getByRole('button', { name: 'Setup options' }));
+  expect(dismiss).toHaveBeenCalledTimes(1);
+  expect(screen.getByRole('button', { name: 'Sign out' })).toBeVisible();
+  fireEvent.press(screen.getByRole('button', { name: 'Close Setup options' }));
+  expect(screen.getByLabelText('Username')).toHaveDisplayValue('my_draft');
+  dismiss.mockRestore();
+});
+
+it('retains timezone selection on back/forward and reports each of the five steps', () => {
+  render(<OnboardingScreen />);
+  for (let step = 1; step <= 5; step++) {
+    expect(screen.getByRole('progressbar')).toHaveAccessibilityValue({
+      min: 1,
+      max: 5,
+      now: step,
+      text: `Step ${step} of 5`,
+    });
+    if (step < 5) continueSetup();
+  }
+  fireEvent.press(screen.getByRole('button', { name: 'Timezone' }));
+  fireEvent.changeText(screen.getByLabelText('Search timezones'), 'Paris');
+  fireEvent.press(screen.getByRole('radio', { name: 'Europe / Paris' }));
+  expect(screen.getByText('Paris')).toBeVisible();
+  fireEvent.press(screen.getByRole('button', { name: 'Previous setup step' }));
+  expect(screen.getByLabelText('Username')).toHaveDisplayValue('learner');
+  continueSetup();
+  expect(screen.getByRole('button', { name: 'Timezone' })).toHaveAccessibilityValue({
+    text: 'Europe/Paris',
+  });
+  expect(save).not.toHaveBeenCalled();
+});
+
+it.each(['light', 'dark'] as const)(
+  'keeps choices and selected state readable in %s mode',
+  (mode) => {
+    const appearance = jest.spyOn(Appearance, 'getColorScheme').mockReturnValue(mode);
+    const app = render(<OnboardingScreen />);
+    const english = screen.getByRole('radio', { name: 'English' });
+    expect(english).toHaveStyle({
+      backgroundColor: palette[mode].surface,
+      borderColor: palette[mode].brandPrimary,
+    });
+    expect(english).toBeChecked();
+    expect(within(english).getByText('English')).toHaveStyle({ color: palette[mode].textPrimary });
+    expect(screen.getByRole('radio', { name: 'French' })).not.toBeChecked();
+    app.unmount();
+    appearance.mockRestore();
+  },
+);

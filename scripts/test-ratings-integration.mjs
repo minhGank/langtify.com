@@ -89,6 +89,7 @@ function publicFields(row, signed = false) {
       'reference_term',
       'cefr_level',
       'username',
+      'avatar_id',
       'submitted_at',
       'average_rating',
       'rating_count',

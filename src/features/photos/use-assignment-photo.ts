@@ -1,10 +1,25 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { PhotoReadTransient } from './photo-read-error';
 import type { AssignmentPhoto, PhotoGateway, Visibility } from '@/services/submissions';
 import type { PreparedPhoto } from './photo-files';
-import { createServerCache, isolatedCacheKey } from '@/lib/server-cache';
+import { createServerCache, isolatedCacheKey, serverScope } from '@/lib/server-cache';
 import { feedback } from '@/lib/haptics';
 
 const assignments = createServerCache<AssignmentPhoto>({ maxEntries: 12 });
+const assignmentTags = ['owner-photo', 'vocabulary', 'unfinished-photos', 'media'];
+export function rememberCompletedAssignment(
+  identity: { userId: string; token: string },
+  data: AssignmentPhoto,
+) {
+  if (data.submission?.status !== 'completed' || data.submission.user_id !== identity.userId)
+    return;
+  assignments
+    .entry(
+      `${serverScope(identity.userId, identity.token)}:assignment:${data.assignmentId}:auto`,
+      assignmentTags,
+    )
+    .set(data);
+}
 
 export type DraftStore = {
   load: () => Promise<PreparedPhoto | null>;
@@ -33,10 +48,7 @@ export function photoError(error: unknown) {
 }
 export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, visible = true) {
   const key = gateway.cacheKey ?? isolatedCacheKey(gateway);
-  const entry = useMemo(
-    () => assignments.entry(key, ['owner-photo', 'vocabulary', 'unfinished-photos', 'media']),
-    [key],
-  );
+  const entry = useMemo(() => assignments.entry(key, assignmentTags), [key]);
   const [data, setData] = useState<AssignmentPhoto | null>(() => entry.getSnapshot().data);
   const [photo, setPhoto] = useState<PreparedPhoto | null>(null);
   const [remoteUri, updateRemoteUri] = useState<string | null>(() => {
@@ -82,15 +94,17 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
       const controller = new AbortController();
       previewRequest.current = controller;
       setLoading(true);
+      setError('');
       try {
         await entry.read((signal) => currentGateway.current.load(signal), {
           staleTime: Infinity,
           force,
-          discardOnError: () => true,
+          discardOnError: (cause) => !(cause instanceof PhotoReadTransient),
         });
         if (!alive.current || request !== generation.current) return;
         const snapshot = entry.getSnapshot();
         const fresh = snapshot.data;
+        if (snapshot.error && fresh) throw new PhotoReadTransient();
         if (!fresh || snapshot.error || snapshot.retired) throw new Error('Photo unavailable.');
         const saved = fresh.submission;
         const uri =
@@ -116,7 +130,16 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
       } catch (cause) {
         if (alive.current && request === generation.current) {
           setError(photoError(cause));
-          setRemoteUri(null);
+          const saved = entry.getSnapshot().data?.submission;
+          const cached =
+            cause instanceof PhotoReadTransient && saved?.status === 'completed'
+              ? currentGateway.current.cachedPreview?.(saved)
+              : null;
+          setRemoteUri(cached ?? null);
+          if (!entry.getSnapshot().data) {
+            currentData.current = null;
+            setData(null);
+          }
         }
       } finally {
         if (alive.current && request === generation.current) {
@@ -256,8 +279,20 @@ export function useAssignmentPhoto(gateway: PhotoGateway, drafts: DraftStore, vi
         isPublic ? 'public' : 'private',
       );
       check();
-      // Keep the reviewed local image while refresh installs the completed row
-      // and remote pixels. That existing recovery path also removes the draft.
+      // Install the authoritative completed row immediately. The canonical post
+      // can use the exact uploaded pixels without waiting for another download.
+      if (
+        finalized.status === 'completed' &&
+        startedGateway === currentGateway.current &&
+        !entry.getSnapshot().retired &&
+        currentData.current
+      ) {
+        if (!existing && photo) startedGateway.rememberUploadedPhoto?.(finalized, photo.bytes);
+        const complete = { ...currentData.current, submission: finalized, canCapture: false };
+        entry.set(complete);
+        currentData.current = complete;
+        setData(complete);
+      }
       if (
         finalized.status === 'completed' &&
         visibleRef.current &&

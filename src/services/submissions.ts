@@ -1,3 +1,5 @@
+import { PhotoReadTransient } from '@/features/photos/photo-read-error';
+import { invalidateOwnPublicLevel } from '@/features/social/cache';
 import { invalidateServerData, serverScope } from '@/lib/server-cache';
 import { boundedFetch } from '@/lib/http';
 import { createClient } from '@supabase/supabase-js';
@@ -5,6 +7,7 @@ import { publicConfig } from '@/lib/env';
 import { requireSupabase } from '@/lib/supabase';
 import type { Database, Json } from '@/types/database';
 import { imageMemory } from '@/lib/image-memory';
+import { isCefrLevel, type CefrLevel } from '@/features/onboarding/validation';
 
 export const PHOTO_BUCKET = 'challenge-submissions';
 export type Visibility = 'private' | 'public';
@@ -12,8 +15,11 @@ export type CaptureKind = 'daily' | 'historical';
 export type Submission = Database['public']['Tables']['submissions']['Row'];
 export type AssignmentPhoto = {
   assignmentId: string;
+  conceptId: string;
   targetTerm: string;
   referenceTerm: string;
+  cefrLevel: CefrLevel;
+  targetLanguageId: string;
   localDate: string;
   currentLocalDate: string;
   timezone: string;
@@ -43,6 +49,7 @@ export async function listUnfinishedPhotos(
 export type PhotoGateway = {
   cacheKey?: string;
   cachedPreview?: (submission: Submission) => string | null;
+  rememberUploadedPhoto?: (submission: Submission, bytes: Uint8Array) => void;
   load: (signal?: AbortSignal) => Promise<AssignmentPhoto>;
   canChooseLibraryPhoto: (signal?: AbortSignal) => Promise<boolean>;
   reserve: () => Promise<Submission>;
@@ -128,10 +135,15 @@ export function parseAssignmentPhoto(
   const kind = submission
     ? captureKind(submission.capture_kind)
     : (intent ?? (result.can_capture_historical ? 'historical' : 'daily'));
+  const level = assignment.cefr_level;
+  if (typeof level !== 'string' || !isCefrLevel(level)) throw new Error('Invalid photo response.');
   return {
     assignmentId,
+    conceptId: text(assignment.concept_id),
     targetTerm: text(assignment.target_term),
     referenceTerm: text(assignment.reference_term),
+    cefrLevel: level,
+    targetLanguageId: text(challenge.target_language_id),
     localDate: text(challenge.local_challenge_date),
     currentLocalDate: text(result.current_local_date),
     timezone: text(challenge.timezone),
@@ -174,8 +186,11 @@ export function photoGateway(
   const load = async (signal?: AbortSignal) => {
     let request = client.rpc('get_assignment_photo', { assignment_id: assignmentId });
     if (signal) request = request.abortSignal(signal);
-    const { data, error } = await request;
-    if (error) throw error;
+    const { data, error, status } = await request;
+    if (error) {
+      if (status === 0 || status >= 500) throw new PhotoReadTransient();
+      throw error;
+    }
     const parsed = parseAssignmentPhoto(data, userId, assignmentId, intent);
     knownKind = parsed.captureKind;
     belongsToCurrentDate = parsed.localDate === parsed.currentLocalDate;
@@ -191,6 +206,11 @@ export function photoGateway(
     cacheKey: `${serverScope(userId, token)}:assignment:${assignmentId}:${intent ?? 'auto'}`,
     cachedPreview(submission) {
       return memory.cached([checked(submission).id])[submission.id] ?? null;
+    },
+    rememberUploadedPhoto(submission, bytes) {
+      const saved = checked(submission);
+      if (saved.status !== 'completed') return;
+      memory.rememberVerifiedPhoto(saved.id, bytes);
     },
     load,
     async canChooseLibraryPhoto(signal) {
@@ -264,6 +284,7 @@ export function photoGateway(
         'discover',
         'unfinished-photos',
       ]);
+      invalidateOwnPublicLevel({ userId, token });
       if (error) throw error;
       return checked(record(data).submission);
     },
@@ -297,6 +318,7 @@ export function photoGateway(
         'discover',
         'unfinished-photos',
       ]);
+      invalidateOwnPublicLevel({ userId, token });
       if (error) throw error;
       return checked(data);
     },

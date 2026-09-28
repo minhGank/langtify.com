@@ -92,12 +92,236 @@ try {
     .filter((file) => file.endsWith('.sql') && file > auditName)
     .sort()) {
     const sql = await readFile(new URL(file, migrations), 'utf8');
+    if (file === '20260928010000_completed_concept_exclusion.sql') {
+      // Real pre-migration lifecycle in the disposable SQL/Storage-metadata stub:
+      // a reversed, then hard-deleted photo must still backfill from its XP source.
+      const erasedPhotoOwner = randomUUID();
+      await execute(
+        `insert into auth.users(id,email) values('${erasedPhotoOwner}','${erasedPhotoOwner}@example.test');
+        select set_config('request.jwt.claim.sub','${erasedPhotoOwner}',false);
+        select public.complete_onboarding('bf_${erasedPhotoOwner.replaceAll('-', '').slice(0, 20)}','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','A1','UTC');
+        do $$ declare c jsonb;s public.submissions;o storage.objects;begin
+          c:=public.get_or_create_today_challenge();
+          s:=public.reserve_submission((c->'words'->0->>'id')::uuid);
+          insert into storage.objects(bucket_id,name,owner_id,version,metadata)
+            values('challenge-submissions',s.storage_path,s.user_id::text,'legacy-completion','{"mimetype":"image/jpeg","size":100}') returning * into o;
+          perform public.attest_submission_photo(s.id,s.user_id,o.id,o.version,repeat('a',64),16,16);
+          perform public.finalize_submission(s.id);
+          perform public.begin_submission_deletion(s.id);
+          delete from storage.objects where name=s.storage_path;
+          perform public.finish_submission_deletion(s.id);
+          delete from public.submissions where id=s.id;
+        end $$;`,
+        database,
+      );
+      const snapshot = `select jsonb_build_object(
+        'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e),
+        'awards',(select jsonb_agg(to_jsonb(a) order by user_id,source_key) from private.xp_awards a),
+        'photos',(select jsonb_agg(to_jsonb(s) order by id) from public.submissions s),
+        'words',(select jsonb_agg(to_jsonb(w) order by id) from public.daily_challenge_words w));`;
+      const before = await execute(snapshot, database);
+      const unresolved = randomUUID();
+      await execute(
+        `insert into auth.users(id,email) values('${unresolved}','unresolved-completion@example.test');
+        select private.set_xp_award('${unresolved}','WORD_COMPLETED','word:'||gen_random_uuid()::text,10,true,gen_random_uuid());`,
+        database,
+      );
+      const rejected = await query(sql, database).result;
+      assert.notEqual(rejected.code, 0);
+      assert.match(rejected.error, /completed_concept_history_requires_review/);
+      assert.equal(
+        await execute(`select to_regclass('private.completed_concepts') is null;`, database),
+        't',
+      );
+      await execute(`delete from auth.users where id='${unresolved}';`, database);
+      await execute(sql, database);
+      const memory = await execute(
+        `select jsonb_agg(to_jsonb(c) order by user_id,concept_id) from private.completed_concepts c;`,
+        database,
+      );
+      assert.notEqual(memory, '', 'Nonempty verified history must be backfilled');
+      assert.equal(
+        await execute(
+          `select count(*) from private.completed_concepts c join public.xp_events e
+            on e.cause_submission_id=c.first_submission_id and e.user_id=c.user_id
+            where c.user_id='${erasedPhotoOwner}' and e.event_type='WORD_COMPLETED' and e.amount>0;`,
+          database,
+        ),
+        '1',
+        'Hard-deleted, reversed legacy photos retain the original proven completion',
+      );
+      assert.equal(
+        await execute(
+          `select count(*) from public.submissions s where s.submitted_at is not null and not exists(select 1 from private.completed_concepts c where c.user_id=s.user_id and c.concept_id=s.concept_id);`,
+          database,
+        ),
+        '0',
+      );
+      await execute(sql, database);
+      assert.equal(
+        await execute(snapshot, database),
+        before,
+        'Migration/replay preserves XP/photos/assignments',
+      );
+      assert.equal(
+        await execute(
+          `select jsonb_agg(to_jsonb(c) order by user_id,concept_id) from private.completed_concepts c;`,
+          database,
+        ),
+        memory,
+      );
+      assert.equal(
+        await execute(
+          `select has_table_privilege('authenticated','private.completed_concepts','select') or has_table_privilege('anon','private.completed_concepts','insert');`,
+          database,
+        ),
+        'f',
+      );
+      // Rollback-only extra rows prove indexed admission under a generic plan.
+      const probe = await execute(
+        `select concept_id from private.completed_concepts where user_id='${user}' limit 1;`,
+        database,
+      );
+      const plan = await execute(
+        `begin;
+        create temporary table extra_concepts as select gen_random_uuid() id from generate_series(1,25000);
+        insert into public.vocabulary_concepts(id,concept_key,category,is_photographable)
+          select id,'PLAN_'||upper(replace(id::text,'-','')),'test',true from extra_concepts;
+        insert into private.completed_concepts(user_id,concept_id,first_submission_id,first_completed_at)
+          select '${user}',id,gen_random_uuid(),now() from extra_concepts;
+        analyze private.completed_concepts;set local plan_cache_mode=force_generic_plan;
+        prepare completed_probe(uuid,uuid) as select 1 from private.completed_concepts where user_id=$1 and concept_id=$2;
+        explain(format json) execute completed_probe('${user}','${probe}');rollback;`,
+        database,
+      );
+      assert.match(plan, /completed_concepts_pkey/);
+      await execute(`delete from auth.users where id='${erasedPhotoOwner}';`, database);
+      console.log(
+        'PASS: completed-concept migration backfills verified/reversed history, rejects unresolvable legacy XP atomically, replays unchanged and uses the owner/concept primary key',
+      );
+      continue;
+    }
+    if (file === '20260928000000_qa32_level_progression.sql') {
+      const snapshot = `select jsonb_build_object(
+        'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e),
+        'awards',(select jsonb_agg(to_jsonb(a) order by user_id,source_key) from private.xp_awards a),
+        'milestones',(select jsonb_agg(to_jsonb(m) order by user_id,milestone,window_end) from private.streak_milestones m),
+        'days',(select jsonb_agg(to_jsonb(d) order by user_id,local_date) from private.qualified_days_seen d),
+        'photos',(select jsonb_agg(to_jsonb(s) order by id) from public.submissions s),
+        'inbox',(select jsonb_agg(to_jsonb(n) order by id) from public.in_app_notifications n));`;
+      const before = await execute(snapshot, database);
+      assert.equal(await execute(`select private.level_progress(620)->>'level';`, database), '3');
+      for (let replay = 0; replay < 2; replay++) {
+        await execute(sql, database);
+        assert.equal(
+          await execute(snapshot, database),
+          before,
+          'Curve migration/replay must not write reward or photo history',
+        );
+        assert.equal(await execute(`select private.level_progress(620)->>'level';`, database), '7');
+        assert.equal(await execute(`select private.level_progress(0)->>'level';`, database), '1');
+        assert.equal(
+          await execute(
+            `select bool_and(private.public_profile_level(p.id)=(private.level_progress(coalesce((select sum(amount) from public.xp_events e where e.user_id=p.id),0)::bigint)->>'level')::integer) from public.profiles p;`,
+            database,
+          ),
+          't',
+        );
+      }
+      console.log(
+        'PASS: QA32 curve migration/replay changes only derived levels; nonempty signed XP, awards, milestones, days, photos and inbox remain identical',
+      );
+      continue;
+    }
     const historicalSnapshot = `select jsonb_build_object(
       'photos',(select jsonb_agg(to_jsonb(s)-'capture_kind' order by id) from public.submissions s),
       'daily',(select jsonb_agg(to_jsonb(w) order by submission_id) from private.word_completions w),
       'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
     const beforeHistorical =
       file === '20260923000000_past_words.sql' ? await execute(historicalSnapshot, database) : null;
+    if (file === '20260927000000_qa28_31_profile_safety_inbox.sql') {
+      const snapshot = `select jsonb_build_object('photos',(select jsonb_agg(to_jsonb(s) order by id) from public.submissions s),'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e),'notifications',(select jsonb_agg(to_jsonb(n) order by id) from public.in_app_notifications n));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(
+        await execute(snapshot, database),
+        before,
+        'Additive QA migration preserves existing learning/history/read state',
+      );
+      const requestId = randomUUID();
+      const admitted = await execute(
+        `begin; select set_config('request.jwt.claim.sub','${user}',true); select public.open_notification_inbox('${requestId}');commit;`,
+        database,
+      );
+      assert.match(admitted, /opened_at/);
+      const receipts = await execute(
+        `select jsonb_agg(to_jsonb(o) order by request_id) from private.inbox_openings o;`,
+        database,
+      );
+      const afterOpen = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), afterOpen, 'Replay cannot reset read state');
+      assert.equal(
+        await execute(
+          `select jsonb_agg(to_jsonb(o) order by request_id) from private.inbox_openings o;`,
+          database,
+        ),
+        receipts,
+        'Replay preserves durable opening cutoff',
+      );
+      for (const signature of [
+        'public.open_notification_inbox(uuid,uuid[])',
+        'public.get_blocked_profile(uuid)',
+      ]) {
+        assert.equal(
+          await execute(
+            `select has_function_privilege('authenticated','${signature}','execute') and not has_function_privilege('anon','${signature}','execute');`,
+            database,
+          ),
+          't',
+        );
+      }
+      assert.equal(
+        await execute(
+          `select has_function_privilege('service_role','public.get_blocked_avatar_targets(uuid,uuid[])','execute') and not has_function_privilege('authenticated','public.get_blocked_avatar_targets(uuid,uuid[])','execute');`,
+          database,
+        ),
+        't',
+      );
+      console.log(
+        'PASS: QA28–31 nonempty migration/replay preserves photos, XP, read state and durable receipts; minimal grants remain',
+      );
+      continue;
+    }
+    if (file === '20260926020000_author_avatar_references.sql') {
+      const snapshot = `select jsonb_build_object('comments',(select jsonb_agg(to_jsonb(c) order by id) from public.submission_comments c),'notifications',(select jsonb_agg(to_jsonb(n) order by id) from public.in_app_notifications n),'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      for (const signature of [
+        'public.get_submission_comments(uuid,timestamptz,uuid)',
+        'public.get_notification_inbox(timestamptz,uuid,integer)',
+      ]) {
+        assert.equal(
+          await execute(
+            `select has_function_privilege('anon','${signature}','execute');`,
+            database,
+          ),
+          'f',
+        );
+        assert.equal(
+          await execute(
+            `select has_function_privilege('authenticated','${signature}','execute');`,
+            database,
+          ),
+          't',
+        );
+      }
+      console.log(
+        'PASS: bounded comment/inbox avatar projection replays without changing comments, events, XP or execute authority',
+      );
+    }
     if (file === '20260912050000_phase4_audit_storage.sql') {
       // Pre-audit completion trusted metadata only. Never silently backfill that
       // fixture as verified or rewrite its completion when installing the guard.
@@ -207,6 +431,169 @@ try {
       );
     } else {
       await execute(sql, database);
+    }
+    if (file === '20260926010000_owner_history_visibility.sql') {
+      const snapshot = `select set_config('request.jwt.claim.sub','${user}',false);
+        select jsonb_build_object(
+          'all',public.get_my_vocabulary(),
+          'public',public.get_my_vocabulary(requested_visibility=>'public'),
+          'private',public.get_my_vocabulary(requested_visibility=>'private'),
+          'photos',(select jsonb_agg(to_jsonb(s) order by id) from public.submissions s),
+          'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      assert.equal(
+        await execute(
+          `select count(*) from pg_proc where pronamespace='public'::regnamespace and proname='get_my_vocabulary';`,
+          database,
+        ),
+        '1',
+      );
+      assert.equal(
+        await execute(
+          `select has_function_privilege('anon','public.get_my_vocabulary(uuid,text,text,timestamptz,uuid,integer,text)','execute');`,
+          database,
+        ),
+        'f',
+      );
+      // Six-argument callers still select All; new filtering never elevates RLS.
+      assert.equal(
+        await execute(
+          `select set_config('request.jwt.claim.sub','${user}',false);
+        select public.get_my_vocabulary()=public.get_my_vocabulary(null,'',null,null,null,12);`,
+          database,
+        ),
+        `${user}\nt`,
+      );
+      const plan = await query(
+        `begin;
+        set local session_replication_role=replica;
+        insert into public.submissions(id,user_id,daily_challenge_id,daily_challenge_word_id,concept_id,vocabulary_term_id,reference_term_id,target_term,reference_term,storage_path,visibility,status,submitted_at)
+          select fixture.id,fixture.owner,s.daily_challenge_id,gen_random_uuid(),s.concept_id,s.vocabulary_term_id,s.reference_term_id,
+            s.target_term,s.reference_term,fixture.owner::text||'/'||fixture.id::text||'.jpg','private','completed',statement_timestamp()
+          from (select * from public.submissions where status='completed' limit 1) s
+          cross join (select gen_random_uuid() id,gen_random_uuid() owner from generate_series(1,25000)) fixture;
+        set local session_replication_role=origin;
+        analyze public.submissions;
+        load 'auto_explain';
+        set local auto_explain.log_min_duration=0;
+        set local auto_explain.log_nested_statements=on;
+        set local auto_explain.log_analyze=on;
+        set local auto_explain.log_timing=off;
+        set local client_min_messages=log;
+        set local plan_cache_mode=force_generic_plan;
+        select set_config('request.jwt.claim.sub','${user}',true);
+        -- The disposable Auth stub omits Supabase's default schema usage grant.
+        -- Match that platform permission locally, inside this rolled-back fixture.
+        grant usage on schema auth to authenticated;
+        set local role authenticated;
+        select public.get_my_vocabulary(requested_visibility=>'private',page_size=>1);
+        rollback;`,
+        database,
+        'supabase_admin',
+      ).result;
+      assert.equal(plan.code, 0, plan.error);
+      assert.match(
+        plan.error,
+        /(?:Index Scan|Bitmap Index Scan) (?:on|using) submissions_(?:vocabulary_history|owner)\b/,
+      );
+      assert.match(plan.error, /Index Cond:.*user_id/);
+      assert.match(plan.error, /Filter:.*visibility = ANY/);
+      assert.doesNotMatch(plan.error, /Seq Scan on submissions/);
+      assert.equal(await execute(snapshot, database), before);
+      console.log(
+        'PASS: owner visibility migration replay preserves photos/XP, old callers and invoker RLS; generic filtered queries use an owner-bound index among 25,000 unrelated captures',
+      );
+    }
+    if (file === '20260926000000_discover_author_avatars.sql') {
+      const author = randomUUID();
+      await execute(
+        `insert into auth.users(id,email) values('${author}','feed-avatar-bootstrap@example.test');
+        select set_config('request.jwt.claim.sub','${author}',false);
+        select public.complete_onboarding('feed_avatar_bootstrap','00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','B1','UTC');
+        do $$ declare a jsonb;o storage.objects;c jsonb;s public.submissions;begin
+          c:=public.get_or_create_today_challenge();
+          s:=public.reserve_submission((c->'words'->0->>'id')::uuid);
+          insert into storage.objects(bucket_id,name,owner_id,version,metadata) values('challenge-submissions',s.storage_path,'${author}','avatar-post','{"mimetype":"image/jpeg","size":100}') returning * into o;
+          perform public.attest_submission_photo(s.id,'${author}',o.id,o.version,repeat('b',64),16,16);
+          perform public.finalize_submission(s.id);
+          perform public.set_submission_visibility(s.id,'public');
+          a:=public.reserve_profile_avatar(gen_random_uuid())->'avatar';
+          insert into storage.objects(bucket_id,name,owner_id,version,metadata)
+           values('profile-avatars',a->>'storage_path','${author}','bootstrap-avatar','{"mimetype":"image/jpeg","size":100}') returning * into o;
+          perform public.activate_profile_avatar((a->>'id')::uuid,'${author}',o.id,o.version,repeat('a',64),16,16);
+        end $$;`,
+        database,
+      );
+      const snapshot = `select jsonb_build_object(
+        'avatars',(select jsonb_agg(to_jsonb(a) order by id) from private.profile_avatars a),
+        'profiles',(select jsonb_agg(to_jsonb(p) order by id) from public.profiles p),
+        'photos',(select jsonb_agg(to_jsonb(s) order by id) from public.submissions s),
+        'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
+      const visible = `select set_config('request.jwt.claim.sub','${author}',false);
+        select public.get_discover_feed(page_size=>1);`;
+      const projected = await execute(visible, database);
+      const avatarId = await execute(`select private.current_avatar_id('${author}');`, database);
+      assert(projected.includes(avatarId) && avatarId.length === 36);
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      assert.equal(await execute(visible, database), projected);
+      assert.equal(
+        await execute(
+          `select has_function_privilege('authenticated','public.get_discover_photo_targets(uuid,uuid,uuid[])','execute');`,
+          database,
+        ),
+        'f',
+      );
+      assert.equal(
+        await execute(
+          `select has_function_privilege('service_role','public.get_discover_photo_targets(uuid,uuid,uuid[])','execute');`,
+          database,
+        ),
+        't',
+      );
+      // Rollback-only planner fixture: current-avatar lookup must stay indexed
+      // and run only for the requested page, even with many unrelated avatars.
+      const plan = await query(
+        `begin;
+        set local session_replication_role=replica;
+        insert into private.profile_avatars(id,user_id,request_id,revision,storage_path,status,object_id,object_version,sha256,width,height)
+          select id,gen_random_uuid(),gen_random_uuid(),1,id::text||'.jpg','current',gen_random_uuid(),'plan',repeat('a',64),16,16
+          from (select gen_random_uuid() id from generate_series(1,25000)) q;
+        set local session_replication_role=origin;
+        analyze private.profile_avatars;
+        load 'auto_explain';
+        set local auto_explain.log_min_duration=0;
+        set local auto_explain.log_nested_statements=on;
+        set local auto_explain.log_analyze=on;
+        set local auto_explain.log_timing=off;
+        set local client_min_messages=log;
+        set local plan_cache_mode=force_generic_plan;
+        select set_config('request.jwt.claim.sub','${author}',true);
+        select public.get_discover_feed(page_size=>1);
+        rollback;`,
+        database,
+        'supabase_admin',
+      ).result;
+      assert.equal(plan.code, 0, plan.error);
+      assert.match(plan.error, /Index Scan using profile_avatars_current/);
+      assert.match(plan.error, /Index Cond: \(user_id = \$1\)/);
+      assert.doesNotMatch(plan.error, /Seq Scan on profile_avatars/);
+      assert.equal(
+        (plan.error.match(/Query Text: \s*select a.id from private.profile_avatars/g) ?? []).length,
+        1,
+      );
+      assert.equal(await execute(snapshot, database), before);
+      console.log(
+        'PASS: actual bounded Discover page resolves avatars once per shown row using the current-avatar index among 25,000 unrelated avatars under a generic plan',
+      );
+      console.log(
+        'PASS: Discover avatar migration bootstraps and replays over verified avatars, existing photos and XP without data changes or widened signing grants',
+      );
+      // Leave the bootstrap's original challenge-count invariant unchanged.
+      await execute(`delete from auth.users where id='${author}';`, database);
     }
     if (file === '20260923000000_past_words.sql') {
       assert.equal(await execute(historicalSnapshot, database), beforeHistorical);

@@ -2,7 +2,7 @@ import { Image, StyleSheet } from 'react-native';
 
 import { useAppTheme } from '@/hooks/use-app-theme';
 
-export function BrandLogo() {
+export function BrandLogo({ compact = false }: { compact?: boolean }) {
   const { isDark } = useAppTheme();
   return (
     <Image
@@ -15,7 +15,7 @@ export function BrandLogo() {
       accessibilityLabel="Langtify"
       accessibilityRole="image"
       resizeMode="contain"
-      style={styles.logo}
+      style={[styles.logo, compact && { width: 136, marginBottom: 0 }]}
     />
   );
 }

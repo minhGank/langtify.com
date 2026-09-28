@@ -18,7 +18,17 @@ import {
   type ReportReason,
   type ReportStatus,
   type SafetyIdentity,
+  type BlockedUser,
 } from '@/features/safety/model';
+
+function blockedUser(value: unknown): BlockedUser {
+  const row = record(value);
+  return {
+    id: identifier(row.id),
+    username: text(row.username),
+    avatarId: row.avatar_id == null ? null : identifier(row.avatar_id),
+  };
+}
 
 export function safetyGateway(identity: SafetyIdentity) {
   const config = publicConfig.config;
@@ -56,11 +66,16 @@ export function safetyGateway(identity: SafetyIdentity) {
             .rpc('get_blocked_users', { before_id: beforeId ?? undefined })
             .abortSignal(signal),
         ),
-        (v) => {
-          const r = record(v);
-          return { id: identifier(r.id), username: text(r.username) };
-        },
+        blockedUser,
       );
+    },
+    async blockedProfile(id: string, signal: AbortSignal) {
+      const row = await receive(
+        activeClient(signal).rpc('get_blocked_profile', { block_id: id }).abortSignal(signal),
+      );
+      const profile = blockedUser(row.profile);
+      if (profile.id !== id) throw new Error('Blocked account changed.');
+      return profile;
     },
     block(id: string, signal: AbortSignal) {
       return acknowledge(

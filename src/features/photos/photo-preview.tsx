@@ -1,60 +1,19 @@
-import { displayTerm } from '@/utils/display-term';
-import { useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Switch, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
-import { IconButton } from '@/components/ui/icon-button';
-import { Sheet } from '@/components/ui/sheet';
-import { MotionView } from '@/components/ui/motion-view';
-import { feedback } from '@/lib/haptics';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { displayTerm } from '@/utils/display-term';
 import type { useAssignmentPhoto } from './use-assignment-photo';
+import { PhotoOptions } from './photo-options';
 
-function VisibilityChoice({
-  value,
-  disabled,
-  onChange,
-}: {
-  value: boolean;
-  disabled: boolean;
-  onChange: (value: boolean) => void;
-}) {
-  const { colors } = useAppTheme();
-  return (
-    <View style={[styles.choice, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-      <Ionicons
-        name={value ? 'globe-outline' : 'lock-closed-outline'}
-        size={22}
-        color={colors.textSecondary}
-      />
-      <View style={styles.choiceText}>
-        <AppText variant="label">Share publicly</AppText>
-        <AppText variant="caption">
-          {value ? 'Visible to other learners' : 'Private · not shared'}
-        </AppText>
-      </View>
-      <Switch
-        accessibilityLabel="Share this photo publicly"
-        accessibilityHint="Show this photo on your profile and in Discover."
-        accessibilityState={{ disabled }}
-        value={value}
-        disabled={disabled}
-        onValueChange={onChange}
-        trackColor={{
-          true: disabled ? colors.controlBorder : colors.brandPrimary,
-          false: colors.controlBorder,
-        }}
-        thumbColor={value && !disabled ? colors.textOnPrimary : colors.surface}
-      />
-    </View>
-  );
-}
 export function PhotoPreview({
   state,
   onTakePhoto,
   onRetake,
   onChooseLibrary,
+  onPreviewReady,
   choosing = false,
 }: {
   state: ReturnType<typeof useAssignmentPhoto>;
@@ -62,18 +21,20 @@ export function PhotoPreview({
   onRetake: () => void;
   onChooseLibrary?: () => void;
   choosing?: boolean;
+  onPreviewReady: (uri: string | null) => void;
 }) {
   const { colors } = useAppTheme();
-  const [sheet, setSheet] = useState<'options' | 'delete' | null>(null);
   const [previewAttempt, setPreviewAttempt] = useState(0);
-  const [loadedUri, setLoadedUri] = useState<string | null>(null),
-    [failedUri, setFailedUri] = useState<string | null>(null);
+  const [loadedUri, setLoadedUri] = useState<string | null>(null);
+  const [failedUri, setFailedUri] = useState<string | null>(null);
   const submission = state.data?.submission;
-  const historical = state.data?.captureKind === 'historical';
-  const completed = submission?.status === 'completed',
-    deleting = submission?.status === 'deleting';
+  const completed = submission?.status === 'completed';
+  const deleting = submission?.status === 'deleting';
   const preview = state.remoteUri ?? state.photo?.uri;
   const ready = !!preview && loadedUri === preview && failedUri !== preview;
+  useEffect(() => {
+    onPreviewReady(ready ? preview : null);
+  }, [ready, preview, onPreviewReady]);
   return (
     <>
       {preview ? (
@@ -121,42 +82,25 @@ export function PhotoPreview({
           <AppText variant="caption">Take a photo or choose one from your library.</AppText>
         </View>
       ) : null}
+
       <View style={styles.context}>
-        <View style={styles.choiceText}>
+        <View style={{ flex: 1, gap: 4 }}>
           <AppText variant="heading">{displayTerm(state.data?.targetTerm ?? '')}</AppText>
           <AppText style={{ color: colors.textSecondary }}>
             {displayTerm(state.data?.referenceTerm ?? '')}
           </AppText>
         </View>
-        {completed && (
-          <IconButton
-            label="Photo options"
-            name="ellipsis-horizontal"
-            variant="surface"
-            disabled={state.busy}
-            onPress={() => setSheet('options')}
+        {(preview || submission) && !deleting && (
+          <PhotoOptions
+            state={state}
+            choosing={choosing}
+            onRetake={onRetake}
+            onChooseLibrary={onChooseLibrary}
           />
         )}
       </View>
-      {completed ? (
-        <View style={styles.context}>
-          <MotionView
-            trigger={state.acknowledgedCompletionId}
-            kind="reward"
-            animateOnMount={state.acknowledgedCompletionId === submission.id}
-            style={styles.status}
-          >
-            <Ionicons name="checkmark-circle" size={18} color={colors.success} />
-            <AppText variant="caption" style={{ color: colors.success }}>
-              {historical ? 'Added to Vocabulary' : 'Completed'}
-            </AppText>
-          </MotionView>
-          <AppText variant="caption">
-            {submission.visibility === 'public' ? 'Public' : 'Private'}
-          </AppText>
-        </View>
-      ) : deleting ? (
-        <View style={styles.group}>
+      {deleting ? (
+        <>
           <AppText>
             This photo hasn’t finished deleting. Finish deleting it before adding another.
           </AppText>
@@ -165,50 +109,8 @@ export function PhotoPreview({
             loading={state.busy}
             onPress={() => void state.deletePhoto()}
           />
-        </View>
-      ) : preview ? (
-        <>
-          <VisibilityChoice
-            value={state.isPublic}
-            disabled={state.busy || choosing}
-            onChange={state.setPublic}
-          />
-          <Button
-            label="Add photo"
-            disabled={!ready || choosing || !state.data?.canCapture}
-            loading={state.busy}
-            onPress={() => void state.submit()}
-          />
-          <View style={styles.actions}>
-            {!state.remoteUri && (
-              <View style={styles.action}>
-                <Button
-                  label="Retake photo"
-                  variant="secondary"
-                  disabled={state.busy || choosing || !state.data?.canCapture}
-                  onPress={onRetake}
-                />
-              </View>
-            )}
-            <View style={styles.action}>
-              <Button
-                label="Discard photo"
-                variant="ghost"
-                disabled={state.busy || choosing}
-                onPress={() => setSheet('delete')}
-              />
-            </View>
-          </View>
-          {!state.remoteUri && onChooseLibrary && (
-            <Button
-              label="Choose another photo"
-              variant="ghost"
-              disabled={state.busy || choosing}
-              onPress={onChooseLibrary}
-            />
-          )}
         </>
-      ) : (
+      ) : !preview ? (
         <>
           <Button
             label="Take photo"
@@ -224,98 +126,12 @@ export function PhotoPreview({
             />
           )}
         </>
-      )}
+      ) : null}
       {!completed && !deleting && state.data && !state.data.canCapture && (
         <AppText variant="caption">
           You can’t add a photo to this word right now. Refresh Vocabulary or Today.
         </AppText>
       )}
-      {submission && !completed && !deleting && !preview && (
-        <Button
-          label="Discard photo"
-          variant="ghost"
-          disabled={state.busy || choosing}
-          onPress={() => setSheet('delete')}
-        />
-      )}
-      <Sheet
-        title={
-          sheet === 'delete'
-            ? completed
-              ? 'Delete this photo?'
-              : 'Discard this photo?'
-            : 'Photo options'
-        }
-        visible={sheet !== null}
-        onClose={() => setSheet(null)}
-      >
-        {sheet === 'delete' ? (
-          <>
-            <AppText>
-              {completed
-                ? historical
-                  ? 'This removes the photo and its XP. Your daily progress and streak won’t change.'
-                  : 'This removes the photo and its XP. It may also affect your challenge bonus and streak.'
-                : 'This photo hasn’t been added yet. Discard it and choose another?'}
-            </AppText>
-            <Button
-              label={completed ? 'Delete photo' : 'Discard photo'}
-              accessibilityLabel="Confirm delete photo"
-              variant="danger"
-              loading={state.busy}
-              onPress={() => {
-                feedback.warning();
-                setSheet(null);
-                void state.deletePhoto();
-              }}
-            />
-            <Button
-              label="Keep photo"
-              variant="secondary"
-              disabled={state.busy}
-              onPress={() => setSheet(null)}
-            />
-          </>
-        ) : (
-          <>
-            {submission && (
-              <VisibilityChoice
-                value={submission.visibility === 'public'}
-                disabled={state.busy}
-                onChange={(value) => void state.changeVisibility(value ? 'public' : 'private')}
-              />
-            )}
-            {state.error && (
-              <View style={styles.group}>
-                <AppText accessibilityRole="alert" style={{ color: colors.error }}>
-                  {state.error}
-                </AppText>
-                <Button
-                  label="Refresh privacy setting"
-                  variant="secondary"
-                  disabled={state.busy}
-                  onPress={() => void state.refresh()}
-                />
-              </View>
-            )}
-            <View style={styles.group}>
-              <AppText variant="caption">Challenge · {state.data?.localDate}</AppText>
-              {submission && (
-                <AppText variant="caption">
-                  Added ·{' '}
-                  {new Date(submission.submitted_at ?? submission.created_at).toLocaleString()}
-                </AppText>
-              )}
-            </View>
-            <Button
-              label="Delete photo"
-              variant="danger"
-              disabled={state.busy}
-              onPress={() => setSheet('delete')}
-            />
-          </>
-        )}
-      </Sheet>
     </>
   );
 }
@@ -330,18 +146,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 12,
   },
-  choice: {
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  choiceText: { flex: 1, gap: 4 },
   context: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
-  status: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  group: { gap: 10 },
-  actions: { flexDirection: 'row', gap: 8 },
-  action: { flex: 1 },
 });

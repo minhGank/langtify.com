@@ -16,8 +16,11 @@ Deno.serve((request: Request) => {
       const result = await auth.auth.getUser(token);
       return result.error ? null : (result.data.user?.id ?? null);
     },
-    async targets(viewer, ids) {
-      const result = await admin.rpc('get_avatar_targets', { viewer, avatar_ids: ids });
+    async targets(viewer, ids, blocked) {
+      const result = await admin.rpc(
+        blocked ? 'get_blocked_avatar_targets' : 'get_avatar_targets',
+        { viewer, avatar_ids: ids },
+      );
       if (result.error) throw result.error;
       return result.data;
     },

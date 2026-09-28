@@ -26,6 +26,7 @@ export type ExploreWord = {
   targetTerm: string;
   referenceTerm: string;
   cefrLevel: CefrLevel;
+  hasCaptures?: boolean;
 };
 export type WordCursor = { term: string; id: string };
 export type WordPage = { items: ExploreWord[]; hasMore: boolean };
@@ -70,7 +71,7 @@ export function parseExploreConcept(
   if (row.item === null) return null;
   const item = word(row.item);
   if (item.conceptId !== conceptId) throw new Error('Vocabulary concept changed.');
-  return item;
+  return { ...item, hasCaptures: flag(record(row.item).has_captures) };
 }
 export function exploreGateway(identity: ExploreIdentity) {
   const config = publicConfig.config;

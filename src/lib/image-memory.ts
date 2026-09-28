@@ -149,6 +149,23 @@ export function imageMemory(scope: string, resource: string, tags: readonly stri
   const entry = (id: string) =>
     images.entry(`${scope}:image:${resource}:${id}`, ['media', ...tags]);
   return {
+    forget(id: string) {
+      entry(id).clear();
+    },
+    // Only the owner upload path calls this after trusted finalization, with the
+    // exact prepared bytes it uploaded. This stores pixels, never a signed URL.
+    rememberVerifiedPhoto(id: string, bytes: Uint8Array) {
+      if (
+        bytes.length < 4 ||
+        bytes.length > maximumImageBytes ||
+        bytes[0] !== 0xff ||
+        bytes[1] !== 0xd8 ||
+        bytes[bytes.length - 2] !== 0xff ||
+        bytes[bytes.length - 1] !== 0xd9
+      )
+        return;
+      entry(id).set(jpegDataUri(bytes));
+    },
     cached(ids: string[]) {
       const result: Record<string, string> = {};
       for (const id of ids) {

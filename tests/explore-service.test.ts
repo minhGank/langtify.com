@@ -23,7 +23,13 @@ const identity = {
   targetLanguageId: 'fr',
   referenceLanguageId: 'en',
 };
-const item = { concept_id: id, target_term: 'le chien', reference_term: 'dog', cefr_level: 'A1' };
+const item = {
+  concept_id: id,
+  target_term: 'le chien',
+  reference_term: 'dog',
+  cefr_level: 'A1',
+  has_captures: false,
+};
 const envelope = { viewer_id: 'viewer', target_language_id: 'fr', reference_language_id: 'en' };
 function response(data: unknown, error: unknown = null) {
   const request = Object.assign(Promise.resolve({ data, error }), { abortSignal: mockAbort });

@@ -5,12 +5,14 @@ import { useAppTheme } from '@/hooks/use-app-theme';
 import type { FeedItem } from '@/services/discover';
 import type { RatingAction, RatingScore } from '@/features/ratings/rating';
 import { FeedPhoto } from './feed-photo';
+import { PostAuthor } from './post-author';
 import { QuickRating } from '@/features/ratings/quick-rating';
 
 export function FeedCard({
   item,
   language,
   uri,
+  avatarUri,
   photoRevision,
   reload,
   open,
@@ -22,6 +24,7 @@ export function FeedCard({
   item: FeedItem;
   language: string;
   uri?: string;
+  avatarUri?: string;
   photoRevision: number;
   reload: () => void;
   open: () => void;
@@ -58,14 +61,7 @@ export function FeedCard({
             {displayTerm(item.referenceTerm)}
           </AppText>
         </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`View @${item.username}`}
-          onPress={author}
-          style={styles.author}
-        >
-          <AppText variant="caption">Photo by @{item.username}</AppText>
-        </Pressable>
+        <PostAuthor uri={avatarUri} username={item.username} onPress={author} />
         <View style={[styles.ratingRow, { borderTopColor: colors.border }]}>
           <QuickRating
             word={displayTerm(item.targetTerm)}

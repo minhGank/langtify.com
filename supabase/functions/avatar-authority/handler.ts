@@ -8,7 +8,7 @@ export type Verification = Target & {
 };
 export type AvatarAuthority = {
   authenticate: (token: string) => Promise<string | null>;
-  targets: (viewer: string, ids: string[]) => Promise<Target[]>;
+  targets: (viewer: string, ids: string[], blocked?: boolean) => Promise<Target[]>;
   sign: (
     paths: string[],
   ) => Promise<{ path: string | null; signedUrl: string | null; error?: string | null }[]>;
@@ -71,7 +71,7 @@ export async function handleAvatar(
     const viewer = token ? await authority.authenticate(token) : null;
     if (!viewer) return reply({ error: 'authentication_required' }, 401);
     const body = await input(request);
-    if (body.action === 'previews') {
+    if (body.action === 'previews' || body.action === 'blocked-previews') {
       const ids = body.avatarIds;
       if (
         !Array.isArray(ids) ||
@@ -81,7 +81,7 @@ export async function handleAvatar(
         new Set(ids.map((id) => String(id).toLowerCase())).size !== ids.length
       )
         return reply({ error: 'invalid_request' }, 400);
-      const targets = await authority.targets(viewer, ids);
+      const targets = await authority.targets(viewer, ids, body.action === 'blocked-previews');
       const signed = targets.length
         ? await authority.sign(targets.map((target) => target.storage_path))
         : [];

@@ -18,6 +18,7 @@ export type FeedItem = RatingSummary & {
   referenceTerm: string;
   cefrLevel: CefrLevel;
   username: string;
+  avatarId: string | null;
   submittedAt: string;
 };
 export type FeedCursor = { time: string; id: string };
@@ -50,6 +51,15 @@ function payload(value: unknown, identity: FeedIdentity) {
     const r = record(item),
       level = text(r.cefr_level),
       submittedAt = text(r.submitted_at);
+    // Missing on older servers and non-Discover initial projections. Signing
+    // revalidation supplies the current reference before rendering those cards.
+    const avatarId = r.avatar_id ?? null;
+    if (
+      avatarId !== null &&
+      (typeof avatarId !== 'string' ||
+        !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(avatarId))
+    )
+      throw new Error('Invalid feed avatar.');
     if (!isCefrLevel(level) || !Number.isFinite(Date.parse(submittedAt)))
       throw new Error('Invalid feed response.');
     return {
@@ -59,6 +69,7 @@ function payload(value: unknown, identity: FeedIdentity) {
       referenceTerm: text(r.reference_term),
       cefrLevel: level,
       username: text(r.username),
+      avatarId,
       submittedAt,
     };
   });

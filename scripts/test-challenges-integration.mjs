@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { query, execute } from './lib/local-db.mjs';
+import { testCompletedConceptConcurrency } from './lib/completed-concepts-concurrency.mjs';
 
 const user = randomUUID();
 const auditLanguage = randomUUID();
@@ -135,3 +136,5 @@ try {
     delete from public.languages where id='${auditLanguage}';`,
   );
 }
+
+await testCompletedConceptConcurrency();

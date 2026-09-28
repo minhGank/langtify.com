@@ -102,12 +102,63 @@ it('resolves only a server-authorized notification ID and drops unrelated routin
   respond({
     viewer_id: identity.userId,
     kind: 'NEW_RATING',
-    assignment_id: id,
+    submission_id: id,
     route: '/moderation',
     signed_url: 'https://private.invalid',
     rater_id: 'hidden',
   });
   const result = await inboxGateway(identity).resolve(id, new AbortController().signal);
   expect(mockRpc).toHaveBeenCalledWith('resolve_notification_target', { notification_id: id });
-  expect(result).toEqual({ kind: 'NEW_RATING', assignmentId: id });
+  expect(result).toEqual({ kind: 'NEW_RATING', submissionId: id });
+});
+
+it('sends only an opening key and bounded displayed IDs, never a caller clock or recipient', async () => {
+  const signal = new AbortController().signal;
+  respond({
+    viewer_id: identity.userId,
+    ok: true,
+    unread_count: 1,
+    read_cursor: cursor,
+    opened_at: cursor.time,
+    read_states: [{ id, read: true }],
+  });
+  expect(await inboxGateway(identity).openInbox(id, [id], signal)).toEqual({
+    unreadCount: 1,
+    readCursor: cursor,
+    openedAt: cursor.time,
+    readStates: [{ id, read: true }],
+  });
+  expect(mockRpc).toHaveBeenCalledWith('open_notification_inbox', {
+    request_id: id,
+    displayed_ids: [id],
+  });
+});
+it('rejects foreign, duplicate, malformed and unsolicited opening row states', async () => {
+  const gateway = inboxGateway(identity),
+    signal = new AbortController().signal;
+  const receipt = {
+    viewer_id: identity.userId,
+    ok: true,
+    unread_count: 0,
+    read_cursor: null,
+    opened_at: cursor.time,
+    read_states: [{ id, read: true }],
+  };
+  for (const patch of [
+    { viewer_id: id },
+    { ok: false },
+    { opened_at: 'bad' },
+    { unread_count: -1 },
+    { read_states: [{ id: identity.userId, read: true }] },
+    { read_states: [{ id, read: 'true' }] },
+    {
+      read_states: [
+        { id, read: true },
+        { id, read: true },
+      ],
+    },
+  ]) {
+    respond({ ...receipt, ...patch });
+    await expect(gateway.openInbox(id, [id], signal)).rejects.toThrow();
+  }
 });

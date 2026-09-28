@@ -3,10 +3,11 @@ import { TabHeading } from '@/components/ui/tab-heading';
 import { useCallback, useMemo } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useFocusEffect } from 'expo-router';
-import { ActivityIndicator, AppState, StyleSheet, View } from 'react-native';
+import { AppState, Pressable, StyleSheet, View } from 'react-native';
 import { ProgressPanel } from '@/features/progress/progress-panel';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
+import { PreparationState } from '@/components/ui/preparation-state';
 import { Screen } from '@/components/ui/screen';
 import { IconButton } from '@/components/ui/icon-button';
 import { MotionView } from '@/components/ui/motion-view';
@@ -116,10 +117,7 @@ function TodayContent(identity: ChallengeIdentity & { cacheKey: string; timezone
         challengeId={challenge?.id}
       />
       {loading && !challenge && (
-        <View accessibilityRole="progressbar" accessibilityLabel="Loading challenge">
-          <ActivityIndicator />
-          <AppText>Finding today’s words…</AppText>
-        </View>
+        <PreparationState title="Finding today’s words…" label="Loading challenge" />
       )}
       {error ? (
         <>
@@ -201,10 +199,34 @@ function WordCard({
         )}
       </View>
       <MotionView trigger={word.id} style={styles.word}>
-        <AppText accessibilityRole="header" variant="heading" style={styles.term}>
-          {displayTerm(word.targetTerm)}
-        </AppText>
-        <AppText style={{ color: colors.textSecondary }}>{displayTerm(word.referenceTerm)}</AppText>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Explore ${displayTerm(word.targetTerm)}`}
+          accessibilityHint="View this word and photo examples."
+          disabled={disabled}
+          onPress={() =>
+            router.push({
+              pathname: '/explore-concept',
+              params: { conceptId: word.conceptId, assignmentId: word.id },
+            })
+          }
+          style={({ pressed }) => [styles.wordLink, { opacity: pressed ? 0.7 : 1 }]}
+        >
+          <View style={styles.wordText}>
+            <AppText accessibilityRole="header" variant="heading" style={styles.term}>
+              {displayTerm(word.targetTerm)}
+            </AppText>
+            <AppText style={{ color: colors.textSecondary }}>
+              {displayTerm(word.referenceTerm)}
+            </AppText>
+          </View>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={colors.textSecondary}
+            accessible={false}
+          />
+        </Pressable>
       </MotionView>
       <Button
         label={completed ? 'View photo' : word.submission ? 'Resume photo' : 'Take photo'}
@@ -219,10 +241,12 @@ function WordCard({
         loading={loading}
         disabled={disabled}
         onPress={() =>
-          router.push({
-            pathname: '/photo',
-            params: { assignmentId: word.id, ...(!word.submission ? { capture: '1' } : {}) },
-          })
+          completed && word.submission
+            ? router.push({ pathname: '/post', params: { submissionId: word.submission.id } })
+            : router.push({
+                pathname: '/photo',
+                params: { assignmentId: word.id, ...(!word.submission ? { capture: '1' } : {}) },
+              })
         }
       />
     </View>
@@ -239,6 +263,8 @@ const styles = StyleSheet.create({
   },
   status: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   word: { gap: 4 },
+  wordLink: { flexDirection: 'row', alignItems: 'center', minHeight: 60, gap: 12 },
+  wordText: { flex: 1, gap: 4 },
   term: { fontSize: 28, lineHeight: 34 },
 });
 

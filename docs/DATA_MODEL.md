@@ -102,6 +102,32 @@ variation. Production level assignments and vocabulary licensing need separate r
 
 ## Phase 3 audit invariants
 
+### Permanent completed-concept eligibility
+
+`20260928010000_completed_concept_exclusion.sql` adds private `completed_concepts`:
+`user_id`, `concept_id` (composite primary key), `first_submission_id` and
+`first_completed_at`. The source ID intentionally has no photo FK so provenance
+survives trusted hard photo/challenge deletion. The concept FK protects semantic
+identity; the profile FK cascades on account erasure. RLS is enabled with no client
+policies/grants. A mutation guard prevents updates or deletion while its owner exists.
+
+Only the existing verified pending-to-completed submission transition inserts a
+fact, atomically with finalization/XP. Daily and Past Words captures qualify; a
+retry/reupload conflicts harmlessly on the primary key. Photo deletion, revocation,
+visibility and moderation cannot restore new-concept eligibility. Both selection
+paths use the same private helper and indexed anti-join. Existing assignments and
+the reversible XP entitlement are unchanged.
+
+Backfill uses retained `submitted_at` (including deleted photos) and positive durable
+word-XP events joined to their owned assignment. First installation refuses unresolved
+positive word events whose submission AND assignment were already hard-deleted;
+operators must review genuine legacy evidence instead of guessing semantic identity.
+Replay preserves original provenance and all XP/photo/assignment records. The migration
+locks profiles then submissions while installing/backfilling; schedule it for a quiet
+Dev window and review backfill duration before a large production rollout.
+
+### Original Phase 3 integrity audit
+
 `20260912030000_phase3_audit_integrity.sql` adds target/reference language snapshots
 on assignment rows and composite foreign keys linking each term ID to its original
 concept/language and each assignment to its challenge language pair. Used terms
@@ -509,3 +535,103 @@ Progress reconciles the same `word:<assignment>` entitlement across daily and
 historical facts; only daily facts enter streaks, bonuses and completion metrics.
 Existing rows remain daily. See [PAST_WORDS.md](PAST_WORDS.md) for constraints,
 concurrency, replay, deletion and rollout details.
+
+## QA #20 Discover author avatars
+
+`20260926000000_discover_author_avatars.sql` adds only nullable `avatar_id` to
+`get_discover_feed`, `get_discover_submission` and the service-only
+`get_discover_photo_targets` projection. No tables, indexes, Storage policies or
+public profile grants change. The internal owner UUID is removed before JSON
+serialization. `private.current_avatar_id` verifies the current lifecycle and
+Storage object identity/version using the existing partial unique index; it runs
+only for the bounded eligible page/batch. Feed order and timestamp/UUID cursors
+remain unchanged. The signing-target return type is replaced transactionally and
+its service-only grant is restored. Replay preserves photos, avatars and XP.
+
+An avatar ID is a reference, not a read capability. `avatar-authority` still verifies
+the caller and current social/block/moderation eligibility, signs at most 24 IDs
+per request for 60 seconds and accepts no caller path or TTL. Removed or replaced
+IDs cannot receive new signatures. Private profile fields remain owner-only.
+
+## QA #19 owner visibility filter
+
+`20260926010000_owner_history_visibility.sql` replaces the six-argument
+`get_my_vocabulary` signature with a single seven-argument signature whose final
+`requested_visibility text` defaults to null. Existing callers omit it and retain
+All behavior. Only null, `public` and `private` are accepted. The old overload is
+dropped transactionally so PostgREST resolution stays unambiguous; authenticated
+execution is restored and anonymous execution remains denied. Security-invoker,
+empty search path and owner-derived identity remain unchanged.
+
+Visibility filters completed owned captures before ranking, concept counts, latest
+capture selection, search/CEFR and cursor paging. This retains older matching photos
+when the newest photo has the other visibility. `total_concepts` is scoped to
+visibility, still independent of search/CEFR. Grouped counts and detail summaries
+use the same filtered set. Deleting/deleted/pending captures remain excluded.
+
+No new table, index, raw grant, RLS/Storage policy or signing endpoint. The existing
+`submissions_vocabulary_history` index bounds reads to the owner. Exact counts and
+latest-per-concept selection still process that owner's eligible history as before;
+responses remain bounded to 24 rows. Bootstrap verifies indexed owner restriction
+under an authenticated generic plan among 25,000 unrelated captures.
+
+## QA #23 author avatar read projection
+
+`20260926020000_author_avatar_references.sql` adds nullable `avatar_id` to the existing
+bounded comment and inbox JSON projections. Comments include the current verified
+author avatar; only NEW_FOLLOWER inbox rows include it. Anonymous ratings and daily
+words retain null. Resolution occurs after paging/eligibility, using the existing
+current-avatar index. No Auth UUID/path/private profile field is added, and no
+write, RLS, grant, Storage, event or pagination authority changes. Old clients ignore
+the additive field; new clients accept absent fields during staged deployment.
+
+## QA #28–31 projection and inbox admission migration
+
+Migration: `20260927000000_qa28_31_profile_safety_inbox.sql`, applied to persistent
+local Supabase on 2026-09-28 with explicit approval. No hosted migration was
+performed; see verification results in QA28_31_PROFILES_INBOX.md.
+
+- `get_explore_concept` adds owned `has_captures` via the completed owner-history index.
+- `get_public_profile` and the existing follow/connection profile projection add
+  `level` only. `private.public_profile_level` sums signed ledger entries through
+  the existing owner index and shared level helper; it is not client executable.
+- `get_blocked_users` adds nullable `avatar_id`; new `get_blocked_profile(block_id)`
+  is Auth-derived and only admits the viewer's outgoing block. Both return exactly
+  block ID/username/avatar ID. Existing block pagination uses the owner/ID index.
+- `get_blocked_avatar_targets(viewer,avatar_ids)` is service-only and returns only
+  current, version-matching avatar objects for that viewer's outgoing blocks.
+  Existing public avatar access, private buckets and Storage RLS are unchanged.
+- `private.inbox_openings` has `(user_id,request_id)` primary key, finite server
+  `opened_at`, profile FK/cascade, RLS and no client/service-role table grants.
+  `open_notification_inbox(request_id,displayed_ids)` accepts at most 60 unique IDs,
+  accepts no caller cutoff/recipient, locks the owner's Auth row before notification
+  rows, serializes openings per viewer and updates snapshot-selected eligible rows
+  once. Durable receipts survive retries/replay; deletion of the account removes
+  receipts. No time-based receipt purge is introduced because it would admit old
+  retries again. The existing owner/unread indexes scope read-state work.
+- `resolve_notification_target` adds canonical `submission_id` for rating targets;
+  the old assignment ID remains for compatibility. Old manual-read RPCs remain
+  available to older clients, while the new UI never invokes them.
+
+The transactional migration is additive and replay-preserving. It does not alter
+XP, completion, challenge selection, visibility, moderation or notification events.
+Projection response sizes remain bounded; exact level and inbox summary computations
+still process only the applicable owner's indexed history/unread rows.
+
+## QA #32 — derived Level 1 progression
+
+Migration **`20260928000000_qa32_level_progression.sql`** replaces only
+`private.level_progress(total_xp bigint)`. The private, read-only, empty-search-path
+helper returns the same JSON fields; no public RPC signature/generated type, table,
+column, RLS policy or grant is added. Its formula is `10 × (L - 1) × (L + 2)`, L ≥ 1.
+Both owner and eligible public-profile reads inherit the formula immediately.
+No XP, source balance, streak, completion, notification or account history is rewritten.
+
+Use a numeric square-root estimate followed by exact numeric threshold comparisons.
+Products and next thresholds are numeric to support the full nonnegative bigint
+input range, including a next threshold beyond bigint maximum; the resulting level
+fits PostgreSQL integer. Null/negative XP is rejected. The app keeps safe-integer
+validation: unrepresentable JSON totals/thresholds show unavailable progress rather
+than rounded numbers. This is a transport limit, not a gameplay level cap; supporting
+such totals would require a future string/bigint transport contract. No such totals
+are plausible under the unchanged reward system. Migration replay preserves history.

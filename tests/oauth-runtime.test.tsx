@@ -7,6 +7,7 @@ import { act, fireEvent, render, renderHook, waitFor } from '@testing-library/re
 import {
   coordinator,
   authMutation,
+  verifySignupCode,
   restoreAuthSession,
   subscribeAuth,
 } from '@/features/auth/oauth/runtime';
@@ -23,6 +24,10 @@ const mockExchange = jest.fn();
 const mockAuthorize = jest.fn();
 const mockClear = jest.fn();
 const mockDismiss = jest.fn();
+const mockEmailExchange = jest.fn();
+jest.mock('@/features/auth/email-verification', () => ({
+  exchangeSignupCode: (...args: unknown[]) => mockEmailExchange(...args),
+}));
 jest.mock('@/lib/env', () => ({
   publicConfig: { config: { url: 'https://auth.example.test', key: 'test-public-key' } },
 }));
@@ -90,6 +95,7 @@ beforeEach(async () => {
   });
   mockBrowser.mockReturnValue(new Promise(() => {}));
   mockExchange.mockResolvedValue(google());
+  mockEmailExchange.mockResolvedValue(google());
   mockSetSession.mockImplementation(async () => {
     mockSession = google();
     mockListener('SIGNED_IN', mockSession);
@@ -429,5 +435,86 @@ it('another tab can recover a crashed installation without having its private PK
     expect(await restoreAuthSession()).toBeNull();
     expect(mockSignOut).toHaveBeenCalled();
     expect(other.pending()).toBeNull();
+  });
+});
+
+it('admits a verified email through the existing session/onboarding authority', async () => {
+  const loadAccount = jest.fn().mockResolvedValue({
+    profile: { ...makeAccount().profile, onboarding_completed_at: null },
+    learning: null,
+    languages: [],
+  });
+  const gateway = {
+    restore: restoreAuthSession,
+    subscribe: (listener: (session: Session | null, event: AuthChangeEvent) => void) =>
+      subscribeAuth((event, session) => listener(session, event)),
+    loadAccount,
+  };
+  const view = renderHook(() => useSessionState(gateway));
+  await waitFor(() => expect(view.result.current.status).toBe('signed-out'));
+  await act(async () => {
+    await verifySignupCode('learner@example.test', '123456', () => true);
+  });
+  await waitFor(() => expect(view.result.current.status).toBe('onboarding'));
+  expect(mockSetSession).toHaveBeenCalledTimes(1);
+  expect(await AsyncStorage.getItem('langtify-oauth:https://auth.example.test:pending')).toBeNull();
+});
+it.each(['leave', 'sign-out', 'account', 'google'])(
+  'rejects stale email verification after %s',
+  async (reason) => {
+    const response = deferred<Session>();
+    mockEmailExchange.mockReturnValue(response.promise);
+    let active = true;
+    const pending = verifySignupCode('learner@example.test', '123456', () => active);
+    const rejected = expect(pending).rejects.toThrow();
+    await waitFor(() => expect(mockEmailExchange).toHaveBeenCalled());
+    let next = Promise.resolve();
+    if (reason === 'leave') active = false;
+    if (reason === 'sign-out') next = authMutation(async () => {});
+    if (reason === 'account') {
+      mockSession = makeSession('new-account');
+      mockListener('SIGNED_IN', mockSession);
+    }
+    if (reason === 'google') void coordinator.start();
+    response.resolve(google());
+    await rejected;
+    await next;
+    expect(mockSetSession).not.toHaveBeenCalled();
+    await coordinator.cancel('');
+  },
+);
+it('rolls back email installation cancelled while setSession was pending', async () => {
+  const gate = deferred<void>();
+  let active = true;
+  mockSetSession.mockImplementation(async () => {
+    await gate.promise;
+    mockSession = google();
+    mockListener('SIGNED_IN', mockSession);
+    return { data: { session: mockSession }, error: null };
+  });
+  const listener = jest.fn();
+  const stop = subscribeAuth(listener);
+  const pending = verifySignupCode('learner@example.test', '123456', () => active);
+  const rejected = expect(pending).rejects.toThrow();
+  await waitFor(() => expect(mockSetSession).toHaveBeenCalled());
+  active = false;
+  gate.resolve();
+  await rejected;
+  expect(mockSignOut).toHaveBeenCalled();
+  expect(listener.mock.calls.some(([event]) => event === 'SIGNED_IN')).toBe(false);
+  expect(await restoreAuthSession()).toBeNull();
+  stop();
+});
+it('a newer browser intent fences email verification before installation', async () => {
+  await inBrowser(async (other) => {
+    const response = deferred<Session>();
+    mockEmailExchange.mockReturnValue(response.promise);
+    const pending = verifySignupCode('learner@example.test', '123456', () => true);
+    const rejected = expect(pending).rejects.toThrow();
+    await waitFor(() => expect(mockEmailExchange).toHaveBeenCalled());
+    other.begin('newer-tab-intent');
+    response.resolve(google());
+    await rejected;
+    expect(mockSetSession).not.toHaveBeenCalled();
   });
 });

@@ -11,13 +11,14 @@ import { socialGateway } from '@/services/social';
 import { openConnections } from '@/features/social/connections-navigation';
 import { ProfileAvatar } from './profile-avatar';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { PublicProfilePosts } from '@/features/social/public-profile-posts';
 
 export function ProfileIdentity({
   userId,
   token,
   username,
-}: SafetyIdentity & { username: string }) {
+  level,
+  learningLabel,
+}: SafetyIdentity & { username: string; level?: number; learningLabel?: string }) {
   const { colors } = useAppTheme();
   const identity = useMemo(() => ({ userId, token }), [userId, token]);
   const gateway = useMemo(() => socialGateway(identity), [identity]);
@@ -53,6 +54,7 @@ export function ProfileIdentity({
           ]}
         >
           <ProfileAvatar
+            isSelf
             identity={identity}
             username={username}
             avatarId={query.data?.avatarId ?? null}
@@ -69,29 +71,52 @@ export function ProfileIdentity({
         </Pressable>
         <View style={styles.text}>
           <AppText variant="heading">@{query.data?.username ?? username}</AppText>
-          {query.data && (
-            <View style={styles.counts}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={`${query.data.followerCount} followers`}
-                onPress={() => query.data && openConnections(query.data.id, 'followers')}
-                style={styles.count}
-              >
-                <AppText variant="caption">{query.data.followerCount} followers</AppText>
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={`${query.data.followingCount} following`}
-                onPress={() => query.data && openConnections(query.data.id, 'following')}
-                style={styles.count}
-              >
-                <AppText variant="caption">{query.data.followingCount} following</AppText>
-              </Pressable>
-            </View>
-          )}
+          {learningLabel && <AppText variant="caption">{learningLabel}</AppText>}
         </View>
       </View>
-      {query.data && <PublicProfilePosts identity={identity} profileId={query.data.id} isOwn />}
+      <View style={[styles.counts, { borderColor: colors.border }]}>
+        <View
+          style={styles.count}
+          accessible
+          accessibilityLabel={level === undefined ? 'Level unavailable' : `Level ${level}`}
+        >
+          <AppText variant="heading">{level ?? '—'}</AppText>
+          <AppText variant="caption">Level</AppText>
+        </View>
+        {(['followers', 'following'] as const).map((kind) => {
+          const count = query.data
+            ? kind === 'followers'
+              ? query.data.followerCount
+              : query.data.followingCount
+            : undefined;
+          return (
+            <Pressable
+              key={kind}
+              accessibilityRole="button"
+              disabled={!query.data}
+              accessibilityState={{ disabled: !query.data }}
+              accessibilityLabel={count === undefined ? `${kind} unavailable` : `${count} ${kind}`}
+              onPress={() => query.data && openConnections(query.data.id, kind)}
+              style={styles.count}
+            >
+              <AppText variant="heading">{count ?? '—'}</AppText>
+              <AppText variant="caption">
+                {kind === 'followers' ? 'Followers' : 'Following'}
+              </AppText>
+            </Pressable>
+          );
+        })}
+      </View>
+      {query.error && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Retry profile summary"
+          onPress={() => void query.refresh()}
+          style={styles.retry}
+        >
+          <AppText variant="caption">Couldn’t load your profile. Tap to retry.</AppText>
+        </Pressable>
+      )}
     </View>
   );
 }
@@ -111,6 +136,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: { flex: 1, gap: 4 },
-  counts: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  count: { minHeight: 44, justifyContent: 'center' },
+  counts: {
+    flexDirection: 'row',
+    gap: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: 16,
+  },
+  count: { flex: 1, minHeight: 56, alignItems: 'center', justifyContent: 'center', gap: 4 },
+  retry: { minHeight: 44, justifyContent: 'center' },
 });

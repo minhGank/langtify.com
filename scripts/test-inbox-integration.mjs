@@ -258,6 +258,7 @@ try {
   assert.equal(ratings[0].submission_id, post.id);
   assert.equal(ratings[0].assignment_id, post.assignmentId);
   assert.equal((await resolve(owner, ratings[0].id)).assignment_id, post.assignmentId);
+  assert.equal((await resolve(owner, ratings[0].id)).submission_id, post.id);
   const forbidden = [
     'actor_user_id',
     'rater_user_id',
@@ -382,6 +383,69 @@ try {
   );
   console.log(
     'PASS: moderation/deletion exclude related events; direct REST, anonymous and cross-user mutations are denied; XP remains unchanged',
+  );
+
+  const recipient = await account();
+  await follow(a, recipient);
+  const openId = randomUUID();
+  const openInbox = (actor, request = openId, ids = []) =>
+    rpc(actor.client, 'open_notification_inbox', { request_id: request, displayed_ids: ids });
+  const oldId = (await inbox(recipient)).items[0].id;
+  const openings = await Promise.all(
+    Array.from({ length: 8 }, () => openInbox(recipient, openId, [oldId])),
+  );
+  assert.equal(new Set(openings.map((row) => row.opened_at)).size, 1);
+  for (const row of openings) {
+    assert.equal(row.unread_count, 0);
+    assert.deepEqual(row.read_states, [{ id: oldId, read: true }]);
+  }
+  assert.equal(
+    await execute(
+      `select count(*) from private.inbox_openings where user_id='${recipient.id}' and request_id='${openId}';`,
+    ),
+    '1',
+  );
+  await follow(b, recipient);
+  const newerId = (await inbox(recipient)).items.find((row) => row.profile_id === b.publicId).id;
+  const retried = await openInbox(recipient, openId, [oldId, newerId]);
+  assert.equal(retried.opened_at, openings[0].opened_at);
+  assert.equal(retried.unread_count, 1, 'A lost-ack retry never broadens admission');
+  assert.equal(retried.read_states.find((row) => row.id === newerId).read, false);
+  const foreign = await openInbox(a, openId, [newerId]);
+  assert.deepEqual(foreign.read_states, []);
+  assert.equal((await summary(recipient)).unread_count, 1);
+  assert((await api.client().rpc('open_notification_inbox', { request_id: randomUUID() })).error);
+
+  // The event exists in an uncommitted producer transaction when opening begins.
+  // A timestamp-only replay could wrongly clear it later. Snapshot membership
+  // plus the durable no-write retry receipt must leave it unread after commit.
+  const producer = query(
+    `begin; ${claim(other.id)} select public.set_follow('${recipient.publicId}',true); select 'AUDIT_LOCKED'; select pg_sleep(0.75);commit;`,
+  );
+  assert.equal(await producer.ready, true);
+  const concurrentId = randomUUID();
+  await openInbox(recipient, concurrentId);
+  const produced = await producer.result;
+  assert.equal(produced.code, 0, produced.error);
+  const concurrentEvent = (await inbox(recipient)).items.find(
+    (row) => row.profile_id === other.publicId,
+  );
+  assert.equal(concurrentEvent.read_at, null, 'Uncommitted event was not visible at opening');
+  const retryConcurrent = await openInbox(recipient, concurrentId, [concurrentEvent.id]);
+  assert.equal(retryConcurrent.unread_count, 1);
+  assert.deepEqual(retryConcurrent.read_states, [{ id: concurrentEvent.id, read: false }]);
+  const finalOpen = await openInbox(recipient, randomUUID());
+  assert.equal(finalOpen.unread_count, 0);
+  const historicalPage = await inbox(recipient, { page_size: 1 });
+  const historicalNext = await inbox(recipient, {
+    page_size: 1,
+    before_time: historicalPage.items[0].created_at,
+    before_id: historicalPage.items[0].id,
+  });
+  assert.notEqual(historicalPage.items[0].id, historicalNext.items[0].id);
+  assert.notEqual(historicalNext.items[0].read_at, null);
+  console.log(
+    'PASS: concurrent inbox opens share one durable cutoff; later and initially uncommitted events survive old retries; recipient-only state and history keysets remain',
   );
 
   const erased = await account();

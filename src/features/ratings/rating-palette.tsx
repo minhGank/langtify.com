@@ -56,7 +56,7 @@ export function RatingPalette({
         >
           <View style={styles.heading}>
             <View style={styles.title}>
-              <AppText variant="caption">PHOTO MATCH</AppText>
+              <AppText variant="caption">How well does it match?</AppText>
               <AppText variant="heading">{word}</AppText>
             </View>
             <IconButton name="close" label="Close rating" onPress={close} />

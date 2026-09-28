@@ -6,7 +6,7 @@ import { AppText } from '@/components/ui/app-text';
 import { Avatar } from '@/components/ui/avatar';
 import { SafetyUnavailable, type SafetyIdentity, type SafetyPage } from '@/features/safety/model';
 import { discardPublicData, searchCache, type SearchWindow } from '@/features/social/cache';
-import { useConnectionAvatars } from '@/features/social/connections-avatars';
+import { useAvatarRows } from '@/features/social/connections-avatars';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useServerQuery } from '@/hooks/use-server-query';
 import { serverScope } from '@/lib/server-cache';
@@ -54,10 +54,7 @@ export function PeopleResults({
     [identity, entry],
   );
   const query = useServerQuery(entry, load, { staleTime: Infinity, discardOnError });
-  const avatars = useConnectionAvatars(
-    identity,
-    query.data?.items.flatMap((item) => (item.avatarId ? [item.avatarId] : [])) ?? [],
-  );
+  const avatars = useAvatarRows(identity, query.data?.items ?? []);
   const more = () => {
     const snapshot = entry.getSnapshot(),
       saved = snapshot.data;
@@ -123,10 +120,7 @@ export function PeopleResults({
             },
           ]}
         >
-          <Avatar
-            username={item.username}
-            uri={item.avatarId ? avatars.photos[item.avatarId] : null}
-          />
+          <Avatar username={item.username} uri={avatars.uri(item)} />
           <View style={styles.name}>
             <AppText variant="label">@{item.username}</AppText>
             <AppText variant="caption">

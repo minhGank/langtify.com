@@ -88,6 +88,19 @@ const progress = (client, challenge) =>
   rpc(client, 'get_my_progress', challenge ? { challenge_id: challenge } : {});
 function noDailyCredit(value, xp) {
   assert.equal(value.total_xp, xp);
+  const expectedLevels = new Map([
+    [0, 1],
+    [10, 1],
+    [20, 1],
+    [30, 1],
+    [40, 2],
+    [50, 2],
+  ]);
+  assert.equal(
+    value.level,
+    expectedLevels.get(xp),
+    'Historical XP shares the authoritative Level 1 curve',
+  );
   assert.equal(value.completed_words, 0);
   assert.equal(value.current_streak, 0);
   assert.equal(value.longest_streak, 0);

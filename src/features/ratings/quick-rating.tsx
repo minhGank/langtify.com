@@ -24,14 +24,21 @@ export function QuickRating({
   const { colors } = useAppTheme();
   const [open, setOpen] = useState(false);
   const selected = summary.viewerRating;
-  const label = selected === null ? 'Rate match' : ratingOptions[selected - 1].label;
+  const label = selected === null ? 'Rate photo' : ratingOptions[selected - 1].label;
   const saving = action?.status === 'saving';
   return (
     <View style={styles.content}>
       <View style={styles.row}>
         <View style={styles.summary}>
           <RatingAggregate summary={summary} compact />
-          {!summary.canRate && <AppText variant="caption">Your photo</AppText>}
+          {!summary.canRate && (
+            <AppText
+              variant="caption"
+              accessibilityLabel="Your photo. Only other people can rate it."
+            >
+              Your photo
+            </AppText>
+          )}
         </View>
         {summary.canRate && (
           <MotionView trigger={selected} kind="change" style={styles.choice}>
