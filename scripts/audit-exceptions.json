@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "scope": "unsigned-ci",
+  "reviewedOn": "2026-10-06",
+  "expiresInterpretation": "Expired at 2026-10-13T00:00:00Z (start of day UTC). No automatic renewal.",
+  "scopeRestrictions": "Only the reviewed .github/workflows/ci.yml app job: tests and unsigned exports. Never signing, publishing, certificate validation or future release jobs. Local invocation only reproduces this unsigned check.",
+  "maintenance": "Review changes before manually updating fingerprints/paths. Full lock SHA-256 freezes all ancestor paths, versions and peer/optional relationships. Remove entries when fixed; stale entries fail. No automatic hash refresh is run by CI.",
+  "lockSha256": "a3e3d2d113fe771cf42387866b259aa4ce3e57b97a79125a73f12031efdf1626",
+  "reviewedFiles": {
+    ".github/workflows/ci.yml": "200e71db03e7a2bbb05486f76f0073d5a3a63e3efaf44c3b59e6f646c2b55a21",
+    "package.json": "ccda8cb175d5a931d36acf9b42d59e7828014079e1cc44f85d314e7ceeec34b8",
+    "app.json": "9ce102420ad3794ece0db1dc168d2250068a0006e6d5c7008f196a54f47c5740",
+    "app.config.js": "1ffefe15c922ef04ca4f6ae72a2d395206d5d371fdcdcf686d647bcf26c521d6"
+  },
+  "exceptions": [
+    {
+      "advisory": "GHSA-vfj7-8cjw-p6xm",
+      "package": "braces",
+      "version": "3.0.3",
+      "severity": "high",
+      "scope": "unsigned-ci",
+      "expires": "2026-10-13",
+      "reason": "No published fixed version. Used by Metro/Jest tooling and absent from reviewed production JS bundles. CI must recheck all three platform source maps; build inputs remain an attack surface.",
+      "nodes": [
+        {
+          "path": "node_modules/braces",
+          "version": "3.0.3"
+        }
+      ],
+      "parents": [
+        {
+          "path": "node_modules/micromatch",
+          "version": "4.0.8",
+          "kind": "dependencies",
+          "range": "^3.0.3"
+        }
+      ]
+    },
+    {
+      "advisory": "GHSA-86w9-cpqp-85rv",
+      "package": "node-forge",
+      "version": "1.4.0",
+      "severity": "high",
+      "scope": "unsigned-ci",
+      "expires": "2026-10-13",
+      "reason": "No published fixed version. Absent from reviewed production JS bundles. Exception applies only to current unsigned tests/exports: Expo uses affected RSA verification for certificate/code-signing operations, which are NOT approved for this exception.",
+      "nodes": [
+        {
+          "path": "node_modules/node-forge",
+          "version": "1.4.0"
+        }
+      ],
+      "parents": [
+        {
+          "path": "node_modules/@expo/cli",
+          "version": "57.0.28",
+          "kind": "dependencies",
+          "range": "^1.3.3"
+        },
+        {
+          "path": "node_modules/@expo/code-signing-certificates",
+          "version": "0.0.6",
+          "kind": "dependencies",
+          "range": "^1.3.3"
+        }
+      ]
+    }
+  ],
+  "remainingRuntimeFinding": {
+    "advisory": "GHSA-vcc3-ghjq-m6fr",
+    "package": "decode-uri-component",
+    "version": "0.2.2",
+    "severity": "moderate",
+    "disposition": "Not excepted or hidden. Ships in iOS/Android/web; reachable via Expo Router query parsing. Focused mitigation/backport and device verification remain release-security work."
+  }
+}

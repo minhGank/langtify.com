@@ -43,16 +43,17 @@ jobs:
       - name: Typecheck, lint, formatting and application tests
         run: npm run check
       - name: CI setup regression tests
-        run: node --test scripts/ci-supabase.test.mjs
-      - name: Dependency security gate
-        # Report known moderates; fail on high/critical findings or registry errors.
-        run: npm audit --audit-level=high
+        run: node --test scripts/ci-supabase.test.mjs scripts/audit-policy.test.mjs
       - name: Export iOS, Android and web
         env:
           # Nonfunctional public fixtures; never point export jobs at hosted data.
           EXPO_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
           EXPO_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_ci_fixture
-        run: npm run export:check -- --clear
+        run: npm run export:check -- --clear --source-maps
+      - name: Dependency security gate (unsigned CI only)
+        # Always report the full audit. Missing export evidence fails closed.
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        run: node scripts/audit-policy.mjs --scope unsigned-ci --bundles dist
       - name: Source and bundle credential scan
         run: npm run security:scan
       - name: Expo Doctor

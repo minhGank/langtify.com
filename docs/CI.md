@@ -24,9 +24,66 @@ SDK compatibility each run after successful dependency installation, even if ano
 check fails, so both diagnostics remain visible. Job timeouts are 25 and 35 minutes.
 Stale runs for the same PR or branch are cancelled using workflow concurrency.
 
-The dependency gate is `npm audit --audit-level=high`: known moderate findings remain
-visible, while high/critical advisories and registry failures fail CI. No force fix,
-SDK downgrade, dependency override or automatic update is performed.
+The dependency gate runs the full `npm audit --json --audit-level=high`, including
+development, optional and peer dependencies, through `scripts/audit-policy.mjs`.
+Critical findings always fail; high findings fail unless every high advisory cause
+matches the explicit unsigned-CI policy below. Moderates remain visible. Registry,
+parsing and classification errors fail closed. No force fix, SDK downgrade,
+dependency override or automatic update is performed.
+
+## Temporary unsigned-CI audit exceptions (2026-10-06)
+
+The operator approved exactly two high-advisory exceptions in
+[`scripts/audit-exceptions.json`](../scripts/audit-exceptions.json):
+
+| Advisory                                                                 | Exact installed package                       | Immediate dependency paths                                                                                 |
+| ------------------------------------------------------------------------ | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) | `braces@3.0.3`, `node_modules/braces`         | `node_modules/micromatch@4.0.8` requires `^3.0.3`                                                          |
+| [GHSA-86w9-cpqp-85rv](https://github.com/advisories/GHSA-86w9-cpqp-85rv) | `node-forge@1.4.0`, `node_modules/node-forge` | `node_modules/@expo/cli@57.0.28` and `node_modules/@expo/code-signing-certificates@0.0.6` require `^1.3.3` |
+
+Neither has a published fixed version at review time; neither appeared in the
+reviewed iOS/Android/web production JS bundles. These remain vulnerabilities in
+tooling, not fixed packages. Both expire at **2026-10-13 00:00:00 UTC** with no grace
+period or automatic renewal. The complete lockfile SHA-256 freezes all transitive
+ancestor paths and versions in addition to the explicit occurrence/parent records.
+Changes require review even if npm still reports the same advisory.
+
+Scope is only the current `CI` workflow's `app` job running tests and unsigned
+exports. Workflow, package scripts and app configuration fingerprints stop reuse
+after scope changes. Other jobs/workflows and signing/publishing scopes are rejected.
+The node-forge exception does **not** authorize certificate validation, code signing,
+update publishing, or a future release workflow: Expo uses its vulnerable RSA
+verification APIs in signing-related operations. Local execution explicitly selects
+`--scope unsigned-ci` and reproduces only this check; it is not release clearance.
+
+The gate prints the entire npm JSON report first, including on policy failure, then
+reports each package and its advisory causes. It resolves inherited findings through
+the audit graph; it does not allowlist Expo, Jest or React Native. Unknown/new highs,
+criticals, expired/stale exceptions, changed dependency paths, missing bundle evidence
+and malformed/network responses fail. Moderate findings stay visible, including the
+runtime decoder warning. CI produces source maps for all three platforms and rejects
+an excepted package found in any map. These diagnostic maps are not published or
+uploaded by this workflow. Fresh checkout/export is required; do not reuse stale
+local exports as evidence for changed application sources.
+
+`decode-uri-component@0.2.2` / GHSA-vcc3-ghjq-m6fr is **not excepted**. Router query
+parsing reaches it at runtime on all three platforms. Its fixed `0.5.0` lies outside
+the parent's range; mitigation/backport and device validation remain release work.
+The moderate sprintf-js and uuid advisories remain reported too. Audit totals at
+review: 0 critical, 49 high, 16 moderate across five underlying advisories.
+
+To reproduce after a fresh all-platform export with the workflow's public fixtures:
+
+```sh
+node --test scripts/ci-supabase.test.mjs scripts/audit-policy.test.mjs
+node scripts/audit-policy.mjs --scope unsigned-ci --bundles dist
+```
+
+For upstream fixes, apply compatible dependency updates, rerun the full audit and
+bundle review, remove obsolete exceptions, and explicitly review any remaining
+fingerprints/paths. Do not regenerate hashes or extend expiry simply to unblock CI.
+The policy cannot replace repository review or protect against a contributor who
+rewrites the policy and its approval data together.
 
 ## Local Supabase and credential handling
 
