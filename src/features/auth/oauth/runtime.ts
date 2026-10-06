@@ -13,6 +13,8 @@ import { createOAuthAttempt } from './pkce-attempt';
 import { appScheme, callbackPath } from './callback';
 import { OAuthCoordinator, type OAuthAttempt, type PendingLogin } from './coordinator';
 import { exchangeSignupCode } from '../email-verification';
+import { RecoveryController } from '../recovery/controller';
+import { createRecoveryClient } from '../recovery/client';
 
 export function oauthRedirect() {
   return makeRedirectUri({ scheme: appScheme, path: callbackPath });
@@ -180,7 +182,10 @@ function connect() {
     ) {
       return;
     }
-    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') authIntent++;
+    if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+      authIntent++;
+      void recovery.cancel().catch(() => {});
+    }
     if (Platform.OS === 'web' && event !== 'INITIAL_SESSION') {
       // SDK broadcasts precede local admission. Wait for the originating tab's
       // mutation/rollback, then accept only the session still present in storage.
@@ -222,7 +227,7 @@ export function authMutation<T>(
 ): Promise<T> {
   authIntent++;
   browserAuthority()?.begin(intentId);
-  const cancelled = coordinator.cancel('').then(
+  const cancelled = Promise.all([coordinator.cancel(''), recovery.cancel()]).then(
     () => true,
     () => false,
   );
@@ -370,6 +375,7 @@ export const coordinator = new OAuthCoordinator({
   now: Date.now,
   begin: (id) => {
     authIntent++;
+    void recovery.cancel().catch(() => {});
     if (Platform.OS === 'web' && !browserAuthority())
       throw new Error('Secure browser coordination unavailable.');
     browserAuthority()?.begin(id);
@@ -407,3 +413,40 @@ export const coordinator = new OAuthCoordinator({
     }
   },
 });
+
+const recoveryKey = `${prefix}recovery`;
+export const recovery = new RecoveryController({
+  read: () => storageTask(() => store.getItem(recoveryKey)),
+  write: (value) => storageTask(() => store.setItem(recoveryKey, value)),
+  remove: (id) =>
+    storageTask(async () => {
+      const raw = await store.getItem(recoveryKey);
+      if (raw) {
+        const pending: unknown = JSON.parse(raw);
+        if (pending && typeof pending === 'object' && 'id' in pending && pending.id === id) {
+          // A failed deletion must not revive a cancelled recovery after restart.
+          await store.setItem(recoveryKey, JSON.stringify({ ...pending, phase: 'cancelled' }));
+          await store.removeItem(recoveryKey);
+        }
+      }
+    }),
+  client: (id) => {
+    if (!config) throw new Error('Auth configuration unavailable.');
+    return createRecoveryClient(config, `${prefix}recovery:${id}`, store);
+  },
+  current: (id) => browserAuthority()?.current(id) ?? Platform.OS !== 'web',
+  signedIn: async () => Boolean(await readAuthSession()),
+  now: Date.now,
+});
+export function requestPasswordReset(email: string) {
+  const id = Crypto.randomUUID();
+  return authMutation(() => recovery.request(email, id), id);
+}
+export function receiveAuthCallback(url: string) {
+  return serialize(() => recovery.receive(url)).then((handled) => {
+    if (!handled) return coordinator.receive(url);
+  });
+}
+export function updateRecoveryPassword(password: string) {
+  return serialize(() => recovery.update(password));
+}

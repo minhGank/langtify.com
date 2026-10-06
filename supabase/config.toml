@@ -64,3 +64,6 @@ verify_jwt = true
 verify_jwt = false
 [analytics]
 enabled = false
+
+[functions.storage-cleanup]
+verify_jwt = false

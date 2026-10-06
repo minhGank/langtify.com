@@ -15,6 +15,9 @@ export function localApi() {
   return {
     url: config.API_URL,
     admin: createClient(config.API_URL, config.SERVICE_ROLE_KEY ?? config.SECRET_KEY, options),
-    client: () => createClient(config.API_URL, config.PUBLISHABLE_KEY ?? config.ANON_KEY, options),
+    client: (auth = {}) =>
+      createClient(config.API_URL, config.PUBLISHABLE_KEY ?? config.ANON_KEY, {
+        auth: { ...options.auth, ...auth },
+      }),
   };
 }

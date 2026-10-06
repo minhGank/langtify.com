@@ -78,8 +78,8 @@
     "submissions:cleanup": "node scripts/cleanup-submissions.mjs",
     "db:test:submissions": "node --experimental-strip-types scripts/test-submissions-integration.mjs",
     "db:test:photo-audit": "node --experimental-strip-types scripts/test-photo-audit.mjs",
-    "functions:check": "npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/index.ts && npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/notification-scheduler/deno.json supabase/functions/notification-scheduler/index.ts && npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/avatar-authority/deno.json supabase/functions/avatar-authority/index.ts",
-    "functions:test": "npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority && npm exec --yes --package=deno@2.9.6 -- deno test --config supabase/functions/notification-scheduler/deno.json supabase/functions/notification-scheduler && npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/avatar-authority/deno.json supabase/functions/avatar-authority",
+    "functions:check": "npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority/index.ts && npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/notification-scheduler/deno.json supabase/functions/notification-scheduler/index.ts && npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/avatar-authority/deno.json supabase/functions/avatar-authority/index.ts && npm exec --yes --package=deno@2.9.6 -- deno check --config supabase/functions/storage-cleanup/deno.json supabase/functions/storage-cleanup/index.ts",
+    "functions:test": "npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/photo-authority/deno.json supabase/functions/photo-authority && npm exec --yes --package=deno@2.9.6 -- deno test --config supabase/functions/notification-scheduler/deno.json supabase/functions/notification-scheduler && npm exec --yes --package=deno@2.9.6 -- deno test --allow-read --config supabase/functions/avatar-authority/deno.json supabase/functions/avatar-authority && npm exec --yes --package=deno@2.9.6 -- deno test --config supabase/functions/storage-cleanup/deno.json supabase/functions/storage-cleanup",
     "functions:lint": "npm exec --yes --package=deno@2.9.6 -- deno lint supabase/functions",
     "security:scan": "node scripts/scan-credentials.mjs",
     "db:test:progress": "node --experimental-strip-types scripts/test-progress-integration.mjs",
@@ -97,7 +97,8 @@
     "db:test:social": "node --experimental-strip-types scripts/test-social-integration.mjs",
     "db:test:inbox": "node --experimental-strip-types scripts/test-inbox-integration.mjs",
     "db:test:explore": "node --experimental-strip-types scripts/test-explore-integration.mjs",
-    "db:test:past-words": "node --experimental-strip-types scripts/test-past-words-integration.mjs"
+    "db:test:past-words": "node --experimental-strip-types scripts/test-past-words-integration.mjs",
+    "db:test:cleanup": "node --experimental-strip-types scripts/test-storage-cleanup.mjs"
   },
   "private": true,
   "engines": {

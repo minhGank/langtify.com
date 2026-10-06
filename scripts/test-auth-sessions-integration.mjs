@@ -66,3 +66,6 @@ try {
   if (userId) assert.ifError((await api.admin.auth.admin.deleteUser(userId)).error);
   await Promise.all([first.auth.dispose(), second.auth.dispose(), api.admin.auth.dispose()]);
 }
+
+// Run sequentially after the existing Auth fixtures have been cleaned up.
+await import('./test-password-recovery-integration.mjs');

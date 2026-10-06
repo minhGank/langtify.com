@@ -791,6 +791,14 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      begin_storage_cleanup_run: {
+        Args: { request_id: string; runner_name: string };
+        Returns: boolean;
+      };
+      finish_storage_cleanup_run: {
+        Args: { request_id: string; counts: Json; uncertain?: boolean };
+        Returns: boolean;
+      };
       activate_profile_avatar: {
         Args: {
           avatar_id: string;

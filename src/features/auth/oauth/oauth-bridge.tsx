@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import * as Linking from 'expo-linking';
 import { Platform } from 'react-native';
-import { coordinator, oauthRedirect } from './runtime';
+import { coordinator, oauthRedirect, receiveAuthCallback } from './runtime';
 import { isCallbackUrl } from './callback';
 import { listenOAuthReturns } from './return-queue';
 
@@ -12,7 +12,7 @@ export function OAuthBridge() {
     let alive = true;
     const accept = (url: string) => {
       if (!alive || !isCallbackUrl(url, oauthRedirect())) return;
-      void coordinator.receive(url);
+      void receiveAuthCallback(url).catch(() => {});
     };
     const stop = listenOAuthReturns(accept);
     const subscription = Linking.addEventListener('url', (event) => accept(event.url));

@@ -12,6 +12,7 @@ jest.mock('@/features/auth/oauth/runtime', () => ({
     receive: (...args: unknown[]) => mockReceive(...args),
     accountChanged: () => mockAccountChanged(),
   },
+  receiveAuthCallback: (...args: unknown[]) => mockReceive(...args),
   oauthRedirect: () => 'langtify://auth/callback',
 }));
 jest.mock('expo-linking', () => ({

@@ -104,6 +104,18 @@ export function AuthScreen({ mode }: { mode: 'sign-in' | 'sign-up' }) {
                   <PasswordGuidance password={auth.password} />
                 )}
               </View>
+              {!signingUp && (
+                <Link href="/forgot-password" asChild>
+                  <Pressable
+                    disabled={busy}
+                    accessibilityRole="link"
+                    accessibilityState={{ disabled: busy }}
+                    style={{ minHeight: 48, justifyContent: 'center' }}
+                  >
+                    <AppText style={{ color: colors.brandText }}>Forgot password?</AppText>
+                  </Pressable>
+                </Link>
+              )}
               {!!auth.error && (
                 <AppText
                   style={{ color: colors.error }}

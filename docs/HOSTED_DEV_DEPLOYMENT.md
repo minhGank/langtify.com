@@ -108,22 +108,15 @@ resetting a consumed attempt; historical blocked rows must not be sent as a back
 Remove the named job using `cron.unschedule('langtify-notifications-dev')` when testing
 ends. Remove any older preparation-only cron before enabling this job.
 
-## 5. Install the existing photo cleanup schedule
+## 5. Hosted Storage cleanup
 
-On a trusted Node runner, deploy this same checkout and run `npm ci`. Supply a
-restricted environment file outside source containing only the **Dev**
-`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Run one maintenance pass, then install
-the existing hourly cron example with correct absolute runner paths:
+Dev is moving to the `storage-cleanup` Edge Function and hourly Supabase Cron.
+Follow [the hosted cleanup runbook](STORAGE_CLEANUP_HOSTED.md) for the exact Dev-only
+migration, Vault/Edge secret, schedule, verification and Mac cutover status.
+The existing Node scripts remain a fallback; never enable both schedules together.
 
-```sh
-node --env-file=/etc/langtify/dev-maintenance.env scripts/cleanup-submissions.mjs
-```
-
-See [the cron template](../ops/submissions-cleanup.cron.example). Restrict the file
-to the runner account and make sure cron references `dev-maintenance.env` and the
-Dev checkout. Alert on failure, nonzero retry counts and missing hourly runs.
-Interrupted deletion and expired uploads must be physically removed through the
-Storage API. Do not replace this worker with SQL deletion from `storage.objects`.
+Cleanup still uses the existing durable queues and Storage API with unchanged
+valid-photo/current-avatar guards. Never delete `storage.objects` rows directly.
 
 ## 6. Provision a development moderator
 

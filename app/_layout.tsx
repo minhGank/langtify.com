@@ -1,5 +1,7 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { NotificationProvider } from '@/features/notifications/notification-provider';
+import { useSyncExternalStore } from 'react';
+import { recovery } from '@/features/auth/oauth/runtime';
 import { StatusBar } from 'expo-status-bar';
 
 import { AuthProvider, useAuth } from '@/features/auth/auth-provider';
@@ -20,6 +22,8 @@ export default function RootLayout() {
 
 export function RootNavigator() {
   const { status } = useAuth();
+  const reset = useSyncExternalStore(recovery.subscribe, recovery.snapshot, recovery.snapshot);
+  const recovering = ['ready', 'updating', 'success', 'failed'].includes(reset.phase);
   const { isDark, colors } = useAppTheme();
   const reduced = useReducedMotion();
   const baseTheme = isDark ? DarkTheme : DefaultTheme;
@@ -47,9 +51,13 @@ export function RootNavigator() {
           >
             <Stack.Screen name="session" />
           </Stack.Protected>
-          <Stack.Protected guard={status === 'signed-out'}>
+          <Stack.Protected guard={status === 'signed-out' && !recovering}>
             <Stack.Screen name="sign-in" />
             <Stack.Screen name="sign-up" />
+            <Stack.Screen name="forgot-password" />
+          </Stack.Protected>
+          <Stack.Protected guard={status === 'signed-out' && recovering}>
+            <Stack.Screen name="set-new-password" />
           </Stack.Protected>
           <Stack.Protected guard={status === 'onboarding'}>
             <Stack.Screen name="onboarding" />

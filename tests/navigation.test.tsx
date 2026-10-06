@@ -8,6 +8,9 @@ import VocabularyScreen from '../app/(tabs)/vocabulary';
 import RootLayout from '../app/_layout';
 import SignInRoute from '../app/sign-in';
 import SignUpRoute from '../app/sign-up';
+import ForgotPasswordRoute from '../app/forgot-password';
+import SetNewPasswordRoute from '../app/set-new-password';
+import { recovery } from '@/features/auth/oauth/runtime';
 import OnboardingRoute from '../app/onboarding';
 import SessionRoute from '../app/session';
 import PhotoRoute from '../app/photo';
@@ -74,6 +77,8 @@ const routes = {
   _layout: RootLayout,
   'sign-in': SignInRoute,
   'sign-up': SignUpRoute,
+  'forgot-password': ForgotPasswordRoute,
+  'set-new-password': SetNewPasswordRoute,
   onboarding: OnboardingRoute,
   session: SessionRoute,
   photo: PhotoRoute,
@@ -234,9 +239,35 @@ it('keeps a malformed signed-out callback outside protected content', async () =
   mockState = { ...mockState, status: 'signed-out', session: null, account: null };
   const app = renderRouter(routes, { initialUrl: '/auth/callback' });
   expect(
-    await screen.findByText('This sign-in link no longer works. Start again from Sign in.'),
+    await screen.findByText(
+      'This link is invalid or has expired. Return to Sign in to start again.',
+    ),
   ).toBeVisible();
   fireEvent.press(screen.getByRole('button', { name: 'Back to sign in' }));
   expect(await screen.findByRole('button', { name: 'Sign in' })).toBeVisible();
   expect(app.getPathname()).toBe('/sign-in');
+});
+
+it('opens Forgot password from login and denies direct password-setting without recovery', async () => {
+  mockState = { status: 'signed-out', session: null, account: null };
+  const app = renderRouter(routes, { initialUrl: '/set-new-password' });
+  expect(await screen.findByText('Welcome back')).toBeVisible();
+  fireEvent.press(screen.getByText('Forgot password?'));
+  expect(await screen.findByRole('header', { name: 'Reset password' })).toBeVisible();
+  expect(app.getPathname()).toBe('/forgot-password');
+});
+it('routes an admitted recovery to Set new password instead of normal authenticated content', async () => {
+  mockState = { status: 'signed-out', session: null, account: null };
+  const snapshot = jest
+    .spyOn(recovery, 'snapshot')
+    .mockReturnValue({ phase: 'ready', message: '' });
+  const app = renderRouter(routes, { initialUrl: '/auth/callback' });
+  try {
+    expect(await screen.findByRole('header', { name: 'Set new password' })).toBeVisible();
+    expect(app.getPathname()).toBe('/set-new-password');
+    expect(screen.queryByText("Today's Challenge")).toBeNull();
+  } finally {
+    app.unmount();
+    snapshot.mockRestore();
+  }
 });
