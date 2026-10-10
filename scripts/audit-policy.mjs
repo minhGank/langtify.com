@@ -89,6 +89,10 @@ export function dependencyParents(lock, name) {
 
 export function verifyScope(policy, { scope, env, files }) {
   requireThat(
+    !env.EAS_BUILD_PROFILE && env.EAS_BUILD !== 'true',
+    'Unsigned CI exceptions cannot authorize EAS builds',
+  );
+  requireThat(
     policy.schemaVersion === 1 && scope === 'unsigned-ci' && policy.scope === scope,
     'Exceptions require explicit unsigned-ci scope',
   );
@@ -105,6 +109,12 @@ export function verifyScope(policy, { scope, env, files }) {
     'Missing reviewed workflow/configuration',
   );
   for (const file of ['.github/workflows/ci.yml', 'package.json', 'app.json', 'app.config.js']) {
+    requireThat(
+      Object.hasOwn(policy.reviewedFiles, file),
+      `Missing reviewed configuration: ${file}`,
+    );
+  }
+  for (const file of Object.keys(policy.reviewedFiles)) {
     requireThat(
       typeof files[file] === 'string' && sha256(files[file]) === policy.reviewedFiles[file],
       `Scope changed; re-review required: ${file}`,

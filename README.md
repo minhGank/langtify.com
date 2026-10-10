@@ -97,6 +97,64 @@ query parameters or fragments. `app.config.js` preserves the metadata in `app.js
 and shares validation with `src/lib/env.ts` through `src/lib/public-config.js`.
 The validator checks configuration shape/key role; Supabase verifies credentials.
 
+## Development and release backends
+
+`EXPO_PUBLIC_BACKEND_ENV` defaults to `development`. Without an explicit URL the
+client uses Dev (`ssuyyrfncvyqsgkirvpq`); an explicitly supplied development URL can
+override it for local tests. Existing `.env.local` stays unchanged and continues to
+use Dev. `NODE_ENV=production` is deliberately not the backend selector: unsigned
+CI exports also use production-mode JavaScript.
+
+`production` requires exactly `https://lfdgjewypbhukjrtwsef.supabase.co` and a
+nonempty `sb_publishable_...` key in `EXPO_PUBLIC_SUPABASE_ANON_KEY`. It rejects Dev,
+localhost, any other project, missing values, secret keys and legacy JWTs. Production
+build configuration must set `EXPO_NO_DOTENV=1`; local dotenv fallback is forbidden.
+Only public values are inlined into the app. No key is added to Expo `extra`.
+
+The minimal `eas.json` profiles use generated native projects (both native folders
+are ignored). Development is an internal Debug client; production is a store build
+using EAS's `production` environment. Before the first production build, link the
+correct EAS project and provide its public UUID as `EXPO_PUBLIC_EAS_PROJECT_ID` for
+dynamic config resolution. Set `EXPO_PUBLIC_SUPABASE_ANON_KEY` to the Production
+publishable key in the EAS **production** environment with plaintext/public
+visibility, not secret visibility. Set the same name to the Dev public key in the
+EAS **development** environment if using remote development builds. Profile URLs
+and modes are already explicit. No remote EAS settings were changed by this task.
+Review `EXPO_PUBLIC_SIGNUP_CODE_LENGTH` against Production's verified signup email
+contract separately; do not copy Dev-specific Auth settings blindly.
+
+Local Dev build (existing `.env.local`):
+
+```sh
+npm run build:ios:dev
+# Or: npm run build:android:dev
+```
+
+Production iOS build, after supplying the public EAS project UUID and Production
+environment values above:
+
+```sh
+EXPO_NO_DOTENV=1 npx eas-cli@24.11.0 build --platform ios --profile production
+```
+
+The resulting signed store build can be submitted to TestFlight/App Store; building
+does not itself submit it. Android uses the same command with `--platform android`.
+No build, submission, signing-credential provisioning or hosted changes were run.
+
+The `with-release-environment` config plugin installs a guard immediately before
+iOS JS bundling and on Android release pre-build tasks. It rechecks the actual
+native build environment, so choosing Release in Xcode/Gradle cannot bypass a
+missing production selection. It rejects skipped iOS bundling and Personal Team
+push-removal configuration. The existing ignored iOS project has also received
+this narrow build-phase guard. Regenerated projects receive it through the plugin;
+old native projects elsewhere must be regenerated before use. A manual Xcode
+archive must receive all production variables and `EXPO_NO_DOTENV=1` in its build
+process, not just in a different terminal or Metro process.
+
+Native binary compilation, signing, device acceptance and the runtime decoder
+security fix remain separate release checks. The temporary unsigned npm-audit
+exceptions explicitly refuse EAS builds; they are not release authorization.
+
 ## Continuous integration
 
 GitHub Actions runs the existing application, export, security and local Supabase

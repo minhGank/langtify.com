@@ -23,6 +23,7 @@
       "favicon": "./assets/branding/favicon.png"
     },
     "plugins": [
+      "./plugins/with-release-environment",
       "expo-router",
       [
         "expo-splash-screen",
@@ -80,6 +81,17 @@
     "experiments": {
       "typedRoutes": true
     },
-    "platforms": ["ios", "android", "web"]
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "38e4505e-b9cf-42d0-a1b3-5e44a5186b65"
+      }
+    },
+    "owner": "minhgank"
   }
 }

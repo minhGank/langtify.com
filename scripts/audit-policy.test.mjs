@@ -196,6 +196,17 @@ test('workflow, scripts and app configuration changes require scope re-review', 
     assert.throws(() => evaluate(f), /Scope changed/);
   }
 });
+test('unsigned audit exceptions never authorize EAS native builds', () => {
+  for (const env of [
+    { EAS_BUILD_PROFILE: 'production' },
+    { EAS_BUILD_PROFILE: 'development' },
+    { EAS_BUILD: 'true' },
+  ]) {
+    const f = fixture();
+    f.context.env = env;
+    assert.throws(() => evaluate(f), /cannot authorize EAS builds/);
+  }
+});
 test('missing platforms, maps, compiled bundles and malformed maps fail', () => {
   for (const change of [
     (c) => {
