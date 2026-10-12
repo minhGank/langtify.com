@@ -9,9 +9,9 @@
   "reviewedFiles": {
     ".github/workflows/ci.yml": "200e71db03e7a2bbb05486f76f0073d5a3a63e3efaf44c3b59e6f646c2b55a21",
     "package.json": "ccda8cb175d5a931d36acf9b42d59e7828014079e1cc44f85d314e7ceeec34b8",
-    "app.json": "cb98584054c97e8279d463863448fb83b9270e64d78b63a7f28bd5de1447db01",
+    "app.json": "b75dffdf2c3be0294f92f9eeca1394e57036b62fa780d6201e50f947850ab5c6",
     "app.config.js": "808d3731c3cdf27c8a14af1027b9943839ffdf08e1bd0c0ae06f97d2c5349ab6",
-    "eas.json": "1be545768a346be4e75a160ec7e87ce14a56ca404043faa27753fc9bf1974324",
+    "eas.json": "3e7b1fb236623d7b4ae7fb044905dd82300806bd9bdc955486a9e35f63d6a539",
     "plugins/with-release-environment.js": "4ec3e190a79b62de3651bf35dc6b6dff607449d847a2bb6f90f9d704a39a6587",
     "scripts/check-release-env.cjs": "8b6d293bab99ad0b5ff4755f318ddabfa3c8adb368772726b404f1a3b0f4ede1",
     "src/lib/backend-environment.js": "8c3a1699d8b835c2a9f4632524dfd2d57ac5d9b4b14e7e6249002145571ad8f1"

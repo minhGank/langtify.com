@@ -81,11 +81,7 @@
     "experiments": {
       "typedRoutes": true
     },
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
     "extra": {
       "router": {},
       "eas": {

@@ -18,7 +18,8 @@
       "env": {
         "EXPO_NO_DOTENV": "1",
         "EXPO_PUBLIC_BACKEND_ENV": "production",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://lfdgjewypbhukjrtwsef.supabase.co"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://lfdgjewypbhukjrtwsef.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_L0bKu_xHF0VRs7pD0n8HBw_HDAgNCGN"
       },
       "ios": { "buildConfiguration": "Release" },
       "android": { "buildType": "app-bundle" }

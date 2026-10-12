@@ -5,6 +5,28 @@ import { backendConfiguration, DEV_URL, PRODUCTION_URL } from '../src/lib/backen
 import configure from '../app.config';
 
 const key = 'sb_publishable_release_test_fixture';
+it('resolves Production from profile values alone before remote EAS variables are fetched', () => {
+  const profile = JSON.parse(readFileSync('eas.json', 'utf8')).build.production;
+  const script = `
+    const configure = require('./app.config');
+    const config = require('./app.json').expo;
+    const result = configure({config});
+    console.log(JSON.stringify({projectId: result.extra.eas.projectId, owner: result.owner}));
+  `;
+  const env = { ...profile.env, EAS_BUILD_PROFILE: 'production' };
+  const result = spawnSync(process.execPath, ['-e', script], { env, encoding: 'utf8' });
+  expect(result.status).toBe(0);
+  expect(JSON.parse(result.stdout)).toEqual({
+    projectId: '38e4505e-b9cf-42d0-a1b3-5e44a5186b65',
+    owner: 'minhgank',
+  });
+  const missing = spawnSync(process.execPath, ['-e', script], {
+    env: { ...env, EXPO_PUBLIC_SUPABASE_ANON_KEY: '' },
+    encoding: 'utf8',
+  });
+  expect(missing.status).toBe(1);
+  expect(missing.stderr).toContain('Production requires');
+});
 it('development accepts Dev and defaults to Dev when only a key is supplied', () => {
   expect(backendConfiguration('development', DEV_URL, key).config?.url).toBe(DEV_URL);
   expect(backendConfiguration(undefined, undefined, key).config?.url).toBe(DEV_URL);

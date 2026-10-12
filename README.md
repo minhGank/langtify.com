@@ -113,13 +113,17 @@ Only public values are inlined into the app. No key is added to Expo `extra`.
 
 The minimal `eas.json` profiles use generated native projects (both native folders
 are ignored). Development is an internal Debug client; production is a store build
-using EAS's `production` environment. Before the first production build, link the
-correct EAS project and provide its public UUID as `EXPO_PUBLIC_EAS_PROJECT_ID` for
-dynamic config resolution. Set `EXPO_PUBLIC_SUPABASE_ANON_KEY` to the Production
-publishable key in the EAS **production** environment with plaintext/public
-visibility, not secret visibility. Set the same name to the Dev public key in the
-EAS **development** environment if using remote development builds. Profile URLs
-and modes are already explicit. No remote EAS settings were changed by this task.
+using EAS's `production` environment. `app.json` links `@minhgank/langtify` to
+project `38e4505e-b9cf-42d0-a1b3-5e44a5186b65`. The production profile contains
+only public backend configuration, including its publishable key, and disables
+dotenv loading. EAS CLI evaluates app config to obtain the project ID before it
+fetches remote environment variables; profile values make this first evaluation
+work on a fresh checkout without manually exporting variables. Profile values
+also take precedence over matching remote variables. When rotating the public
+Production key, update both the profile and EAS Production environment together.
+Never place a service-role or other privileged key in either public configuration.
+Set the Dev public key in the EAS **development** environment for remote development
+builds; local development continues using `.env.local`. No hosted settings changed.
 Review `EXPO_PUBLIC_SIGNUP_CODE_LENGTH` against Production's verified signup email
 contract separately; do not copy Dev-specific Auth settings blindly.
 
@@ -130,11 +134,10 @@ npm run build:ios:dev
 # Or: npm run build:android:dev
 ```
 
-Production iOS build, after supplying the public EAS project UUID and Production
-environment values above:
+Production iOS build, after EAS login and Apple signing setup:
 
 ```sh
-EXPO_NO_DOTENV=1 npx eas-cli@24.11.0 build --platform ios --profile production
+npx eas-cli@24.11.0 build --platform ios --profile production
 ```
 
 The resulting signed store build can be submitted to TestFlight/App Store; building
