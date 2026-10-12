@@ -1,0 +1,11 @@
+[Unit]
+Description=Hourly Langtify Production cleanup
+
+[Timer]
+OnCalendar=*-*-* *:00:00 UTC
+Persistent=true
+AccuracySec=1min
+Unit=langtify-cleanup.service
+
+[Install]
+WantedBy=timers.target

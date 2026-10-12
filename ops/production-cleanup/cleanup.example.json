@@ -1,0 +1,7 @@
+{
+  "environment": "production",
+  "supabaseUrl": "https://lfdgjewypbhukjrtwsef.supabase.co",
+  "serviceKey": "REPLACE_IN_ROOT_OWNED_FILE_ONLY",
+  "photosHeartbeat": "https://hc-ping.com/REPLACE_WITH_PHOTOS_CHECK_UUID",
+  "avatarsHeartbeat": "https://hc-ping.com/REPLACE_WITH_AVATARS_CHECK_UUID"
+}

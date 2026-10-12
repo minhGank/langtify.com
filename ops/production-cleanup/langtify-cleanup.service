@@ -1,0 +1,32 @@
+[Unit]
+Description=Langtify Production Storage cleanup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=langtify-cleanup
+Group=langtify-cleanup
+WorkingDirectory=/opt/langtify-cleanup
+LoadCredential=cleanup.json:/etc/langtify-production/cleanup.json
+StateDirectory=langtify-cleanup
+StateDirectoryMode=0700
+ExecStart=/usr/bin/flock --nonblock --conflict-exit-code 75 /var/lib/langtify-cleanup/worker.lock /usr/bin/node /opt/langtify-cleanup/scripts/production-cleanup.mjs
+TimeoutStartSec=300
+TimeoutStopSec=10
+KillMode=control-group
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+LimitCORE=0
+StandardOutput=journal
+StandardError=null
