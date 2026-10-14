@@ -1,0 +1,1086 @@
+{
+  "schema_version": 1,
+  "manifest_version": "0.2.0",
+  "concepts": [
+    {
+      "concept_key": "BED",
+      "locales": {
+        "en": {
+          "primary_idea": "Show a made bed without people or private details.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph another safely accessible bed in your home from a seated position.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Low effort indoors; no lifting or rearranging needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "PILLOW",
+      "locales": {
+        "en": {
+          "primary_idea": "Show a sleeping pillow resting on a bed.",
+          "representation_mode": "literal",
+          "alternative_idea": "Place the pillow on a reachable chair with some bedding context.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Low effort; avoid identifying bedroom details.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "BOTTLE",
+      "locales": {
+        "en": {
+          "primary_idea": "Show your water bottle without identifying labels.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph an empty reusable bottle on a reachable surface.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Common indoor object; avoid personal labels.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "PLATE",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a clean dinner plate from above or beside it.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use an unbreakable plate at a reachable height.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Low effort; do not require glass or ceramics.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "SPOON",
+      "locales": {
+        "en": {
+          "primary_idea": "Show a table spoon on a plain surface.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use a clean plastic spoon on a tray.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Low effort indoors.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "FORK",
+      "locales": {
+        "en": {
+          "primary_idea": "Show a table fork resting flat.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use an unbreakable fork with its prongs pointing away from hands.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Low effort; no handling sharp points.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "BACKPACK",
+      "locales": {
+        "en": {
+          "primary_idea": "Show your bag with its shoulder straps visible.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a backpack resting on a reachable chair.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "No wearing or lifting required; hide school/address labels.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "SCISSORS",
+      "locales": {
+        "en": {
+          "primary_idea": "Show closed household scissors on a surface.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use closed blunt-ended craft scissors.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Low effort; keep blades closed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "BUTTERFLY",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a butterfly from a distance without touching it.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a clearly butterfly-shaped paper model and show its wings.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Seasonal; a model is an interpretive alternative, not a live specimen.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "BIRD",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a bird from a window without approaching a nest.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a bird-shaped toy with a visible beak and wings.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Window access or a model; no feeding or disturbing wildlife.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "RABBIT",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph an already accessible rabbit without handling it.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a rabbit toy with long ears and a short tail.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Live access is optional; model is interpretive.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "SNAIL",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a snail where it is, without moving it.",
+          "representation_mode": "literal",
+          "alternative_idea": "Arrange a toy snail or a paper spiral shell attached to a body.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Outdoor/seasonal; use a model if needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "ANT",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph an ant from a safe path without disturbing it.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a simple ant model with six legs and a segmented body.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Small subject; focus may be difficult; model optional.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "FLOWER",
+      "locales": {
+        "en": {
+          "primary_idea": "Show a flower already growing or owned.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a clearly recognisable fabric or paper flower.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Seasonal live access; no picking or purchase needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "LEAF",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a leaf still attached to a plant.",
+          "representation_mode": "literal",
+          "alternative_idea": "Show a fallen leaf with a visible blade and veins.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Often accessible; no touching unknown plants.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "GRASS",
+      "locales": {
+        "en": {
+          "primary_idea": "Show a patch of grass from a safe path or window.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a small already accessible patch beside a walkway.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Seasonal/local access; no stepping onto private land.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "RUN",
+      "locales": {
+        "en": {
+          "primary_idea": "With consent, photograph an adult friend's lower legs running in a safe open area.",
+          "representation_mode": "literal",
+          "alternative_idea": "Pose a toy figure in a clearly running stride on a tabletop.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No user needs to run; a toy scene is interpretive and may be less clear.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "WALK",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph your own feet mid-step only while safely stationary for capture, or a consenting adult walking.",
+          "representation_mode": "literal",
+          "alternative_idea": "Pose a toy figure with one foot forward and the other supporting it.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No walking required; seated staging available.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "READ",
+      "locales": {
+        "en": {
+          "primary_idea": "Show your own hand following a line in a non-private book.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage an open book in front of a seated toy reader.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Can be seated; no face, private messages or legible personal text.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "COOK",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage your own hands stirring prepared ingredients in a cool pan to represent cooking.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Stage a toy cook beside a bowl and pretend ingredients.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No heat, knives, eating or special diet required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "DANCE",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph your own seated hand/arm dance pose with music context and no identifying screen.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Pose two toy figures in a recognisable dance arrangement.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Seated or staged interpretation is valid; movement need not be strenuous.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "DRAW",
+      "locales": {
+        "en": {
+          "primary_idea": "Show your own hand adding a line to a simple sketch.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use an adapted grip or ask a consenting adult to demonstrate, cropping to the hand.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Tabletop/seated; no artistic skill required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "WASH_HANDS",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage your own hands with soap beside an accessible basin.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use a small tabletop wash bowl or toy hands with pretend soap.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No running tap or standing required; do not spill near devices.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "STRETCH_BODY",
+      "locales": {
+        "en": {
+          "primary_idea": "Show your own comfortable seated arm stretch without strain.",
+          "representation_mode": "literal",
+          "alternative_idea": "Pose an articulated toy in a gentle stretching position.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No flexibility target; toy alternative for any mobility level.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "HAPPINESS",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph your own optional staged smile beside something you enjoy.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Arrange a cheerful paper face beside a favourite object.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Solo tabletop option; showing a real face is optional.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "SADNESS",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph your own deliberately staged downturned expression if comfortable.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Create a drooping paper face beside a plain tissue.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Entirely staged; no real distress or personal disclosure needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "SURPRISE",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage your own surprised expression beside an opened harmless gift box.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Place an unexpected colourful object in an open plain box with a surprised paper face.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Solo prop scene; no prank, startle or real gift required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "ANGER",
+      "locales": {
+        "en": {
+          "primary_idea": "Pose your own furrowed-brow expression if comfortable, away from others.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Photograph an angular paper face with tightly drawn brows.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Safe staged expression; no shouting, threats or conflict required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "WORRY",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage your own thoughtful worried pose beside a fictional unfinished task.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Arrange a furrowed paper face beside a blank calendar and an unfinished puzzle.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No personal deadlines, finances or real anxious event needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "RELIEF",
+      "locales": {
+        "en": {
+          "primary_idea": "Pose your own relaxed expression beside a visibly completed simple puzzle.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Stage a relaxed paper face beside the last puzzle piece in place.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No real danger or distress; one staged scene is enough.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "SUNSET",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph evening sky colours from a safe window without looking directly at the sun.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use your own previously taken sunset photo through the existing library flow.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Time/weather dependent; no travel or staring at the sun.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "RAINBOW",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a rainbow from shelter if one is visible.",
+          "representation_mode": "literal",
+          "alternative_idea": "Arrange coloured paper strips into an arc and photograph the model.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Weather dependent; tabletop model is interpretive.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "RAIN",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph falling rain through a closed window.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use your own earlier rain photo through the existing library flow.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Weather dependent; stay indoors and keep the device dry.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "SNOW",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph snow through a window or from a cleared safe path.",
+          "representation_mode": "literal",
+          "alternative_idea": "Build a recognisable miniature snowy scene with paper flakes.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Seasonal; staging available; no cold exposure or slippery access needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "CLOUD",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph clouds through a safe window.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a clearly cloud-shaped paper model against a sky-coloured background.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Window or tabletop access; never lean out.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "PUDDLE",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a puddle from dry safe ground.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a shallow water patch on a waterproof tray away from electronics.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Weather optional; contain all staged water.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "WATER_WAVE",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph small water waves from a safe shore or barrier.",
+          "representation_mode": "literal",
+          "alternative_idea": "Make a gentle wave in a shallow tray and photograph from a dry position.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "No swimming, beach trip or rough water required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "PARK",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a path, lawn and seating in an empty section of a park.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a miniature park with a paper path, toy bench and greenery.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Outdoor access optional; no identifiable passers-by.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "BEACH",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph an empty shoreline from a safe accessible point.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a sand-coloured cloth beside a blue surface with a clear shore boundary.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Travel optional; tabletop interpretation available.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "FOREST",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a tree-filled view from a safe path or window.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a dense group of toy or paper trees with a path into them.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No remote walk required; tabletop interpretation available.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "PLAYGROUND",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph empty play equipment when permitted and no children are present.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a small toy slide and swing area.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No children or strangers needed; access/permission varies.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "KITCHEN",
+      "locales": {
+        "en": {
+          "primary_idea": "Show part of your kitchen with a work surface and safe appliances.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a toy kitchen with its preparation area visible.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Seated or model option; omit addresses and personal papers.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "BUS_STOP",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph an empty bus-stop sign or shelter from the pavement.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a toy bus beside a model stop sign on a tabletop.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No road entry, travel, timetables with personal data or passengers needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "GREET",
+      "locales": {
+        "en": {
+          "primary_idea": "Show consenting adults' hands exchanging a small greeting wave, cropped to hands.",
+          "representation_mode": "literal",
+          "alternative_idea": "Arrange two toy figures facing one another with a raised hand.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Solo staging available; no face or physical contact required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "SHARE",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph consenting hands dividing fruit pieces between two plates.",
+          "representation_mode": "literal",
+          "alternative_idea": "Arrange two toy figures with equal portions of pretend food being passed.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No eating, spending or other person required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "HELP",
+      "locales": {
+        "en": {
+          "primary_idea": "Show a consenting adult's hands holding a box steady while another packs it.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage two toy figures, one supporting a box while the other fills it.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Tabletop and solo options; use light props.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "CELEBRATION",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage a small decorated tabletop with reusable paper bunting.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Photograph two toy figures beside a paper rosette and celebratory arrangement.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Solo, low-cost staging; no guests, alcohol or candles required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "PICNIC",
+      "locales": {
+        "en": {
+          "primary_idea": "Arrange your own simple meal on a cloth outside in a safe permitted place.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a miniature meal on a cloth with a clearly outdoor model setting.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No travel, cooking or eating required; indoor model available.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "WAITING_LINE",
+      "locales": {
+        "en": {
+          "primary_idea": "With consent, stage a few adult participants in an orderly line, cropped to avoid faces.",
+          "representation_mode": "literal",
+          "alternative_idea": "Line up toy figures behind a pretend service counter.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Solo tabletop option; no real queue, strangers or crowd needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "MESSY",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage a few scattered toys on a table.",
+          "representation_mode": "literal",
+          "alternative_idea": "Scatter lightweight paper shapes on a tray within easy reach.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Quick, reversible indoor setup; no personal home judgement.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "EMPTY",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph an empty open bowl or box.",
+          "representation_mode": "literal",
+          "alternative_idea": "Use a lightweight container with its interior clearly visible.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Low effort seated setup.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "WET",
+      "locales": {
+        "en": {
+          "primary_idea": "Show a damp cloth beside a dry portion for context.",
+          "representation_mode": "literal",
+          "alternative_idea": "Put a few drops on a waterproof tray, keeping the phone dry.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Small contained setup; no floor spills or bad weather required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "COLOURFUL",
+      "locales": {
+        "en": {
+          "primary_idea": "Arrange objects or paper in several distinct colours.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photograph a colourful pattern on something already owned.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Low effort; assistive help choosing colours is optional.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "ROUND",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a round lid straight on.",
+          "representation_mode": "literal",
+          "alternative_idea": "Arrange a loop of string on a reachable surface.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Simple indoor setup; no object-specific purchase.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "BROKEN_OBJECT",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph an already broken harmless toy or pencil resting safely.",
+          "representation_mode": "literal",
+          "alternative_idea": "Stage a toy with a removable part detached beside its matching empty socket; this represents damage without actually breaking anything.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Do not break anything; no glass, live wiring or exposed sharp parts.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "FRIENDSHIP",
+      "locales": {
+        "en": {
+          "primary_idea": "With consent, show friends' hands beside a shared board game.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Stage two toy figures sitting together with a game and mutually welcoming poses.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Solo prop scene; no actual relationship disclosure needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "LONELINESS",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage one toy figure apart from a small welcoming-looking group.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Photograph an unused second place setting beside one occupied toy seat.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Entirely fictional scene; no isolated strangers or painful disclosure.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "PATIENCE",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage a toy waiting calmly beside a partly finished puzzle and a timer.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Arrange a slowly progressing craft with a relaxed paper face; no actual wait required.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Solo and seated; do not make users wait to take the photo.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "HOPE",
+      "locales": {
+        "en": {
+          "primary_idea": "Photograph a growing seedling beside a prepared empty pot as a staged future-growth scene.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Stage a paper sprout reaching toward a bright paper opening.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No gardening, sunlight access or actual adversity required.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    },
+    {
+      "concept_key": "FREEDOM",
+      "locales": {
+        "en": {
+          "primary_idea": "Stage a toy figure leaving an open paper enclosure toward several open paths.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Photograph an open toy gate with a clear unobstructed route beyond it.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Tabletop staging; no real captivity, trespass, animal release or political event needed.",
+          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        }
+      }
+    }
+  ]
+}

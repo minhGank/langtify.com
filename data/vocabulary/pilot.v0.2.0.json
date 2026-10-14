@@ -1,0 +1,3221 @@
+{
+  "schema_version": 2,
+  "dataset_id": "langtify-vocabulary-pilot",
+  "version": "0.2.0",
+  "created_at": "2026-10-13",
+  "status": "draft",
+  "expected_concepts": 60,
+  "languages": ["en", "fr"],
+  "language_policy": "Canadian English and standard Metropolitan French primary. Regional variants remain sense-qualified metadata; arrêt d’autobus is a Canadian French alternative to arrêt de bus. Independent per-language CEFR estimates remain unverified. Concept identities and meanings approved by the project owner on 2026-10-13 in meaning-approval.v0.2.0.json; linguistic review remains separate.",
+  "source_policy": "Original editorial draft. Photographable means a meaning can be represented in a photo, literally or through a recognisable staged scene. No dictionary definitions or proprietary CEFR lists copied. All levels, translations, accessibility and interpretive examples await human review.",
+  "concepts": [
+    {
+      "concept_key": "BED",
+      "definition": "Furniture intended for sleeping, rather than bedding alone.",
+      "category": "everyday_objects",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show a made bed without people or private details.",
+        "alternative": "Photograph another safely accessible bed in your home from a seated position.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Low effort indoors; no lifting or rearranging needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "bed",
+          "display": "bed",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic home noun used in first descriptions of a room. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "lit",
+          "display": "le lit",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic bedroom noun, taught with its masculine article. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Keep BED identity from v0.1; do not count a pillow-only photo as the bed."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PILLOW",
+      "definition": "A soft support for the head when sleeping.",
+      "category": "everyday_objects",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show a sleeping pillow resting on a bed.",
+        "alternative": "Place the pillow on a reachable chair with some bedding context.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Low effort; avoid identifying bedroom details.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "pillow",
+          "display": "pillow",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Specific bedding noun beyond the most basic room labels. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "oreiller",
+          "display": "l’oreiller",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday bedding noun with vowel elision and a cushion/oreiller sense distinction. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Retain sleeping-head-support sense; decorative cushion is not the same concept."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BOTTLE",
+      "definition": "A narrow-necked container for holding a liquid.",
+      "category": "everyday_objects",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show your water bottle without identifying labels.",
+        "alternative": "Photograph an empty reusable bottle on a reachable surface.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Common indoor object; avoid personal labels.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "bottle",
+          "display": "bottle",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic container noun in food and drink vocabulary. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "bouteille",
+          "display": "la bouteille",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic container noun used in everyday requests. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Container rather than its contents; no alcohol required."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PLATE",
+      "definition": "A shallow dish used to serve food.",
+      "category": "everyday_objects",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a clean dinner plate from above or beside it.",
+        "alternative": "Use an unbreakable plate at a reachable height.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Low effort; do not require glass or ceramics.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "plate",
+          "display": "plate",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic mealtime noun. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "assiette",
+          "display": "l’assiette",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic tableware noun with elision. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude a tray or deep bowl; preserve prior PLATE identity."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SPOON",
+      "definition": "An eating utensil with a small bowl and a handle.",
+      "category": "everyday_objects",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show a table spoon on a plain surface.",
+        "alternative": "Use a clean plastic spoon on a tray.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Low effort indoors.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "spoon",
+          "display": "spoon",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common eating utensil taught in routine meal contexts. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "cuillère",
+          "display": "la cuillère",
+          "aliases": ["cuiller"],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common utensil noun; spelling variant does not change level or meaning. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Cuiller is an accepted spelling variant, not a second concept."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "FORK",
+      "definition": "An eating utensil with prongs and a handle.",
+      "category": "everyday_objects",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show a table fork resting flat.",
+        "alternative": "Use an unbreakable fork with its prongs pointing away from hands.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Low effort; no handling sharp points.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "fork",
+          "display": "fork",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common mealtime noun in its concrete utensil sense. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "fourchette",
+          "display": "la fourchette",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common utensil noun, not an abstract range or gardening tool. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Eating sense only, not a road junction or gardening tool."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BACKPACK",
+      "definition": "A bag carried on the back with shoulder straps.",
+      "category": "everyday_objects",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show your bag with its shoulder straps visible.",
+        "alternative": "Photograph a backpack resting on a reachable chair.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "No wearing or lifting required; hide school/address labels.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "backpack",
+          "display": "backpack",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common compound for school and travel, provisionally elementary. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "sac à dos",
+          "display": "le sac à dos",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. High-utility school noun phrase; transparent everyday construction. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Distinct from seed SUITCASE; retain BACKPACK identity."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SCISSORS",
+      "definition": "A hand tool with two pivoted cutting blades.",
+      "category": "everyday_objects",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show closed household scissors on a surface.",
+        "alternative": "Use closed blunt-ended craft scissors.",
+        "alternative_mode": "literal",
+        "difficulty": "moderate",
+        "accessibility": "Low effort; keep blades closed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "scissors",
+          "display": "scissors",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday tool noun with lexical plural form. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "ciseaux",
+          "display": "les ciseaux",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday tool noun used in the plural; keep les. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "plural",
+            "article": "les",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Plural in both languages; retain prior identity."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BUTTERFLY",
+      "definition": "An insect with two pairs of broad often patterned wings, in the butterfly sense.",
+      "category": "animals_plants",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a butterfly from a distance without touching it.",
+        "alternative": "Stage a clearly butterfly-shaped paper model and show its wings.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Seasonal; a model is an interpretive alternative, not a live specimen.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "butterfly",
+          "display": "butterfly",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common nature noun, but not universal first-list animal vocabulary. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "papillon",
+          "display": "le papillon",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common insect noun; photograph should distinguish it from a generic insect. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Do not chase, catch or identify a species; exclude moth-specific meaning from the prompt."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BIRD",
+      "definition": "A feathered animal with a beak and wings, regardless of whether it is flying.",
+      "category": "animals_plants",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a bird from a window without approaching a nest.",
+        "alternative": "Photograph a bird-shaped toy with a visible beak and wings.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Window access or a model; no feeding or disturbing wildlife.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "bird",
+          "display": "bird",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic general animal noun. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "oiseau",
+          "display": "l’oiseau",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic general animal noun; irregular-looking spelling remains a familiar label. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not seed DOG or CAT; bird is an animal, not the action of flying."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "RABBIT",
+      "definition": "A long-eared rabbit, as an animal rather than meat.",
+      "category": "animals_plants",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph an already accessible rabbit without handling it.",
+        "alternative": "Photograph a rabbit toy with long ears and a short tail.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Live access is optional; model is interpretive.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "rabbit",
+          "display": "rabbit",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Familiar specific animal noun provisionally beyond the broadest first labels. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "lapin",
+          "display": "le lapin",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common animal label in elementary vocabulary; not the food sense. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not buy, borrow or handle an animal for the challenge; no hare claim."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SNAIL",
+      "definition": "A slow-moving land mollusc with a coiled shell.",
+      "category": "animals_plants",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a snail where it is, without moving it.",
+        "alternative": "Arrange a toy snail or a paper spiral shell attached to a body.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Outdoor/seasonal; use a model if needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "snail",
+          "display": "snail",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Familiar small-animal noun with a specific shell/body distinction. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "escargot",
+          "display": "l’escargot",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common nature noun; culinary and animal senses must remain separate. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Whole animal, not an empty shell or a prepared dish."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "ANT",
+      "definition": "A small social insect in the ant sense.",
+      "category": "animals_plants",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph an ant from a safe path without disturbing it.",
+        "alternative": "Photograph a simple ant model with six legs and a segmented body.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Small subject; focus may be difficult; model optional.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "ant",
+          "display": "ant",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common insect noun, but small-object identification adds photo rather than lexical difficulty. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "fourmi",
+          "display": "la fourmi",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Familiar insect noun; photographability does not itself justify a higher CEFR. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["No nest disturbance or bait; verify recognisability on a phone."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "FLOWER",
+      "definition": "The blossom of a flowering plant rather than a whole plant species.",
+      "category": "animals_plants",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show a flower already growing or owned.",
+        "alternative": "Photograph a clearly recognisable fabric or paper flower.",
+        "alternative_mode": "interpretive",
+        "difficulty": "easy",
+        "accessibility": "Seasonal live access; no picking or purchase needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "flower",
+          "display": "flower",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic nature noun used in simple descriptions. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "fleur",
+          "display": "la fleur",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic botanical everyday noun, not specialist species vocabulary. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Flower and leaf can share a plant but are distinct parts; centre the blossom."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "LEAF",
+      "definition": "A leaf of a plant, not a sheet of paper.",
+      "category": "animals_plants",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a leaf still attached to a plant.",
+        "alternative": "Show a fallen leaf with a visible blade and veins.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Often accessible; no touching unknown plants.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "leaf",
+          "display": "leaf",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday plant-part noun with irregular plural leaves. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "feuille",
+          "display": "la feuille",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common basic plant-part sense; disambiguate from paper rather than changing translation. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["French feuille also means sheet; the plant definition controls this pair."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "GRASS",
+      "definition": "Low-growing grass vegetation, such as blades on a lawn.",
+      "category": "animals_plants",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show a patch of grass from a safe path or window.",
+        "alternative": "Photograph a small already accessible patch beside a walkway.",
+        "alternative_mode": "literal",
+        "difficulty": "context_dependent",
+        "accessibility": "Seasonal/local access; no stepping onto private land.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "grass",
+          "display": "grass",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic landscape noun in the vegetation sense. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "herbe",
+          "display": "l’herbe",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic vegetation noun; pelouse would unnecessarily narrow it to a lawn. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "l’",
+            "onset": "mute_h"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Herbe is broader than lawn grass; specify blades, not culinary herbs or a manicured lawn requirement."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "RUN",
+      "definition": "Move on foot at a running pace rather than walk.",
+      "category": "actions_activities",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "With consent, photograph an adult friend's lower legs running in a safe open area.",
+        "alternative": "Pose a toy figure in a clearly running stride on a tabletop.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No user needs to run; a toy scene is interpretive and may be less clear.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "run",
+          "display": "run",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic action verb in the locomotion sense. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "courir",
+          "display": "courir",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic infinitive of movement; no conjugation mastery is claimed. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Movement is inferred from a still frame; exclude race-winning or speed requirements."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "WALK",
+      "definition": "Move on foot at an ordinary walking pace.",
+      "category": "actions_activities",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph your own feet mid-step only while safely stationary for capture, or a consenting adult walking.",
+        "alternative": "Pose a toy figure with one foot forward and the other supporting it.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No walking required; seated staging available.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "walk",
+          "display": "walk",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic movement verb, not taking a pet out as a separate sense. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "marcher",
+          "display": "marcher",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic locomotion verb; exclude marcher meaning to function. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Contrast with running through an ordinary step; do not equate disability aids with inability to participate."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "READ",
+      "definition": "Look at written material to understand its words.",
+      "category": "actions_activities",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show your own hand following a line in a non-private book.",
+        "alternative": "Stage an open book in front of a seated toy reader.",
+        "alternative_mode": "interpretive",
+        "difficulty": "easy",
+        "accessibility": "Can be seated; no face, private messages or legible personal text.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "read",
+          "display": "read",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic literacy action verb. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "lire",
+          "display": "lire",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic infinitive used in routine activities; no reading-level claim. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Distinct from seed BOOK: the act of reading needs reader/context, not a closed book alone."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "COOK",
+      "definition": "Prepare food as a meal, typically using heat.",
+      "category": "actions_activities",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Stage your own hands stirring prepared ingredients in a cool pan to represent cooking.",
+        "alternative": "Stage a toy cook beside a bowl and pretend ingredients.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No heat, knives, eating or special diet required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "cook",
+          "display": "cook",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic daily-routine verb; a staged image can represent meal preparation safely. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "cuisiner",
+          "display": "cuisiner",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Practical activity verb; cuisiner describes preparing a meal rather than only heating an ingredient. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Staging can suggest cooking without heat; simply holding a finished dish is weaker evidence. Do not claim that a cold setup shows literal heat-based cooking."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DANCE",
+      "definition": "Move the body rhythmically as a dance.",
+      "category": "actions_activities",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Photograph your own seated hand/arm dance pose with music context and no identifying screen.",
+        "alternative": "Pose two toy figures in a recognisable dance arrangement.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Seated or staged interpretation is valid; movement need not be strenuous.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "dance",
+          "display": "dance",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic leisure action verb. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "danser",
+          "display": "danser",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic regular activity verb, not a technical dance form. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "A still pose can be ambiguous; context should distinguish dance from stretching."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DRAW",
+      "definition": "Make a picture using lines or marks.",
+      "category": "actions_activities",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show your own hand adding a line to a simple sketch.",
+        "alternative": "Use an adapted grip or ask a consenting adult to demonstrate, cropping to the hand.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Tabletop/seated; no artistic skill required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "draw",
+          "display": "draw",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic creative-action sense, not pull or a tied score. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "dessiner",
+          "display": "dessiner",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic creative-action verb; familiar infinitive. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Action rather than the finished picture; no copyrighted character needed."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "WASH_HANDS",
+      "definition": "Clean one's hands with water and soap.",
+      "category": "actions_activities",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Stage your own hands with soap beside an accessible basin.",
+        "alternative": "Use a small tabletop wash bowl or toy hands with pretend soap.",
+        "alternative_mode": "interpretive",
+        "difficulty": "easy",
+        "accessibility": "No running tap or standing required; do not spill near devices.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "wash hands",
+          "display": "wash hands",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic hygiene action phrase, not washing an object. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "se laver les mains",
+          "display": "se laver les mains",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic routine reflexive phrase; lexical familiarity is distinct from mastering its conjugation. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "French uses a reflexive phrase and definite article; do not translate as laver ses mains by default."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "STRETCH_BODY",
+      "definition": "Gently extend the body or limbs as an exercise.",
+      "category": "actions_activities",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show your own comfortable seated arm stretch without strain.",
+        "alternative": "Pose an articulated toy in a gentle stretching position.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No flexibility target; toy alternative for any mobility level.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "stretch",
+          "display": "stretch",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common exercise verb with a sense boundary from material stretching. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "s’étirer",
+          "display": "s’étirer",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday reflexive exercise verb, distinct from étirer an external object. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Body sense, not stretching fabric; no pain or medical benefit claim."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "HAPPINESS",
+      "definition": "A feeling of being happy or content.",
+      "category": "emotions_expressions",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Photograph your own optional staged smile beside something you enjoy.",
+        "alternative": "Arrange a cheerful paper face beside a favourite object.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Solo tabletop option; showing a real face is optional.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "happiness",
+          "display": "happiness",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common emotion noun formed from happy; noun may follow the simpler adjective. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "bonheur",
+          "display": "le bonheur",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common positive-feeling noun; not a promise of life satisfaction or luck. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "A smile is a possible symbol, not proof of anyone's internal state; do not add joy as a separate near-duplicate."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SADNESS",
+      "definition": "The feeling of being sad, without implying a diagnosis.",
+      "category": "emotions_expressions",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Photograph your own deliberately staged downturned expression if comfortable.",
+        "alternative": "Create a drooping paper face beside a plain tissue.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Entirely staged; no real distress or personal disclosure needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "sadness",
+          "display": "sadness",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Transparent emotion noun beyond the basic adjective sad. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "tristesse",
+          "display": "la tristesse",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Familiar emotion noun; no clinical sense or advanced quota. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Do not photograph distressed strangers or infer depression; loneliness is a different feeling."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SURPRISE",
+      "definition": "The feeling caused by something unexpected.",
+      "category": "emotions_expressions",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Stage your own surprised expression beside an opened harmless gift box.",
+        "alternative": "Place an unexpected colourful object in an open plain box with a surprised paper face.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Solo prop scene; no prank, startle or real gift required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "surprise",
+          "display": "surprise",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday emotion/event noun; this entry fixes the emotional sense. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "surprise",
+          "display": "la surprise",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common same-form noun; the feminine article distinguishes grammar, not level. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Emotional surprise, not the object or planned surprise party alone."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "ANGER",
+      "definition": "A feeling of strong displeasure, without depicting harmful behaviour.",
+      "category": "emotions_expressions",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Pose your own furrowed-brow expression if comfortable, away from others.",
+        "alternative": "Photograph an angular paper face with tightly drawn brows.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Safe staged expression; no shouting, threats or conflict required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "anger",
+          "display": "anger",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Abstract emotion noun less elementary than angry; provisional independent estimate. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "colère",
+          "display": "la colère",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common emotion noun in everyday expressions such as être en colère. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Avoid equating a facial feature or person with anger; never provoke someone."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "WORRY",
+      "definition": "Unease about a possible problem, not a diagnosed anxiety condition.",
+      "category": "emotions_expressions",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Stage your own thoughtful worried pose beside a fictional unfinished task.",
+        "alternative": "Arrange a furrowed paper face beside a blank calendar and an unfinished puzzle.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No personal deadlines, finances or real anxious event needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "worry",
+          "display": "worry",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday abstract noun requiring the concern sense rather than the verb. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "inquiétude",
+          "display": "l’inquiétude",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday abstract feeling noun; longer form does not alone determine level. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Concern about a possible outcome, distinct from sadness or immediate surprise."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "RELIEF",
+      "definition": "The easing of worry or discomfort after a difficulty ends.",
+      "category": "emotions_expressions",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Pose your own relaxed expression beside a visibly completed simple puzzle.",
+        "alternative": "Stage a relaxed paper face beside the last puzzle piece in place.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No real danger or distress; one staged scene is enough.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "relief",
+          "display": "relief",
+          "aliases": [],
+          "cefr": "B2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Polysemous abstract noun; this post-difficulty emotion sense provisionally needs broader vocabulary. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "soulagement",
+          "display": "le soulagement",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday noun related to soulager; estimate independently from English polysemy. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "English relief is not French relief in this sense; a relaxed pose alone lacks the resolution context."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SUNSET",
+      "definition": "The evening event when the sun goes below the horizon.",
+      "category": "nature_weather",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph evening sky colours from a safe window without looking directly at the sun.",
+        "alternative": "Use your own previously taken sunset photo through the existing library flow.",
+        "alternative_mode": "literal",
+        "difficulty": "context_dependent",
+        "accessibility": "Time/weather dependent; no travel or staring at the sun.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "sunset",
+          "display": "sunset",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common compound describing an everyday natural event. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "coucher de soleil",
+          "display": "le coucher de soleil",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common transparent noun phrase; multiword form is not inherently advanced. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Evening, not sunrise; colour alone cannot prove the time."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "RAINBOW",
+      "definition": "A multicoloured arc seen in the sky after light meets water droplets.",
+      "category": "nature_weather",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a rainbow from shelter if one is visible.",
+        "alternative": "Arrange coloured paper strips into an arc and photograph the model.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Weather dependent; tabletop model is interpretive.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "rainbow",
+          "display": "rainbow",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common nature noun; not technical optics vocabulary. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "arc-en-ciel",
+          "display": "l’arc-en-ciel",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common compound; hyphens and plural morphology do not imply high CEFR. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Distinct from seed IRIDESCENCE: an arc phenomenon, not a shifting surface sheen."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "RAIN",
+      "definition": "Water droplets falling from clouds.",
+      "category": "nature_weather",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph falling rain through a closed window.",
+        "alternative": "Use your own earlier rain photo through the existing library flow.",
+        "alternative_mode": "literal",
+        "difficulty": "context_dependent",
+        "accessibility": "Weather dependent; stay indoors and keep the device dry.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "rain",
+          "display": "rain",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic weather noun. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "pluie",
+          "display": "la pluie",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic weather noun used in routine descriptions. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Falling water, not only a puddle or a wet surface."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SNOW",
+      "definition": "Snowflakes or an accumulation of snow, not frost on a surface.",
+      "category": "nature_weather",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph snow through a window or from a cleared safe path.",
+        "alternative": "Build a recognisable miniature snowy scene with paper flakes.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Seasonal; staging available; no cold exposure or slippery access needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "snow",
+          "display": "snow",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic weather noun. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "neige",
+          "display": "la neige",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic weather noun; avoid merging with glace or givre. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Not seed RIME/givre: snow precipitation/accumulation differs from frost deposition."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "CLOUD",
+      "definition": "A visible cloud in the sky, not smoke or a computing service.",
+      "category": "nature_weather",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph clouds through a safe window.",
+        "alternative": "Photograph a clearly cloud-shaped paper model against a sky-coloured background.",
+        "alternative_mode": "interpretive",
+        "difficulty": "easy",
+        "accessibility": "Window or tabletop access; never lean out.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "cloud",
+          "display": "cloud",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic weather noun with the digital sense excluded. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "nuage",
+          "display": "le nuage",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic sky noun; no meteorological subtype required. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Keep the sky/weather sense; no smoke simulation."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PUDDLE",
+      "definition": "A small shallow pool of water on a surface.",
+      "category": "nature_weather",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a puddle from dry safe ground.",
+        "alternative": "Stage a shallow water patch on a waterproof tray away from electronics.",
+        "alternative_mode": "literal",
+        "difficulty": "moderate",
+        "accessibility": "Weather optional; contain all staged water.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "puddle",
+          "display": "puddle",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common outdoor noun beyond basic weather labels. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "flaque d’eau",
+          "display": "la flaque d’eau",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday phrase specifying water; flaque alone can refer to other liquids. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not seed REFLECTION: show the water's boundary, not only a reflected image."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "WATER_WAVE",
+      "definition": "A moving ridge on a water surface.",
+      "category": "nature_weather",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph small water waves from a safe shore or barrier.",
+        "alternative": "Make a gentle wave in a shallow tray and photograph from a dry position.",
+        "alternative_mode": "literal",
+        "difficulty": "moderate",
+        "accessibility": "No swimming, beach trip or rough water required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "wave",
+          "display": "wave",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common nature noun in its water sense, not a greeting verb. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "vague",
+          "display": "la vague",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common water noun; exclude vague as an adjective meaning imprecise. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not waving a hand; a water scene anchors the polysemous English word."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PARK",
+      "definition": "A public outdoor green space used for leisure.",
+      "category": "places_environments",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a path, lawn and seating in an empty section of a park.",
+        "alternative": "Stage a miniature park with a paper path, toy bench and greenery.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Outdoor access optional; no identifiable passers-by.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "park",
+          "display": "park",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common everyday place noun. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "parc",
+          "display": "le parc",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common urban place noun; narrow to leisure green space. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not a car park, theme park or seed GREENHOUSE."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BEACH",
+      "definition": "A strip of sand or pebbles beside a body of water.",
+      "category": "places_environments",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph an empty shoreline from a safe accessible point.",
+        "alternative": "Stage a sand-coloured cloth beside a blue surface with a clear shore boundary.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "Travel optional; tabletop interpretation available.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "beach",
+          "display": "beach",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic leisure-place noun. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "plage",
+          "display": "la plage",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic leisure-place noun; exclude other plage senses such as time range. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not seed BANK_RIVER: show a sand/pebble shore, not a vegetated river edge."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "FOREST",
+      "definition": "A large area characterised by many growing trees.",
+      "category": "places_environments",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a tree-filled view from a safe path or window.",
+        "alternative": "Stage a dense group of toy or paper trees with a path into them.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "No remote walk required; tabletop interpretation available.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "forest",
+          "display": "forest",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Familiar environment noun beyond the most basic place list. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "forêt",
+          "display": "la forêt",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common natural-environment noun; no technical woodland classification. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Distinct from a park's leisure facilities; show trees as the dominant environment."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PLAYGROUND",
+      "definition": "An area equipped for play, such as with a slide or swings.",
+      "category": "places_environments",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph empty play equipment when permitted and no children are present.",
+        "alternative": "Stage a small toy slide and swing area.",
+        "alternative_mode": "interpretive",
+        "difficulty": "context_dependent",
+        "accessibility": "No children or strangers needed; access/permission varies.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "playground",
+          "display": "playground",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common compound for a familiar place. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "aire de jeux",
+          "display": "l’aire de jeux",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common noun phrase; aire is feminine and means an area here. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Use the play-area sense, not school grounds generally; empty equipment is enough."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "KITCHEN",
+      "definition": "A room or area used for food preparation.",
+      "category": "places_environments",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show part of your kitchen with a work surface and safe appliances.",
+        "alternative": "Photograph a toy kitchen with its preparation area visible.",
+        "alternative_mode": "interpretive",
+        "difficulty": "easy",
+        "accessibility": "Seated or model option; omit addresses and personal papers.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "kitchen",
+          "display": "kitchen",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic room noun. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "cuisine",
+          "display": "la cuisine",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic room noun; same lemma has other senses deliberately excluded. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Place, not French cuisine meaning cooking style; distinct from COOK activity."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BUS_STOP",
+      "definition": "A designated place where a bus picks up and drops off passengers.",
+      "category": "places_environments",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph an empty bus-stop sign or shelter from the pavement.",
+        "alternative": "Stage a toy bus beside a model stop sign on a tabletop.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No road entry, travel, timetables with personal data or passengers needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "bus stop",
+          "display": "bus stop",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common beginner transport phrase. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "arrêt de bus",
+          "display": "l’arrêt de bus",
+          "aliases": ["arrêt d’autobus"],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Practical transport phrase; the stop/place sense of arrêt needs context. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not a bus station; Canadian French arrêt d’autobus is an alternative."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "GREET",
+      "definition": "Acknowledge another person on meeting them.",
+      "category": "social_situations",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show consenting adults' hands exchanging a small greeting wave, cropped to hands.",
+        "alternative": "Arrange two toy figures facing one another with a raised hand.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Solo staging available; no face or physical contact required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "greet",
+          "display": "greet",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common interpersonal verb, more specific than saying hello. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "saluer",
+          "display": "saluer",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common social verb; exclude a military salute requirement. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "A greeting is different from WATER_WAVE; do not create a duplicate waving concept."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SHARE",
+      "definition": "Let others use or receive part of something.",
+      "category": "social_situations",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph consenting hands dividing fruit pieces between two plates.",
+        "alternative": "Arrange two toy figures with equal portions of pretend food being passed.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No eating, spending or other person required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "share",
+          "display": "share",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. High-utility social verb; digital reposting is outside this sense. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "partager",
+          "display": "partager",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. High-utility verb; show allocation rather than an unqualified split object. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Sharing is distribution/access, not the same as helping or friendship."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "HELP",
+      "definition": "Make a task easier for someone else.",
+      "category": "social_situations",
+      "part_of_speech": "verb",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show a consenting adult's hands holding a box steady while another packs it.",
+        "alternative": "Stage two toy figures, one supporting a box while the other fills it.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Tabletop and solo options; use light props.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "help",
+          "display": "help",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic interpersonal verb. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "aider",
+          "display": "aider",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic interpersonal verb; no emergency or charitable institution needed. Independent French learner-level review required.",
+          "grammar": {
+            "form": "infinitive"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Avoid depicting vulnerable strangers; help is an act, friendship is a relationship."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "CELEBRATION",
+      "definition": "A joyful social occasion marking something special.",
+      "category": "social_situations",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Stage a small decorated tabletop with reusable paper bunting.",
+        "alternative": "Photograph two toy figures beside a paper rosette and celebratory arrangement.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Solo, low-cost staging; no guests, alcohol or candles required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "celebration",
+          "display": "celebration",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common event noun, more complex than party; independent estimate. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "fête",
+          "display": "la fête",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Very common social-occasion noun; celebration need not translate literally as célébration. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Fête is natural for this occasion; not any public holiday. Happiness is a feeling, not the event."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PICNIC",
+      "definition": "An informal meal eaten outdoors.",
+      "category": "social_situations",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Arrange your own simple meal on a cloth outside in a safe permitted place.",
+        "alternative": "Stage a miniature meal on a cloth with a clearly outdoor model setting.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No travel, cooking or eating required; indoor model available.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "picnic",
+          "display": "picnic",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common leisure-activity noun. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "pique-nique",
+          "display": "le pique-nique",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common activity noun with conventional hyphenation. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not treat every indoor meal on a blanket as literal outdoor dining."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "WAITING_LINE",
+      "definition": "People arranged in order while waiting their turn.",
+      "category": "social_situations",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "With consent, stage a few adult participants in an orderly line, cropped to avoid faces.",
+        "alternative": "Line up toy figures behind a pretend service counter.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Solo tabletop option; no real queue, strangers or crowd needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "line",
+          "display": "line",
+          "aliases": ["queue"],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday Canadian use in waiting contexts; geometric line is excluded. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "file d’attente",
+          "display": "la file d’attente",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common situation phrase; explicitly waiting rather than just a row of objects. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Canadian English line, with queue as an alias. Not seed CROWDED or TRAFFIC_JAM: order/turn-taking, not density or vehicles."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "MESSY",
+      "definition": "Visibly untidy or disorganised in arrangement, not necessarily dirty.",
+      "category": "visual_descriptions",
+      "part_of_speech": "adjective",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Stage a few scattered toys on a table.",
+        "alternative": "Scatter lightweight paper shapes on a tray within easy reach.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Quick, reversible indoor setup; no personal home judgement.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "messy",
+          "display": "messy",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common descriptive adjective in the untidy sense. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "en désordre",
+          "display": "en désordre",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Everyday adjectival phrase; distinguishes arrangement from dirt. Independent French learner-level review required.",
+          "grammar": {
+            "form": "invariable"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "French en désordre is an invariable adjectival phrase, more accurate here than sale. No shame about living conditions."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "EMPTY",
+      "definition": "Containing nothing in the visible space intended to hold contents.",
+      "category": "visual_descriptions",
+      "part_of_speech": "adjective",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph an empty open bowl or box.",
+        "alternative": "Use a lightweight container with its interior clearly visible.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Low effort seated setup.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "empty",
+          "display": "empty",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic descriptive adjective. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "vide",
+          "display": "vide",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic adjective; same form for masculine and feminine singular. Independent French learner-level review required.",
+          "grammar": {
+            "form": "masculine_singular",
+            "feminine": "vide",
+            "masculine_plural": "vides",
+            "feminine_plural": "vides"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not loneliness or an abandoned place; describe visible lack of contents."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "WET",
+      "definition": "Having water on or within a surface.",
+      "category": "visual_descriptions",
+      "part_of_speech": "adjective",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Show a damp cloth beside a dry portion for context.",
+        "alternative": "Put a few drops on a waterproof tray, keeping the phone dry.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Small contained setup; no floor spills or bad weather required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "wet",
+          "display": "wet",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common surface-state adjective. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "mouillé",
+          "display": "mouillé",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common adjective/participle used descriptively; agreement needs explicit forms. Independent French learner-level review required.",
+          "grammar": {
+            "form": "masculine_singular",
+            "feminine": "mouillée",
+            "masculine_plural": "mouillés",
+            "feminine_plural": "mouillées"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["State of an object, distinct from falling RAIN or a pooled PUDDLE."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "COLOURFUL",
+      "definition": "Having several noticeable colours.",
+      "category": "visual_descriptions",
+      "part_of_speech": "adjective",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Arrange objects or paper in several distinct colours.",
+        "alternative": "Photograph a colourful pattern on something already owned.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Low effort; assistive help choosing colours is optional.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "colourful",
+          "display": "colourful",
+          "aliases": ["colorful"],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common descriptive adjective using Canadian spelling. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "coloré",
+          "display": "coloré",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common visual adjective; no advanced classification from artistic interpretation. Independent French learner-level review required.",
+          "grammar": {
+            "form": "masculine_singular",
+            "feminine": "colorée",
+            "masculine_plural": "colorés",
+            "feminine_plural": "colorées"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Canadian spelling colourful; not seed IRIDESCENCE, which depends on changing sheen, or a rainbow specifically."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "ROUND",
+      "definition": "Having a circular outline or rounded shape.",
+      "category": "visual_descriptions",
+      "part_of_speech": "adjective",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph a round lid straight on.",
+        "alternative": "Arrange a loop of string on a reachable surface.",
+        "alternative_mode": "literal",
+        "difficulty": "easy",
+        "accessibility": "Simple indoor setup; no object-specific purchase.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "round",
+          "display": "round",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic shape adjective. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "rond",
+          "display": "rond",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Basic shape adjective with regular feminine ronde. Independent French learner-level review required.",
+          "grammar": {
+            "form": "masculine_singular",
+            "feminine": "ronde",
+            "masculine_plural": "ronds",
+            "feminine_plural": "rondes"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Property rather than a new lid/ball concept; the outline must be visible."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BROKEN_OBJECT",
+      "definition": "Damaged so that an object is no longer intact or working as intended.",
+      "category": "visual_descriptions",
+      "part_of_speech": "adjective",
+      "photography": {
+        "photographable": true,
+        "mode": "literal",
+        "guidance": "Photograph an already broken harmless toy or pencil resting safely.",
+        "alternative": "Stage a toy with a removable part detached beside its matching empty socket; this represents damage without actually breaking anything.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Do not break anything; no glass, live wiring or exposed sharp parts.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "broken",
+          "display": "broken",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common result-state adjective; irregular past participle used descriptively. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "cassé",
+          "display": "cassé",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common adjective/participle for damaged objects; not a relationship metaphor. Independent French learner-level review required.",
+          "grammar": {
+            "form": "masculine_singular",
+            "feminine": "cassée",
+            "masculine_plural": "cassés",
+            "feminine_plural": "cassées"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Physical object sense, not heartbreak; staged separation may need clearer context."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "FRIENDSHIP",
+      "definition": "A caring personal relationship between friends.",
+      "category": "abstract_scenes",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "With consent, show friends' hands beside a shared board game.",
+        "alternative": "Stage two toy figures sitting together with a game and mutually welcoming poses.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Solo prop scene; no actual relationship disclosure needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "friendship",
+          "display": "friendship",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common abstract relationship noun beyond basic friend. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "amitié",
+          "display": "l’amitié",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common relationship noun in familiar social contexts; independent estimate. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "A scene suggests friendship but cannot prove it; sharing/helping are acts, not synonyms."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "LONELINESS",
+      "definition": "The unwanted feeling of lacking companionship or connection.",
+      "category": "abstract_scenes",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Stage one toy figure apart from a small welcoming-looking group.",
+        "alternative": "Photograph an unused second place setting beside one occupied toy seat.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Entirely fictional scene; no isolated strangers or painful disclosure.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "loneliness",
+          "display": "loneliness",
+          "aliases": [],
+          "cefr": "B2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Abstract feeling noun with nuance distinct from alone and voluntary solitude. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "sentiment de solitude",
+          "display": "le sentiment de solitude",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Transparent but nuanced feeling phrase; avoids treating every solitude as distress. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Being alone is not necessarily loneliness; French qualifier sentiment de keeps the emotional sense, not chosen solitude."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PATIENCE",
+      "definition": "The ability to wait or continue calmly without frustration.",
+      "category": "abstract_scenes",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Stage a toy waiting calmly beside a partly finished puzzle and a timer.",
+        "alternative": "Arrange a slowly progressing craft with a relaxed paper face; no actual wait required.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Solo and seated; do not make users wait to take the photo.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "patience",
+          "display": "patience",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common abstract quality noun requiring calm waiting/persistence sense. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "patience",
+          "display": "la patience",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common abstract quality noun; same spelling is not evidence for the same level. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "A still image suggests calm persistence, not proof of duration; distinct from a waiting line."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "HOPE",
+      "definition": "A wish and positive expectation for something in the future.",
+      "category": "abstract_scenes",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Photograph a growing seedling beside a prepared empty pot as a staged future-growth scene.",
+        "alternative": "Stage a paper sprout reaching toward a bright paper opening.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "No gardening, sunlight access or actual adversity required.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "hope",
+          "display": "hope",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common abstract future-oriented noun, not merely a prediction. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "espoir",
+          "display": "l’espoir",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common feeling noun in everyday expressions; no specialist sense. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Symbolic interpretation may be culturally variable; a plant alone need not mean hope."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "FREEDOM",
+      "definition": "The state of being able to choose or act without unwanted restriction.",
+      "category": "abstract_scenes",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "mode": "interpretive",
+        "guidance": "Stage a toy figure leaving an open paper enclosure toward several open paths.",
+        "alternative": "Photograph an open toy gate with a clear unobstructed route beyond it.",
+        "alternative_mode": "interpretive",
+        "difficulty": "moderate",
+        "accessibility": "Tabletop staging; no real captivity, trespass, animal release or political event needed.",
+        "availability": "review_required",
+        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+      },
+      "terms": {
+        "en": {
+          "lemma": "freedom",
+          "display": "freedom",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common social abstract noun with a sense broader than free of cost. Independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "liberté",
+          "display": "la liberté",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate. Common civic/everyday abstract noun; creative photo difficulty does not make it C1. Independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "A metaphor, not proof of freedom; different cultural readings require acceptance testing."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    }
+  ]
+}

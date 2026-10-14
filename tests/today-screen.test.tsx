@@ -222,3 +222,31 @@ it('opens every assigned word in the canonical concept route with owned snapshot
   }
   expect(screen.queryByText(/^Level /)).toBeNull();
 });
+
+it('shows optional guidance and closes it when the assignment is replaced', async () => {
+  const c = makeChallenge();
+  c.words[0].photoGuidance = {
+    locale: 'en',
+    primaryIdea: 'Show the window frame.',
+    mode: 'literal',
+    alternativeIdea: null,
+    alternativeMode: null,
+    accessibility: 'Stay seated if you prefer.',
+    safety: 'Never lean out.',
+  };
+  mockLoad.mockResolvedValue(c);
+  const next = makeChallenge();
+  next.words[0].id = 'new-assignment';
+  next.words[0].conceptId = 'new-concept';
+  next.words[0].targetTerm = 'la porte';
+  next.words[0].photoGuidance = { ...c.words[0].photoGuidance, primaryIdea: 'Show the door.' };
+  mockReplace.mockResolvedValue(next);
+  render(<TodayScreen />);
+  fireEvent.press(await screen.findByRole('button', { name: 'Photo idea for La fenêtre' }));
+  expect(screen.getByText('Never lean out.')).toBeVisible();
+  fireEvent.press(screen.getAllByRole('button', { name: 'Replace' })[0]);
+  await screen.findByRole('button', { name: 'Photo idea for La porte' });
+  expect(screen.queryByText('Show the door.')).toBeNull();
+  expect(screen.queryByText('Show the window frame.')).toBeNull();
+  expect(screen.getByRole('button', { name: 'Take photo · review' })).toBeEnabled();
+});

@@ -55,6 +55,10 @@ to the catalog without schema changes.
 
 - Supabase/PostgreSQL is authoritative for product-critical state.
 - A daily challenge contains three photographable vocabulary words.
+- When reviewed concept guidance is available, Today offers an optional Photo idea
+  disclosure with literal/interpretive examples, accessibility tips and safety.
+  Instructions use the interface language independently of the learning language;
+  the current interface is English. Guidance does not affect challenge eligibility.
 - Vocabulary levels are CEFR A1, A2, B1, B2, C1, C2.
 - Slots are review (one level below), target (current level), stretch (one above).
 - A1 boundary: A1 / A1 / A2. C2 boundary: C1 / C2 / C2.

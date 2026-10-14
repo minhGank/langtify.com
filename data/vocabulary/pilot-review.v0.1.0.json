@@ -1,0 +1,373 @@
+{
+  "schema_version": 1,
+  "manifest_version": "0.1.0",
+  "manifest_sha256": "08554708765f2e139de1fc8e7f4b2c805e5c39f3fc0e4fae31e9d37a83adfb9d",
+  "review_date": "2026-10-13",
+  "status": "recommendations_only",
+  "primary_conventions": {
+    "en": "Canadian English",
+    "fr": "Standard Metropolitan French"
+  },
+  "concepts": [
+    {
+      "concept_key": "TABLE",
+      "photography_difficulty": "Easy",
+      "recommendation": "revise",
+      "concerns": "Definition includes work desks although the existing concern excludes them. Specify a dining/general-purpose table; exclude a dedicated writing desk consistently."
+    },
+    {
+      "concept_key": "BED",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Show the bed, not only a mattress or bedding; no people or private bedroom details."
+    },
+    {
+      "concept_key": "SOFA",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Show a multi-person sofa with backrest; distinguish the seed CHAIR and an armchair. Record Canadian French divan separately (regional sense)."
+    },
+    {
+      "concept_key": "PILLOW",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair for a sleeping pillow. Keep the bed context; decorative cushions are not oreillers by default."
+    },
+    {
+      "concept_key": "BLANKET",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Specify a separate non-quilted blanket; avoid duvet/couette and quilt confusion."
+    },
+    {
+      "concept_key": "MIRROR",
+      "photography_difficulty": "Moderate",
+      "recommendation": "retain",
+      "concerns": "Object is distinct from seed REFLECTION, but images can overlap. Include its edge/frame; avoid faces, screens and private reflections."
+    },
+    {
+      "concept_key": "CLOCK",
+      "photography_difficulty": "Easy",
+      "recommendation": "revise",
+      "concerns": "Clock/horloge is acceptable generally, but the desk-clock prompt also admits pendule/réveil. Prefer a wall-clock photo and explicitly exclude alarm clocks; do not teach every bedside clock as horloge."
+    },
+    {
+      "concept_key": "LAMP",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Use an intact table/floor lamp with its support visible, not a ceiling fixture or bare bulb."
+    },
+    {
+      "concept_key": "BOTTLE",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. The container is the concept; use an ordinary water bottle without personal labels."
+    },
+    {
+      "concept_key": "PLATE",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Show a dinner plate; exclude serving trays and deep bowls."
+    },
+    {
+      "concept_key": "SPOON",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Cuillère and cuiller are accepted forms; keep cuillère primary. Use a table spoon rather than a ladle."
+    },
+    {
+      "concept_key": "FORK",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural utensil pair. Show a table fork, not a gardening tool or branching shape."
+    },
+    {
+      "concept_key": "BANANA",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. The fruit is the target; do not require a particular ripeness or a purchase."
+    },
+    {
+      "concept_key": "CARROT",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. A whole edible root is identifiable; orange is typical, not a mandatory colour."
+    },
+    {
+      "concept_key": "POTATO",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair; pomme de terre is not seed APPLE/pomme. Show the tuber, not the plant or chips."
+    },
+    {
+      "concept_key": "ONION",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Oignon remains primary; ognon is an accepted spelling alternative, not a separate concept."
+    },
+    {
+      "concept_key": "EGG",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair for an intact hen's egg. Keep œ and elision in l’œuf; cooked dishes would change the sense."
+    },
+    {
+      "concept_key": "LOAF_BREAD",
+      "photography_difficulty": "Easy",
+      "recommendation": "revise",
+      "concerns": "Pain is broader than a whole loaf. Keep the whole-loaf identity and use le pain entier with an explicit whole-loaf definition; do not substitute pain de mie (a subtype). Reassess French CEFR for the revised phrase."
+    },
+    {
+      "concept_key": "SHOE",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Exclude boots/slippers consistently. Record le soulier as a Canadian French alternative in this sense; chaussure stays primary."
+    },
+    {
+      "concept_key": "SOCK",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. One sock is sufficient; no need to photograph a foot or change the concept to a pair."
+    },
+    {
+      "concept_key": "HAT",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Chapeau fits a shaped hat. Exclude knitted tuques/bonnets and caps from this concept; they are not regional synonyms for this sense."
+    },
+    {
+      "concept_key": "COAT",
+      "photography_difficulty": "Easy",
+      "recommendation": "revise",
+      "concerns": "Current outer-garment definition also fits jackets. Specify a coat extending below the hips; distinguish jacket/veste/blouson and avoid relying on warmth alone."
+    },
+    {
+      "concept_key": "TOOTHBRUSH",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. A clean brush alone is sufficient; omit people and identifying bathroom details."
+    },
+    {
+      "concept_key": "TOWEL",
+      "photography_difficulty": "Easy",
+      "recommendation": "revise",
+      "concerns": "French correctly specifies body drying; unqualified towel also includes kitchen towels. Prefer bath towel / la serviette de bain and narrow the definition/photo to that size/use. Preserve TOWEL identity only if confirmed as the same intended body-towel sense."
+    },
+    {
+      "concept_key": "COMB",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Teeth must be visible; a hairbrush is a different concept."
+    },
+    {
+      "concept_key": "KEY",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "Translation is correct, but the photo prompt should use a non-working demonstration key and conceal identifying tags/codes. Do not ask for a usable house key's detailed cuts; validate a safe recognisable crop before approval."
+    },
+    {
+      "concept_key": "BACKPACK",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair and distinct from seed SUITCASE. Show shoulder straps; no address or school-name label."
+    },
+    {
+      "concept_key": "SCISSORS",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Correct plural-to-plural pair. Photograph closed blades; do not convert les ciseaux to a singular article."
+    },
+    {
+      "concept_key": "KETTLE",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Show a cool water-heating kettle, not a teapot; ownership varies, so no purchase requirement."
+    },
+    {
+      "concept_key": "FRYING_PAN",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Correct feminine la poêle (pan), not masculine le poêle (stove). Use a cool shallow pan; avoid a saucepan."
+    },
+    {
+      "concept_key": "COLANDER",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "Passoire is natural but broader than colander. Keep the perforated-bowl concept and add passoire à trous as clarifying guidance; exclude fine-mesh strainers/sieves without calling the existing translation wrong."
+    },
+    {
+      "concept_key": "CORKSCREW",
+      "photography_difficulty": "Moderate",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Less universally available; photograph the tool alone with the point safely positioned. No alcohol or opening demonstration needed."
+    },
+    {
+      "concept_key": "GRATER",
+      "photography_difficulty": "Moderate",
+      "recommendation": "retain",
+      "concerns": "Natural kitchen sense. Show perforations without touching them; exclude a woodworking rasp."
+    },
+    {
+      "concept_key": "ROLLING_PIN",
+      "photography_difficulty": "Moderate",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Show the whole cylinder; kitchen access is needed, and a paint roller is not equivalent."
+    },
+    {
+      "concept_key": "CLOTHES_HANGER",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Show an empty hanger; exclude a wall hook. Do not adopt English support as an unreviewed French alias."
+    },
+    {
+      "concept_key": "BROOM",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Show long handle and bristles; a small hand brush is outside the definition."
+    },
+    {
+      "concept_key": "DUSTPAN",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Pelle à poussière is clear; bare pelle is too broad. Record Canadian French le porte-poussière, retaining its masculine gender."
+    },
+    {
+      "concept_key": "BUCKET",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair, distinct from seed RECYCLING_BIN when its carrying handle is visible. Record Canadian French chaudière only as a qualified regional usage note, not a universal synonym."
+    },
+    {
+      "concept_key": "PADLOCK",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. An owned spare padlock is sufficient; no opening, lock picking or identifying key required."
+    },
+    {
+      "concept_key": "SCREWDRIVER",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural manual-tool sense. Show tip and handle; exclude a power drill and the English cocktail sense."
+    },
+    {
+      "concept_key": "HAMMER",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Rest the tool on a surface; no striking demonstration."
+    },
+    {
+      "concept_key": "PLIERS",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "Pince universelle means combination pliers, while pliers is broader. Change English to combination pliers and narrow the definition to the pictured tool; English plural/French singular is correct. Reassess English CEFR."
+    },
+    {
+      "concept_key": "TAPE_MEASURE",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. A short marked length is enough; avoid snap-back and do not require a long extension."
+    },
+    {
+      "concept_key": "PLANT_POT",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair even when it contains foliage rather than flowers. Make the container the subject; do not require a particular plant."
+    },
+    {
+      "concept_key": "WATERING_CAN",
+      "photography_difficulty": "Easy",
+      "recommendation": "retain",
+      "concerns": "Natural pair. Show handle and long spout; distinguish the water-heating kettle by shape/use."
+    },
+    {
+      "concept_key": "DRAINPIPE",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "Use Canadian English downspout; drainpipe is broader and regionally less suitable here. Prefer la descente de gouttière as the explicit rainwater label, retaining tuyau de descente as a qualified variant. Ground-level access only."
+    },
+    {
+      "concept_key": "DOOR_HINGE",
+      "photography_difficulty": "Moderate",
+      "recommendation": "retain",
+      "concerns": "Natural pair and permitted small component. Distinct from seed DOOR when pivot plates are centred; avoid trapped fingers. Provisional B2/B1 needs review, not automatic equalisation."
+    },
+    {
+      "concept_key": "ZIPPER",
+      "photography_difficulty": "Moderate",
+      "recommendation": "retain",
+      "concerns": "Canadian zipper is suitable. Fermeture à glissière is correct formal French; existing fermeture éclair is the familiar alternative, not uniquely Canadian. Use zipper rather than zip in English photo guidance; recheck FR B2 against the chosen primary form."
+    },
+    {
+      "concept_key": "THIMBLE",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "UNRESOLVED ADVANCED. Accurate pair, but sewing-kit availability is uneven. Retain for reassessment at an evidence-supported level, not automatically C1; show the cap alone in focus."
+    },
+    {
+      "concept_key": "DOOR_LATCH",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "UNRESOLVED ADVANCED. Loquet is narrower than generic latch. Specify a simple pivoting door latch / loquet de porte and exclude concealed spring catches/deadbolts. Distinguish the movable latch from the fixed strike plate; no assigned C1."
+    },
+    {
+      "concept_key": "SKIRTING_BOARD",
+      "photography_difficulty": "Easy",
+      "recommendation": "revise",
+      "concerns": "UNRESOLVED ADVANCED. Make baseboard primary Canadian English and keep skirting board as British metadata. Plinthe is natural; describe trim of any material and exclude baseboard heaters. Common object, not evidence of C1."
+    },
+    {
+      "concept_key": "DOWNPIPE_ELBOW",
+      "photography_difficulty": "Hard",
+      "recommendation": "defer",
+      "concerns": "UNRESOLVED ADVANCED. Defer from the initial catalog: small fitting repeats much of DRAINPIPE's photo/meaning. If retained later, use downspout elbow / coude de descente de gouttière and a distinct ground-level close-up; C1 unproven."
+    },
+    {
+      "concept_key": "UPHOLSTERY_TACK",
+      "photography_difficulty": "Hard",
+      "recommendation": "defer",
+      "concerns": "UNRESOLVED ADVANCED. Defer: often hidden or absent on modern furniture; tiny visible heads may be decorative studs rather than fastening tacks. Do not remove upholstery or handle loose sharp nails. Translation is plausible; C1 unproven."
+    },
+    {
+      "concept_key": "DRAWER_RUNNER",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "UNRESOLVED ADVANCED. Prefer Canadian English drawer slide / la coulisse de tiroir. Restrict to visible rails on a supported partly open drawer, with no removal/disassembly. Undermount slides may be inaccessible; C1 unproven."
+    },
+    {
+      "concept_key": "METAL_EYELET",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "UNRESOLVED ADVANCED. Good everyday component on shoes/bags. Keep œillet métallique; remove unqualified grommet alias until its broader senses are constrained. Close-up must show the ring/hole, not just the shoe; C2 unproven."
+    },
+    {
+      "concept_key": "PAINTBRUSH_FERRULE",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "UNRESOLVED ADVANCED. Virole de pinceau is a valid specialist term and the sleeve is visible. Keep as a candidate with brush context and no disassembly; technical precision does not establish C2 or universal availability."
+    },
+    {
+      "concept_key": "UPHOLSTERY_PIPING",
+      "photography_difficulty": "Hard",
+      "recommendation": "defer",
+      "concerns": "UNRESOLVED ADVANCED. Defer: passepoil can include flat edging, while this definition requires raised corded upholstery piping. A future passepoil cordé label needs specialist review; photo can resemble an ordinary seam. C2 unproven."
+    },
+    {
+      "concept_key": "DOOR_STRIKE_PLATE",
+      "photography_difficulty": "Moderate",
+      "recommendation": "revise",
+      "concerns": "UNRESOLVED ADVANCED. Gâche de porte is suitable with a frame-side receiving-fitting definition. Exclude the moving latch and hinge; use an open door safely without disassembly. Narrow the photo to the plate and opening; C2 unproven."
+    },
+    {
+      "concept_key": "TOGGLE_FASTENER",
+      "photography_difficulty": "Hard",
+      "recommendation": "defer",
+      "concerns": "UNRESOLVED ADVANCED. Defer: specific coat closure is not universally available. The sense is a toggle button, not the whole fastener; propose toggle button / le bouton bûchette and verify unhyphenated spelling before reuse. C2 unproven."
+    },
+    {
+      "concept_key": "WATCH_BEZEL",
+      "photography_difficulty": "Hard",
+      "recommendation": "defer",
+      "concerns": "UNRESOLVED ADVANCED. Translation is suitable, but many users lack a watch with a distinct rim; glare and small size make it hard to distinguish from the crystal. Defer from the initial catalog; C2 unproven."
+    }
+  ]
+}

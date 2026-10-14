@@ -1,0 +1,348 @@
+{
+  "schema_version": 2,
+  "status": "editorial_draft_not_external_review",
+  "note": "Separate consistency assertions; not independent linguistic certification. Nouns carry gender/number/onset, verbs infinitive form, adjectives agreement or an explicit invariable form.",
+  "forms": {
+    "lit": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "oreiller": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "bouteille": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "assiette": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "cuillère": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "fourchette": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "sac à dos": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "ciseaux": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "plural",
+      "onset": "consonant"
+    },
+    "papillon": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "oiseau": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "lapin": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "escargot": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "fourmi": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "fleur": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "feuille": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "herbe": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "mute_h"
+    },
+    "courir": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "marcher": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "lire": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "cuisiner": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "danser": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "dessiner": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "se laver les mains": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "s’étirer": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "bonheur": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "tristesse": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "surprise": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "colère": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "inquiétude": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "soulagement": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "coucher de soleil": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "arc-en-ciel": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "pluie": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "neige": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "nuage": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "flaque d’eau": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "vague": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "parc": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "plage": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "forêt": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "aire de jeux": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "cuisine": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "arrêt de bus": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "saluer": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "partager": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "aider": {
+      "part_of_speech": "verb",
+      "form": "infinitive"
+    },
+    "fête": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "pique-nique": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "file d’attente": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "en désordre": {
+      "part_of_speech": "adjective",
+      "form": "invariable"
+    },
+    "vide": {
+      "part_of_speech": "adjective",
+      "form": "masculine_singular",
+      "feminine": "vide",
+      "masculine_plural": "vides",
+      "feminine_plural": "vides"
+    },
+    "mouillé": {
+      "part_of_speech": "adjective",
+      "form": "masculine_singular",
+      "feminine": "mouillée",
+      "masculine_plural": "mouillés",
+      "feminine_plural": "mouillées"
+    },
+    "coloré": {
+      "part_of_speech": "adjective",
+      "form": "masculine_singular",
+      "feminine": "colorée",
+      "masculine_plural": "colorés",
+      "feminine_plural": "colorées"
+    },
+    "rond": {
+      "part_of_speech": "adjective",
+      "form": "masculine_singular",
+      "feminine": "ronde",
+      "masculine_plural": "ronds",
+      "feminine_plural": "rondes"
+    },
+    "cassé": {
+      "part_of_speech": "adjective",
+      "form": "masculine_singular",
+      "feminine": "cassée",
+      "masculine_plural": "cassés",
+      "feminine_plural": "cassées"
+    },
+    "amitié": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "sentiment de solitude": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "patience": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "espoir": {
+      "part_of_speech": "noun",
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "liberté": {
+      "part_of_speech": "noun",
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    }
+  }
+}

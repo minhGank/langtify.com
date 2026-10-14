@@ -166,6 +166,12 @@ storage requires normal XSS precautions before any future web release.
 
 ## Challenge authority
 
+The owner-checked challenge payload optionally includes concept-level photo guidance.
+A private helper resolves complete instruction locales; the current English UI adds
+a collapsed Photo idea disclosure without another request or selection changes.
+See [Vocabulary photo guidance](VOCABULARY_PHOTO_GUIDANCE.md) for localization,
+permissions and editorial approval boundaries.
+
 `get_or_create_today_challenge()` accepts no configuration or identity arguments.
 `replace_daily_challenge_word(active_assignment_id)` accepts only the assignment ID.
 Both verify `auth.uid()`, require completed onboarding and serialize on the owner's

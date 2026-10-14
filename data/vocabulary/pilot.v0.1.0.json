@@ -1,0 +1,2909 @@
+{
+  "schema_version": 1,
+  "dataset_id": "langtify-vocabulary-pilot",
+  "version": "0.1.0",
+  "created_at": "2026-10-13",
+  "status": "draft",
+  "expected_concepts": 60,
+  "languages": ["en", "fr"],
+  "language_policy": "English uses broadly understood forms, with regional alternatives recorded; French uses standard international forms with explicit regional review pending. No variant selection approved yet.",
+  "source_policy": "Original editorial draft. No dictionary definitions or proprietary CEFR lists copied. No independent human review is claimed.",
+  "concepts": [
+    {
+      "concept_key": "TABLE",
+      "definition": "Furniture with a flat raised surface used for meals or work.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the tabletop and its supports.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "table",
+          "display": "table",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "table",
+          "display": "la table",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Exclude desks with a different intended sense; chairs are separate seed concepts."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BED",
+      "definition": "Furniture intended for sleeping, including its mattress and frame.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a made bed without people.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "bed",
+          "display": "bed",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "lit",
+          "display": "le lit",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not photograph sleeping people."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SOFA",
+      "definition": "A padded seat designed for more than one person.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the whole sofa and its cushions.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "sofa",
+          "display": "sofa",
+          "aliases": ["couch"],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "canapé",
+          "display": "le canapé",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not a single-person armchair; distinct from seed CHAIR."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PILLOW",
+      "definition": "A soft support for the head when sleeping.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Place it on a bed and show its shape.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "pillow",
+          "display": "pillow",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "oreiller",
+          "display": "l’oreiller",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude decorative seat cushions."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BLANKET",
+      "definition": "A separate fabric covering used to keep a person warm.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a folded blanket or one spread over a bed.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "blanket",
+          "display": "blanket",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "couverture",
+          "display": "la couverture",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude quilts and duvets in this pilot sense."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "MIRROR",
+      "definition": "An object with a reflective surface made for viewing an image.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the mirror frame and surface without a person.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "mirror",
+          "display": "mirror",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "miroir",
+          "display": "le miroir",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "The physical mirror, not seed REFLECTION; avoid faces and private reflections."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "CLOCK",
+      "definition": "A wall or freestanding instrument displaying the time.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a wall or desk clock face.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "clock",
+          "display": "clock",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "horloge",
+          "display": "l’horloge",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "l’",
+            "onset": "mute_h"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude wristwatches and phone displays."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "LAMP",
+      "definition": "A portable or freestanding electric light with its own support.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an intact table or floor lamp.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "lamp",
+          "display": "lamp",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "lampe",
+          "display": "la lampe",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not expose electrical wiring."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BOTTLE",
+      "definition": "A narrow-necked container for holding a liquid.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a plain water bottle with identifying labels hidden.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "bottle",
+          "display": "bottle",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "bouteille",
+          "display": "la bouteille",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Container, not its contents; no alcohol needed."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PLATE",
+      "definition": "A shallow dish used to serve food.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Photograph a clean dinner plate from above.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "plate",
+          "display": "plate",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "assiette",
+          "display": "l’assiette",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude serving trays."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SPOON",
+      "definition": "An eating utensil with a small bowl and a handle.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Place a spoon flat on a table.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "spoon",
+          "display": "spoon",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "cuillère",
+          "display": "la cuillère",
+          "aliases": ["cuiller"],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Cuiller is an accepted French spelling variant."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "FORK",
+      "definition": "An eating utensil with prongs and a handle.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Place a table fork on a clear surface.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "fork",
+          "display": "fork",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "fourchette",
+          "display": "la fourchette",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude garden forks and other senses."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BANANA",
+      "definition": "The elongated edible fruit with a peel, usually yellow when ripe.",
+      "category": "food",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a banana or a small bunch.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "banana",
+          "display": "banana",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "banane",
+          "display": "la banane",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude ornamental banana plants as the main subject."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "CARROT",
+      "definition": "The edible root vegetable, commonly orange.",
+      "category": "food",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a whole carrot.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "carrot",
+          "display": "carrot",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "carotte",
+          "display": "la carotte",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Distinct from other root vegetables."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "POTATO",
+      "definition": "The edible starchy tuber of the potato plant.",
+      "category": "food",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show one or more whole potatoes.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "potato",
+          "display": "potato",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "pomme de terre",
+          "display": "la pomme de terre",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not seed APPLE despite the words pomme de terre."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "ONION",
+      "definition": "The layered edible bulb used as a vegetable.",
+      "category": "food",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an intact onion.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "onion",
+          "display": "onion",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "oignon",
+          "display": "l’oignon",
+          "aliases": ["ognon"],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Ognon is an accepted spelling variant; keep oignon as primary."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "EGG",
+      "definition": "A hen's egg used as food, still in its shell.",
+      "category": "food",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an intact egg on a safe surface.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "egg",
+          "display": "egg",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "œuf",
+          "display": "l’œuf",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude other animal eggs and cooked dishes."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "LOAF_BREAD",
+      "definition": "A whole baked loaf of bread rather than a slice or sandwich.",
+      "category": "food",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a whole loaf.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "loaf of bread",
+          "display": "loaf of bread",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "pain",
+          "display": "le pain",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["French pain is broader; guidance constrains the same whole-loaf referent."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SHOE",
+      "definition": "A single item of footwear covering the foot, excluding a tall boot.",
+      "category": "clothing",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a clean shoe.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "shoe",
+          "display": "shoe",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "chaussure",
+          "display": "la chaussure",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["No feet or people required."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SOCK",
+      "definition": "A close-fitting fabric covering for a foot and ankle.",
+      "category": "clothing",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a sock laid flat.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "sock",
+          "display": "sock",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "chaussette",
+          "display": "la chaussette",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["A single sock is sufficient."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "HAT",
+      "definition": "A shaped head covering with a crown, usually with a brim.",
+      "category": "clothing",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a hat on a surface.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "hat",
+          "display": "hat",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "chapeau",
+          "display": "le chapeau",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude knitted caps in this sense."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "COAT",
+      "definition": "An outer garment worn over other clothes for warmth.",
+      "category": "clothing",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a coat hanging up.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "coat",
+          "display": "coat",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "manteau",
+          "display": "le manteau",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["A jacket may be too short; reviewer should confirm the boundary."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "TOOTHBRUSH",
+      "definition": "A small brush used to clean teeth.",
+      "category": "personal",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a clean toothbrush and its bristles.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "toothbrush",
+          "display": "toothbrush",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "brosse à dents",
+          "display": "la brosse à dents",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Hide medicine labels and other private bathroom items."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "TOWEL",
+      "definition": "An absorbent cloth for drying the body after washing.",
+      "category": "personal",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a folded bathroom towel.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "towel",
+          "display": "towel",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "serviette de toilette",
+          "display": "la serviette de toilette",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Qualified French term excludes a table napkin."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "COMB",
+      "definition": "A toothed implement used to arrange hair.",
+      "category": "personal",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the teeth of a comb.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "comb",
+          "display": "comb",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "peigne",
+          "display": "le peigne",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude hairbrushes."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "KEY",
+      "definition": "A physical toothed key that fits a mechanical lock.",
+      "category": "personal",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a spare key without identifying tags.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "key",
+          "display": "key",
+          "aliases": [],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "clé",
+          "display": "la clé",
+          "aliases": ["clef"],
+          "cefr": "A1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Never show a key associated with a visible address; clef is a spelling variant."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BACKPACK",
+      "definition": "A bag carried on the back with shoulder straps.",
+      "category": "personal",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the bag and its two shoulder straps.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "backpack",
+          "display": "backpack",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "sac à dos",
+          "display": "le sac à dos",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Distinct from seed SUITCASE."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SCISSORS",
+      "definition": "A hand tool with two pivoted cutting blades.",
+      "category": "tools",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show closed household scissors.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "scissors",
+          "display": "scissors",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "ciseaux",
+          "display": "les ciseaux",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "plural",
+            "article": "les",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Plural-only primary forms; no cutting demonstration."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "KETTLE",
+      "definition": "A vessel with a spout used to heat water.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a cool kettle.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "kettle",
+          "display": "kettle",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "bouilloire",
+          "display": "la bouilloire",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not handle boiling water for the photo."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "FRYING_PAN",
+      "definition": "A shallow handled pan used for frying food.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an empty cool frying pan.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "frying pan",
+          "display": "frying pan",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "poêle",
+          "display": "la poêle",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["French feminine poêle means pan, not masculine stove."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "COLANDER",
+      "definition": "A perforated bowl used to drain water from food.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show its holes and bowl shape.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "colander",
+          "display": "colander",
+          "aliases": [],
+          "cefr": "B2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "passoire",
+          "display": "la passoire",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Distinguish fine-mesh sieves; French passoire has a broader range."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "CORKSCREW",
+      "definition": "A tool with a spiral used to pull a cork from a bottle.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the tool alone with the pointed part safely positioned.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "corkscrew",
+          "display": "corkscrew",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "tire-bouchon",
+          "display": "le tire-bouchon",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["No alcohol or opening demonstration required."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "GRATER",
+      "definition": "A kitchen tool with rough perforations for shredding food.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an unused kitchen grater.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "grater",
+          "display": "grater",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "râpe",
+          "display": "la râpe",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["No fingers against cutting surfaces."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "ROLLING_PIN",
+      "definition": "A cylindrical kitchen tool used to flatten dough.",
+      "category": "kitchen",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the whole rolling pin.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "rolling pin",
+          "display": "rolling pin",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "rouleau à pâtisserie",
+          "display": "le rouleau à pâtisserie",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude paint rollers."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "CLOTHES_HANGER",
+      "definition": "A shaped frame used to support hanging clothes.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an empty hanger.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "clothes hanger",
+          "display": "clothes hanger",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "cintre",
+          "display": "le cintre",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not a coat hook fixed to a wall."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BROOM",
+      "definition": "A long-handled brush used to sweep floors.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show its handle and bristle head.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "broom",
+          "display": "broom",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "balai",
+          "display": "le balai",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude handheld dust brushes."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DUSTPAN",
+      "definition": "A shallow scoop that collects dirt swept from a floor.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the pan beside a clear floor.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "dustpan",
+          "display": "dustpan",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "pelle à poussière",
+          "display": "la pelle à poussière",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not shorten to pelle, which is ambiguous."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "BUCKET",
+      "definition": "An open-topped container with a carrying handle.",
+      "category": "home",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an empty bucket.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "bucket",
+          "display": "bucket",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "seau",
+          "display": "le seau",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude bins and seed RECYCLING_BIN."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PADLOCK",
+      "definition": "A portable lock with a hinged or removable shackle.",
+      "category": "tools",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an owned spare padlock.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "padlock",
+          "display": "padlock",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "cadenas",
+          "display": "le cadenas",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not attempt access to someone else's property."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SCREWDRIVER",
+      "definition": "A hand tool whose shaped tip turns screws.",
+      "category": "tools",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a manual screwdriver on a surface.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "screwdriver",
+          "display": "screwdriver",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "tournevis",
+          "display": "le tournevis",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude powered drills and cocktail meanings."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "HAMMER",
+      "definition": "A hand tool with a weighted head used to strike nails.",
+      "category": "tools",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the hammer resting on a surface.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "hammer",
+          "display": "hammer",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "marteau",
+          "display": "le marteau",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["No striking demonstration."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PLIERS",
+      "definition": "A pivoted hand tool with jaws for gripping or bending small objects.",
+      "category": "tools",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a combination pair of pliers closed.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "pliers",
+          "display": "pliers",
+          "aliases": [],
+          "cefr": "B2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "pince universelle",
+          "display": "la pince universelle",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["English plural and French singular are intentional; exclude tweezers."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "TAPE_MEASURE",
+      "definition": "A marked flexible tape used to measure length.",
+      "category": "tools",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a short safely extended section.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "tape measure",
+          "display": "tape measure",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "mètre ruban",
+          "display": "le mètre ruban",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Exclude rigid rulers; do not release a long spring-loaded tape."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PLANT_POT",
+      "definition": "A container made for growing a plant.",
+      "category": "garden",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the pot clearly, with or without a plant.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "plant pot",
+          "display": "plant pot",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "pot de fleurs",
+          "display": "le pot de fleurs",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["The pot is the subject, not a particular plant species."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "WATERING_CAN",
+      "definition": "A portable water container with a spout for watering plants.",
+      "category": "garden",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the handle and pouring spout.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "watering can",
+          "display": "watering can",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "arrosoir",
+          "display": "l’arrosoir",
+          "aliases": [],
+          "cefr": "A2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not a kettle despite similar shape."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DRAINPIPE",
+      "definition": "A vertical exterior pipe carrying rainwater down from a gutter.",
+      "category": "built_environment",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Photograph an accessible section from ground level.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "drainpipe",
+          "display": "drainpipe",
+          "aliases": [],
+          "cefr": "B2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "tuyau de descente",
+          "display": "le tuyau de descente",
+          "aliases": [],
+          "cefr": "B2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Rainwater sense only; avoid house numbers and private windows."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DOOR_HINGE",
+      "definition": "The pivoting metal fitting joining a door to its frame.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the visible hinge on your own open door.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "door hinge",
+          "display": "door hinge",
+          "aliases": [],
+          "cefr": "B2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "charnière de porte",
+          "display": "la charnière de porte",
+          "aliases": [],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Part of seed DOOR but a distinct fitting; exclude the whole door as subject."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "ZIPPER",
+      "definition": "A fastening formed by two rows of interlocking teeth and a slider.",
+      "category": "clothing",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a zip on an unworn garment or bag.",
+        "availability": "everyday",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "zipper",
+          "display": "zipper",
+          "aliases": ["zip"],
+          "cefr": "B1",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent English learner-level review required.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "fermeture à glissière",
+          "display": "la fermeture à glissière",
+          "aliases": ["fermeture éclair"],
+          "cefr": "B2",
+          "cefr_review_band": null,
+          "cefr_rationale": "Provisional editorial estimate for this concrete noun sense; independent French learner-level review required.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Zip is the British-English variant; fermeture éclair is a common French alternative."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "THIMBLE",
+      "definition": "A small protective cap worn on a finger while sewing.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the thimble alone.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "thimble",
+          "display": "thimble",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "dé à coudre",
+          "display": "le dé à coudre",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Specialized vocabulary is not evidence of C1; availability needs review."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DOOR_LATCH",
+      "definition": "A simple movable fastening that holds a door closed.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an accessible latch without dismantling it.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "door latch",
+          "display": "door latch",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "loquet de porte",
+          "display": "le loquet de porte",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Distinct from hinge and strike plate; not every home has this latch type."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "SKIRTING_BOARD",
+      "definition": "A narrow finishing board along the base of an interior wall.",
+      "category": "built_environment",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Photograph the wall-floor junction.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "skirting board",
+          "display": "skirting board",
+          "aliases": ["baseboard"],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "plinthe",
+          "display": "la plinthe",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Baseboard is the North-American variant; not a structural buttress."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DOWNPIPE_ELBOW",
+      "definition": "A bent fitting that changes the direction of an exterior rainwater pipe.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show an accessible bend from ground level.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "downpipe elbow",
+          "display": "downpipe elbow",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "coude de descente",
+          "display": "le coude de descente",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Distinct component of DRAINPIPE; technical term and subset relationship need review."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "UPHOLSTERY_TACK",
+      "definition": "A short nail used to fix upholstery, sometimes with a visible decorative head.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show a visible tack on owned upholstered furniture.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "upholstery tack",
+          "display": "upholstery tack",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "clou de tapissier",
+          "display": "le clou de tapissier",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not remove it; not all furniture exposes these fittings."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DRAWER_RUNNER",
+      "definition": "A rail mechanism that guides a drawer as it slides.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the visible rail with the drawer safely partly open.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "drawer runner",
+          "display": "drawer runner",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "coulisse de tiroir",
+          "display": "la coulisse de tiroir",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C1",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C1. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Do not disassemble furniture; runner is sense-qualified."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "METAL_EYELET",
+      "definition": "A small metal ring reinforcing a hole for a cord or lace.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Take a close-up of a shoe or bag eyelet.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "metal eyelet",
+          "display": "metal eyelet",
+          "aliases": ["grommet"],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "œillet métallique",
+          "display": "l’œillet métallique",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "l’",
+            "onset": "vowel"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not the flower œillet; precise component label does not establish C2."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "PAINTBRUSH_FERRULE",
+      "definition": "The metal sleeve securing a paintbrush's bristles to its handle.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the metal sleeve of an owned dry paintbrush.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "paintbrush ferrule",
+          "display": "paintbrush ferrule",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "virole de pinceau",
+          "display": "la virole de pinceau",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Not the whole brush; technicality alone does not establish C2."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "UPHOLSTERY_PIPING",
+      "definition": "A raised fabric-covered cord used to edge upholstery seams.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the raised edging on a cushion or sofa.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "upholstery piping",
+          "display": "upholstery piping",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "passepoil",
+          "display": "le passepoil",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["Distinct from seed CHAIR and pilot SOFA; not every visible seam is piping."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "DOOR_STRIKE_PLATE",
+      "definition": "A metal fitting on a door frame that receives a latch or lock bolt.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the visible frame fitting without dismantling it.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "door strike plate",
+          "display": "door strike plate",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "gâche de porte",
+          "display": "la gâche de porte",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "French gâche may denote the receiving fitting beyond just its plate; bilingual scope review required."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "TOGGLE_FASTENER",
+      "definition": "An elongated button passed through a loop to fasten clothing.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the fastener on an unworn coat.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "toggle fastener",
+          "display": "toggle fastener",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "bouton-bûchette",
+          "display": "le bouton-bûchette",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "m",
+            "number": "singular",
+            "article": "le",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": [
+          "Not a generic round button; availability and French hyphenation need review."
+        ],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    },
+    {
+      "concept_key": "WATCH_BEZEL",
+      "definition": "The rim surrounding a wristwatch's face or crystal.",
+      "category": "components",
+      "part_of_speech": "noun",
+      "photography": {
+        "photographable": true,
+        "guidance": "Show the rim of an owned watch in close-up.",
+        "availability": "review_required",
+        "safety": "Photograph only objects you own or may access; no people, private details, hazardous handling or purchases required."
+      },
+      "terms": {
+        "en": {
+          "lemma": "watch bezel",
+          "display": "watch bezel",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": null
+        },
+        "fr": {
+          "lemma": "lunette de montre",
+          "display": "la lunette de montre",
+          "aliases": [],
+          "cefr": null,
+          "cefr_review_band": "C2",
+          "cefr_rationale": "Unresolved: precision/specialization alone does not justify C2. Bilingual educator must consider a lower band or exclusion.",
+          "grammar": {
+            "gender": "f",
+            "number": "singular",
+            "article": "la",
+            "onset": "consonant"
+          }
+        }
+      },
+      "editorial": {
+        "status": "draft",
+        "reviewer": null,
+        "reviewed_at": null,
+        "concerns": ["French lunette here is not eyewear; precise sense does not prove C2."],
+        "translation_evidence": [],
+        "cefr_evidence": {
+          "en": [],
+          "fr": []
+        }
+      }
+    }
+  ]
+}

@@ -344,6 +344,10 @@ validated by PostgreSQL; device timezone data is used only to assist input.
 
 ## Vocabulary and daily challenges
 
+Optional concept-level [photo guidance](docs/VOCABULARY_PHOTO_GUIDANCE.md) adds an
+expandable Today hint. Its migration, local importer and editorial gates are
+documented separately; no hosted catalog import is implied.
+
 `vocabulary_concepts` represents meanings; `vocabulary_terms` supplies one primary
 term per concept/language, with independent CEFR. Reference equivalents follow
 concept linkage. The development seed provides six French examples per level

@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "seed_sha256": "f15537ae8061c9df477a1c290c3b4b09b622c4659f3b461e3c3ecb047ba17254",
+  "approval": "development_fixtures_only",
+  "concepts": [
+    {
+      "concept_key": "DOG",
+      "aliases": ["le chien", "dog", "puppy", "canine", "chiot", "dogs", "chiens"]
+    },
+    {
+      "concept_key": "CAT",
+      "aliases": ["le chat", "cat", "kitten", "feline", "chaton", "cats", "chats"]
+    },
+    {
+      "concept_key": "APPLE",
+      "aliases": ["la pomme", "apple", "apples", "pommes"]
+    },
+    {
+      "concept_key": "CHAIR",
+      "aliases": ["la chaise", "chair", "chairs", "chaises"]
+    },
+    {
+      "concept_key": "BOOK",
+      "aliases": ["le livre", "book", "books", "livres"]
+    },
+    {
+      "concept_key": "DOOR",
+      "aliases": ["la porte", "door", "doors", "portes"]
+    },
+    {
+      "concept_key": "WINDOW",
+      "aliases": ["la fenêtre", "window", "windows", "fenêtres"]
+    },
+    {
+      "concept_key": "BICYCLE",
+      "aliases": [
+        "le vélo",
+        "bicycle",
+        "bike",
+        "cycle",
+        "bicyclette",
+        "bicycles",
+        "bikes",
+        "vélos",
+        "bicyclettes"
+      ]
+    },
+    {
+      "concept_key": "BRIDGE",
+      "aliases": ["le pont", "bridge", "bridges", "ponts"]
+    },
+    {
+      "concept_key": "BANK_RIVER",
+      "aliases": [
+        "la rive",
+        "bank",
+        "riverbank",
+        "river bank",
+        "river shore",
+        "berge",
+        "riverbanks",
+        "river banks",
+        "rives",
+        "berges"
+      ]
+    },
+    {
+      "concept_key": "UMBRELLA",
+      "aliases": ["le parapluie", "umbrella", "umbrellas", "parapluies"]
+    },
+    {
+      "concept_key": "SUITCASE",
+      "aliases": ["la valise", "suitcase", "suitcases", "valises"]
+    },
+    {
+      "concept_key": "TRAFFIC_JAM",
+      "aliases": ["un embouteillage", "traffic jam"]
+    },
+    {
+      "concept_key": "CROSSWALK",
+      "aliases": [
+        "le passage piéton",
+        "crosswalk",
+        "pedestrian crossing",
+        "zebra crossing",
+        "passage pour piétons",
+        "crosswalks",
+        "passages piétons"
+      ]
+    },
+    {
+      "concept_key": "BANK_FINANCIAL",
+      "aliases": ["la banque", "bank", "financial bank", "bank building", "banks", "banques"]
+    },
+    {
+      "concept_key": "MARKET_STALL",
+      "aliases": ["un étal", "market stall"]
+    },
+    {
+      "concept_key": "SCAFFOLDING",
+      "aliases": ["un échafaudage", "scaffolding"]
+    },
+    {
+      "concept_key": "RECYCLING_BIN",
+      "aliases": [
+        "le bac de recyclage",
+        "recycling bin",
+        "recycle bin",
+        "recycling container",
+        "recycling bins",
+        "bacs de recyclage"
+      ]
+    },
+    {
+      "concept_key": "CROWDED",
+      "aliases": [
+        "bondé",
+        "crowded",
+        "crowd",
+        "foule",
+        "packed",
+        "crowded place",
+        "crowded scene",
+        "packed place",
+        "bondée",
+        "bondés",
+        "bondées",
+        "plein de monde",
+        "surpeuplé",
+        "surpeuplée"
+      ]
+    },
+    {
+      "concept_key": "ALLEY",
+      "aliases": ["la ruelle", "alley", "alleyway", "lane", "alleys", "ruelles"]
+    },
+    {
+      "concept_key": "GREENHOUSE",
+      "aliases": ["la serre", "greenhouse"]
+    },
+    {
+      "concept_key": "WIND_TURBINE",
+      "aliases": ["une éolienne", "wind turbine"]
+    },
+    {
+      "concept_key": "SOLAR_PANEL",
+      "aliases": ["le panneau solaire", "solar panel"]
+    },
+    {
+      "concept_key": "REFLECTION",
+      "aliases": ["le reflet", "reflection", "reflected image"]
+    },
+    {
+      "concept_key": "BUTTRESS",
+      "aliases": ["le contrefort", "buttress"]
+    },
+    {
+      "concept_key": "ESTUARY",
+      "aliases": ["un estuaire", "estuary"]
+    },
+    {
+      "concept_key": "IRIDESCENCE",
+      "aliases": ["une irisation", "iridescence", "iridescent sheen"]
+    },
+    {
+      "concept_key": "TERRACED_FIELD",
+      "aliases": [
+        "une culture en terrasses",
+        "terraced field",
+        "terraced farmland",
+        "terrace farming"
+      ]
+    },
+    {
+      "concept_key": "VIADUCT",
+      "aliases": ["le viaduc", "viaduct"]
+    },
+    {
+      "concept_key": "PATINA",
+      "aliases": ["la patine", "patina"]
+    },
+    {
+      "concept_key": "FLYING_BUTTRESS",
+      "aliases": ["un arc-boutant", "flying buttress"]
+    },
+    {
+      "concept_key": "EFFLORESCENCE",
+      "aliases": ["une efflorescence", "efflorescence"]
+    },
+    {
+      "concept_key": "SPANDREL",
+      "aliases": ["un écoinçon", "spandrel"]
+    },
+    {
+      "concept_key": "SCREE",
+      "aliases": ["un pierrier", "scree", "loose rock slope", "éboulis"]
+    },
+    {
+      "concept_key": "CARYATID",
+      "aliases": ["une cariatide", "caryatid"]
+    },
+    {
+      "concept_key": "RIME",
+      "aliases": ["le givre", "rime", "hoarfrost", "frost", "gelée blanche"]
+    }
+  ]
+}

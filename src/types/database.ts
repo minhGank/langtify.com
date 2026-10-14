@@ -694,6 +694,47 @@ export type Database = {
         };
         Relationships: [];
       };
+      vocabulary_photo_guidance: {
+        Row: {
+          concept_id: string;
+          locale: string;
+          primary_idea: string;
+          representation_mode: string;
+          alternative_idea: string | null;
+          alternative_mode: string | null;
+          accessibility_guidance: string;
+          safety_guidance: string;
+        };
+        Insert: {
+          concept_id: string;
+          locale: string;
+          primary_idea: string;
+          representation_mode: string;
+          alternative_idea?: string | null;
+          alternative_mode?: string | null;
+          accessibility_guidance: string;
+          safety_guidance: string;
+        };
+        Update: {
+          concept_id?: string;
+          locale?: string;
+          primary_idea?: string;
+          representation_mode?: string;
+          alternative_idea?: string | null;
+          alternative_mode?: string | null;
+          accessibility_guidance?: string;
+          safety_guidance?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'vocabulary_photo_guidance_concept_id_fkey';
+            columns: ['concept_id'];
+            isOneToOne: false;
+            referencedRelation: 'vocabulary_concepts';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       vocabulary_terms: {
         Row: {
           cefr_level: string;

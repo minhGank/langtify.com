@@ -62,6 +62,10 @@ existing users' stored selections or revoke their completion.
 
 ## Shared vocabulary
 
+Concept-level localized photo guidance is optional and independently permissioned; see
+[Vocabulary photo guidance](VOCABULARY_PHOTO_GUIDANCE.md) for its schema, editorial
+gates and retrieval contract. It does not change selection or assignment snapshots.
+
 - `vocabulary_concepts`: semantic key (unique), category, active/photographable flags,
   timestamps. `BANK_FINANCIAL` and `BANK_RIVER` are separate meanings.
 - `vocabulary_terms`: concept/language foreign keys, term, independent CEFR A1–C2,

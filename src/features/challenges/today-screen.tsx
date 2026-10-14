@@ -13,6 +13,7 @@ import { IconButton } from '@/components/ui/icon-button';
 import { MotionView } from '@/components/ui/motion-view';
 import { useAuth } from '@/features/auth/auth-provider';
 import { useTodayChallenge } from '@/features/challenges/use-today-challenge';
+import { PhotoGuidance } from '@/features/challenges/photo-guidance';
 import { UnfinishedPhotos } from '@/features/photos/unfinished-photos';
 import { invalidateServerData, serverScope } from '@/lib/server-cache';
 import { useAppTheme } from '@/hooks/use-app-theme';
@@ -228,6 +229,13 @@ function WordCard({
           />
         </Pressable>
       </MotionView>
+      {word.photoGuidance && (
+        <PhotoGuidance
+          key={word.id}
+          guidance={word.photoGuidance}
+          word={displayTerm(word.targetTerm)}
+        />
+      )}
       <Button
         label={completed ? 'View photo' : word.submission ? 'Resume photo' : 'Take photo'}
         accessibilityLabel={

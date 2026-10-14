@@ -1,0 +1,307 @@
+{
+  "schema_version": 1,
+  "status": "editorial_draft_not_external_review",
+  "note": "Independent from per-entry article metadata so accidental lemma/gender changes fail. Original editorial grammar assertions, not proof of bilingual accuracy. Changes require review.",
+  "forms": {
+    "table": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "lit": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "canapé": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "oreiller": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "couverture": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "miroir": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "horloge": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "mute_h"
+    },
+    "lampe": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "bouteille": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "assiette": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "cuillère": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "fourchette": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "banane": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "carotte": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "pomme de terre": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "oignon": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "œuf": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "pain": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "chaussure": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "chaussette": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "chapeau": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "manteau": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "brosse à dents": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "serviette de toilette": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "peigne": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "clé": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "sac à dos": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "ciseaux": {
+      "gender": "m",
+      "number": "plural",
+      "onset": "consonant"
+    },
+    "bouilloire": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "poêle": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "passoire": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "tire-bouchon": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "râpe": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "rouleau à pâtisserie": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "cintre": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "balai": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "pelle à poussière": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "seau": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "cadenas": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "tournevis": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "marteau": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "pince universelle": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "mètre ruban": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "pot de fleurs": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "arrosoir": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "tuyau de descente": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "charnière de porte": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "fermeture à glissière": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "dé à coudre": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "loquet de porte": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "plinthe": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "coude de descente": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "clou de tapissier": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "coulisse de tiroir": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "œillet métallique": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "vowel"
+    },
+    "virole de pinceau": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "passepoil": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "gâche de porte": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "bouton-bûchette": {
+      "gender": "m",
+      "number": "singular",
+      "onset": "consonant"
+    },
+    "lunette de montre": {
+      "gender": "f",
+      "number": "singular",
+      "onset": "consonant"
+    }
+  }
+}

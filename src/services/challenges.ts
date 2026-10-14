@@ -2,6 +2,7 @@ import { requireSupabase } from '@/lib/supabase';
 import type { Json } from '@/types/database';
 import { isCefrLevel } from '@/features/onboarding/validation';
 import { createServerCache, invalidateServerData, serverScope } from '@/lib/server-cache';
+import { parsePhotoGuidance, type PhotoGuidance } from '@/services/photo-guidance';
 
 const noticedChallenges = createServerCache<string>({ maxEntries: 4 });
 
@@ -14,6 +15,7 @@ export type ChallengeWord = {
   conceptId: string;
   targetTerm: string;
   referenceTerm: string;
+  photoGuidance?: PhotoGuidance | null;
   submission: {
     id: string;
     status: 'pending' | 'completed' | 'deleting';
@@ -87,6 +89,7 @@ export function parseChallenge(
       conceptId: text(word.concept_id),
       targetTerm: text(word.target_term),
       referenceTerm: text(word.reference_term),
+      photoGuidance: parsePhotoGuidance(word.photo_guidance, text(word.concept_id)),
       submission,
     };
   });
