@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, BackHandler, Keyboard, StyleSheet, View } from 'react-native';
 
@@ -262,6 +263,14 @@ function OnboardingForm() {
         </View>
       </MotionView>
       <Sheet title="Setup options" visible={optionsOpen} onClose={() => setOptionsOpen(false)}>
+        <Button
+          label="Account settings"
+          variant="ghost"
+          onPress={() => {
+            setOptionsOpen(false);
+            router.push('/account-settings');
+          }}
+        />
         <SignOutButton />
       </Sheet>
     </Screen>

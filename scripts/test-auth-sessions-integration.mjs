@@ -69,3 +69,6 @@ try {
 
 // Run sequentially after the existing Auth fixtures have been cleaned up.
 await import('./test-password-recovery-integration.mjs');
+
+// Keep account erasure in the existing local Auth CI gate.
+await import('./test-account-deletion.mjs');

@@ -516,33 +516,28 @@ try {
   console.log(
     'PASS: restricted active sessions cannot publicly finalize; private finalization remains valid and restoration never awards XP',
   );
-  const historyBeforeDeletion = await execute(
-    `select jsonb_agg(to_jsonb(e) order by id) from public.moderation_audit e;`,
-  );
-  const reportsBeforeDeletion = await execute(
-    `select jsonb_agg(to_jsonb(r) order by id) from public.safety_reports r;`,
-  );
-  await execute(`delete from auth.users where id='${a.id}';`);
+  const unrelatedReports = `select id from public.safety_reports where reporter_user_id<>'${a.id}' and subject_user_id<>'${a.id}'`;
+  const unrelatedAudit = `select jsonb_agg(to_jsonb(e) order by id) from public.moderation_audit e where moderator_user_id<>'${a.id}' and report_id in (${unrelatedReports})`;
+  const unrelatedCases = `select jsonb_agg(to_jsonb(r) order by id) from public.safety_reports r where id in (${unrelatedReports})`;
+  const historyBeforeDeletion = await execute(unrelatedAudit);
+  const reportsBeforeDeletion = await execute(unrelatedCases);
+  await rpc(a.client, 'delete_my_account');
+  assert.equal(await execute(unrelatedAudit), historyBeforeDeletion);
+  assert.equal(await execute(unrelatedCases), reportsBeforeDeletion);
   assert.equal(
-    await execute(`select jsonb_agg(to_jsonb(e) order by id) from public.moderation_audit e;`),
-    historyBeforeDeletion,
+    await execute(
+      `select count(*) from public.safety_reports where reporter_user_id='${a.id}' or subject_user_id='${a.id}'`,
+    ),
+    '0',
   );
-  assert.equal(
-    await execute(`select jsonb_agg(to_jsonb(r) order by id) from public.safety_reports r;`),
-    reportsBeforeDeletion,
-  );
-  assert.equal(
-    (await rpc(mod.client, 'get_moderation_report', { report_id: userCase })).user_exists,
-    false,
-  );
+  await denied(mod.client.rpc('get_moderation_report', { report_id: userCase }));
   assert.equal((await preview(mod.client, submissionCase)).data.photo, null);
-  await moderate(mod.client, userCase, 'resolve_report');
   console.log(
-    'PASS: hard target deletion preserves every report/audit snapshot and permits case resolution without stale photo access',
+    'PASS: account erasure removes identifying cases/audit, preserves unrelated history and denies stale case access',
   );
 } finally {
   // These are this suite's durable case/audit fixtures only. Delete immutable
-  // audit fixtures with a local admin transaction; production has no delete API.
+  // audit fixtures with a local admin transaction; moderators cannot erase audits.
   if (users.length)
     await execute(`begin; alter table public.moderation_audit disable trigger immutable_moderation_audit;
     delete from public.moderation_audit where moderator_user_id in (${users.map((id) => `'${id}'`).join(',')});

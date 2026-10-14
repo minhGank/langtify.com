@@ -112,6 +112,9 @@ export function RootNavigator() {
             <Stack.Screen name="connections" />
             <Stack.Screen name="notifications" />
           </Stack.Protected>
+          <Stack.Protected guard={status === 'ready' || status === 'onboarding'}>
+            <Stack.Screen name="account-settings" />
+          </Stack.Protected>
           <Stack.Screen name="auth/callback" />
         </Stack>
       </NotificationProvider>

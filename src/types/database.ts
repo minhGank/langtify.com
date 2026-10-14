@@ -791,6 +791,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      delete_my_account: { Args: Record<PropertyKey, never>; Returns: boolean };
       begin_storage_cleanup_run: {
         Args: { request_id: string; runner_name: string };
         Returns: boolean;

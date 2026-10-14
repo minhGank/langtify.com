@@ -143,6 +143,11 @@ function ProfileContent({ userId, token }: { userId: string; token: string }) {
           <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
         </Pressable>
         <ProfileSafety userId={userId} token={token} />
+        <Button
+          label="Settings"
+          variant="secondary"
+          onPress={() => router.push('/account-settings')}
+        />
       </View>
       <SignOutButton />
     </Screen>
