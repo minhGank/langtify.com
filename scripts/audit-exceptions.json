@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "scope": "unsigned-ci",
-  "reviewedOn": "2026-10-06",
-  "expiresInterpretation": "Expired at 2026-10-13T00:00:00Z (start of day UTC). No automatic renewal.",
-  "scopeRestrictions": "Only the reviewed .github/workflows/ci.yml app job: tests and unsigned exports. Never signing, publishing, certificate validation or future release jobs. Local invocation only reproduces this unsigned check. EAS native builds are explicitly rejected, regardless of profile. Release-environment configuration reviewed 2026-10-07 for unsigned config/export evaluation only; expiry and advisory coverage unchanged.",
+  "reviewedOn": "2026-10-19",
+  "expiresInterpretation": "Expires at 2026-10-21T00:00:00Z (start of day UTC). Explicit user approval on 2026-10-19; no automatic renewal.",
+  "scopeRestrictions": "Only the reviewed .github/workflows/ci.yml app job tests and unsigned exports, or their local reproduction. Never EAS builds or EAS custom workflow workers, signing, publishing, certificate validation or future release workflows. Known EAS worker markers are rejected. Configuration and dependency changes require re-review.",
   "maintenance": "Review changes before manually updating fingerprints/paths. Full lock SHA-256 freezes all ancestor paths, versions and peer/optional relationships. Remove entries when fixed; stale entries fail. No automatic hash refresh is run by CI.",
-  "lockSha256": "a3e3d2d113fe771cf42387866b259aa4ce3e57b97a79125a73f12031efdf1626",
+  "lockSha256": "f88a532eafd77c10ca49d259d8ece0e0d3bb94b46e4fad5796421601e289aca3",
   "reviewedFiles": {
     ".github/workflows/ci.yml": "200e71db03e7a2bbb05486f76f0073d5a3a63e3efaf44c3b59e6f646c2b55a21",
-    "package.json": "ccda8cb175d5a931d36acf9b42d59e7828014079e1cc44f85d314e7ceeec34b8",
+    "package.json": "a367aac2ff4a96b443021f696f439eb16c238f0ba22671a82306eb5c7b71c967",
     "app.json": "b75dffdf2c3be0294f92f9eeca1394e57036b62fa780d6201e50f947850ab5c6",
     "app.config.js": "808d3731c3cdf27c8a14af1027b9943839ffdf08e1bd0c0ae06f97d2c5349ab6",
     "eas.json": "3e7b1fb236623d7b4ae7fb044905dd82300806bd9bdc955486a9e35f63d6a539",
@@ -23,7 +23,7 @@
       "version": "3.0.3",
       "severity": "high",
       "scope": "unsigned-ci",
-      "expires": "2026-10-13",
+      "expires": "2026-10-21",
       "reason": "No published fixed version. Used by Metro/Jest tooling and absent from reviewed production JS bundles. CI must recheck all three platform source maps; build inputs remain an attack surface.",
       "nodes": [
         {
@@ -46,7 +46,7 @@
       "version": "1.4.0",
       "severity": "high",
       "scope": "unsigned-ci",
-      "expires": "2026-10-13",
+      "expires": "2026-10-21",
       "reason": "No published fixed version. Absent from reviewed production JS bundles. Exception applies only to current unsigned tests/exports: Expo uses affected RSA verification for certificate/code-signing operations, which are NOT approved for this exception.",
       "nodes": [
         {
@@ -56,14 +56,14 @@
       ],
       "parents": [
         {
-          "path": "node_modules/@expo/cli",
-          "version": "57.0.28",
+          "path": "node_modules/@expo/code-signing-certificates",
+          "version": "0.0.6",
           "kind": "dependencies",
           "range": "^1.3.3"
         },
         {
-          "path": "node_modules/@expo/code-signing-certificates",
-          "version": "0.0.6",
+          "path": "node_modules/expo/node_modules/@expo/cli",
+          "version": "57.0.31",
           "kind": "dependencies",
           "range": "^1.3.3"
         }
@@ -75,6 +75,6 @@
     "package": "decode-uri-component",
     "version": "0.2.2",
     "severity": "moderate",
-    "disposition": "Not excepted or hidden. Ships in iOS/Android/web; reachable via Expo Router query parsing. Focused mitigation/backport and device verification remain release-security work."
+    "disposition": "Not excepted. Present in all three JS exports. Configured Router parsing uses URL.searchParams, while bundled React Navigation fallback invokes the affected decoder. Focused parser tests are not a full device/runtime reachability proof."
   }
 }

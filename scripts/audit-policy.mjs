@@ -89,7 +89,13 @@ export function dependencyParents(lock, name) {
 
 export function verifyScope(policy, { scope, env, files }) {
   requireThat(
-    !env.EAS_BUILD_PROFILE && env.EAS_BUILD !== 'true',
+    ![
+      'EAS_BUILD_PROFILE',
+      'EAS_BUILD_ID',
+      'EAS_BUILD_PROJECT_ID',
+      'EAS_BUILD_RUNNER',
+      'EAS_BUILD_PLATFORM',
+    ].some((name) => env[name]) && env.EAS_BUILD !== 'true',
     'Unsigned CI exceptions cannot authorize EAS builds',
   );
   requireThat(

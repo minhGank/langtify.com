@@ -138,6 +138,42 @@ test('expires at the start of October 13 UTC, with no grace period', () => {
   f.context.now = Date.parse('2026-10-13T00:00:00Z');
   assert.throws(() => evaluate(f), /expired/);
 });
+test('approved October 21 exceptions expire at exactly midnight UTC', () => {
+  const policy = JSON.parse(readFileSync(new URL('./audit-exceptions.json', import.meta.url)));
+  assert.deepEqual(
+    policy.exceptions.map(({ advisory, package: name, version, expires, scope }) => ({
+      advisory,
+      name,
+      version,
+      expires,
+      scope,
+    })),
+    [
+      {
+        advisory: 'GHSA-vfj7-8cjw-p6xm',
+        name: 'braces',
+        version: '3.0.3',
+        expires: '2026-10-21',
+        scope: 'unsigned-ci',
+      },
+      {
+        advisory: 'GHSA-86w9-cpqp-85rv',
+        name: 'node-forge',
+        version: '1.4.0',
+        expires: '2026-10-21',
+        scope: 'unsigned-ci',
+      },
+    ],
+  );
+  for (const entry of policy.exceptions) {
+    const f = fixture();
+    f.context.policy.exceptions[0].expires = entry.expires;
+    f.context.now = Date.parse('2026-10-20T23:59:59.999Z');
+    assert.equal(evaluate(f).pass, true);
+    f.context.now = Date.parse('2026-10-21T00:00:00Z');
+    assert.throws(() => evaluate(f), /expired/);
+  }
+});
 test('changed lockfile requires review even when immediate exception nodes are unchanged', () => {
   const f = fixture();
   f.context.lockText += '\n';
@@ -186,8 +222,10 @@ test('signing/release scopes and other workflows/jobs cannot use exceptions', ()
     assert.throws(() => evaluate(f), /not authorized/);
   }
   f.context.env = {};
-  f.context.scope = 'signing';
-  assert.throws(() => evaluate(f), /unsigned-ci scope/);
+  for (const scope of ['signing', 'publishing', 'release', 'certificate-validation']) {
+    f.context.scope = scope;
+    assert.throws(() => evaluate(f), /unsigned-ci scope/);
+  }
 });
 test('workflow, scripts and app configuration changes require scope re-review', () => {
   for (const path of ['.github/workflows/ci.yml', 'package.json', 'app.json', 'app.config.js']) {
@@ -196,11 +234,15 @@ test('workflow, scripts and app configuration changes require scope re-review', 
     assert.throws(() => evaluate(f), /Scope changed/);
   }
 });
-test('unsigned audit exceptions never authorize EAS native builds', () => {
+test('unsigned audit exceptions never authorize EAS builds or custom workflow workers', () => {
   for (const env of [
     { EAS_BUILD_PROFILE: 'production' },
     { EAS_BUILD_PROFILE: 'development' },
     { EAS_BUILD: 'true' },
+    { EAS_BUILD_ID: 'custom-workflow-job' },
+    { EAS_BUILD_PROJECT_ID: 'project-id' },
+    { EAS_BUILD_RUNNER: 'local-build-plugin' },
+    { EAS_BUILD_PLATFORM: 'ios' },
   ]) {
     const f = fixture();
     f.context.env = env;
