@@ -215,7 +215,7 @@ test('current review is deterministic, contains all 60 rows and matches the docu
   }
   assert.match(report, /No C1\/C2 terms are claimed/);
   assert.match(report, /CROWDED already exists in the seed/);
-  assert.match(report, /Recommendation requiring approval/);
+  assert.match(report, /Selection policy v2 retains all six learner levels/);
 });
 
 const changedCurrent = (mutate) => {
@@ -361,7 +361,7 @@ test('CLI draft succeeds, release gate rejects unsupported coverage and approval
     encoding: 'utf8',
   });
   assert.equal(blocked.status, 1);
-  assert.match(blocked.stdout, /no assigned coverage/);
+  assert.match(blocked.stdout, /no feasible three-concept day/);
   assert.match(blocked.stdout, /independent bilingual review pending/);
   assert.equal(
     spawnSync(process.execPath, ['scripts/validate-vocabulary.mjs', '--import'], { stdio: 'pipe' })

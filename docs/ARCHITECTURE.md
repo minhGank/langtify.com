@@ -180,9 +180,11 @@ Uniqueness and deferred constraints protect the one-per-date and three-slot inva
 All elevated helpers stay private with revoked client execution and empty search paths.
 
 Shared concept/term tables provide linked language equivalents and independent
-CEFR levels. Candidate selection uses exact eligibility, excludes all concepts in
+CEFR levels. Policy v2 plans three levels jointly with bounded fallback; v1 keeps
+exact slots. Candidate selection uses versioned eligibility, excludes all concepts in
 the current challenge's history and the owner's durable `private.completed_concepts`
-index, and orders remaining concepts by unseen/oldest assignment, with random ties.
+index, and orders remaining concepts by unseen/oldest assignment. V2 breaks ties
+with category variety and a stable hash. See `DAILY_SELECTION_V2.md`.
 The private `(user_id, concept_id)` primary key avoids scanning photo/XP history for
 each candidate. A successful pending-to-completed photo transition records the first
 verified source in the same transaction, for both daily and historical captures.

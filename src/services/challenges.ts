@@ -15,6 +15,8 @@ export type ChallengeWord = {
   conceptId: string;
   targetTerm: string;
   referenceTerm: string;
+  selectionLabel?: string;
+  consolidation?: boolean;
   photoGuidance?: PhotoGuidance | null;
   submission: {
     id: string;
@@ -54,6 +56,13 @@ export function parseChallenge(
   ) {
     throw new Error('Challenge account changed.');
   }
+  const policy = challenge.selection_policy_version ?? 1;
+  if (policy !== 1 && policy !== 2) throw new Error('Unknown challenge policy.');
+  if (
+    policy === 2 &&
+    (typeof challenge.cefr_level !== 'string' || !isCefrLevel(challenge.cefr_level))
+  )
+    throw new Error('Invalid learner level.');
   const id = text(challenge.id);
   const words = payload.words;
   if (!Array.isArray(words) || words.length !== 3)
@@ -86,6 +95,12 @@ export function parseChallenge(
       id: text(word.id),
       slot,
       cefrLevel: word.cefr_level,
+      ...(policy === 2
+        ? {
+            selectionLabel: `Word ${challengeSlots.indexOf(slot) + 1}`,
+            consolidation: challenge.cefr_level === 'C2' && word.cefr_level === 'B2',
+          }
+        : {}),
       conceptId: text(word.concept_id),
       targetTerm: text(word.target_term),
       referenceTerm: text(word.reference_term),

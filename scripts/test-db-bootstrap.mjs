@@ -1205,6 +1205,25 @@ try {
         'PASS: Phase 10 admission audit migration replays without changing durable attempts, events, bindings or XP and preserves service-only admission',
       );
     }
+    if (file === '20261020000000_bounded_challenge_selection.sql') {
+      const snapshot = `select jsonb_build_object(
+        'challenges',(select jsonb_agg(to_jsonb(c) order by id) from public.daily_challenges c),
+        'words',(select jsonb_agg(to_jsonb(w) order by id) from public.daily_challenge_words w),
+        'xp',(select jsonb_agg(to_jsonb(e) order by id) from public.xp_events e));`;
+      assert.equal(
+        await execute(
+          `select count(*) from public.daily_challenges where selection_policy_version<>1;`,
+          database,
+        ),
+        '0',
+      );
+      const before = await execute(snapshot, database);
+      await execute(sql, database);
+      assert.equal(await execute(snapshot, database), before);
+      console.log(
+        'PASS: selection v2 migration/replay preserves legacy versions, assignments and XP',
+      );
+    }
     if (file === '20260917000000_phase9_safety.sql') {
       const rater = await execute(
         `select id from auth.users where id<>'${user}' limit 1;`,

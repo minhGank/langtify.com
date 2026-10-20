@@ -135,16 +135,17 @@ evidence, no unresolved concerns, and reviewed accessibility. Drafts may not
 claim a completed human review. Merely filling these fields cannot authenticate a
 reviewer's identity or validate a linguistic claim.
 
-The release gate still requires all six bands in each language and full approval;
-it is deliberately **not relaxed** by this direction change. The report proposes
-broader vocabulary bands with a separate optional creative mode, but this needs a
-specific approved product/selection design first. No fallback, level remapping,
-category balancing, word replacement or completion rule is changed.
+The release gate requires full editorial approval and feasible three-concept days
+for every supported learner level under selection policy v2. It no longer requires
+every lexical CEFR bin to be populated. The report separates provisional from
+reviewed supply and simulates successive fully completed days; it does not promise
+a launch horizon. See [selection policy v2](../../docs/DAILY_SELECTION_V2.md).
 
-Current exact slots remain A1/A1/A2, review/target/stretch, and C1/C2/C2 at C2.
-Three eligible distinct concepts are mandatory; permanently completed concepts
-never return in another language. Exhaustion remains atomic, with no silent level
-substitution. The new pilot is not sufficient for all current learner-level settings.
+Preferred patterns remain unchanged. Nearby fallback preserves actual levels,
+three distinct concepts, and permanent semantic completion exclusion across
+languages. C2 can use B2 consolidation. An insufficient bounded pool fails
+atomically; completed concepts never recycle. This pilot remains insufficient for
+all six learner levels, and its translations/levels still await independent review.
 
 ## Evidence and verification
 

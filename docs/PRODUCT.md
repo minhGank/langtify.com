@@ -60,9 +60,13 @@ to the catalog without schema changes.
   Instructions use the interface language independently of the learning language;
   the current interface is English. Guidance does not affect challenge eligibility.
 - Vocabulary levels are CEFR A1, A2, B1, B2, C1, C2.
-- Slots are review (one level below), target (current level), stretch (one above).
+- Preferred levels are review (one below), target (current), stretch (one above).
 - A1 boundary: A1 / A1 / A2. C2 boundary: C1 / C2 / C2.
-- Users may replace assigned words; replacements preserve the slot's CEFR level.
+- Policy v2 plans all three together with bounded fallback and at most one above
+  the learner; C2 may use B2 consolidation. Actual CEFR labels are never changed.
+- Replacements prefer the word's actual level, then bounded fallback while keeping
+  the other two cards. Existing policy-v1 challenges retain exact-slot rules.
+- See [daily selection v2](DAILY_SELECTION_V2.md) for ranking and versioning.
 
 Vocabulary uses shared semantic concepts, with one primary term per concept/language.
 A meaning may have different CEFR levels in different languages. Ambiguous meanings
@@ -72,9 +76,9 @@ concept linkage; there is no manually duplicated translation table.
 The server derives identity, learning configuration and local date from persisted
 state and server time. Each learning profile has at most one challenge per local
 calendar date, with three active slots. Eligible terms match the exact target
-language and slot CEFR, are active, belong to an active photographable concept,
+language and versioned level rules, are active, belong to an active photographable concept,
 and have an active reference-language equivalent. Insufficient pools return an
-error without substitutions at another level or partial challenge creation.
+controlled error without partial challenge creation or out-of-range substitution.
 
 Selection excludes every concept already assigned in that challenge, including
 replaced words, and every concept this user has ever genuinely completed. A verified
@@ -84,16 +88,16 @@ XP reversal, privacy changes and moderation do not erase this fact. Pending, fai
 or abandoned uploads do not count. Account erasure removes its private history.
 
 Among never-completed concepts, selection still prefers never-assigned concepts,
-then least recently assigned concepts, randomizing ties. An old unfinished assignment
+then least recently assigned concepts. V2 uses category variety and a stable hash for ties. An old unfinished assignment
 may therefore return. Existing challenge snapshots and reuploads of already assigned
 words remain valid; this rule changes new selection only. No mastery score or spaced
-repetition is implemented. An exhausted exact-level pool fails atomically, without
-reusing a completed concept or substituting another level. The UI explains that new
+repetition is implemented. An exhausted bounded pool fails atomically, without
+reusing a completed concept. The UI explains that new
 words are unavailable and preserves Vocabulary access; a failed replacement retains
 the original word. The 36-concept development seed can exhaust quickly.
 
 Repeated replacements are allowed while eligible concepts remain. The server
-chooses a different concept at the original slot level/language, preserving the
+chooses a different concept under the saved selection policy/language, preserving the
 retired assignment. Old active IDs cannot be replaced twice. No replacement-count
 limit was introduced. Challenges snapshot their configuration and displayed terms;
 later settings/catalog changes never rewrite them. Same-profile/same-date calls

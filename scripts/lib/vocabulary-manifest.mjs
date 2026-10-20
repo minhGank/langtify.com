@@ -1,5 +1,6 @@
 // Offline editorial validation only. No database client or import operation.
 import { createHash } from 'node:crypto';
+import { measureCoverage } from './vocabulary-coverage.mjs';
 export const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 const CATEGORIES = [
   'home',
@@ -379,12 +380,13 @@ export function validateManifest(manifest, { seedSql, baseline, grammar }) {
       if (!manifest.concepts.some((c) => c?.category === category))
         add('concepts', `missing category ${category}`);
   }
+  const readiness = measureCoverage(manifest.concepts);
   for (const l of ['en', 'fr'])
     for (const level of LEVELS)
-      if (!coverage[l][level])
-        blockers.push(`${l}/${level}: no assigned coverage (review bands do not count)`);
+      if (!readiness.provisional[l][level].firstDay)
+        blockers.push(`${l}/${level}: no feasible three-concept day under selection policy v2`);
   if (manifest.status === 'approved' && (approved !== manifest.concepts.length || blockers.length))
     add('status', 'dataset cannot be approved with unresolved entries/coverage');
   if (manifest.status !== 'approved') blockers.push('Dataset is a draft, not an import approval.');
-  return { errors, warnings, blockers, coverage, unresolved, approved };
+  return { errors, warnings, blockers, coverage, unresolved, approved, readiness };
 }

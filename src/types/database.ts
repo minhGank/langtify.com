@@ -161,6 +161,7 @@ export type Database = {
       };
       daily_challenges: {
         Row: {
+          selection_policy_version: number;
           cefr_level: string;
           created_at: string;
           id: string;
@@ -172,6 +173,7 @@ export type Database = {
           user_language_profile_id: string;
         };
         Insert: {
+          selection_policy_version?: number;
           cefr_level: string;
           created_at?: string;
           id?: string;
@@ -183,6 +185,7 @@ export type Database = {
           user_language_profile_id: string;
         };
         Update: {
+          selection_policy_version?: number;
           cefr_level?: string;
           created_at?: string;
           id?: string;

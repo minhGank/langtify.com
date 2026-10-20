@@ -170,7 +170,7 @@ function WordCard({
   onReplace: () => void;
 }) {
   const { colors } = useAppTheme();
-  const label = word.slot[0].toUpperCase() + word.slot.slice(1);
+  const label = word.selectionLabel ?? word.slot[0].toUpperCase() + word.slot.slice(1);
   const completed = word.submission?.status === 'completed';
   return (
     <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
@@ -189,7 +189,7 @@ function WordCard({
           <IconButton
             name="refresh-outline"
             label="Replace"
-            hint={`Replace the ${word.slot} word: ${displayTerm(word.targetTerm)}`}
+            hint={`Replace ${word.selectionLabel ?? word.slot}: ${displayTerm(word.targetTerm)}`}
             disabled={disabled || loading}
             onPress={onReplace}
           />
@@ -199,6 +199,9 @@ function WordCard({
           </AppText>
         )}
       </View>
+      {word.consolidation && (
+        <AppText variant="caption">B2 consolidation · New vocabulary from a nearby level.</AppText>
+      )}
       <MotionView trigger={word.id} style={styles.word}>
         <Pressable
           accessibilityRole="button"
@@ -240,10 +243,10 @@ function WordCard({
         label={completed ? 'View photo' : word.submission ? 'Resume photo' : 'Take photo'}
         accessibilityLabel={
           completed
-            ? `View photo · ${word.slot}`
+            ? `View photo · ${word.selectionLabel ?? word.slot}`
             : word.submission
-              ? `Resume photo · ${word.slot}`
-              : `Take photo · ${word.slot}`
+              ? `Resume photo · ${word.selectionLabel ?? word.slot}`
+              : `Take photo · ${word.selectionLabel ?? word.slot}`
         }
         variant={completed ? 'secondary' : 'primary'}
         loading={loading}

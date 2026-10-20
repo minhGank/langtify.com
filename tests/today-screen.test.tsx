@@ -62,6 +62,23 @@ it('renders linked vocabulary cards and accessible replacement actions', async (
   fireEvent.press(screen.getAllByRole('button', { name: 'Replace' })[0]);
   await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('assignment-review'));
 });
+it('labels fallback cards by position and explicitly identifies C2 consolidation', async () => {
+  const challenge = makeChallenge();
+  challenge.words = challenge.words.map((word, i) => ({
+    ...word,
+    cefrLevel: 'B2',
+    selectionLabel: `Word ${i + 1}`,
+    consolidation: true,
+  }));
+  mockLoad.mockResolvedValue(challenge);
+  render(<TodayScreen />);
+  expect(await screen.findByText('Word 1 · B2')).toBeVisible();
+  expect(
+    screen.getAllByText('B2 consolidation · New vocabulary from a nearby level.'),
+  ).toHaveLength(3);
+  expect(screen.getByRole('button', { name: 'Take photo · Word 1' })).toBeVisible();
+  expect(screen.queryByText('Stretch · B2')).toBeNull();
+});
 it('keeps the previous word visible during replacement and transitions only the confirmed changed slot', async () => {
   const timing = jest.spyOn(Animated, 'timing');
   let finish: (challenge: TodayChallenge) => void = () => {};

@@ -106,9 +106,12 @@ completion to show a fact or add facts to ordinary mutations/page fetches. See
 - Daily generation and replacement must exclude the owner's ever-completed semantic
   concepts using `private.completed_concepts`. Verified daily and historical captures
   count permanently despite photo deletion/XP reversal; pending uploads do not.
-  Preserve old assignments/reuploads, exact CEFR, recency for uncompleted concepts,
+  Preserve old assignments/reuploads, actual CEFR labels, recency for uncompleted concepts,
   owner/revision serialization and atomic insufficient-vocabulary failure. Never
-  recycle completed concepts to conceal pool exhaustion. See decision 051.
+  recycle completed concepts to conceal pool exhaustion. Policy v1 keeps exact slots;
+  policy v2 jointly selects three with approved bounded fallback and at most one
+  above the learner, including C2 B2 consolidation. See decisions 051/052 and
+  docs/DAILY_SELECTION_V2.md.
 - Supabase/PostgreSQL is authoritative. Use RLS, constraints and atomic writes for
   onboarding; never trust a client completion flag or expose service-role keys.
 - Keep migrations, database types, seed and database tests consistent.

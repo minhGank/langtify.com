@@ -10,6 +10,29 @@ const identity = {
   learningId: 'learning-id',
   accessToken: 'captured-token',
 };
+it('keeps actual CEFR and uses neutral labels for version 2 consolidation', () => {
+  const payload = makeChallengePayload();
+  const parsed = parseChallenge(
+    {
+      ...payload,
+      challenge: { ...payload.challenge, selection_policy_version: 2, cefr_level: 'C2' },
+      words: payload.words.map((word) => ({ ...word, cefr_level: 'B2' })),
+    },
+    identity,
+  );
+  expect(parsed.words.map((word) => word.selectionLabel)).toEqual(['Word 1', 'Word 2', 'Word 3']);
+  expect(parsed.words.every((word) => word.cefrLevel === 'B2' && word.consolidation)).toBe(true);
+  expect(parseChallenge(payload, identity).words[0].selectionLabel).toBeUndefined();
+});
+it('rejects unknown policy versions rather than inventing labels', () => {
+  const payload = makeChallengePayload();
+  expect(() =>
+    parseChallenge(
+      { ...payload, challenge: { ...payload.challenge, selection_policy_version: 3 } },
+      identity,
+    ),
+  ).toThrow('Unknown challenge policy');
+});
 beforeEach(() => {
   jest.clearAllMocks();
   mockHeader.mockResolvedValue({ data: makeChallengePayload(), error: null });

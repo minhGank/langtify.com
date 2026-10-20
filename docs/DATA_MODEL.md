@@ -78,11 +78,15 @@ gates and retrieval contract. It does not change selection or assignment snapsho
 - `daily_challenges`: owner and learning-profile foreign keys; unique
   `(user_language_profile_id, local_challenge_date)`; saved language pair, configured
   CEFR, IANA timezone and server creation time. Configuration/date are immutable.
+  Immutable `selection_policy_version` defaults/backfills to 1; new public generation
+  explicitly uses 2 for joint bounded fallback. Existing days retain v1 exact slots.
 - `daily_challenge_words`: challenge FK, review/target/stretch slot, saved CEFR,
   target/reference term FKs, concept FK, language/text snapshots, assignment/replacement times.
   Unique `(daily_challenge_id, concept_id)` covers active and replaced history.
   A partial unique index allows at most one active assignment per slot. Deferred
-  constraints require three active assignments when the transaction commits.
+  constraints require three active assignments when the transaction commits. V2 also
+  checks the bounded level window and at most one word above the learner; saved
+  CEFR is always the actual term level, including C2 B2 consolidation.
 
 Assignment insertion validates catalog eligibility against the challenge snapshot
 and copies text/meaning from backend records. An update can only retire an active

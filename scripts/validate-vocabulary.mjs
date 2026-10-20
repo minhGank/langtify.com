@@ -109,13 +109,22 @@ ${['en', 'fr'].map((l) => `| ${l} | ${LEVELS.map((k) => result.coverage[l][k]).j
 
 No C1/C2 terms are claimed. French B2 coverage is also absent in this draft. Do not force advanced labels onto familiar meanings or obscure hardware. All assigned A1–B2 values remain provisional, including asymmetric pairs such as relief/soulagement and celebration/fête. The primary phrase, not a shorter synonym, is what the estimate applies to.
 
-The unchanged algorithm uses A1/A1/A2 for A1 learners, then one level below/current/above, and C1/C2/C2 at C2. Thus this draft cannot provision French B1 challenges (missing B2), nor French B2–C2 or English B2–C2 (missing advanced pools). Existing fixture content is not a workaround or approved launch inventory. Even supported lower slots exhaust quickly; feasibility must be calculated per target language and exact slot after approval.
+Selection policy v2 retains all six learner levels and the preferred patterns, but plans all three concepts together. Nearby-level fallback is bounded to one level below/above, with at most one word above the learner. C2 may use B2 consolidation only when C1/C2 supply is insufficient. Actual term levels remain visible. Existing challenges keep policy v1. See [the implementation and verification plan](DAILY_SELECTION_V2.md).
 
-**Recommendation requiring approval:** decouple daily content difficulty from six mandatory lexical bins. Retain three distinct, never-completed meanings per day and independent language-level estimates, but consider broader learning bands (for example A1–A2 and B1–B2 pools), with a separate optional creative mode available at either band. Creative must not become a third proficiency level. A creative challenge is not automatically CEFR C1/C2. Make its visual interpretation and access requirements visible. Keep six CEFR proficiency labels only if their educational meaning is accurately explained; this app does not assess overall CEFR proficiency from photos.
+The table below simulates a fresh user completing all three concepts daily, with no replacements, prior completions or accessibility exclusions. Provisional counts are **not release approval**. A finite horizon is not a guarantee for every user or language switch.
 
-This is a direction for a separately specified product change, not permission to substitute levels silently. Before implementing it, approve the precise level-to-pool mapping, eligibility and exhaustion behaviour, replacement rules, treatment of existing saved levels, and whether a creative slot is optional. Category diversity also needs an explicit selection design if guaranteed per day; it is currently editorial metadata only. **No selection algorithm, XP, streak, privacy or completion-history change is made by this curriculum proposal.** The separately authorized [photo-guidance implementation](VOCABULARY_PHOTO_GUIDANCE.md) adds optional catalog metadata and Today hints only.
+| Language | Learner | Provisional full days | Fallback days | B2 consolidation days | Fully reviewed full days |
+| --- | --- | --- | --- | --- | --- |
+${['en', 'fr']
+  .flatMap((language) =>
+    LEVELS.map((learner) => {
+      const supply = result.readiness.provisional[language][learner];
+      return `| ${language} | ${learner} | ${supply.fullCompletionDays} | ${supply.fallbackDays} | ${supply.consolidationDays} | ${result.readiness.reviewed[language][learner].fullCompletionDays} |`;
+    }),
+  )
+  .join('\n')}
 
-If six exact CEFR slots are retained instead, commission independent evidence for genuinely useful advanced terms and sufficient reserves; do not ship the full six-level offering on this pilot. The current release validator still requires all six bands and fails; it has not been weakened to approve an incomplete catalog.
+The validator checks feasible three-concept days under the actual policy instead of demanding every lexical CEFR bin be populated. It preserves separate linguistic/editorial release gates. This pilot still cannot support the complete six-level offering. No concept, translation or CEFR estimate was changed to improve these figures. Category variety is a soft tie-break among equally recent candidates, not a quota or a new eligibility rule.
 
 The long-term target remains 600 distinct meanings / 1,200 primary terms, not 600 objects or six equal quotas. At three new completed meanings daily, 600 permits at most 200 full-completion days before global exhaustion; exact-level pools, access constraints and replacements can make the practical horizon shorter. Set a launch horizon and replenishment plan. Completed concepts must never be recycled to conceal exhaustion.
 
@@ -176,9 +185,9 @@ Review concern: ${c.editorial.concerns.join(' ')}
 ## Decisions requiring human approval
 
 1. Validate translations, independent level estimates and guidance copy; all 60 identities and meanings are already approved. Draft status now reflects the remaining linguistic/accessibility reviews. The broader photographable-meaning principle itself is already your instruction, not a pending decision.
-2. Confirm the proposed launch treatment of interpretive scenes and models: they should be eligible, with meaning-match guidance that accepts multiple plausible readings. Establish a rubric for a recognisable scene rather than hidden mental-state inference; do not add AI emotion detection. The optional photo-guidance hints are now separately authorized and implemented locally; broader rating-copy or selection changes still require approval.
+2. Confirm the proposed launch treatment of interpretive scenes and models: they should be eligible, with meaning-match guidance that accepts multiple plausible readings. Establish a rubric for a recognisable scene rather than hidden mental-state inference; do not add AI emotion detection. The optional photo-guidance hints are now separately authorized and implemented locally; broader rating-copy changes still require approval.
 3. Test solo/seated alternatives and phone framing with people with differing mobility, vision, living space and cultural backgrounds. No single scene is universally obvious. Decide whether accessibility preferences or an optional creative slot should affect future assignment; neither exists in the algorithm today.
-4. Decide between commissioning six sufficiently supported exact CEFR pools and specifying the recommended content-band redesign. Approve the exact migration/selection plan separately; no fallback or level remapping is implemented here.
+4. The bounded fallback policy is approved and implemented locally as version 2; hosted deployment remains separate. Validate the remaining language-level supply before enabling a six-level launch.
 5. Set the content horizon, replacement reserve and expansion balance before growing to 600. Do not auto-approve the existing 36 fixtures or force C1/C2 for apparent completeness.
 
 Offline checks validate structure, grammar metadata, documented duplicates and draft gates. They cannot certify translation accuracy, photo meaning or CEFR. See [manifest contract](../data/vocabulary/README.md). No importer or hosted operation is included.

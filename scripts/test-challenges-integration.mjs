@@ -3,6 +3,12 @@ import { randomUUID } from 'node:crypto';
 import { query, execute } from './lib/local-db.mjs';
 import { testCompletedConceptConcurrency } from './lib/completed-concepts-concurrency.mjs';
 
+import { testFallbackConcurrency } from './lib/selection-concurrency.mjs';
+import { testSelectionParity } from './lib/selection-parity.mjs';
+
+await testSelectionParity();
+await testFallbackConcurrency();
+
 const user = randomUUID();
 const auditLanguage = randomUUID();
 const auditConcepts = [randomUUID(), randomUUID(), randomUUID()];
@@ -32,6 +38,12 @@ try {
       `select count(*) from public.daily_challenge_words where daily_challenge_id='${challenge}' and replaced_at is null;`,
     ),
     '3',
+  );
+  assert.equal(
+    await execute(
+      `select selection_policy_version from public.daily_challenges where id='${challenge}';`,
+    ),
+    '2',
   );
   console.log(
     'PASS: simultaneous authenticated creation returns one challenge with three active slots',

@@ -1053,3 +1053,20 @@ ordering for the remaining never-completed concepts. Exhaustion fails atomically
 never recycle completed words to mask the small development catalog. No seed expansion,
 public read grant, new reward, Edge Function or client-side eligibility filter.
 See `COMPLETED_CONCEPT_EXCLUSION.md` for verification and Dev rollout.
+
+## 052 — Versioned joint daily selection with bounded fallback
+
+Approved 2026-10-20. Preserve six learner levels and preferred patterns; plan three
+levels together from eligible never-completed concepts. Allow the neighboring
+levels only, at most one above, with B2 consolidation for C2 when C1/C2 is insufficient.
+Rank feasible patterns deterministically; never invent advanced word labels.
+Prefer never-assigned concepts within selected levels, then oldest unfinished history.
+Never recycle completed meanings across languages or after photo deletion.
+
+Migration adds immutable selection_policy_version: existing days remain v1;
+new public generation uses v2. Replacement keeps other cards and obeys the saved
+policy, preferring the replaced word's actual level. Shortage rolls back completely.
+V2 cards show neutral Word 1–3 labels and actual CEFR; C2 B2 is marked consolidation.
+This supersedes decision 051's exact-slot requirement only for v2 challenges;
+all permanent-completion, authority and reward invariants remain unchanged.
+See `DAILY_SELECTION_V2.md` for implementation, catalog simulation and rollout.
