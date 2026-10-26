@@ -8,10 +8,23 @@
         "en": {
           "primary_idea": "Show a made bed without people or private details.",
           "representation_mode": "literal",
-          "alternative_idea": "Photograph another safely accessible bed in your home from a seated position.",
-          "alternative_mode": "literal",
+          "alternative_idea": "Photograph a miniature bed with its mattress and blanket visible.",
+          "alternative_mode": "interpretive",
           "accessibility_guidance": "Low effort indoors; no lifting or rearranging needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Cadrez un lit fait, sans personne ni détail privé.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photographiez un lit miniature avec son matelas et sa couverture.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Restez à une hauteur confortable ; il n’est pas nécessaire de déplacer le lit.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -29,7 +42,20 @@
           "alternative_idea": "Place the pillow on a reachable chair with some bedding context.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Low effort; avoid identifying bedroom details.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez un oreiller posé sur un lit.",
+          "representation_mode": "literal",
+          "alternative_idea": "Posez un oreiller à portée de main, avec un coin de couverture pour rappeler le sommeil.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Cadrez uniquement la literie, sans détails permettant d’identifier la chambre.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -47,7 +73,20 @@
           "alternative_idea": "Photograph an empty reusable bottle on a reachable surface.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Common indoor object; avoid personal labels.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez une bouteille d’eau en montrant son goulot.",
+          "representation_mode": "literal",
+          "alternative_idea": "Posez une bouteille réutilisable vide sur une surface accessible.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Masquez les étiquettes personnelles ; nul besoin de montrer son contenu.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -65,7 +104,20 @@
           "alternative_idea": "Use an unbreakable plate at a reachable height.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Low effort; do not require glass or ceramics.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez une assiette propre, de dessus ou de côté.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez une assiette incassable à portée de main.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Une installation sur une table suffit ; évitez la vaisselle fragile.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -83,7 +135,20 @@
           "alternative_idea": "Use a clean plastic spoon on a tray.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Low effort indoors.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Posez une cuillère de table sur une surface unie.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photographiez une cuillère propre et légère sur un plateau.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Vous pouvez prendre la photo en position assise.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -101,7 +166,20 @@
           "alternative_idea": "Use an unbreakable fork with its prongs pointing away from hands.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Low effort; no handling sharp points.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez une fourchette de table posée à plat.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez une fourchette légère, les dents éloignées des mains.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Il n’est pas nécessaire de tenir les pointes.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -119,7 +197,20 @@
           "alternative_idea": "Photograph a backpack resting on a reachable chair.",
           "alternative_mode": "literal",
           "accessibility_guidance": "No wearing or lifting required; hide school/address labels.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Montrez un sac à dos avec ses bretelles visibles.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photographiez un sac à dos posé sur une chaise accessible.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Pas besoin de le porter ; masquez les noms et les adresses.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -137,7 +228,20 @@
           "alternative_idea": "Use closed blunt-ended craft scissors.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Low effort; keep blades closed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez des ciseaux fermés, posés à plat.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez des ciseaux à bouts ronds, toujours fermés.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Ne coupez rien pour la photo et gardez les lames fermées.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -155,7 +259,20 @@
           "alternative_idea": "Stage a clearly butterfly-shaped paper model and show its wings.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Seasonal; a model is an interpretive alternative, not a live specimen.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez un papillon à distance, sans le toucher.",
+          "representation_mode": "literal",
+          "alternative_idea": "Posez un papillon en papier avec ses deux paires d’ailes bien visibles.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle évite de dépendre de la saison ou de devoir sortir.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -170,10 +287,23 @@
         "en": {
           "primary_idea": "Photograph a bird from a window without approaching a nest.",
           "representation_mode": "literal",
-          "alternative_idea": "Photograph a bird-shaped toy with a visible beak and wings.",
+          "alternative_idea": "Photograph a paper bird or toy with a visible beak and wings.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Window access or a model; no feeding or disturbing wildlife.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez un oiseau depuis une fenêtre, loin des nids.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez un oiseau en papier ou une figurine avec un bec et des ailes visibles.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Ne nourrissez pas les oiseaux et ne les dérangez pas.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -191,7 +321,20 @@
           "alternative_idea": "Photograph a rabbit toy with long ears and a short tail.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Live access is optional; model is interpretive.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez un lapin déjà présent, sans le manipuler.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez une figurine de lapin aux longues oreilles et à la courte queue.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Aucun animal réel n’est nécessaire ; n’en achetez pas pour la photo.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -209,7 +352,20 @@
           "alternative_idea": "Arrange a toy snail or a paper spiral shell attached to a body.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Outdoor/seasonal; use a model if needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez un escargot là où il se trouve, sans le déplacer.",
+          "representation_mode": "literal",
+          "alternative_idea": "Posez une coquille en spirale faite en papier sur un corps d’escargot en papier.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle permet de rester à l’intérieur ; évitez les coquilles seules.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -227,7 +383,20 @@
           "alternative_idea": "Photograph a simple ant model with six legs and a segmented body.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Small subject; focus may be difficult; model optional.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez une fourmi depuis un endroit sûr, sans la déranger.",
+          "representation_mode": "literal",
+          "alternative_idea": "Créez un modèle de fourmi avec six pattes et trois parties du corps.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle est plus facile à cadrer qu’un très petit insecte vivant.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -245,7 +414,20 @@
           "alternative_idea": "Photograph a clearly recognisable fabric or paper flower.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Seasonal live access; no picking or purchase needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Cadrez une fleur déjà présente, sur une plante ou chez vous.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photographiez une fleur reconnaissable en papier ou en tissu.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Inutile de cueillir une fleur ou d’en acheter une.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -260,10 +442,23 @@
         "en": {
           "primary_idea": "Photograph a leaf still attached to a plant.",
           "representation_mode": "literal",
-          "alternative_idea": "Show a fallen leaf with a visible blade and veins.",
-          "alternative_mode": "literal",
-          "accessibility_guidance": "Often accessible; no touching unknown plants.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "alternative_idea": "Photograph a paper leaf with a stalk and drawn veins.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "A paper model avoids outdoor access or touching an unknown plant.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Cadrez une feuille encore attachée à sa plante, avec ses nervures visibles.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez une feuille en papier avec une tige et des nervures dessinées.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Pas besoin de toucher une plante inconnue ni de sortir.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -278,10 +473,23 @@
         "en": {
           "primary_idea": "Show a patch of grass from a safe path or window.",
           "representation_mode": "literal",
-          "alternative_idea": "Photograph a small already accessible patch beside a walkway.",
-          "alternative_mode": "literal",
-          "accessibility_guidance": "Seasonal/local access; no stepping onto private land.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "alternative_idea": "Arrange paper blades into a small tuft of grass.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "A tabletop model avoids seasonal or garden-access requirements.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez de l’herbe depuis un chemin sûr ou une fenêtre.",
+          "representation_mode": "literal",
+          "alternative_idea": "Disposez des brins de papier en une petite touffe d’herbe.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle évite les contraintes de saison et l’accès à un jardin.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -299,7 +507,20 @@
           "alternative_idea": "Pose a toy figure in a clearly running stride on a tabletop.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No user needs to run; a toy scene is interpretive and may be less clear.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Avec son accord, cadrez les jambes d’un adulte qui court dans un espace sûr.",
+          "representation_mode": "literal",
+          "alternative_idea": "Posez une figurine en pleine foulée sur une table.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Vous n’avez pas besoin de courir ; le modèle suggère le mouvement.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -312,12 +533,25 @@
       "concept_key": "WALK",
       "locales": {
         "en": {
-          "primary_idea": "Photograph your own feet mid-step only while safely stationary for capture, or a consenting adult walking.",
+          "primary_idea": "With consent, photograph an adult walking while you stay still to frame the shot.",
           "representation_mode": "literal",
           "alternative_idea": "Pose a toy figure with one foot forward and the other supporting it.",
           "alternative_mode": "interpretive",
-          "accessibility_guidance": "No walking required; seated staging available.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "accessibility_guidance": "A seated toy setup is an option; do not walk while framing the photo.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Avec son accord, photographiez un adulte qui marche, en restant immobile pour cadrer.",
+          "representation_mode": "literal",
+          "alternative_idea": "Placez une figurine avec un pied en avant et l’autre posé au sol.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Vous pouvez rester assis et utiliser un modèle ; ne marchez pas en cadrant.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -335,7 +569,20 @@
           "alternative_idea": "Stage an open book in front of a seated toy reader.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Can be seated; no face, private messages or legible personal text.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Montrez une main suivant une ligne dans un livre sans information privée.",
+          "representation_mode": "literal",
+          "alternative_idea": "Placez un livre ouvert devant une figurine assise qui semble le lire.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Un cadrage sur la main suffit ; évitez les messages personnels.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -353,7 +600,20 @@
           "alternative_idea": "Stage a toy cook beside a bowl and pretend ingredients.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No heat, knives, eating or special diet required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Mettez en scène des mains remuant des ingrédients dans une casserole froide.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Installez une figurine près d’un bol et d’aliments factices.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Aucune chaleur, lame ou préparation à manger n’est nécessaire.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -371,7 +631,20 @@
           "alternative_idea": "Pose two toy figures in a recognisable dance arrangement.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Seated or staged interpretation is valid; movement need not be strenuous.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Prenez une pose de danse avec les bras, assis si vous le souhaitez, près d’un accessoire musical.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Placez deux figurines dans des poses qui évoquent une danse.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Une pose confortable suffit ; la photo ne nécessite aucun effort intense.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -389,7 +662,20 @@
           "alternative_idea": "Use an adapted grip or ask a consenting adult to demonstrate, cropping to the hand.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Tabletop/seated; no artistic skill required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Montrez une main ajoutant un trait à un dessin simple.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez un outil adapté ou demandez à un adulte volontaire de tracer un trait.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Aucun talent artistique n’est nécessaire ; cadrez la main et le papier.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -404,10 +690,23 @@
         "en": {
           "primary_idea": "Stage your own hands with soap beside an accessible basin.",
           "representation_mode": "literal",
-          "alternative_idea": "Use a small tabletop wash bowl or toy hands with pretend soap.",
+          "alternative_idea": "Stage paper hands with paper foam beside a bowl.",
           "alternative_mode": "interpretive",
-          "accessibility_guidance": "No running tap or standing required; do not spill near devices.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "accessibility_guidance": "A dry model avoids water near the phone and needs no running tap.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Mettez en scène vos mains avec du savon près d’un lavabo accessible.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez des mains en papier avec de la mousse en papier à côté d’un bol.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Un modèle sec évite de mouiller le téléphone et ne nécessite pas de robinet.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -425,7 +724,20 @@
           "alternative_idea": "Pose an articulated toy in a gentle stretching position.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No flexibility target; toy alternative for any mobility level.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Montrez un étirement doux du bras dans une position confortable, assise si besoin.",
+          "representation_mode": "literal",
+          "alternative_idea": "Posez une figurine articulée dans une position d’étirement.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Ne forcez pas un mouvement ; le modèle ne demande aucun effort physique.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -443,7 +755,20 @@
           "alternative_idea": "Arrange a cheerful paper face beside a favourite object.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Solo tabletop option; showing a real face is optional.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Si cela vous convient, mettez en scène votre sourire près de quelque chose que vous aimez.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Disposez un visage souriant en papier près d’un objet apprécié.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Il n’est pas nécessaire de montrer votre visage ou de raconter votre vie.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -461,7 +786,20 @@
           "alternative_idea": "Create a drooping paper face beside a plain tissue.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Entirely staged; no real distress or personal disclosure needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Si cela vous convient, prenez une expression triste volontairement mise en scène.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Photographiez un visage en papier à la bouche tombante près d’un mouchoir.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Ne provoquez aucune tristesse réelle ; une scène fictive suffit.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -479,7 +817,20 @@
           "alternative_idea": "Place an unexpected colourful object in an open plain box with a surprised paper face.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Solo prop scene; no prank, startle or real gift required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Mettez en scène une expression surprise devant une boîte ouverte sans danger.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Placez un objet inattendu dans une boîte, à côté d’un visage surpris en papier.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Aucune farce, frayeur ou dépense n’est nécessaire.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -497,7 +848,20 @@
           "alternative_idea": "Photograph an angular paper face with tightly drawn brows.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Safe staged expression; no shouting, threats or conflict required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Si cela vous convient, mettez en scène une expression de colère, sans impliquer d’autre personne.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Dessinez des sourcils froncés sur un visage en papier et photographiez-le.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Nul besoin de crier, de menacer ou de provoquer qui que ce soit.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -515,7 +879,20 @@
           "alternative_idea": "Arrange a furrowed paper face beside a blank calendar and an unfinished puzzle.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No personal deadlines, finances or real anxious event needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Mettez en scène une expression inquiète devant une tâche fictive inachevée.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Posez un visage soucieux en papier près d’un calendrier vierge et d’un puzzle inachevé.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Évitez les vrais soucis, les finances ou les échéances personnelles.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -533,7 +910,20 @@
           "alternative_idea": "Stage a relaxed paper face beside the last puzzle piece in place.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No real danger or distress; one staged scene is enough.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Mettez en scène une expression détendue près d’un puzzle qui vient d’être terminé.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Posez un visage détendu en papier près de la dernière pièce mise en place.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le contexte suggère la fin d’une difficulté ; aucune détresse réelle n’est nécessaire.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -548,10 +938,23 @@
         "en": {
           "primary_idea": "Photograph evening sky colours from a safe window without looking directly at the sun.",
           "representation_mode": "literal",
-          "alternative_idea": "Use your own previously taken sunset photo through the existing library flow.",
-          "alternative_mode": "literal",
-          "accessibility_guidance": "Time/weather dependent; no travel or staring at the sun.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "alternative_idea": "Stage a paper sun half-hidden behind a dark horizon against an orange sky.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "The model avoids waiting for evening; a colourful real sky alone cannot establish the time.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez les couleurs du ciel au coucher du soleil depuis une fenêtre sûre, sans regarder directement le soleil.",
+          "representation_mode": "literal",
+          "alternative_idea": "Mettez en scène un soleil en papier à moitié caché derrière un horizon sombre et un ciel orangé.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle évite d’attendre le soir ; un vrai ciel coloré ne prouve pas à lui seul l’heure.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -569,7 +972,20 @@
           "alternative_idea": "Arrange coloured paper strips into an arc and photograph the model.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Weather dependent; tabletop model is interpretive.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez un arc-en-ciel visible depuis un endroit abrité.",
+          "representation_mode": "literal",
+          "alternative_idea": "Disposez des bandes de papier coloré en forme d’arc.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle ne dépend pas de la météo et peut être installé sur une table.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -584,10 +1000,23 @@
         "en": {
           "primary_idea": "Photograph falling rain through a closed window.",
           "representation_mode": "literal",
-          "alternative_idea": "Use your own earlier rain photo through the existing library flow.",
-          "alternative_mode": "literal",
-          "accessibility_guidance": "Weather dependent; stay indoors and keep the device dry.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "alternative_idea": "Hang paper raindrops beneath a paper cloud to suggest falling rain.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Stay dry indoors; the model needs no water.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez la pluie qui tombe à travers une fenêtre fermée.",
+          "representation_mode": "literal",
+          "alternative_idea": "Suspendez des gouttes en papier sous un nuage en papier pour évoquer la pluie.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Restez au sec ; le modèle n’utilise pas d’eau.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -605,7 +1034,20 @@
           "alternative_idea": "Build a recognisable miniature snowy scene with paper flakes.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Seasonal; staging available; no cold exposure or slippery access needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez la neige depuis une fenêtre ou un chemin déneigé et sûr.",
+          "representation_mode": "literal",
+          "alternative_idea": "Créez un petit paysage enneigé avec du papier blanc et des flocons en papier.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Ne sortez pas dans le froid et ne marchez pas sur une surface glissante pour la photo.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -623,7 +1065,20 @@
           "alternative_idea": "Photograph a clearly cloud-shaped paper model against a sky-coloured background.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Window or tabletop access; never lean out.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez des nuages depuis une fenêtre sûre.",
+          "representation_mode": "literal",
+          "alternative_idea": "Posez un nuage en papier devant un fond couleur de ciel.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Restez à l’intérieur sans vous pencher par la fenêtre ; ne produisez pas de fumée.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -638,10 +1093,23 @@
         "en": {
           "primary_idea": "Photograph a puddle from dry safe ground.",
           "representation_mode": "literal",
-          "alternative_idea": "Stage a shallow water patch on a waterproof tray away from electronics.",
-          "alternative_mode": "literal",
-          "accessibility_guidance": "Weather optional; contain all staged water.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "alternative_idea": "Place an irregular shape of shiny blue paper on a tray to represent a puddle.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "A dry model avoids spills; show the boundary of the water shape.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez une flaque depuis un sol sec et sûr.",
+          "representation_mode": "literal",
+          "alternative_idea": "Découpez une forme irrégulière dans du papier bleu brillant et posez-la sur un plateau.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle sec évite les éclaboussures ; montrez bien le contour de la flaque.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -656,10 +1124,23 @@
         "en": {
           "primary_idea": "Photograph small water waves from a safe shore or barrier.",
           "representation_mode": "literal",
-          "alternative_idea": "Make a gentle wave in a shallow tray and photograph from a dry position.",
-          "alternative_mode": "literal",
-          "accessibility_guidance": "No swimming, beach trip or rough water required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "alternative_idea": "Curve a strip of blue paper into a wave rising above a blue surface.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "No swimming, travel or real water required.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez de petites vagues depuis un point d’observation sûr, derrière une barrière s’il y en a une.",
+          "representation_mode": "literal",
+          "alternative_idea": "Courbez une bande de papier bleu pour former une vague au-dessus d’une surface bleue.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Pas besoin de nager, de voyager ou d’utiliser de l’eau.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -677,7 +1158,20 @@
           "alternative_idea": "Stage a miniature park with a paper path, toy bench and greenery.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Outdoor access optional; no identifiable passers-by.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Cadrez un chemin, de l’herbe et un banc dans une partie vide d’un parc.",
+          "representation_mode": "literal",
+          "alternative_idea": "Créez un parc miniature avec un chemin en papier, un banc et de la verdure.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Un modèle suffit ; n’incluez pas de passants reconnaissables.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -695,7 +1189,20 @@
           "alternative_idea": "Stage a sand-coloured cloth beside a blue surface with a clear shore boundary.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Travel optional; tabletop interpretation available.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez une plage vide depuis un endroit sûr et accessible.",
+          "representation_mode": "literal",
+          "alternative_idea": "Placez un tissu couleur sable à côté d’une surface bleue pour évoquer le rivage.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Un modèle sur une table remplace le déplacement ; restez loin des vagues.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -713,7 +1220,20 @@
           "alternative_idea": "Stage a dense group of toy or paper trees with a path into them.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No remote walk required; tabletop interpretation available.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez une vue dominée par les arbres depuis un chemin sûr ou une fenêtre.",
+          "representation_mode": "literal",
+          "alternative_idea": "Rassemblez plusieurs arbres en papier autour d’un petit chemin.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle évite une promenade isolée ; faites ressortir l’ensemble des arbres.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -728,10 +1248,23 @@
         "en": {
           "primary_idea": "Photograph empty play equipment when permitted and no children are present.",
           "representation_mode": "literal",
-          "alternative_idea": "Stage a small toy slide and swing area.",
+          "alternative_idea": "Stage a miniature slide and swing made from paper.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No children or strangers needed; access/permission varies.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez des jeux vides, avec l’autorisation nécessaire et sans enfant dans le cadre.",
+          "representation_mode": "literal",
+          "alternative_idea": "Créez une aire de jeux miniature avec un toboggan et une balançoire en papier.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "N’entrez pas dans une zone privée ; le modèle peut rester à l’intérieur.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -744,12 +1277,25 @@
       "concept_key": "KITCHEN",
       "locales": {
         "en": {
-          "primary_idea": "Show part of your kitchen with a work surface and safe appliances.",
+          "primary_idea": "Show part of a kitchen with its work surface and switched-off appliances.",
           "representation_mode": "literal",
           "alternative_idea": "Photograph a toy kitchen with its preparation area visible.",
           "alternative_mode": "interpretive",
-          "accessibility_guidance": "Seated or model option; omit addresses and personal papers.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "accessibility_guidance": "Hide mail and private details; do not switch on appliances.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Cadrez un coin de cuisine avec son plan de travail et des appareils éteints.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photographiez une cuisine miniature en montrant la zone de préparation.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Masquez le courrier et les détails privés ; n’allumez aucun appareil.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -767,7 +1313,20 @@
           "alternative_idea": "Stage a toy bus beside a model stop sign on a tabletop.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No road entry, travel, timetables with personal data or passengers needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Cadrez un panneau ou un abri d’arrêt de bus vide depuis le trottoir.",
+          "representation_mode": "literal",
+          "alternative_idea": "Placez un bus miniature à côté d’un panneau d’arrêt fabriqué en papier.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Restez loin de la chaussée ; aucun trajet ni passager n’est nécessaire.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -785,7 +1344,20 @@
           "alternative_idea": "Arrange two toy figures facing one another with a raised hand.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Solo staging available; no face or physical contact required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Avec leur accord, photographiez deux adultes se saluant de la main, en cadrant les mains.",
+          "representation_mode": "literal",
+          "alternative_idea": "Placez deux figurines face à face, l’une levant la main.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Un modèle permet de réaliser la scène seul, sans contact physique.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -798,12 +1370,25 @@
       "concept_key": "SHARE",
       "locales": {
         "en": {
-          "primary_idea": "Photograph consenting hands dividing fruit pieces between two plates.",
+          "primary_idea": "With consent, photograph hands dividing small objects between two people.",
           "representation_mode": "literal",
           "alternative_idea": "Arrange two toy figures with equal portions of pretend food being passed.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No eating, spending or other person required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Avec leur accord, cadrez des mains répartissant de petits objets entre deux personnes.",
+          "representation_mode": "literal",
+          "alternative_idea": "Placez deux figurines qui se passent des portions d’aliments factices.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Aucun achat, repas ou autre participant n’est nécessaire avec des figurines.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -821,7 +1406,20 @@
           "alternative_idea": "Stage two toy figures, one supporting a box while the other fills it.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Tabletop and solo options; use light props.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Avec leur accord, cadrez des mains qui tiennent une boîte légère pendant qu’une autre personne la remplit.",
+          "representation_mode": "literal",
+          "alternative_idea": "Placez deux figurines, l’une soutenant une boîte et l’autre la remplissant.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Utilisez des accessoires légers sur une table ; ne photographiez pas de personne vulnérable.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -834,12 +1432,25 @@
       "concept_key": "CELEBRATION",
       "locales": {
         "en": {
-          "primary_idea": "Stage a small decorated tabletop with reusable paper bunting.",
+          "primary_idea": "Stage a festive tabletop with paper bunting and a fictional occasion card.",
           "representation_mode": "interpretive",
-          "alternative_idea": "Photograph two toy figures beside a paper rosette and celebratory arrangement.",
+          "alternative_idea": "Photograph two toy figures beside decorations and a fictional birthday card.",
           "alternative_mode": "interpretive",
-          "accessibility_guidance": "Solo, low-cost staging; no guests, alcohol or candles required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "accessibility_guidance": "No guests, alcohol, candles or purchases required; hide real names and dates.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Créez une table de fête avec une guirlande en papier et une carte d’occasion fictive.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Placez deux figurines près d’une décoration et d’une petite carte d’anniversaire fictive.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Aucun invité, alcool, bougie ou achat n’est nécessaire ; masquez les vrais noms et dates.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -857,7 +1468,20 @@
           "alternative_idea": "Stage a miniature meal on a cloth with a clearly outdoor model setting.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No travel, cooking or eating required; indoor model available.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Disposez un repas simple sur une nappe dehors, dans un lieu sûr où cela est permis.",
+          "representation_mode": "literal",
+          "alternative_idea": "Mettez en scène un repas miniature sur une nappe avec un décor extérieur en papier.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Le modèle peut rester à l’intérieur ; il n’est pas nécessaire de cuisiner ou de manger.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -875,7 +1499,20 @@
           "alternative_idea": "Line up toy figures behind a pretend service counter.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Solo tabletop option; no real queue, strangers or crowd needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Avec leur accord, mettez en scène des adultes qui attendent leur tour, en évitant les visages.",
+          "representation_mode": "literal",
+          "alternative_idea": "Alignez des figurines devant un comptoir factice.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Aucune vraie file ni aucun inconnu n’est nécessaire ; montrez l’ordre de passage.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -893,7 +1530,20 @@
           "alternative_idea": "Scatter lightweight paper shapes on a tray within easy reach.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Quick, reversible indoor setup; no personal home judgement.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Éparpillez quelques jouets sur une table pour créer un désordre temporaire.",
+          "representation_mode": "literal",
+          "alternative_idea": "Disposez des formes en papier de façon désordonnée sur un plateau.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Choisissez une petite scène facile à ranger ; aucun jugement sur votre logement.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -911,7 +1561,20 @@
           "alternative_idea": "Use a lightweight container with its interior clearly visible.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Low effort seated setup.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez l’intérieur vide d’une boîte ou d’un bol ouvert.",
+          "representation_mode": "literal",
+          "alternative_idea": "Utilisez un récipient léger dont on voit bien le fond.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Une installation à portée de main convient, même en position assise.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -929,7 +1592,20 @@
           "alternative_idea": "Put a few drops on a waterproof tray, keeping the phone dry.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Small contained setup; no floor spills or bad weather required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Montrez une partie mouillée d’un tissu à côté d’une partie sèche.",
+          "representation_mode": "literal",
+          "alternative_idea": "Placez quelques gouttes sur un plateau étanche, loin du téléphone.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Gardez le sol sec et l’eau bien contenue ; aucune sortie sous la pluie n’est nécessaire.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -947,7 +1623,20 @@
           "alternative_idea": "Photograph a colourful pattern on something already owned.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Low effort; assistive help choosing colours is optional.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Rassemblez plusieurs objets ou papiers de couleurs différentes.",
+          "representation_mode": "literal",
+          "alternative_idea": "Photographiez un motif multicolore sur un objet déjà à vous.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Vous pouvez demander de l’aide pour choisir les couleurs ; aucun achat n’est nécessaire.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -965,7 +1654,20 @@
           "alternative_idea": "Arrange a loop of string on a reachable surface.",
           "alternative_mode": "literal",
           "accessibility_guidance": "Simple indoor setup; no object-specific purchase.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez un couvercle rond bien de face.",
+          "representation_mode": "literal",
+          "alternative_idea": "Formez un cercle avec une ficelle sur une surface accessible.",
+          "alternative_mode": "literal",
+          "accessibility_guidance": "Un petit montage à l’intérieur suffit ; montrez clairement le contour.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -978,12 +1680,25 @@
       "concept_key": "BROKEN_OBJECT",
       "locales": {
         "en": {
-          "primary_idea": "Photograph an already broken harmless toy or pencil resting safely.",
+          "primary_idea": "Photograph an already broken harmless object, without sharp edges or electrical parts, resting safely.",
           "representation_mode": "literal",
           "alternative_idea": "Stage a toy with a removable part detached beside its matching empty socket; this represents damage without actually breaking anything.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Do not break anything; no glass, live wiring or exposed sharp parts.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Photographiez un objet déjà cassé, sans bord coupant ni élément électrique, posé sans danger.",
+          "representation_mode": "literal",
+          "alternative_idea": "Détachez une pièce conçue pour se retirer d’un jouet et posez-la près de son emplacement.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Ne cassez rien ; la seconde idée représente une cassure sans abîmer le jouet.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -1001,7 +1716,20 @@
           "alternative_idea": "Stage two toy figures sitting together with a game and mutually welcoming poses.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Solo prop scene; no actual relationship disclosure needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Avec leur accord, cadrez les mains d’amis autour d’un jeu de société.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Placez deux figurines dans des poses accueillantes autour d’un jeu.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Une scène fictive suffit ; il n’est pas nécessaire de révéler vos relations.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -1014,12 +1742,25 @@
       "concept_key": "LONELINESS",
       "locales": {
         "en": {
-          "primary_idea": "Stage one toy figure apart from a small welcoming-looking group.",
+          "primary_idea": "Stage one toy figure apart from a group, turned toward it as if wanting to join.",
           "representation_mode": "interpretive",
-          "alternative_idea": "Photograph an unused second place setting beside one occupied toy seat.",
+          "alternative_idea": "Stage a sad-looking toy at two place settings, with the second setting unused.",
           "alternative_mode": "interpretive",
-          "accessibility_guidance": "Entirely fictional scene; no isolated strangers or painful disclosure.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "accessibility_guidance": "No isolated strangers or disclosure; being alone does not necessarily mean loneliness.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Mettez en scène une figurine à l’écart d’un petit groupe, tournée vers lui comme pour le rejoindre.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Placez une figurine devant deux couverts, dont l’un reste inutilisé, avec une posture triste.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Ne photographiez pas d’inconnus isolés ; être seul ne signifie pas forcément se sentir seul.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -1037,7 +1778,20 @@
           "alternative_idea": "Arrange a slowly progressing craft with a relaxed paper face; no actual wait required.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Solo and seated; do not make users wait to take the photo.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Placez une figurine calme près d’un puzzle inachevé et d’un minuteur.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Disposez un ouvrage en cours près d’un visage détendu en papier.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Aucun temps d’attente réel n’est demandé ; une photo suggère la patience sans la prouver.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -1055,7 +1809,20 @@
           "alternative_idea": "Stage a paper sprout reaching toward a bright paper opening.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "No gardening, sunlight access or actual adversity required.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Mettez en scène une jeune pousse près d’un pot prêt à accueillir sa croissance.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Posez une pousse en papier tournée vers une ouverture lumineuse en papier.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Aucun jardin, soleil réel ou vécu difficile n’est nécessaire ; le symbole peut être interprété autrement.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,
@@ -1073,7 +1840,20 @@
           "alternative_idea": "Photograph an open toy gate with a clear unobstructed route beyond it.",
           "alternative_mode": "interpretive",
           "accessibility_guidance": "Tabletop staging; no real captivity, trespass, animal release or political event needed.",
-          "safety_guidance": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people.",
+          "safety_guidance": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person.",
+          "review": {
+            "status": "draft",
+            "reviewer": null,
+            "reviewed_at": null
+          }
+        },
+        "fr": {
+          "primary_idea": "Placez une figurine sortant d’un enclos en papier ouvert vers plusieurs chemins libres.",
+          "representation_mode": "interpretive",
+          "alternative_idea": "Photographiez un portail miniature ouvert avec un passage dégagé derrière.",
+          "alternative_mode": "interpretive",
+          "accessibility_guidance": "Ne libérez aucun animal et n’entrez pas dans un lieu interdit ; un modèle suffit.",
+          "safety_guidance": "Utilisez un lieu sûr et des accessoires déjà à vous. Demandez l’accord de toute personne pour la photo et son partage ; un recadrage ne garantit pas l’anonymat. Évitez les inconnus, les enfants, les détails privés et les dangers. Ne provoquez aucune détresse réelle. Une mise en scène suggère un sens sans rien prouver sur une personne.",
           "review": {
             "status": "draft",
             "reviewer": null,

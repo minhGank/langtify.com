@@ -1,0 +1,413 @@
+{
+  "schema_version": 1,
+  "project_ref": "ssuyyrfncvyqsgkirvpq",
+  "snapshot_sha256": "709fd11f692f72c598d6d2ab9f3e54d2134cf07273f3f6bb0f719fe9d0dce2f4",
+  "reviewer": "Codex: AI-assisted semantic identity review",
+  "reviewed_at": "2026-10-22",
+  "independent_human_approval": false,
+  "evidence": {
+    "catalog_concepts": 36,
+    "catalog_terms": 72,
+    "comparison": "All existing concept keys and bilingual primary terms compared against all 60 approved definitions; related meanings reviewed explicitly. No existing UUID maps to a pilot meaning. This is identity reconciliation, not translation/CEFR or activation approval.",
+    "existing_keys": [
+      "ALLEY",
+      "APPLE",
+      "BANK_FINANCIAL",
+      "BANK_RIVER",
+      "BICYCLE",
+      "BOOK",
+      "BRIDGE",
+      "BUTTRESS",
+      "CARYATID",
+      "CAT",
+      "CHAIR",
+      "CROSSWALK",
+      "CROWDED",
+      "DOG",
+      "DOOR",
+      "EFFLORESCENCE",
+      "ESTUARY",
+      "FLYING_BUTTRESS",
+      "GREENHOUSE",
+      "IRIDESCENCE",
+      "MARKET_STALL",
+      "PATINA",
+      "RECYCLING_BIN",
+      "REFLECTION",
+      "RIME",
+      "SCAFFOLDING",
+      "SCREE",
+      "SOLAR_PANEL",
+      "SPANDREL",
+      "SUITCASE",
+      "TERRACED_FIELD",
+      "TRAFFIC_JAM",
+      "UMBRELLA",
+      "VIADUCT",
+      "WINDOW",
+      "WIND_TURBINE"
+    ]
+  },
+  "concepts": [
+    {
+      "concept_key": "BED",
+      "meaning_sha256": "db84b85b447cf8c787706600df2cd2ad11d35bafe3c08deb3e9c30d6824fe6d7",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "PILLOW",
+      "meaning_sha256": "49e29b27b46d4cea1d9c41c9604a78c2a785bb06c0722e18c870f94c0529f0b9",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "BOTTLE",
+      "meaning_sha256": "25798d8cb47a439f9a43b0cc577476870a9d8283d6e3bfa5f96e801ae73287ec",
+      "existing_id": null,
+      "note": "A bottle is a container, distinct from RECYCLING_BIN and from its material."
+    },
+    {
+      "concept_key": "PLATE",
+      "meaning_sha256": "cb22718c9893b9f6ed18b6bf6bce7fe6b62e36af587c101a19abe50898e5a24e",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "SPOON",
+      "meaning_sha256": "ef5b40208b71daf5ed9e17d539af38ce64992a31c908c1f22a41d9352ec48253",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "FORK",
+      "meaning_sha256": "1a3a4240fa6acf93881f1448776462032e90df80227a5e37da5236fd8dea22a6",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "BACKPACK",
+      "meaning_sha256": "54110fab4809ea1ca17fee2913639f93b315175a1e84e4421421a1a62957307a",
+      "existing_id": null,
+      "note": "SUITCASE is a travel case; BACKPACK is specifically carried on the back with straps."
+    },
+    {
+      "concept_key": "SCISSORS",
+      "meaning_sha256": "14cc37d6f125059e07ade26cb0cabae1ed4c24c1ebab195ff14ea1b875cb42e7",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "BUTTERFLY",
+      "meaning_sha256": "33e80cfe8cc8e5089866035c71516f4773c7bf9107b260f5fca68f053f72156d",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "BIRD",
+      "meaning_sha256": "6a8b42d6f7daedfba196889c0a6f038c05432d2a7b2078209fe549bc1965118b",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "RABBIT",
+      "meaning_sha256": "7dbfa3b21bab3cdeff2e795f3c153f262ad7429ff7b2d2a8983093286bf5dd40",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "SNAIL",
+      "meaning_sha256": "ce210e5aca88a0144684058756c1589eccd94a9f98974999b176c2a44a24b126",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "ANT",
+      "meaning_sha256": "66214fafc219f7a5e6ea5792c9b2c5f4aeaedb1bee93cef426203913f0c938b4",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "FLOWER",
+      "meaning_sha256": "db37d36daeeff1716e52990c9157c4b015282c56ab3155908bbdcba90a6c2100",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "LEAF",
+      "meaning_sha256": "8c9b2e1ac1627f092e38de94a0baa767073e47a1966173ec913b2097098208e3",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "GRASS",
+      "meaning_sha256": "4e7ce05d8a13c1c1f3108daba6897492685b48db00c5d3dfbe6daca8b1c2e8d0",
+      "existing_id": null,
+      "note": "TERRACED_FIELD is agricultural land shaped into terraces; GRASS is vegetation."
+    },
+    {
+      "concept_key": "RUN",
+      "meaning_sha256": "256d95f8a4f624484d76d7904cdf49b34230c26ad5573eca12e26279e4d292e4",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "WALK",
+      "meaning_sha256": "f1068a3620296773fffb47cea659d3a89299db15eeea6d84e01a107e26410ac3",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "READ",
+      "meaning_sha256": "150a2bf62bfe603c6fe6382425df9843f3e550a37a262e6c0b5e8db59444c319",
+      "existing_id": null,
+      "note": "BOOK is an object; READ is the action of understanding written words."
+    },
+    {
+      "concept_key": "COOK",
+      "meaning_sha256": "1a48d17a41fdda930c165facfc9a79e6fdd65bcc58af3dae9f4fa6ad4f7a0de2",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "DANCE",
+      "meaning_sha256": "40d8092abef1b1ea5a40af4635831ab32dfcf6d44835aa887acfc29499d761d8",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "DRAW",
+      "meaning_sha256": "0d96d5d33a6c531e824b340b8d52361f0b87e63533036275ddd1ade14bbf7dcc",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "WASH_HANDS",
+      "meaning_sha256": "3f81d7d8f1f6eeb1e0303d68e345913f6416551416aecb85a2cf9f98cbb371a6",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "STRETCH_BODY",
+      "meaning_sha256": "20547b16c1e1308bafae1588882bb0ecd2533bc5c0fe928e14d48be34271c87b",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "HAPPINESS",
+      "meaning_sha256": "0ce101458e77bc17a74dbee320b7c5035d660eebc0f73901088a9348f5f724b7",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "SADNESS",
+      "meaning_sha256": "88a5bec83c0f78f9a1ba143ab8ce9e112b1634592073a958f7ec1d9b827ed6cd",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "SURPRISE",
+      "meaning_sha256": "fefbfc0e5db885e0a4674e19b4d59e511570f78e83bec8798c6d663ba62d98b9",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "ANGER",
+      "meaning_sha256": "67c7d4e5556f134e5fc3401c6020f5b329130faf4af67555797361b5f1ec23e4",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "WORRY",
+      "meaning_sha256": "817796c981bc717f34694fcd2b118c3d69791b645febfb264d90d5808c36903c",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "RELIEF",
+      "meaning_sha256": "462bc6028d73013cea58a3561732c25e0d13c07066f365e8862035102fbe9f11",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "SUNSET",
+      "meaning_sha256": "470e470c2f1f80d6a53d5ca7e43859a98ed62d4e661cb88cd65a741a7a42da99",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "RAINBOW",
+      "meaning_sha256": "284b8014f831edad3e86d212a46c93c56d11fb6e74a3de8b9297946eba032c08",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "RAIN",
+      "meaning_sha256": "91b0751b1110f3c1b625c72ae9645b8df3a21809966bc9a578b28fe41e2ad096",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "SNOW",
+      "meaning_sha256": "840fcccb648aa76bb1f1578b093ffe65fdda716cd7b51f02816e29c34162fd9a",
+      "existing_id": null,
+      "note": "RIME is frost deposited on a surface; SNOW is flakes or accumulated snow."
+    },
+    {
+      "concept_key": "CLOUD",
+      "meaning_sha256": "2b23941ce6c504de2c879ddae550071ba6f2da4424e19c3370a72122baa53d31",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "PUDDLE",
+      "meaning_sha256": "7d0226895aed06de213054c1fbf3b12e7a257eab450d06c7b9bfc545ca2df892",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "WATER_WAVE",
+      "meaning_sha256": "59863b374dade2aea3ed4cb364d3e1694337d512221653f6ff2efe65763df1af",
+      "existing_id": null,
+      "note": "REFLECTION is an optical image; WATER_WAVE is a moving water ridge."
+    },
+    {
+      "concept_key": "PARK",
+      "meaning_sha256": "4a150fa8158e539df862d7e0445b37470b284c6da458bb2bce600e43fa8d1723",
+      "existing_id": null,
+      "note": "PLAYGROUND is a play-equipped area; PARK is a leisure green space. Neither exists in the Dev fixture catalog."
+    },
+    {
+      "concept_key": "BEACH",
+      "meaning_sha256": "c4e3bcdd00804b60557d8a9f2b32e74a6e64a398a06bfebe316aded766fd0880",
+      "existing_id": null,
+      "note": "BANK_RIVER is the side of a river; BEACH is a sand/pebble shoreline."
+    },
+    {
+      "concept_key": "FOREST",
+      "meaning_sha256": "7418737d393b03cc1edf169b7826855f7e6428145698c527e934bd70719b68ef",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "PLAYGROUND",
+      "meaning_sha256": "a7e13ccb3df0ccbd45aec15d4bb0b81421dfc493fc39ad28a8f6df570f11d803",
+      "existing_id": null,
+      "note": "PARK may contain a playground, but the area equipped for play is a distinct meaning; neither exists in Dev."
+    },
+    {
+      "concept_key": "KITCHEN",
+      "meaning_sha256": "fb7012069959b63567959db2386494b0013360a976412fbf66849f86e43263bd",
+      "existing_id": null,
+      "note": "COOK is the activity; KITCHEN the place. Neither is in Dev."
+    },
+    {
+      "concept_key": "BUS_STOP",
+      "meaning_sha256": "5a838ebc1c4cbd0a23d7297f5eec066754a685a7e48f4180de85981309d8d023",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "GREET",
+      "meaning_sha256": "d18d16b8098da97d3d0b61d88d9a17f8ec22bea89a7f5888eb999c703f6cc957",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "SHARE",
+      "meaning_sha256": "688f110279d07003ac49542c97146a57ce443476929122d53b8cdf1a2d60f77e",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "HELP",
+      "meaning_sha256": "be176d7b745704a78aba2ac094717ea650d480508c105ec7192b47f6e6ccdbb3",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "CELEBRATION",
+      "meaning_sha256": "d8b2027402366b72b751af9130ae70fc9a9ff2128fe1e2ca7a1db5268ae3fed4",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "PICNIC",
+      "meaning_sha256": "6ec74f728cc5676534f0ab67482d4670f5c24043069a48cf0e3a10cc6fc4f845",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "WAITING_LINE",
+      "meaning_sha256": "4d10b4e5ad562c9f9695f6695249ac484feec216c4df139a3833fa6c087987ee",
+      "existing_id": null,
+      "note": "CROWDED describes density; WAITING_LINE describes an ordered queue. TRAFFIC_JAM is obstructed vehicle traffic."
+    },
+    {
+      "concept_key": "MESSY",
+      "meaning_sha256": "7456a1a055eced5627441670ae5d1bb182d81ee128275bbc1e5701f80fd80404",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "EMPTY",
+      "meaning_sha256": "4a873e03a4331cfb0f32bfa5c4211a912ebe46ce57c98fea6a973460d0548dd1",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "WET",
+      "meaning_sha256": "b7bf205c9dc1a0346247ab9f914f3feb6ebcae32246a51ee4b8f8651c647a60b",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "COLOURFUL",
+      "meaning_sha256": "81356281947adfe998dcb9e6556913050fadf5713dde47814f6c9054f3978927",
+      "existing_id": null,
+      "note": "IRIDESCENCE is angle-dependent colour change; COLOURFUL is having noticeable colours."
+    },
+    {
+      "concept_key": "ROUND",
+      "meaning_sha256": "02a653ff08e4ae1330c526f364b43c25a24ba8c8229c81e3738c038245128152",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "BROKEN_OBJECT",
+      "meaning_sha256": "d2013f6f3eaa8f403074f3cc334aa5da0be1186a02e4ea5ae548d98bcb9d97aa",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "FRIENDSHIP",
+      "meaning_sha256": "8c1e58f178d7213a48fc6b18d5cec81df17b8d9858f1e756dd062bf511e20b58",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "LONELINESS",
+      "meaning_sha256": "34469c63a2789c8a4eb0df7b5b3607e2128fc2760fe04672612cb1ff8f9d07f6",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "PATIENCE",
+      "meaning_sha256": "b20217d66e825e24a11cff7eac8f045a5463d8762e9cd73e9f28649026a55ff9",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "HOPE",
+      "meaning_sha256": "4d0977e3542ee08549b612124c2f617b5532d85039dcb5d7dc8288c46f10a15b",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    },
+    {
+      "concept_key": "FREEDOM",
+      "meaning_sha256": "a0842c3e95d49c053dd07a5fdfa9c25a974c49095a7d130457c489532ad26319",
+      "existing_id": null,
+      "note": "No equivalent meaning in the 36-concept Dev inventory."
+    }
+  ]
+}

@@ -20,7 +20,7 @@ with A1–B2 quality prioritised and no manufactured C1/C2 classifications.
 - `meaning-approval.v0.2.0.json`: owner approval of keys/definitions only, pinned by
   per-meaning hashes. It cannot mark bilingual review or CEFR evidence complete.
 - `photo-guidance.v0.2.0.json`: versioned EN/FR localization contract; currently
-  English copy only, with independent draft copy review. The English fields must
+  complete English and French draft copy, with human copy review pending. The English fields must
   match the pilot photography metadata. See the photo-guidance runbook for import.
 - `french-grammar.v2.json`: separate draft consistency assertions for noun gender,
   number and onset; verb infinitives; adjective agreement and invariable phrases.
@@ -28,6 +28,8 @@ with A1–B2 quality prioritised and no manufactured C1/C2 classifications.
 - `seed-baseline.v1.json`: unchanged seed SQL hash and 36 Dev seed identities/labels,
   with curated lexical exclusions. Extra crowded/packed forms now guard against
   replacing the existing CROWDED identity under a new key. The SQL itself is unchanged.
+- `editorial-review.v0.2.0.json`: content-hashed model-assisted review of all 60
+  entries, selected evidence and remaining decisions; never human approval.
 - `../../docs/VOCABULARY_PILOT_REVIEW.md`: generated current review, all 60 concepts,
   detailed bilingual rationale, photo alternatives and proposed curriculum decisions.
 - `pilot.v0.1.0.json`, `french-grammar.v1.json` and `pilot-review.v0.1.0.json`: retained
@@ -91,7 +93,8 @@ cross-language part-of-speech mismatches into this contract without review.
 
 Each language's CEFR can be A1–C2 or null. Null requires a non-null review band;
 a review band is never assigned coverage. All v0.2 terms have provisional estimates,
-not approval. Each has a language-specific rationale, not inherited from its
+not approval. The English loneliness estimate additionally carries an unresolved
+C1 review band; 19 other English estimates were revised using dictionary evidence. Each has a language-specific rationale, not inherited from its
 translation. No term is assigned C1/C2, and French B2 is also absent.
 
 Literal/interpretive describes the **example**, not whether a word is eligible.
@@ -123,8 +126,9 @@ A future approved import must reconcile semantic meaning and key, preserve actua
 Dev concept/term UUIDs, and avoid copying Dev UUIDs blindly into Production. It must
 fail on unknown semantic matches, default to a reviewed dry-run with explicit project
 ref and artifact hash, apply atomically and replay as a no-op. Never reset completed
-history or rewrite immutable assignment snapshots. Full catalog import remains
-unimplemented. The local guidance-only importer reuses existing UUIDs and refuses
+history or rewrite immutable assignment snapshots. The offline full catalog planner is now implemented; see
+[`VOCABULARY_RELEASE_PREPARATION.md`](../../docs/VOCABULARY_RELEASE_PREPARATION.md)
+for strict release gates, conflict handling, dry-run commands and recovery. The local guidance-only importer reuses existing UUIDs and refuses
 missing identities; it never creates terms/concepts or connects to hosted projects.
 
 ## Approval and curriculum gates
@@ -159,3 +163,32 @@ noun/verb/adjective agreement, interpretive/accessibility metadata, draft approv
 gates, coverage shortfalls and deterministic review output. The photo-guidance
 runbook records additional SQL, importer and mobile tests for the implementation.
 Physical photo recognisability, accessibility and bilingual review remain pending.
+
+### Inactive staging preparation
+
+The catalog CLI now accepts explicit `--mode inactive-staging`. It keeps all editorial
+and coverage blockers visible as `release_blockers`, without requiring their completion
+for inactive staging. Structural/identity checks, technical prerequisites, current
+reconciliation and conflicts still block SQL. Default `release-reviewed` behavior stays
+strict; neither mode activates records. Existing active pilot identities are rejected
+in staging mode. See the 2026-10-22 section of
+[`VOCABULARY_RELEASE_PREPARATION.md`](../../docs/VOCABULARY_RELEASE_PREPARATION.md)
+for backup status, scoped migration/language preparation and the existing raw-catalog
+visibility limitation. Reconciliation files are AI-assisted identity evidence only.
+
+### Hosted inactive staging — 2026-10-26
+
+The pilot was staged in both Dev and Production: 60 concepts, 120 bilingual terms,
+120 localized guidance rows each. At staging, all pilot concepts/terms were inactive.
+`staging-receipts/` records target-specific
+public catalog identities and hashes, not credentials or editorial approval. Preserve
+these UUIDs on future reconciliation. See the
+[rollout and recovery record](../../docs/VOCABULARY_ROLLOUT_2026_10_26.md).
+
+The subsequent `owner-approval.v0.2.0.json` authorizes this exact content as a limited
+pilot, English loneliness C1, remaining provisional CEFR estimates and documented
+shortages. It is not independent linguistic/accessibility certification. Existing
+draft review fields and the general full-release validator are preserved. The
+scoped activation uses this separate, content-hashed owner authorization;
+`activation-receipts/` records verified outcomes and unchanged UUIDs. See the
+[activation record](../../docs/VOCABULARY_ACTIVATION_REVIEW.md) for current status.

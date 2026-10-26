@@ -74,13 +74,13 @@ test('supports a complete independently reviewed French locale', () => {
     review: { status: 'approved', reviewer: 'Fixture reviewer', reviewed_at: '2026-10-13' },
   };
   assert.deepEqual(validateGuidance(manifest, g), []);
-  assert.equal(plan(g).rows.length, 61);
+  assert.equal(plan(g).rows.length, 120);
   g.concepts[0].locales.fr.representation_mode =
     en.representation_mode === 'literal' ? 'interpretive' : 'literal';
   assert.ok(validateGuidance(manifest, g).length);
 });
 test('default planning blocks unreviewed copy and never silently creates missing identities', () => {
-  assert.equal(plan(guidance, catalog, false).blockers.length, 60);
+  assert.equal(plan(guidance, catalog, false).blockers.length, 120);
   assert.throws(() => guidanceUpsertSql(plan(guidance, catalog, false)), /blocked/);
   assert.equal(plan(guidance, []).blockers.length, 60);
   assert.equal(plan(guidance, []).rows.length, 0);
@@ -89,7 +89,7 @@ test('default planning blocks unreviewed copy and never silently creates missing
 test('preserves target catalog UUIDs and writes only guidance with idempotent upserts', () => {
   const p = plan();
   assert.deepEqual(p.blockers, []);
-  assert.equal(p.rows.length, 60);
+  assert.equal(p.rows.length, 120);
   for (const row of p.rows)
     assert.equal(row.concept_id, catalog.find((c) => c.concept_key === row.concept_key).id);
   const sql = localImportSql(p);
@@ -97,7 +97,7 @@ test('preserves target catalog UUIDs and writes only guidance with idempotent up
   assert.match(sql, /catalog_identity_drift/);
   assert.match(sql, /on conflict\(concept_id,locale\) do update/);
   assert.match(sql, /is distinct from/);
-  assert.equal((sql.match(/insert into public.vocabulary_photo_guidance/g) || []).length, 60);
+  assert.equal((sql.match(/insert into public.vocabulary_photo_guidance/g) || []).length, 120);
   assert.doesNotMatch(sql, /(insert into|update|delete from) public.vocabulary_(concepts|terms)/);
 });
 test('CLI refuses hosted or unknown targeting options before database access', () => {

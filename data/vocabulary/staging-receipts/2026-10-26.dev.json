@@ -1,0 +1,599 @@
+{
+  "project_ref": "ssuyyrfncvyqsgkirvpq",
+  "at": "2026-10-26T14:05:01.379Z",
+  "plan_sha256": "8e9f40ef434f7d4c45787a1b0e83b321ee182494734349ca807aa9a9a965e1aa",
+  "artifact_sha256": "d164c00bf7bcae2dacbdce0560a1f1a080c6f34bbae670d21bd5d22725752cc6",
+  "concepts_imported": 60,
+  "terms_imported": 120,
+  "guidance_imported": 120,
+  "inactive_concepts": 60,
+  "inactive_terms": 120,
+  "total_concepts": 96,
+  "total_terms": 192,
+  "total_guidance": 120,
+  "existing_catalog_unchanged": true,
+  "bilingual_content_exact_match": true,
+  "repeat_plan_inserts": 0,
+  "release_blockers": 243,
+  "schema_security_storage_unchanged_by_import": true,
+  "editorial_approval_changed": false,
+  "migration_history": [
+    "20260912000000",
+    "20260912010000",
+    "20260912020000",
+    "20260912030000",
+    "20260912040000",
+    "20260912050000",
+    "20260913000000",
+    "20260913010000",
+    "20260914000000",
+    "20260915000000",
+    "20260915010000",
+    "20260916000000",
+    "20260917000000",
+    "20260918000000",
+    "20260918010000",
+    "20260918020000",
+    "20260918030000",
+    "20260921000000",
+    "20260921010000",
+    "20260922000000",
+    "20260922010000",
+    "20260922020000",
+    "20260923000000",
+    "20260926000000",
+    "20260926010000",
+    "20260926020000",
+    "20260927000000",
+    "20260928000000",
+    "20260928010000",
+    "20261003000000",
+    "20261005000000",
+    "20261005010000",
+    "20261012000000",
+    "20261013000000",
+    "20261020000000"
+  ],
+  "identities": [
+    {
+      "concept_key": "ANGER",
+      "concept_id": "f084893d-8295-45f7-9c1f-623635210d6a",
+      "terms": {
+        "en": "0c1a95cd-b422-4472-8268-9bee4e9f11fe",
+        "fr": "788ecf6e-6318-4d98-a893-6cbaf95b0775"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "ANT",
+      "concept_id": "57cb95d4-b55a-4657-aa76-6ad16d424ebb",
+      "terms": {
+        "fr": "4144c886-eaac-48bd-b051-894c5f53e85b",
+        "en": "7f39f233-fb6c-4c6d-810e-2285d4546163"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "BACKPACK",
+      "concept_id": "2454db7f-1aa6-48c1-8aaf-f6be1d073fc7",
+      "terms": {
+        "fr": "2a176ecf-3e0a-491c-a07f-073892de7245",
+        "en": "6efc5995-944c-4617-85a2-158c8abd976d"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "BEACH",
+      "concept_id": "08ce55a6-63c3-4feb-9a57-5aa20c717b22",
+      "terms": {
+        "fr": "d828d5f5-5abf-4d90-878d-8579724ae37e",
+        "en": "f6f924ef-5c2d-466f-ba2f-c639581b472a"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "BED",
+      "concept_id": "b8801cc8-bc70-4235-9243-24912ed9f1a3",
+      "terms": {
+        "fr": "42d96772-2c88-4420-acb6-998e5a39a5c9",
+        "en": "8249790a-396b-4851-87cf-6c4efe6cfff9"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "BIRD",
+      "concept_id": "0198bb90-acc9-497f-bcb6-23f1ae2f80d1",
+      "terms": {
+        "fr": "3401c49f-bcd1-4e21-91d3-bab8970ddbe8",
+        "en": "f84936b2-a5aa-4263-9043-c405ec3cd81a"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "BOTTLE",
+      "concept_id": "d9b26a64-f505-48e2-bf86-fa876e08e4f5",
+      "terms": {
+        "en": "a7ac2a7e-f108-4983-b89f-615306f09fb7",
+        "fr": "ccae4648-dcc5-4f15-a09e-de05efc3f0ad"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "BROKEN_OBJECT",
+      "concept_id": "c1387513-4b8c-4761-85e4-8edec5535d56",
+      "terms": {
+        "en": "14fb3771-4c47-4c00-8287-6a9c9b30d95f",
+        "fr": "8ba16b3e-38b2-43ac-89cb-44c67eb1294f"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "BUS_STOP",
+      "concept_id": "46f4b551-1ac4-42be-b49b-746f3eced557",
+      "terms": {
+        "fr": "d0349389-f144-47d8-a8c0-45376c5a8463",
+        "en": "ea56efe5-cc26-4836-a585-89fe881ad32f"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "BUTTERFLY",
+      "concept_id": "b5ff7ddc-5ce8-4b35-8da2-05fa538b850e",
+      "terms": {
+        "fr": "126aa994-a7b6-4ecd-b583-bdc92c312098",
+        "en": "d8954391-6726-4f6b-ab4f-1670e75539f6"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "CELEBRATION",
+      "concept_id": "5da7ea63-70ad-4692-920b-cd9f6aed0929",
+      "terms": {
+        "fr": "80cfc354-cb0e-4795-8a1f-4d0dd1f41141",
+        "en": "eab60a39-1f39-45ef-b330-93f138d94246"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "CLOUD",
+      "concept_id": "8d59718f-f682-4e30-b565-10ea7f541e10",
+      "terms": {
+        "fr": "226a04ff-e9ce-43f8-ae4d-ecd74b3726c8",
+        "en": "d3c80dc3-7440-4f8f-8e03-09ee95488b02"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "COLOURFUL",
+      "concept_id": "f6892d3b-3f10-4651-ba2d-90941bdfc03f",
+      "terms": {
+        "en": "7636eeb5-e46c-4cc6-b6bc-34e32885280b",
+        "fr": "b7ab8f05-aef7-49c5-bc36-91e2166c0eaa"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "COOK",
+      "concept_id": "647bc749-9ecc-4076-8561-66a702dd77b6",
+      "terms": {
+        "en": "8d0433f6-669b-4ea6-9773-fb53da947889",
+        "fr": "b5113ec2-d60a-442c-9a6e-6619d2a4222b"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "DANCE",
+      "concept_id": "e637f110-6437-4315-a2df-b5bb3e9e93fa",
+      "terms": {
+        "en": "554c5938-b878-4a2d-b040-bbb3fa5cd6fc",
+        "fr": "ca322dc2-8682-47ad-af41-e286034a8b46"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "DRAW",
+      "concept_id": "4309908b-07d7-4c68-a5ba-c4082319f5c5",
+      "terms": {
+        "en": "5607c688-acdc-46ec-bd78-9dd39f6798e1",
+        "fr": "665916ab-65ff-4480-aa2b-9f43d89cf894"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "EMPTY",
+      "concept_id": "4844db62-2e76-4334-b239-7640a228e7dc",
+      "terms": {
+        "fr": "c5f57284-44f4-468a-aff1-6762da4fa8c1",
+        "en": "f5c48045-4806-4539-934e-0666f1217a03"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "FLOWER",
+      "concept_id": "fe29c107-0683-4ff5-8168-a29465c13069",
+      "terms": {
+        "fr": "8e6ee0da-ccc8-4d88-8631-1945c4424ce9",
+        "en": "e5d12bcb-d691-4bb9-8c1d-12073608e60e"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "FOREST",
+      "concept_id": "42115584-2d1c-4ec2-94ca-9c29a0d2ec43",
+      "terms": {
+        "en": "b8dda6fb-2982-4f10-8559-c15f8ed3370a",
+        "fr": "c4655a35-2242-4e3f-ba88-8ee7a287b3c4"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "FORK",
+      "concept_id": "96959e20-f0c4-4fef-a424-da4f943f93cd",
+      "terms": {
+        "en": "c76aa367-71b2-4872-8a8d-f76db87682fb",
+        "fr": "f9e9d9b6-7a71-4b9e-a771-cb0e3fdea2b7"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "FREEDOM",
+      "concept_id": "0a6dfd97-53d0-4d8e-87dc-b73cdc548808",
+      "terms": {
+        "fr": "6e2d4869-5e00-4ad5-aaa3-1293de17a705",
+        "en": "cabe0f62-13b4-4a0e-9874-52b6b673023e"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "FRIENDSHIP",
+      "concept_id": "e7084c9d-39ed-4be8-92f9-ce90d44c5a40",
+      "terms": {
+        "fr": "5498d630-9f9a-43fa-b4b7-48942b5a297d",
+        "en": "ec46d8a5-bba5-4095-9732-60d66aa48719"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "GRASS",
+      "concept_id": "33f095e4-a0bd-411f-9d6d-9abdfc306d8d",
+      "terms": {
+        "fr": "1319504c-ee23-49dc-9d57-c833055ed6e5",
+        "en": "1a3fd18b-9032-49cd-af50-b9637ce3e0ac"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "GREET",
+      "concept_id": "e9c22f84-c9d7-47a2-8d57-94e1772bf3f0",
+      "terms": {
+        "fr": "7e509549-0ecb-4a5d-b4cc-c7ac105e7f79",
+        "en": "b164b517-a862-4131-a966-477804e8eacc"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "HAPPINESS",
+      "concept_id": "8b9dc53f-2062-4835-b0f1-e557ab62b0cc",
+      "terms": {
+        "en": "32cbf662-e89e-4d75-8236-325e917e1dd4",
+        "fr": "ab1b000f-1526-4758-b543-1f09c8e32262"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "HELP",
+      "concept_id": "9a2c3229-9c00-4262-b86e-aab5d915547b",
+      "terms": {
+        "en": "8dd49ce2-2d13-4965-8492-ec02d956dd4f",
+        "fr": "c32035d7-b0fe-4bcc-af0a-d527ca08644d"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "HOPE",
+      "concept_id": "f846890f-ed8c-4b6b-8df7-ca4c6227b200",
+      "terms": {
+        "fr": "5eaa2703-a469-4951-999c-b1ad242117cc",
+        "en": "745b834b-91e2-47d2-93a6-9f4a659116bb"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "KITCHEN",
+      "concept_id": "6fc8c28c-a34f-4535-aeb5-793daa99a049",
+      "terms": {
+        "fr": "bec54575-1fb6-4b01-ba4d-03671a37f5f6",
+        "en": "e28114e4-51a3-4044-ac33-bcba7aa4f9b7"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "LEAF",
+      "concept_id": "2331fb87-61df-41f2-beca-853407972459",
+      "terms": {
+        "fr": "65a4065b-0aa1-4b3c-ada3-185816fa0eb8",
+        "en": "b00c9d7b-22ca-4c35-a392-dc316b127158"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "LONELINESS",
+      "concept_id": "5da2dedb-9e6f-4159-972a-dc4b0cee8a13",
+      "terms": {
+        "fr": "41dab7b8-0765-4777-9b9c-f47669005d72",
+        "en": "49ad930b-1a2b-4890-9666-68bb6f6929f8"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "MESSY",
+      "concept_id": "2e2c37d1-4665-48cf-a251-2baf63727202",
+      "terms": {
+        "en": "4fdf1b2d-2d74-486a-9816-6ec077079439",
+        "fr": "e3ed5261-d40f-4716-9234-82ec764c52cc"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "PARK",
+      "concept_id": "f9c1fc89-5737-45fa-bb33-212ca5d917fe",
+      "terms": {
+        "en": "4a645b59-7c62-4418-8147-3b7773bbbb60",
+        "fr": "f08e06c3-8552-4c0c-a599-a74e04c69592"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "PATIENCE",
+      "concept_id": "53cad9ea-549d-46a3-8585-2c0618fa03da",
+      "terms": {
+        "fr": "5fbc0123-7917-45a3-86fe-3e3faf0153e2",
+        "en": "90f8df7e-8280-4191-9e04-d53c8d7ceb47"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "PICNIC",
+      "concept_id": "3760b3fc-8456-46b2-aab8-c4033c1f97cf",
+      "terms": {
+        "fr": "f9f039ad-96ed-4b98-aae4-f966f5fbfc95",
+        "en": "fe07f561-f354-43ba-8164-ded1f5f28b12"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "PILLOW",
+      "concept_id": "3316593a-5149-4854-97de-da24cb2d474e",
+      "terms": {
+        "fr": "df7968be-7bb3-4c30-acfb-2e3df2497542",
+        "en": "f4bdf267-0ed3-4762-a66b-015975b30526"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "PLATE",
+      "concept_id": "d3085ce1-4118-46b8-b864-6c9f781bafe6",
+      "terms": {
+        "en": "215243df-8007-4a16-8280-0b9a31f54300",
+        "fr": "3647fb0f-16e8-4c8f-a22d-2584c7a6c16e"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "PLAYGROUND",
+      "concept_id": "a03e2500-47d3-40fb-a745-d2953a974f25",
+      "terms": {
+        "en": "abbb7e1f-54f2-49a5-9ce3-bc76b9be1710",
+        "fr": "d0d3e3d3-469d-43dd-b00b-4cb9d00f5d96"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "PUDDLE",
+      "concept_id": "3c5db177-4528-4709-8186-5ed554d44232",
+      "terms": {
+        "fr": "0bcf5719-8495-4a79-b4f7-3369c8d4013d",
+        "en": "8a091a35-5b33-4271-8a95-b68d78ab2e0d"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "RABBIT",
+      "concept_id": "fba8fb10-b991-4185-bdf2-a71ed727f256",
+      "terms": {
+        "en": "0b40cfcb-93ee-475e-b6c2-6114a4efea4e",
+        "fr": "7a4ccfd9-f3a5-423c-aa9f-0a6251f972c5"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "RAIN",
+      "concept_id": "e924f2bb-6c18-4b94-afab-4e3a09084033",
+      "terms": {
+        "fr": "09c1fd02-e93c-43e6-9d7d-e93634e4e43d",
+        "en": "6364f94a-a501-4eda-a593-0ddf49c4b97b"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "RAINBOW",
+      "concept_id": "7c8342f7-d96a-45b5-9e77-a477c1353600",
+      "terms": {
+        "en": "d3f5c253-51f0-4642-af42-3a3f1c89462e",
+        "fr": "eaeb134c-dab6-4be6-961b-eb7ebdc5db3b"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "READ",
+      "concept_id": "a7aec205-583b-4d42-a08f-530b61f744cf",
+      "terms": {
+        "fr": "69fe1b9a-a614-40c5-aa65-0c86fcb7f969",
+        "en": "f7d6a8b2-edc1-4e05-8271-54390a500f57"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "RELIEF",
+      "concept_id": "ee24a49b-8e52-4e74-ae56-b4e1da0aa5b7",
+      "terms": {
+        "en": "1f4382af-6080-46e0-8456-f3b37ab2b86f",
+        "fr": "51807493-ae44-4c1e-8545-c1aa97fabd53"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "ROUND",
+      "concept_id": "84b51a66-ea53-43e7-8f1f-826308e9b5e5",
+      "terms": {
+        "en": "35ed68ef-a991-4281-9ef6-b5d6070bdd6e",
+        "fr": "5bd0b041-a90b-4540-9da6-a3bb012e56b7"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "RUN",
+      "concept_id": "99508dc5-5a5b-4587-badd-9d3d8b928231",
+      "terms": {
+        "en": "144e73f3-f660-4f84-afac-bb32d011da27",
+        "fr": "dd6c4dc7-6e9d-40d2-9247-997075ae4a5e"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "SADNESS",
+      "concept_id": "f352a7e8-4711-4be3-85f1-1f46a7b276df",
+      "terms": {
+        "fr": "3543424a-2854-41d7-82dd-61acbfff4f8f",
+        "en": "7d726526-d8df-469a-9852-729d1dc0161e"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "SCISSORS",
+      "concept_id": "75f79b3c-51dc-40c6-8084-0ce5568bda73",
+      "terms": {
+        "fr": "76b110ee-df0f-4894-a3e7-d151f7ed1177",
+        "en": "da08a1a7-b314-4fbf-a357-24f3b43cc0a5"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "SHARE",
+      "concept_id": "9341d318-4e18-457d-9c55-3c5efd6507c7",
+      "terms": {
+        "en": "3f53b07e-ef65-4ba5-ac08-54cfffb98f38",
+        "fr": "645b03a2-99e2-42e0-af22-6a740a4856a1"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "SNAIL",
+      "concept_id": "fd5b3233-79b2-495a-b1bf-4a46e7ddeedf",
+      "terms": {
+        "fr": "0b198949-5f51-45d2-b785-3a4f58b27fcc",
+        "en": "aad599f4-b62f-4611-bc83-81512087d64f"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "SNOW",
+      "concept_id": "fb991911-5606-44c2-a95d-99230d12ecd6",
+      "terms": {
+        "fr": "5a4f5fe8-1cdf-4c80-a7bd-7cb96c808787",
+        "en": "c414e86d-56bf-4ee3-9548-a7b23c5c165e"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "SPOON",
+      "concept_id": "72b72e0a-3594-4b0e-ae41-6cc1bc93427a",
+      "terms": {
+        "en": "97346abd-b774-4ecf-ba9e-d642ebd3cf09",
+        "fr": "c1117be7-6801-497c-8016-580334382e6c"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "STRETCH_BODY",
+      "concept_id": "d37ae575-5796-4822-bd37-5a364fda42a7",
+      "terms": {
+        "en": "2dd03f07-4b2c-4e55-aa92-553b07c89cfc",
+        "fr": "369a5ef8-2466-451a-8b4f-8fb29ea75b12"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "SUNSET",
+      "concept_id": "f2bb5d48-d876-4678-885c-b41c6002b133",
+      "terms": {
+        "en": "3a650c60-9a3a-4028-9d58-50b99fa258b8",
+        "fr": "3bfb2712-70bf-440a-b9f4-427e107d2776"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "SURPRISE",
+      "concept_id": "33e7cb6d-05ad-43a1-a32e-1c4e02631308",
+      "terms": {
+        "fr": "660b7185-c2d9-4374-a954-9b258c37b08e",
+        "en": "e6d81331-b8fc-446e-ac31-277b8afe68e6"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "WAITING_LINE",
+      "concept_id": "d91dc0b9-508f-4bca-a99c-d0458e253f46",
+      "terms": {
+        "en": "3b8613af-8b11-487b-9c06-53b2f0932055",
+        "fr": "c0a6199a-f9c0-42c2-ae8c-bfceee392dc6"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "WALK",
+      "concept_id": "9db747a9-9651-48ed-bcb2-a60e5eb1b24a",
+      "terms": {
+        "fr": "a16308f5-ac33-4c71-af52-6b41aa779ca3",
+        "en": "d7b0088a-6469-49fd-be43-1131dcbf930d"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "WASH_HANDS",
+      "concept_id": "95d0b043-5cc6-4227-91aa-de457696328c",
+      "terms": {
+        "fr": "019105bf-a3b6-4cc3-b674-194751156f1d",
+        "en": "bf53b58f-fa37-472d-b7e1-344916f28cbd"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "WATER_WAVE",
+      "concept_id": "d180b0a6-a43b-46d6-8105-8893c06d3934",
+      "terms": {
+        "fr": "4b5580d9-88c2-4ac6-9273-2eff46178075",
+        "en": "fd94173a-6455-45c4-9dff-b2df6fb2a038"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "WET",
+      "concept_id": "f33f0b20-c120-467f-b0cb-c49daafc650d",
+      "terms": {
+        "en": "46c8f58c-12c8-4f90-ad22-fed5026fa262",
+        "fr": "af91dbc9-477f-4deb-9c8f-ec66da08c0f5"
+      },
+      "guidance_locales": ["en", "fr"]
+    },
+    {
+      "concept_key": "WORRY",
+      "concept_id": "907e0e41-2003-43f4-bc4e-13ba6e4f6af9",
+      "terms": {
+        "fr": "d14e1b1b-9dff-406e-bf97-03c389dc3958",
+        "en": "d45703fc-15c7-46f6-a724-a32c85fc3307"
+      },
+      "guidance_locales": ["en", "fr"]
+    }
+  ]
+}

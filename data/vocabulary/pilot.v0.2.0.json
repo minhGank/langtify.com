@@ -18,12 +18,12 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Show a made bed without people or private details.",
-        "alternative": "Photograph another safely accessible bed in your home from a seated position.",
-        "alternative_mode": "literal",
+        "alternative": "Photograph a miniature bed with its mattress and blanket visible.",
+        "alternative_mode": "interpretive",
         "difficulty": "easy",
         "accessibility": "Low effort indoors; no lifting or rearranging needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -76,7 +76,7 @@
         "difficulty": "easy",
         "accessibility": "Low effort; avoid identifying bedroom details.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -110,7 +110,9 @@
         "concerns": [
           "Retain sleeping-head-support sense; decorative cushion is not the same concept."
         ],
-        "translation_evidence": [],
+        "translation_evidence": [
+          "https://dictionary.cambridge.org/dictionary/french-english/oreiller — Dictionary excerpt supports masculine oreiller as sleeping head support, not a decorative cushion."
+        ],
         "cefr_evidence": {
           "en": [],
           "fr": []
@@ -131,7 +133,7 @@
         "difficulty": "easy",
         "accessibility": "Common indoor object; avoid personal labels.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -184,16 +186,16 @@
         "difficulty": "easy",
         "accessibility": "Low effort; do not require glass or ceramics.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "plate",
           "display": "plate",
           "aliases": [],
-          "cefr": "A1",
+          "cefr": "A2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Basic mealtime noun. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -218,7 +220,9 @@
         "concerns": ["Exclude a tray or deep bowl; preserve prior PLATE identity."],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -237,16 +241,16 @@
         "difficulty": "easy",
         "accessibility": "Low effort indoors.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "spoon",
           "display": "spoon",
           "aliases": [],
-          "cefr": "A1",
+          "cefr": "A2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common eating utensil taught in routine meal contexts. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -271,7 +275,9 @@
         "concerns": ["Cuiller is an accepted spelling variant, not a second concept."],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -290,16 +296,16 @@
         "difficulty": "easy",
         "accessibility": "Low effort; no handling sharp points.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "fork",
           "display": "fork",
           "aliases": [],
-          "cefr": "A1",
+          "cefr": "A2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common mealtime noun in its concrete utensil sense. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -324,7 +330,9 @@
         "concerns": ["Eating sense only, not a road junction or gardening tool."],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -343,7 +351,7 @@
         "difficulty": "easy",
         "accessibility": "No wearing or lifting required; hide school/address labels.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -396,7 +404,7 @@
         "difficulty": "moderate",
         "accessibility": "Low effort; keep blades closed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -449,16 +457,16 @@
         "difficulty": "context_dependent",
         "accessibility": "Seasonal; a model is an interpretive alternative, not a live specimen.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "butterfly",
           "display": "butterfly",
           "aliases": [],
-          "cefr": "A2",
+          "cefr": "B1",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common nature noun, but not universal first-list animal vocabulary. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional B1 estimate: Cambridge labels this concrete English sense B1. Familiarity and photo accessibility do not establish A2 lexical difficulty. Independent curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -485,7 +493,7 @@
         ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": ["https://dictionary.cambridge.org/us/dictionary/english/butterfly"],
           "fr": []
         }
       }
@@ -499,12 +507,12 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Photograph a bird from a window without approaching a nest.",
-        "alternative": "Photograph a bird-shaped toy with a visible beak and wings.",
+        "alternative": "Photograph a paper bird or toy with a visible beak and wings.",
         "alternative_mode": "interpretive",
         "difficulty": "context_dependent",
         "accessibility": "Window access or a model; no feeding or disturbing wildlife.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -557,7 +565,7 @@
         "difficulty": "context_dependent",
         "accessibility": "Live access is optional; model is interpretive.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -610,7 +618,7 @@
         "difficulty": "context_dependent",
         "accessibility": "Outdoor/seasonal; use a model if needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -663,7 +671,7 @@
         "difficulty": "context_dependent",
         "accessibility": "Small subject; focus may be difficult; model optional.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -716,7 +724,7 @@
         "difficulty": "easy",
         "accessibility": "Seasonal live access; no picking or purchase needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -766,21 +774,21 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Photograph a leaf still attached to a plant.",
-        "alternative": "Show a fallen leaf with a visible blade and veins.",
-        "alternative_mode": "literal",
+        "alternative": "Photograph a paper leaf with a stalk and drawn veins.",
+        "alternative_mode": "interpretive",
         "difficulty": "easy",
-        "accessibility": "Often accessible; no touching unknown plants.",
+        "accessibility": "A paper model avoids outdoor access or touching an unknown plant.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "leaf",
           "display": "leaf",
           "aliases": [],
-          "cefr": "A2",
+          "cefr": "B1",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Everyday plant-part noun with irregular plural leaves. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional B1 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -803,9 +811,13 @@
         "reviewer": null,
         "reviewed_at": null,
         "concerns": ["French feuille also means sheet; the plant definition controls this pair."],
-        "translation_evidence": [],
+        "translation_evidence": [
+          "https://www.collinsdictionary.com/dictionary/english-french/leaf — Dictionary excerpt separates plant feuille from paper/table senses; its English label is not a French CEFR rating."
+        ],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -819,21 +831,21 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Show a patch of grass from a safe path or window.",
-        "alternative": "Photograph a small already accessible patch beside a walkway.",
-        "alternative_mode": "literal",
+        "alternative": "Arrange paper blades into a small tuft of grass.",
+        "alternative_mode": "interpretive",
         "difficulty": "context_dependent",
-        "accessibility": "Seasonal/local access; no stepping onto private land.",
+        "accessibility": "A tabletop model avoids seasonal or garden-access requirements.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "grass",
           "display": "grass",
           "aliases": [],
-          "cefr": "A1",
+          "cefr": "A2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Basic landscape noun in the vegetation sense. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -860,7 +872,9 @@
         ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -879,7 +893,7 @@
         "difficulty": "moderate",
         "accessibility": "No user needs to run; a toy scene is interpretive and may be less clear.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -925,13 +939,13 @@
       "photography": {
         "photographable": true,
         "mode": "literal",
-        "guidance": "Photograph your own feet mid-step only while safely stationary for capture, or a consenting adult walking.",
+        "guidance": "With consent, photograph an adult walking while you stay still to frame the shot.",
         "alternative": "Pose a toy figure with one foot forward and the other supporting it.",
         "alternative_mode": "interpretive",
         "difficulty": "moderate",
-        "accessibility": "No walking required; seated staging available.",
+        "accessibility": "A seated toy setup is an option; do not walk while framing the photo.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -983,7 +997,7 @@
         "difficulty": "easy",
         "accessibility": "Can be seated; no face, private messages or legible personal text.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1035,7 +1049,7 @@
         "difficulty": "moderate",
         "accessibility": "No heat, knives, eating or special diet required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1087,7 +1101,7 @@
         "difficulty": "moderate",
         "accessibility": "Seated or staged interpretation is valid; movement need not be strenuous.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1139,7 +1153,7 @@
         "difficulty": "easy",
         "accessibility": "Tabletop/seated; no artistic skill required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1184,12 +1198,12 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Stage your own hands with soap beside an accessible basin.",
-        "alternative": "Use a small tabletop wash bowl or toy hands with pretend soap.",
+        "alternative": "Stage paper hands with paper foam beside a bowl.",
         "alternative_mode": "interpretive",
         "difficulty": "easy",
-        "accessibility": "No running tap or standing required; do not spill near devices.",
+        "accessibility": "A dry model avoids water near the phone and needs no running tap.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1241,16 +1255,16 @@
         "difficulty": "moderate",
         "accessibility": "No flexibility target; toy alternative for any mobility level.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "stretch",
           "display": "stretch",
           "aliases": [],
-          "cefr": "A2",
+          "cefr": "B2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common exercise verb with a sense boundary from material stretching. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional B2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -1269,10 +1283,15 @@
         "status": "draft",
         "reviewer": null,
         "reviewed_at": null,
-        "concerns": ["Body sense, not stretching fabric; no pain or medical benefit claim."],
+        "concerns": [
+          "Body sense, not stretching fabric; no pain or medical benefit claim.",
+          "The English reference headword includes several senses; confirm B2 for the body-exercise sense rather than treating all stretch senses as identical."
+        ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -1291,16 +1310,16 @@
         "difficulty": "moderate",
         "accessibility": "Solo tabletop option; showing a real face is optional.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "happiness",
           "display": "happiness",
           "aliases": [],
-          "cefr": "A2",
+          "cefr": "B1",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common emotion noun formed from happy; noun may follow the simpler adjective. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional B1 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -1327,7 +1346,9 @@
         ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -1346,7 +1367,7 @@
         "difficulty": "moderate",
         "accessibility": "Entirely staged; no real distress or personal disclosure needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1401,7 +1422,7 @@
         "difficulty": "moderate",
         "accessibility": "Solo prop scene; no prank, startle or real gift required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1454,16 +1475,16 @@
         "difficulty": "moderate",
         "accessibility": "Safe staged expression; no shouting, threats or conflict required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "anger",
           "display": "anger",
           "aliases": [],
-          "cefr": "B1",
+          "cefr": "B2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Abstract emotion noun less elementary than angry; provisional independent estimate. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional B2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -1490,7 +1511,9 @@
         ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -1509,7 +1532,7 @@
         "difficulty": "moderate",
         "accessibility": "No personal deadlines, finances or real anxious event needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1564,7 +1587,7 @@
         "difficulty": "moderate",
         "accessibility": "No real danger or distress; one staged scene is enough.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1614,12 +1637,12 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Photograph evening sky colours from a safe window without looking directly at the sun.",
-        "alternative": "Use your own previously taken sunset photo through the existing library flow.",
-        "alternative_mode": "literal",
+        "alternative": "Stage a paper sun half-hidden behind a dark horizon against an orange sky.",
+        "alternative_mode": "interpretive",
         "difficulty": "context_dependent",
-        "accessibility": "Time/weather dependent; no travel or staring at the sun.",
+        "accessibility": "The model avoids waiting for evening; a colourful real sky alone cannot establish the time.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1672,16 +1695,16 @@
         "difficulty": "context_dependent",
         "accessibility": "Weather dependent; tabletop model is interpretive.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "rainbow",
           "display": "rainbow",
           "aliases": [],
-          "cefr": "A2",
+          "cefr": "B2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common nature noun; not technical optics vocabulary. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional B2 estimate: Cambridge labels this concrete English sense B2. Familiarity and photo accessibility do not establish A2 lexical difficulty. Independent curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -1708,7 +1731,7 @@
         ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": ["https://dictionary.cambridge.org/us/dictionary/english/rainbow"],
           "fr": []
         }
       }
@@ -1722,12 +1745,12 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Photograph falling rain through a closed window.",
-        "alternative": "Use your own earlier rain photo through the existing library flow.",
-        "alternative_mode": "literal",
+        "alternative": "Hang paper raindrops beneath a paper cloud to suggest falling rain.",
+        "alternative_mode": "interpretive",
         "difficulty": "context_dependent",
-        "accessibility": "Weather dependent; stay indoors and keep the device dry.",
+        "accessibility": "Stay dry indoors; the model needs no water.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1780,7 +1803,7 @@
         "difficulty": "context_dependent",
         "accessibility": "Seasonal; staging available; no cold exposure or slippery access needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1835,16 +1858,16 @@
         "difficulty": "easy",
         "accessibility": "Window or tabletop access; never lean out.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "cloud",
           "display": "cloud",
           "aliases": [],
-          "cefr": "A1",
+          "cefr": "A2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Basic weather noun with the digital sense excluded. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -1869,7 +1892,9 @@
         "concerns": ["Keep the sky/weather sense; no smoke simulation."],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -1883,12 +1908,12 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Photograph a puddle from dry safe ground.",
-        "alternative": "Stage a shallow water patch on a waterproof tray away from electronics.",
-        "alternative_mode": "literal",
+        "alternative": "Place an irregular shape of shiny blue paper on a tray to represent a puddle.",
+        "alternative_mode": "interpretive",
         "difficulty": "moderate",
-        "accessibility": "Weather optional; contain all staged water.",
+        "accessibility": "A dry model avoids spills; show the boundary of the water shape.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1936,12 +1961,12 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Photograph small water waves from a safe shore or barrier.",
-        "alternative": "Make a gentle wave in a shallow tray and photograph from a dry position.",
-        "alternative_mode": "literal",
+        "alternative": "Curve a strip of blue paper into a wave rising above a blue surface.",
+        "alternative_mode": "interpretive",
         "difficulty": "moderate",
-        "accessibility": "No swimming, beach trip or rough water required.",
+        "accessibility": "No swimming, travel or real water required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -1994,7 +2019,7 @@
         "difficulty": "context_dependent",
         "accessibility": "Outdoor access optional; no identifiable passers-by.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2047,7 +2072,7 @@
         "difficulty": "context_dependent",
         "accessibility": "Travel optional; tabletop interpretation available.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2100,7 +2125,7 @@
         "difficulty": "context_dependent",
         "accessibility": "No remote walk required; tabletop interpretation available.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2150,12 +2175,12 @@
         "photographable": true,
         "mode": "literal",
         "guidance": "Photograph empty play equipment when permitted and no children are present.",
-        "alternative": "Stage a small toy slide and swing area.",
+        "alternative": "Stage a miniature slide and swing made from paper.",
         "alternative_mode": "interpretive",
         "difficulty": "context_dependent",
         "accessibility": "No children or strangers needed; access/permission varies.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2204,13 +2229,13 @@
       "photography": {
         "photographable": true,
         "mode": "literal",
-        "guidance": "Show part of your kitchen with a work surface and safe appliances.",
+        "guidance": "Show part of a kitchen with its work surface and switched-off appliances.",
         "alternative": "Photograph a toy kitchen with its preparation area visible.",
         "alternative_mode": "interpretive",
         "difficulty": "easy",
-        "accessibility": "Seated or model option; omit addresses and personal papers.",
+        "accessibility": "Hide mail and private details; do not switch on appliances.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2265,7 +2290,7 @@
         "difficulty": "moderate",
         "accessibility": "No road entry, travel, timetables with personal data or passengers needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2318,7 +2343,7 @@
         "difficulty": "moderate",
         "accessibility": "Solo staging available; no face or physical contact required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2364,22 +2389,22 @@
       "photography": {
         "photographable": true,
         "mode": "literal",
-        "guidance": "Photograph consenting hands dividing fruit pieces between two plates.",
+        "guidance": "With consent, photograph hands dividing small objects between two people.",
         "alternative": "Arrange two toy figures with equal portions of pretend food being passed.",
         "alternative_mode": "interpretive",
         "difficulty": "moderate",
         "accessibility": "No eating, spending or other person required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "share",
           "display": "share",
           "aliases": [],
-          "cefr": "A2",
+          "cefr": "A1",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. High-utility social verb; digital reposting is outside this sense. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A1 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -2401,7 +2426,9 @@
         "concerns": ["Sharing is distribution/access, not the same as helping or friendship."],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -2420,7 +2447,7 @@
         "difficulty": "moderate",
         "accessibility": "Tabletop and solo options; use light props.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2466,13 +2493,13 @@
       "photography": {
         "photographable": true,
         "mode": "interpretive",
-        "guidance": "Stage a small decorated tabletop with reusable paper bunting.",
-        "alternative": "Photograph two toy figures beside a paper rosette and celebratory arrangement.",
+        "guidance": "Stage a festive tabletop with paper bunting and a fictional occasion card.",
+        "alternative": "Photograph two toy figures beside decorations and a fictional birthday card.",
         "alternative_mode": "interpretive",
         "difficulty": "moderate",
-        "accessibility": "Solo, low-cost staging; no guests, alcohol or candles required.",
+        "accessibility": "No guests, alcohol, candles or purchases required; hide real names and dates.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2506,7 +2533,9 @@
         "concerns": [
           "Fête is natural for this occasion; not any public holiday. Happiness is a feeling, not the event."
         ],
-        "translation_evidence": [],
+        "translation_evidence": [
+          "https://dictionary.cambridge.org/dictionary/english-french/celebration — Dictionary excerpt supports fête for an occasion; ceremonial célébration is not required here."
+        ],
         "cefr_evidence": {
           "en": [],
           "fr": []
@@ -2527,7 +2556,7 @@
         "difficulty": "moderate",
         "accessibility": "No travel, cooking or eating required; indoor model available.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2580,7 +2609,7 @@
         "difficulty": "moderate",
         "accessibility": "Solo tabletop option; no real queue, strangers or crowd needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2635,16 +2664,16 @@
         "difficulty": "easy",
         "accessibility": "Quick, reversible indoor setup; no personal home judgement.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "messy",
           "display": "messy",
           "aliases": [],
-          "cefr": "A2",
+          "cefr": "B1",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common descriptive adjective in the untidy sense. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional estimate revised to B1: Cambridge labels the DIRTY/UNTIDY sense B1 (checked 2026-10-21). This supports the English sense only; independent curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -2666,9 +2695,11 @@
         "concerns": [
           "French en désordre is an invariable adjectival phrase, more accurate here than sale. No shame about living conditions."
         ],
-        "translation_evidence": [],
+        "translation_evidence": [
+          "https://dictionary.cambridge.org/dictionary/english-french/messy — Dictionary supports en désordre for untidy arrangement; sale would introduce dirt."
+        ],
         "cefr_evidence": {
-          "en": [],
+          "en": ["https://dictionary.cambridge.org/us/dictionary/english/messy"],
           "fr": []
         }
       }
@@ -2687,16 +2718,16 @@
         "difficulty": "easy",
         "accessibility": "Low effort seated setup.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "empty",
           "display": "empty",
           "aliases": [],
-          "cefr": "A1",
+          "cefr": "A2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Basic descriptive adjective. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -2721,7 +2752,9 @@
         "concerns": ["Not loneliness or an abandoned place; describe visible lack of contents."],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -2740,7 +2773,7 @@
         "difficulty": "easy",
         "accessibility": "Small contained setup; no floor spills or bad weather required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2772,7 +2805,9 @@
         "reviewer": null,
         "reviewed_at": null,
         "concerns": ["State of an object, distinct from falling RAIN or a pooled PUDDLE."],
-        "translation_evidence": [],
+        "translation_evidence": [
+          "https://dictionary.cambridge.org/dictionary/english-french/wet — Dictionary excerpt supports mouillé for a wet surface, separately from rainy weather."
+        ],
         "cefr_evidence": {
           "en": [],
           "fr": []
@@ -2793,16 +2828,16 @@
         "difficulty": "easy",
         "accessibility": "Low effort; assistive help choosing colours is optional.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "colourful",
           "display": "colourful",
           "aliases": ["colorful"],
-          "cefr": "A2",
+          "cefr": "B1",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common descriptive adjective using Canadian spelling. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional estimate revised to B1: Cambridge labels the APPEARANCE sense B1 (checked 2026-10-21). This supports the English sense only; independent curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -2829,7 +2864,7 @@
         ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": ["https://dictionary.cambridge.org/dictionary/english/colourful"],
           "fr": []
         }
       }
@@ -2848,16 +2883,16 @@
         "difficulty": "easy",
         "accessibility": "Simple indoor setup; no object-specific purchase.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "round",
           "display": "round",
           "aliases": [],
-          "cefr": "A1",
+          "cefr": "A2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Basic shape adjective. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -2882,7 +2917,9 @@
         "concerns": ["Property rather than a new lid/ball concept; the outline must be visible."],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -2895,13 +2932,13 @@
       "photography": {
         "photographable": true,
         "mode": "literal",
-        "guidance": "Photograph an already broken harmless toy or pencil resting safely.",
+        "guidance": "Photograph an already broken harmless object, without sharp edges or electrical parts, resting safely.",
         "alternative": "Stage a toy with a removable part detached beside its matching empty socket; this represents damage without actually breaking anything.",
         "alternative_mode": "interpretive",
         "difficulty": "moderate",
         "accessibility": "Do not break anything; no glass, live wiring or exposed sharp parts.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -2956,7 +2993,7 @@
         "difficulty": "moderate",
         "accessibility": "Solo prop scene; no actual relationship disclosure needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
@@ -3005,22 +3042,22 @@
       "photography": {
         "photographable": true,
         "mode": "interpretive",
-        "guidance": "Stage one toy figure apart from a small welcoming-looking group.",
-        "alternative": "Photograph an unused second place setting beside one occupied toy seat.",
+        "guidance": "Stage one toy figure apart from a group, turned toward it as if wanting to join.",
+        "alternative": "Stage a sad-looking toy at two place settings, with the second setting unused.",
         "alternative_mode": "interpretive",
         "difficulty": "moderate",
-        "accessibility": "Entirely fictional scene; no isolated strangers or painful disclosure.",
+        "accessibility": "No isolated strangers or disclosure; being alone does not necessarily mean loneliness.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "loneliness",
           "display": "loneliness",
           "aliases": [],
-          "cefr": "B2",
+          "cefr": "C1",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Abstract feeling noun with nuance distinct from alone and voluntary solitude. Independent English learner-level review required.",
+          "cefr_rationale": "C1 selected by the product owner on 2026-10-26 for the limited pilot, resolving the earlier B2/C1 choice. This is owner curriculum approval, not independent linguistic certification. The noun and unwanted-disconnection meaning are unchanged.",
           "grammar": null
         },
         "fr": {
@@ -3045,9 +3082,14 @@
         "concerns": [
           "Being alone is not necessarily loneliness; French qualifier sentiment de keeps the emotional sense, not chosen solitude."
         ],
-        "translation_evidence": [],
+        "translation_evidence": [
+          "https://dictionary.cambridge.org/us/dictionary/french-english/solitude — Dictionary excerpt gives solitude/ loneliness; sentiment de preserves the approved emotional sense, with unwantedness supplied by definition/context."
+        ],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://dictionary.cambridge.org/dictionary/english/loneliness",
+            "Owner curriculum decision, 2026-10-26: English loneliness C1; other classifications remain provisional. See owner-approval.v0.2.0.json."
+          ],
           "fr": []
         }
       }
@@ -3066,16 +3108,16 @@
         "difficulty": "moderate",
         "accessibility": "Solo and seated; do not make users wait to take the photo.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "patience",
           "display": "patience",
           "aliases": [],
-          "cefr": "B1",
+          "cefr": "B2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common abstract quality noun requiring calm waiting/persistence sense. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional estimate revised to B2: Cambridge labels the QUALITY sense B2 (checked 2026-10-21). This supports the English sense only; independent curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -3102,7 +3144,7 @@
         ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": ["https://dictionary.cambridge.org/us/dictionary/english/patience"],
           "fr": []
         }
       }
@@ -3121,16 +3163,16 @@
         "difficulty": "moderate",
         "accessibility": "No gardening, sunlight access or actual adversity required.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "hope",
           "display": "hope",
           "aliases": [],
-          "cefr": "B1",
+          "cefr": "A2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common abstract future-oriented noun, not merely a prediction. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional A2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -3155,9 +3197,13 @@
         "concerns": [
           "Symbolic interpretation may be culturally variable; a plant alone need not mean hope."
         ],
-        "translation_evidence": [],
+        "translation_evidence": [
+          "https://www.larousse.fr/dictionnaires/anglais-francais/hope/586969 — Larousse supports masculine espoir for the desire/expectation noun; not the verb espérer."
+        ],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }
@@ -3176,16 +3222,16 @@
         "difficulty": "moderate",
         "accessibility": "Tabletop staging; no real captivity, trespass, animal release or political event needed.",
         "availability": "review_required",
-        "safety": "Use your own safe setting and props. Any real participant must consent to capture and any sharing; crop out faces and identifying details where possible. No strangers, children, distress, hazards, purchases or disclosure are required. Staged scenes are acceptable proposals, not claims about real people."
+        "safety": "Use a safe setting and props you already have. Ask any participant for consent to the photo and any sharing; cropping may not hide identity. Avoid strangers, children, private details and hazards. Do not provoke real distress. A staged scene is an interpretation, not proof about a person."
       },
       "terms": {
         "en": {
           "lemma": "freedom",
           "display": "freedom",
           "aliases": [],
-          "cefr": "B1",
+          "cefr": "B2",
           "cefr_review_band": null,
-          "cefr_rationale": "Provisional editorial estimate. Common social abstract noun with a sense broader than free of cost. Independent English learner-level review required.",
+          "cefr_rationale": "Provisional B2 estimate after English headword/part-of-speech comparison. The approved sense remains unchanged; this does not determine French difficulty. Human sense-specific curriculum review remains pending.",
           "grammar": null
         },
         "fr": {
@@ -3212,7 +3258,9 @@
         ],
         "translation_evidence": [],
         "cefr_evidence": {
-          "en": [],
+          "en": [
+            "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+          ],
           "fr": []
         }
       }

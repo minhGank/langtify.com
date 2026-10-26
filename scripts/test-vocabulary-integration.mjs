@@ -1,3 +1,4 @@
+import { testCatalogImport } from './test-vocabulary-catalog.mjs';
 import assert from 'node:assert/strict';
 import { Buffer } from 'node:buffer';
 import { randomUUID } from 'node:crypto';
@@ -7,6 +8,8 @@ import { execute } from './lib/local-db.mjs';
 import { reservePriorDailyFixture } from './lib/prior-daily-fixture.mjs';
 import { cleanupSubmissions } from './cleanup-submissions.mjs';
 import { stripJpegMetadata } from '../src/features/photos/jpeg.ts';
+
+await testCatalogImport();
 
 const api = localApi(),
   users = [];

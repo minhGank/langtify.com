@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { validateManifest, LEVELS, DIVERSE_CATEGORIES } from './lib/vocabulary-manifest.mjs';
 import { validateMeaningApproval, validateGuidance } from './lib/vocabulary-guidance.mjs';
+import { validateEditorialReview } from './lib/vocabulary-catalog.mjs';
 const root = new URL('../', import.meta.url);
 export const jsonFile = (relative) => JSON.parse(readFileSync(new URL(relative, root), 'utf8'));
 export function loadPilot(version = '0.2.0') {
@@ -78,7 +79,7 @@ Parts of speech: ${Object.entries(count('part_of_speech'))
 
 **Literal** means the relevant object, visible action, place or property can appear in the image, including a consenting staged action. **Interpretive** means the scene suggests a meaning through expression, context, a model or metaphor. No photograph proves happiness, loneliness, friendship or another internal state. Both modes are eligible editorially; recognisability still needs human testing. Staging is disclosed in the guidance, not passed off as documentary evidence.
 
-The project owner approved all 60 concept identities and meanings on 2026-10-13, recorded in meaning-approval.v0.2.0.json with per-meaning hashes. Translation accuracy, CEFR estimates and guidance copy are separate: entries retain draft status, with independent bilingual reviewer/date and evidence unset. English guidance copy is staged separately; French localization is supported but not yet authored or approved. Accessibility ratings are estimates, not device-tested guarantees. Easy means a simple reachable setup; moderate needs framing/context; context-dependent needs weather, location, season or a substitute. All 60 still require accessibility review. No user must show a face, involve strangers or children, reveal distress, travel, buy props, perform the depicted physical activity, or enter an unsafe setting. Real participants must consent to capture and any sharing; even cropped images can identify someone. Solo alternatives are provided. Props and library alternatives are options, not hidden requirements.
+The project owner approved all 60 concept identities and meanings on 2026-10-13, recorded in meaning-approval.v0.2.0.json with per-meaning hashes. Translation accuracy, CEFR estimates and guidance copy are separate: entries retain draft status, with independent human reviewer/date unset. The 2026-10-21 model-assisted editorial pass records selected dictionary evidence, 19 English level corrections and a B2/C1 loneliness decision subsequently resolved to C1 by the owner on 2026-10-26. All 60 English and French guidance drafts are now authored; both locales are owner-approved for the limited pilot in owner-approval.v0.2.0.json, without independent linguistic or accessibility certification. See [release preparation](VOCABULARY_RELEASE_PREPARATION.md) and the content-hashed editorial review sidecar. Accessibility ratings are estimates, not device-tested guarantees. Easy means a simple reachable setup; moderate needs framing/context; context-dependent needs weather, location, season or a substitute. All 60 still require accessibility review. No user must show a face, involve strangers or children, reveal distress, travel, buy props, perform the depicted physical activity, or enter an unsafe setting. Real participants must consent to capture and any sharing; even cropped images can identify someone. Solo alternatives are provided. Props and library alternatives are options, not hidden requirements.
 
 ## All 60 proposals
 
@@ -177,20 +178,28 @@ French ${level(c.terms.fr)}: ${c.terms.fr.cefr_rationale}
 
 French grammar: ${grammar(c.terms.fr.grammar)}
 
+French photo draft: ${jsonFile('data/vocabulary/photo-guidance.v0.2.0.json').concepts.find((g) => g.concept_key === c.concept_key).locales.fr.primary_idea}
+
+French alternative: ${jsonFile('data/vocabulary/photo-guidance.v0.2.0.json').concepts.find((g) => g.concept_key === c.concept_key).locales.fr.alternative_idea}
+
+French accessibility: ${jsonFile('data/vocabulary/photo-guidance.v0.2.0.json').concepts.find((g) => g.concept_key === c.concept_key).locales.fr.accessibility_guidance}
+
+French safety: ${jsonFile('data/vocabulary/photo-guidance.v0.2.0.json').concepts.find((g) => g.concept_key === c.concept_key).locales.fr.safety_guidance}
+
 Review concern: ${c.editorial.concerns.join(' ')}
 `,
   )
   .join('\n')}
 
-## Decisions requiring human approval
+## Owner pilot acceptance and remaining validation
 
-1. Validate translations, independent level estimates and guidance copy; all 60 identities and meanings are already approved. Draft status now reflects the remaining linguistic/accessibility reviews. The broader photographable-meaning principle itself is already your instruction, not a pending decision.
-2. Confirm the proposed launch treatment of interpretive scenes and models: they should be eligible, with meaning-match guidance that accepts multiple plausible readings. Establish a rubric for a recognisable scene rather than hidden mental-state inference; do not add AI emotion detection. The optional photo-guidance hints are now separately authorized and implemented locally; broader rating-copy changes still require approval.
+1. The owner approved the existing translations, bilingual guidance and a limited pilot on 2026-10-26, selected English loneliness C1 and accepted remaining provisional levels and advanced-level shortages. See owner-approval.v0.2.0.json. Draft fields preserve the absence of independent linguistic/accessibility certification; they do not revoke this scoped owner approval.
+2. Interpretive scenes and models remain eligible under the approved photographic-meaning principle and owner-approved guidance. A scene suggests a meaning rather than proving an internal state. Future rating-copy or AI-validation changes are outside this rollout.
 3. Test solo/seated alternatives and phone framing with people with differing mobility, vision, living space and cultural backgrounds. No single scene is universally obvious. Decide whether accessibility preferences or an optional creative slot should affect future assignment; neither exists in the algorithm today.
-4. The bounded fallback policy is approved and implemented locally as version 2; hosted deployment remains separate. Validate the remaining language-level supply before enabling a six-level launch.
+4. Selection v2 is deployed in both environments and unchanged. The owner accepts controlled shortages for this limited pilot, including Production French C1/C2. This is not approval to claim a fully supplied six-level launch.
 5. Set the content horizon, replacement reserve and expansion balance before growing to 600. Do not auto-approve the existing 36 fixtures or force C1/C2 for apparent completeness.
 
-Offline checks validate structure, grammar metadata, documented duplicates and draft gates. They cannot certify translation accuracy, photo meaning or CEFR. See [manifest contract](../data/vocabulary/README.md). No importer or hosted operation is included.
+Offline checks validate structure, grammar metadata, documented duplicates and draft gates. They cannot certify translation accuracy, photo meaning or CEFR. See [manifest contract](../data/vocabulary/README.md). An offline, gated catalog import planner is included; the 60 concepts are already staged in both environments; activation status is recorded separately in VOCABULARY_ACTIVATION_REVIEW.md.
 `;
 }
 async function main(args) {
@@ -204,6 +213,11 @@ async function main(args) {
   );
   result.errors.push(
     ...validateGuidance(manifest, jsonFile('data/vocabulary/photo-guidance.v0.2.0.json')),
+    ...validateEditorialReview(
+      manifest,
+      jsonFile('data/vocabulary/photo-guidance.v0.2.0.json'),
+      jsonFile('data/vocabulary/editorial-review.v0.2.0.json'),
+    ),
   );
   console.log(
     JSON.stringify(

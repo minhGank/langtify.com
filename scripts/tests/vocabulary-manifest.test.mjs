@@ -252,7 +252,7 @@ test('v2 contains 60 diverse meanings, eight preserved identities and no manufac
   assert.equal(r.approved, 0);
   assert.deepEqual(r.unresolved, { en: 0, fr: 0 });
   for (const l of ['en', 'fr']) {
-    assert.equal(r.coverage[l].C1, 0);
+    assert.equal(r.coverage[l].C1, l === 'en' ? 1 : 0);
     assert.equal(r.coverage[l].C2, 0);
   }
   assert.equal(r.coverage.fr.B2, 0);

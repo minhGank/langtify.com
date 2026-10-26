@@ -197,3 +197,11 @@ English/French guidance has been imported into a hosted project.
   imported. No draft catalog was created just to satisfy a test.
 
 Hosted verification and physical-device acceptance remain pending.
+
+## Release preparation follow-up (2026-10-21)
+
+All 60 English and French instruction records now exist as drafts. The original
+guidance-only local tool remains available; the new offline catalog planner covers
+concepts, bilingual terms and both guidance locales with inactive staging, strict
+approval gates and conflict detection. See [release preparation](VOCABULARY_RELEASE_PREPARATION.md).
+No new migration or hosted change occurred in this follow-up.

@@ -51,10 +51,11 @@ test('pilot reports provisional supply separately from reviewed release inventor
     readFileSync(new URL('../../data/vocabulary/pilot.v0.2.0.json', import.meta.url)),
   );
   const result = measureCoverage(pilot.concepts);
-  assert.equal(result.provisional.en.B2.fullCompletionDays, 3);
+  assert.equal(result.provisional.en.B2.fullCompletionDays, 5);
   assert.equal(result.provisional.fr.B2.fullCompletionDays, 1);
   for (const lang of ['en', 'fr']) {
-    assert.equal(result.provisional[lang].C2.firstDay, null);
+    if (lang === 'fr') assert.equal(result.provisional[lang].C2.firstDay, null);
+    else assert.deepEqual(result.provisional[lang].C2.firstDay, ['B2', 'B2', 'C1']);
     for (const level of LEVELS) assert.equal(result.reviewed[lang][level].fullCompletionDays, 0);
   }
   const changed = structuredClone(pilot.concepts);

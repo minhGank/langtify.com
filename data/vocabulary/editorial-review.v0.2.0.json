@@ -1,0 +1,460 @@
+{
+  "schema_version": 1,
+  "manifest_version": "0.2.0",
+  "reviewed_at": "2026-10-21",
+  "reviewer_kind": "ai_assisted_editorial_review",
+  "independent_human_approval": false,
+  "scope": "All 120 terms and separate EN/FR estimates; all 60 EN guidance entries; 60 newly drafted FR guidance entries. Semantic boundaries, grammar metadata, modes, consent, physical access and safety reviewed. No device or human acceptance claim.",
+  "concepts": [
+    {
+      "concept_key": "BED",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "b32eb17f0b047224574f9c00dafaa161cfc198a5dadd8fa874e6bcbdd03f16f7"
+    },
+    {
+      "concept_key": "PILLOW",
+      "translation_note": "Dictionary excerpt supports masculine oreiller as sleeping head support, not a decorative cushion.",
+      "sources": ["https://dictionary.cambridge.org/dictionary/french-english/oreiller"],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "fe60acf03bda0f69000c245664d863b63f82624654c791447157944ff259f927"
+    },
+    {
+      "concept_key": "BOTTLE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "b566080f88e597a95f17d84885772e61894fa9607e8fcd46474f326101ea0179"
+    },
+    {
+      "concept_key": "PLATE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A1 → A2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "11b03834c3656cbf4eeb3a05d65d35e523c3d00bb2d2ac79ec9936d04f7c1e91"
+    },
+    {
+      "concept_key": "SPOON",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A1 → A2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "0c3cddcc1e6068db052a817d9bcb9c68b20a4abfe55118569c0104d56c49b091"
+    },
+    {
+      "concept_key": "FORK",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A1 → A2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "006805a64b29aaa7e71c3b22b3d5ad8f46324ea3f45d07629b35fe140653dd4f"
+    },
+    {
+      "concept_key": "BACKPACK",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "e42c87669c85fd7d3a8b676aa2aa10f2d9ab50ebe9e95da0ba95bfa98112e03f"
+    },
+    {
+      "concept_key": "SCISSORS",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "5ad0d146b5fda469c609853b51cf88e6e8295b7c986945c93b71016157c309db"
+    },
+    {
+      "concept_key": "BUTTERFLY",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": ["https://dictionary.cambridge.org/us/dictionary/english/butterfly"],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A2 → B1.",
+      "content_sha256": "66a6f4dd09ea691480a0f9bbfcb5603ce258646d17dbb8049b0648616e0254d4"
+    },
+    {
+      "concept_key": "BIRD",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "a4bde78cdca2b41a2cd6c14aee30adbbe55d4a432c2594571a989ea8cb62f0dc"
+    },
+    {
+      "concept_key": "RABBIT",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "8889d3c44fcaa5b7c6c2dc019476512cb1b8fff78290b1ab26f6f0a3eafb9ff9"
+    },
+    {
+      "concept_key": "SNAIL",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "d5a1246a7489f983878500b19a2ecc49e91dda6355482d0cea6ecb61bf1b3fca"
+    },
+    {
+      "concept_key": "ANT",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "559155c8f35c6c08c377a84d13dda83f2f26ed9041dce8d2a1aced5664af5df2"
+    },
+    {
+      "concept_key": "FLOWER",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "56ca4bdbb918c05ce7404b082030adf81a321dc43b3a6dda4a11ab32f75250b3"
+    },
+    {
+      "concept_key": "LEAF",
+      "translation_note": "Dictionary excerpt separates plant feuille from paper/table senses; its English label is not a French CEFR rating.",
+      "sources": [
+        "https://www.collinsdictionary.com/dictionary/english-french/leaf",
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A2 → B1; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "2c2bd4aa62a65016ccfd726d204de024375ec1771d287cd13589c8dedb64069a"
+    },
+    {
+      "concept_key": "GRASS",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A1 → A2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "e12f45703f9585f63b406f361aa2c6216f3764dfc1489b0e9526791c749724db"
+    },
+    {
+      "concept_key": "RUN",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "1ff844ebf8e0e33d7306f01fe42e23e3e74933fdd3b40cd90a61ee7bd984b2d9"
+    },
+    {
+      "concept_key": "WALK",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "b324840eda318efb41536f7ee341a0a2bf2eceef23992a5997a02ffaceb47450"
+    },
+    {
+      "concept_key": "READ",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "1d4146a9c8a1cf1e1551b4349f3c2d7ba7cc5f30eec23216c62c9472fc5a73f6"
+    },
+    {
+      "concept_key": "COOK",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "543434e48c1cec99a294bb6c40cd28bcf6335a85ab78341c3fc92cc13c455206"
+    },
+    {
+      "concept_key": "DANCE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "dd5ea075337dd06ba7ec3289bf49963b05b819fae8c4e370133289ddafcf71f0"
+    },
+    {
+      "concept_key": "DRAW",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "dbb45d12fca796f9a44306879666b56dd6765bfb4679e9f2c780f3964271f966"
+    },
+    {
+      "concept_key": "WASH_HANDS",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "13cfc567acc1302c5fcbfc96152233ccae956978c2a924cddaabf6c15207e6e5"
+    },
+    {
+      "concept_key": "STRETCH_BODY",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A2 → B2; verify this sense rather than importing all senses of the headword. Body-exercise sense needs explicit review against the broad reference headword.",
+      "content_sha256": "e7201d1a42a3784a31bc7c507b9fd9aa9eae91a9dfde7694295dff72c4c59b34"
+    },
+    {
+      "concept_key": "HAPPINESS",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A2 → B1; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "c0952a3d0b78bf7b41278b2d706f37665083b7ae83123d3f88ecbb71e91507fd"
+    },
+    {
+      "concept_key": "SADNESS",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "c83405dc68953b9e34f54982c1da9e7775a10498852eced311f4bb96a54f9c5d"
+    },
+    {
+      "concept_key": "SURPRISE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "13ae8589e70857bdb24185cc4da7cc0a7c7523ce3f1d632ea6da74cb3da4a025"
+    },
+    {
+      "concept_key": "ANGER",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised B1 → B2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "49d29899278346ac9681baa2c6a4c58e4206647ffbe7c15aafcf179ff4fa1fb7"
+    },
+    {
+      "concept_key": "WORRY",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "0b98e743dea88b7713a5d73d345674f0d9a6b02f42d7fe823234f40ce14886a7"
+    },
+    {
+      "concept_key": "RELIEF",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "61da8ae81bb36ee01802afa8ecb41d0b7d932f43ee23e58134c236ef4a5b7593"
+    },
+    {
+      "concept_key": "SUNSET",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "a94ee92d3b041ca2cfe89c553ca25b8051a8e9d799ab7834e64b7bda9d4d1648"
+    },
+    {
+      "concept_key": "RAINBOW",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": ["https://dictionary.cambridge.org/us/dictionary/english/rainbow"],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A2 → B2.",
+      "content_sha256": "b5f8691a21dd9ffe53fdcee05551fe9c83ad47c4138670e62e37a0c95b9b53fd"
+    },
+    {
+      "concept_key": "RAIN",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "3dc719179fb10d4f5a794f01a44397f19b0fbb7690b929b3aec9177dc7aa6801"
+    },
+    {
+      "concept_key": "SNOW",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "c51218220f0f97f258040526b4ae5a533689ca0bcf371484a9155d79e3fa7932"
+    },
+    {
+      "concept_key": "CLOUD",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A1 → A2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "e334a8f0ec69aedceba944e7d1ed7fa1705efa7a663dfd33265e1c23830e38ab"
+    },
+    {
+      "concept_key": "PUDDLE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "6b5c55d62afdc2fa41d3feade6a1c1939c68f32e901b4c65d425914296a38dd1"
+    },
+    {
+      "concept_key": "WATER_WAVE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "10ebd426d6315e77c4d7ced084641940a71d66e2a5ceb084d2a3e5d4830a8307"
+    },
+    {
+      "concept_key": "PARK",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "dbe549db65ec2b65084f40bced5a197f02926338c53435bdd1d774ddf489e5d4"
+    },
+    {
+      "concept_key": "BEACH",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "095df7270d56e931f89c81c4649d890633c45d18cb99ff8c192922bbc21c127a"
+    },
+    {
+      "concept_key": "FOREST",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "9f3b2588f6c3e375e9d07fe4987ef280574b05dbadaabb225ecd6d2b1c7ccd62"
+    },
+    {
+      "concept_key": "PLAYGROUND",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "c44f3bff3eaf7eb7531e4ed6da1a8a339b03cf5131bfd8d8561afed5d5645817"
+    },
+    {
+      "concept_key": "KITCHEN",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "20a3ebf5fdeb0e8899aa9e516e2c33f864132209b1040cbdef257256af99b452"
+    },
+    {
+      "concept_key": "BUS_STOP",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "865c98936ba64b047a0520676033b296903d1b710677c3caaede9a2a3b03888f"
+    },
+    {
+      "concept_key": "GREET",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "63dfdd437e95605a34edd409a56eead4bdf4581527ea5c1de801125e63e2c625"
+    },
+    {
+      "concept_key": "SHARE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A2 → A1; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "1580cca0bc9b1487b34da76a9eebfb8d62839624b98424558ac8f7861b2a8d69"
+    },
+    {
+      "concept_key": "HELP",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "11f966180d872096d1bb2c46136934b3e28e19b00058b5264bd4e60535bc2bac"
+    },
+    {
+      "concept_key": "CELEBRATION",
+      "translation_note": "Dictionary excerpt supports fête for an occasion; ceremonial célébration is not required here.",
+      "sources": ["https://dictionary.cambridge.org/dictionary/english-french/celebration"],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "ea09aadfce368fd5335f5dd7a466f775341733de131f53a11bbbf79d8a78e4db"
+    },
+    {
+      "concept_key": "PICNIC",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. No exact per-sense English CEFR evidence established in this pass; current estimate remains provisional.",
+      "content_sha256": "20811e9c6b76c712eaf17ea76bb6983a7e0f63e3944679367a3485131908d4aa"
+    },
+    {
+      "concept_key": "WAITING_LINE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "d913abd4d6299486fdf18601863cb7123b63a3ff092203477e8be69a579cf109"
+    },
+    {
+      "concept_key": "MESSY",
+      "translation_note": "Dictionary supports en désordre for untidy arrangement; sale would introduce dirt.",
+      "sources": ["https://dictionary.cambridge.org/dictionary/english-french/messy"],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "9a856143209b5e527e726bca72d1dc46d8e1fcb9d461829bcf45e9e8f7dc6c9c"
+    },
+    {
+      "concept_key": "EMPTY",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A1 → A2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "96cfa168ca3a76bb90d38d5750318fad42bf87319b4062f3d93d5f030a42ebbd"
+    },
+    {
+      "concept_key": "WET",
+      "translation_note": "Dictionary excerpt supports mouillé for a wet surface, separately from rainy weather.",
+      "sources": ["https://dictionary.cambridge.org/dictionary/english-french/wet"],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "dc409c056ab569abe262aaec8b1a3d9618d50290c59b66a930a3a92dd01b7238"
+    },
+    {
+      "concept_key": "COLOURFUL",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "f277177ebc03a59eed2ca7feaf91aef9f3edf78309aa4bcaf17e22ee0d20d52a"
+    },
+    {
+      "concept_key": "ROUND",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised A1 → A2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "cc2008a82b00e69eeeb4aff306524b5ebd62c128e16bb36267e7e1b23271a51b"
+    },
+    {
+      "concept_key": "BROKEN_OBJECT",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "50163c72d8b3fad2d0068bec0218048686a76311dc2f43dec10cc64b133e7fbc"
+    },
+    {
+      "concept_key": "FRIENDSHIP",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "b3bfdbda4d0f7d6d33f44f919ce1b5f5c666a3ea91518d2743091e90b21449cd"
+    },
+    {
+      "concept_key": "LONELINESS",
+      "translation_note": "Dictionary excerpt gives solitude/ loneliness; sentiment de preserves the approved emotional sense, with unwantedness supplied by definition/context.",
+      "sources": ["https://dictionary.cambridge.org/us/dictionary/french-english/solitude"],
+      "decision": "Owner selected English C1 on 2026-10-26. Meaning and translation unchanged. This hash refresh records the approved level change, not a new independent review; independent linguistic/accessibility certification remains absent.",
+      "content_sha256": "e7b98d58aff0bfe57e52460d83918af59317092eb75d02d674ef149a99e34f9d"
+    },
+    {
+      "concept_key": "PATIENCE",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending.",
+      "content_sha256": "c8a5b5b839e37e2fb365f9995b22c20d51ba3db7b9d363c6bb87c09463d904c5"
+    },
+    {
+      "concept_key": "HOPE",
+      "translation_note": "Larousse supports masculine espoir for the desire/expectation noun; not the verb espérer.",
+      "sources": [
+        "https://www.larousse.fr/dictionnaires/anglais-francais/hope/586969",
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised B1 → A2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "e9f2886152356b978715887b225b1387dae12de60153eb61ac10f7b93e68b797"
+    },
+    {
+      "concept_key": "FREEDOM",
+      "translation_note": "EN/FR wording matches the approved sense on model editorial review; external per-sense dictionary confirmation remains pending.",
+      "sources": [
+        "https://www.oxfordlearnersdictionaries.com/external/pdf/wordlists/oxford-3000-5000/The_Oxford_3000.pdf"
+      ],
+      "decision": "Independent bilingual level/copy review and photo accessibility acceptance remain pending. English draft revised B1 → B2; verify this sense rather than importing all senses of the headword.",
+      "content_sha256": "b799163b02638aa6e63175829db414d18cbdee7b39d9c1292376696afae71314"
+    }
+  ]
+}
